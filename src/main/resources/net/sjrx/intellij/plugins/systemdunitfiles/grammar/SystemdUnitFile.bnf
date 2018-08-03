@@ -1,0 +1,23 @@
+{
+  parserClass="net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="UnitFile"
+  psiImplClassSuffix="Impl"
+  psiPackage="net.sjrx.intellij.plugins.systemdunitfiles.psi"
+  psiImplPackage="net.sjrx.intellij.plugins.systemdunitfiles.psi.impl"
+
+  elementTypeHolderClass="net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder"
+  elementTypeClass="net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileElementType"
+  tokenTypeClass="net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileTokenType"
+}
+
+
+unitFile ::= (COMMENT|CRLF)* section_groups_*
+
+private section_groups_ ::= SECTION line_items_*
+
+private line_items_ ::= (property|COMMENT|CRLF)
+
+property ::= (KEY SEPARATOR VALUE)

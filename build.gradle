@@ -1,9 +1,10 @@
 plugins {
     id 'java'
     id 'org.jetbrains.intellij' version '0.3.5'
+    id "org.jetbrains.grammarkit" version "2018.1.7"
     id 'checkstyle'
-}
 
+}
 group 'net.sjrx.intellij.plugins'
 version '0.1-SNAPSHOT'
 
@@ -30,5 +31,37 @@ patchPluginXml {
 sourceSets.main.java.srcDirs += 'src/main/gen'
 
 checkstyle {
+  // Exclude the generated sources
+  checkstyleMain.source = "src/main/java"
   toolVersion "8.11"
+
 }
+
+
+apply plugin: 'org.jetbrains.grammarkit'
+// import is optional to make task creation easier
+import org.jetbrains.grammarkit.tasks.*
+
+task generateLexer(type: GenerateLexer) {
+  source = "src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/lexer/SystemdUnitFile.flex"
+  targetDir = "src/main/gen/net/sjrx/intellij/plugins/systemdunitfiles/generated/"
+  targetClass = "UnitFileLexer"
+  purgeOldFiles = true
+}
+
+task generateParser(type: GenerateParser) {
+  source = "src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/grammar/SystemdUnitFile.bnf"
+  targetRoot = "src/main/gen/"
+
+  // path to a parser file, relative to the targetRoot
+  pathToParser = 'src/main/gen/net/sjrx/intellij/plugins/systemdunitfiles/generated/UnitFileParser.java'
+
+  // path to a directory with generated psi files, relative to the targetRoot
+  pathToPsiRoot = 'src/main/gen/net/sjrx/intellij/plugins/systemdunitfiles/psi/'
+
+  purgeOldFiles = true
+
+  dependsOn generateLexer
+}
+
+compileJava.dependsOn += generateParser
