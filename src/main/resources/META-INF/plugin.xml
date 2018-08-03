@@ -23,7 +23,8 @@
   -->
 
   <extensions defaultExtensionNs="com.intellij">
-      <fileTypeFactory implementation="net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileTypeFactory"/>
+    <lang.parserDefinition language="Systemd Unit File" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.parser.UnitFileParserDefinition"/>
+    <fileTypeFactory implementation="net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileTypeFactory"/>
   </extensions>
 
   <actions>
