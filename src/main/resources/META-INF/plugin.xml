@@ -24,6 +24,8 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <lang.parserDefinition language="Systemd Unit File" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.parser.UnitFileParserDefinition"/>
+    <lang.syntaxHighlighterFactory language="Systemd Unit File" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.coloring.UnitSyntaxHighlighterFactory"/>
+    <colorSettingsPage implementation="net.sjrx.intellij.plugins.systemdunitfiles.coloring.settings.UnitFileColorSettings"/>
     <fileTypeFactory implementation="net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileTypeFactory"/>
   </extensions>
 
