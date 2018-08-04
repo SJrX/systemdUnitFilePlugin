@@ -54,7 +54,8 @@ KEY_CHARACTER=[^=\ \n\t\f\\] | "\\ "
 // First value doesn't allow spaces
 VALUE_CHARACTER=[^\n\t\f\\] | "\\"{CRLF} | "\\".
 
-COMMENT=("#")[^\n]*
+// Comments can start with either ; or a #
+COMMENT=("#"|";")[^\n]*
 SEPARATOR=[=]
 
 %state IN_SECTION
