@@ -83,7 +83,7 @@ SEPARATOR=[=]
 
 <WAITING_FOR_SEPARATOR> {WHITE_SPACE}*{SEPARATOR}{WHITE_SPACE}* { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR; }
 
-<WAITING_FOR_VALUE> {VALUE_CHARACTER}*                          { yybegin(IN_SECTION); return UnitFileElementTypeHolder.VALUE; }
+<WAITING_FOR_VALUE> {VALUE_CHARACTER}+                          { yybegin(IN_SECTION); return UnitFileElementTypeHolder.VALUE; }
 
 ({CRLF}|{WHITE_SPACE})+                                         { return TokenType.WHITE_SPACE; }
 

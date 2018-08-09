@@ -26,6 +26,9 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
     if (root_ == PROPERTY) {
       result_ = property(builder_, 0);
     }
+    else if (root_ == SECTION_GROUPS) {
+      result_ = section_groups(builder_, 0);
+    }
     else {
       result_ = parse_root_(root_, builder_, 0);
     }
@@ -61,30 +64,30 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // SECTION line_items_*
-  static boolean section_groups_(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "section_groups_")) return false;
+  public static boolean section_groups(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "section_groups")) return false;
     if (!nextTokenIs(builder_, SECTION)) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, SECTION);
-    result_ = result_ && section_groups__1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
+    result_ = result_ && section_groups_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, SECTION_GROUPS, result_);
     return result_;
   }
 
   // line_items_*
-  private static boolean section_groups__1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "section_groups__1")) return false;
+  private static boolean section_groups_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "section_groups_1")) return false;
     while (true) {
       int pos_ = current_position_(builder_);
       if (!line_items_(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "section_groups__1", pos_)) break;
+      if (!empty_element_parsed_guard_(builder_, "section_groups_1", pos_)) break;
     }
     return true;
   }
 
   /* ********************************************************** */
-  // (COMMENT|CRLF)* section_groups_*
+  // (COMMENT|CRLF)* section_groups*
   static boolean unitFile(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "unitFile")) return false;
     boolean result_;
@@ -115,12 +118,12 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
     return result_;
   }
 
-  // section_groups_*
+  // section_groups*
   private static boolean unitFile_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "unitFile_1")) return false;
     while (true) {
       int pos_ = current_position_(builder_);
-      if (!section_groups_(builder_, level_ + 1)) break;
+      if (!section_groups(builder_, level_ + 1)) break;
       if (!empty_element_parsed_guard_(builder_, "unitFile_1", pos_)) break;
     }
     return true;

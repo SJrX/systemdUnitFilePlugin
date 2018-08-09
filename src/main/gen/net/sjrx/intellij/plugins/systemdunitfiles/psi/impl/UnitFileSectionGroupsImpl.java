@@ -11,19 +11,25 @@ import static net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileEleme
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.*;
 
-public class UnitFilePropertyImpl extends UnitFilePropertyType implements UnitFileProperty {
+public class UnitFileSectionGroupsImpl extends UnitFilePropertyType implements UnitFileSectionGroups {
 
-  public UnitFilePropertyImpl(ASTNode node) {
+  public UnitFileSectionGroupsImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UnitFileVisitor visitor) {
-    visitor.visitProperty(this);
+    visitor.visitSectionGroups(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof UnitFileVisitor) accept((UnitFileVisitor)visitor);
     else super.accept(visitor);
+  }
+
+  @Override
+  @NotNull
+  public List<UnitFileProperty> getPropertyList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, UnitFileProperty.class);
   }
 
 }
