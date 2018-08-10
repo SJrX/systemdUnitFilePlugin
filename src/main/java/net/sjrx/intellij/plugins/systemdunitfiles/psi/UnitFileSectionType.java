@@ -16,7 +16,7 @@ public class UnitFileSectionType extends ASTWrapperPsiElement {
    * @return the section name
    */
   public String getSectionName() {
-    String sectionNameWithBrackets = getNode().getText();
+    String sectionNameWithBrackets = getNode().getFirstChildNode().getText();
 
     return sectionNameWithBrackets.substring(1, sectionNameWithBrackets.length() - 1);
   }

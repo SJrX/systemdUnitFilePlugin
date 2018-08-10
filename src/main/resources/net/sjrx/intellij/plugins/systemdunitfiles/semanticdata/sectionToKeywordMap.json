@@ -1,560 +1,635 @@
 {
-    "Unit": [
-        {
-            "key": "Description",
+    "Unit": {
+        "After": {
             "values": ""
         },
-        {
-            "key": "Documentation",
+        "AllowIsolate": {
             "values": ""
         },
-        {
-            "key": "Requires",
+        "AssertACPower": {
             "values": ""
         },
-        {
-            "key": "Requisite",
+        "AssertArchitecture": {
             "values": ""
         },
-        {
-            "key": "Wants",
+        "AssertCapability": {
             "values": ""
         },
-        {
-            "key": "BindsTo",
+        "AssertControlGroupController": {
             "values": ""
         },
-        {
-            "key": "PartOf",
+        "AssertDirectoryNotEmpty": {
             "values": ""
         },
-        {
-            "key": "Conflicts",
+        "AssertFileIsExecutable": {
             "values": ""
         },
-        {
-            "key": "Before",
+        "AssertFileNotEmpty": {
             "values": ""
         },
-        {
-            "key": "OnFailure",
+        "AssertFirstBoot": {
             "values": ""
         },
-        {
-            "key": "PropagatesReloadTo",
+        "AssertGroup": {
             "values": ""
         },
-        {
-            "key": "JoinsNamespaceOf",
+        "AssertHost": {
             "values": ""
         },
-        {
-            "key": "RequiresMountsFor",
+        "AssertKernelCommandLine": {
             "values": ""
         },
-        {
-            "key": "OnFailureJobMode",
+        "AssertKernelVersion": {
             "values": ""
         },
-        {
-            "key": "IgnoreOnIsolate",
+        "AssertNeedsUpdate": {
             "values": ""
         },
-        {
-            "key": "StopWhenUnneeded",
+        "AssertPathExists": {
             "values": ""
         },
-        {
-            "key": "RefuseManualStart",
+        "AssertPathExistsGlob": {
             "values": ""
         },
-        {
-            "key": "AllowIsolate",
+        "AssertPathIsDirectory": {
             "values": ""
         },
-        {
-            "key": "DefaultDependencies",
+        "AssertPathIsMountPoint": {
             "values": ""
         },
-        {
-            "key": "CollectMode",
+        "AssertPathIsReadWrite": {
             "values": ""
         },
-        {
-            "key": "JobTimeoutSec",
+        "AssertPathIsSymbolicLink": {
             "values": ""
         },
-        {
-            "key": "StartLimitIntervalSec",
-            "values": "interval"
-        },
-        {
-            "key": "StartLimitAction",
+        "AssertSecurity": {
             "values": ""
         },
-        {
-            "key": "FailureAction",
+        "AssertUser": {
             "values": ""
         },
-        {
-            "key": "RebootArgument",
+        "AssertVirtualization": {
             "values": ""
         },
-        {
-            "key": "ConditionArchitecture",
+        "Before": {
             "values": ""
         },
-        {
-            "key": "AssertArchitecture",
+        "BindsTo": {
             "values": ""
         },
-        {
-            "key": "SourcePath",
-            "values": ""
-        }
-    ],
-    "Install": [
-        {
-            "key": "Alias",
+        "CollectMode": {
             "values": ""
         },
-        {
-            "key": "WantedBy",
+        "ConditionACPower": {
             "values": ""
         },
-        {
-            "key": "Also",
+        "ConditionArchitecture": {
             "values": ""
         },
-        {
-            "key": "DefaultInstance",
-            "values": ""
-        }
-    ],
-    "Service": [
-        {
-            "key": "Type",
+        "ConditionCapability": {
             "values": ""
         },
-        {
-            "key": "RemainAfterExit",
+        "ConditionControlGroupController": {
             "values": ""
         },
-        {
-            "key": "GuessMainPID",
+        "ConditionDirectoryNotEmpty": {
             "values": ""
         },
-        {
-            "key": "PIDFile",
+        "ConditionFileIsExecutable": {
             "values": ""
         },
-        {
-            "key": "BusName",
+        "ConditionFileNotEmpty": {
             "values": ""
         },
-        {
-            "key": "ExecStart",
+        "ConditionFirstBoot": {
             "values": ""
         },
-        {
-            "key": "ExecStartPre",
+        "ConditionGroup": {
             "values": ""
         },
-        {
-            "key": "ExecReload",
+        "ConditionHost": {
             "values": ""
         },
-        {
-            "key": "ExecStop",
+        "ConditionKernelCommandLine": {
             "values": ""
         },
-        {
-            "key": "ExecStopPost",
+        "ConditionKernelVersion": {
             "values": ""
         },
-        {
-            "key": "RestartSec",
+        "ConditionNeedsUpdate": {
             "values": ""
         },
-        {
-            "key": "TimeoutStartSec",
+        "ConditionPathExists": {
             "values": ""
         },
-        {
-            "key": "TimeoutStopSec",
+        "ConditionPathExistsGlob": {
             "values": ""
         },
-        {
-            "key": "TimeoutSec",
+        "ConditionPathIsDirectory": {
             "values": ""
         },
-        {
-            "key": "RuntimeMaxSec",
+        "ConditionPathIsMountPoint": {
             "values": ""
         },
-        {
-            "key": "WatchdogSec",
+        "ConditionPathIsReadWrite": {
             "values": ""
         },
-        {
-            "key": "Restart",
+        "ConditionPathIsSymbolicLink": {
             "values": ""
         },
-        {
-            "key": "SuccessExitStatus",
+        "ConditionSecurity": {
             "values": ""
         },
-        {
-            "key": "RestartPreventExitStatus",
+        "ConditionUser": {
             "values": ""
         },
-        {
-            "key": "RestartForceExitStatus",
+        "ConditionVirtualization": {
             "values": ""
         },
-        {
-            "key": "PermissionsStartOnly",
+        "Conflicts": {
             "values": ""
         },
-        {
-            "key": "RootDirectoryStartOnly",
+        "DefaultDependencies": {
             "values": ""
         },
-        {
-            "key": "NonBlocking",
+        "Description": {
             "values": ""
         },
-        {
-            "key": "NotifyAccess",
+        "Documentation": {
             "values": ""
         },
-        {
-            "key": "Sockets",
+        "FailureAction": {
             "values": ""
         },
-        {
-            "key": "FileDescriptorStoreMax",
+        "IgnoreOnIsolate": {
             "values": ""
         },
-        {
-            "key": "USBFunctionDescriptors",
+        "JobRunningTimeoutSec": {
             "values": ""
         },
-        {
-            "key": "USBFunctionStrings",
+        "JobTimeoutAction": {
+            "values": ""
+        },
+        "JobTimeoutRebootArgument": {
+            "values": ""
+        },
+        "JobTimeoutSec": {
+            "values": ""
+        },
+        "JoinsNamespaceOf": {
+            "values": ""
+        },
+        "OnFailure": {
+            "values": ""
+        },
+        "OnFailureJobMode": {
+            "values": ""
+        },
+        "PartOf": {
+            "values": ""
+        },
+        "PropagatesReloadTo": {
+            "values": ""
+        },
+        "RebootArgument": {
+            "values": ""
+        },
+        "RefuseManualStart": {
+            "values": ""
+        },
+        "RefuseManualStop": {
+            "values": ""
+        },
+        "ReloadPropagatedFrom": {
+            "values": ""
+        },
+        "Requires": {
+            "values": ""
+        },
+        "RequiresMountsFor": {
+            "values": ""
+        },
+        "Requisite": {
+            "values": ""
+        },
+        "SourcePath": {
+            "values": ""
+        },
+        "StartLimitAction": {
+            "values": ""
+        },
+        "StartLimitBurst": {
+            "values": ""
+        },
+        "StartLimitIntervalSec": {
+            "values": ""
+        },
+        "StopWhenUnneeded": {
+            "values": ""
+        },
+        "SuccessAction": {
+            "values": ""
+        },
+        "Wants": {
             "values": ""
         }
-    ],
-    "Timer": [
-        {
-            "key": "OnActiveSec",
+    },
+    "Install": {
+        "Alias": {
             "values": ""
         },
-        {
-            "key": "OnCalendar",
+        "Also": {
             "values": ""
         },
-        {
-            "key": "AccuracySec",
+        "DefaultInstance": {
             "values": ""
         },
-        {
-            "key": "RandomizedDelaySec",
+        "RequiredBy": {
             "values": ""
         },
-        {
-            "key": "Unit",
-            "values": ""
-        },
-        {
-            "key": "Persistent",
-            "values": ""
-        },
-        {
-            "key": "WakeSystem",
-            "values": ""
-        },
-        {
-            "key": "RemainAfterElapse",
+        "WantedBy": {
             "values": ""
         }
-    ],
-    "Automount": [
-        {
-            "key": "Where",
+    },
+    "Service": {
+        "BusName": {
             "values": ""
         },
-        {
-            "key": "DirectoryMode",
+        "ExecReload": {
             "values": ""
         },
-        {
-            "key": "TimeoutIdleSec",
+        "ExecStart": {
+            "values": ""
+        },
+        "ExecStartPost": {
+            "values": ""
+        },
+        "ExecStartPre": {
+            "values": ""
+        },
+        "ExecStop": {
+            "values": ""
+        },
+        "ExecStopPost": {
+            "values": ""
+        },
+        "FileDescriptorStoreMax": {
+            "values": ""
+        },
+        "GuessMainPID": {
+            "values": ""
+        },
+        "NonBlocking": {
+            "values": ""
+        },
+        "NotifyAccess": {
+            "values": ""
+        },
+        "PIDFile": {
+            "values": ""
+        },
+        "PermissionsStartOnly": {
+            "values": ""
+        },
+        "RemainAfterExit": {
+            "values": ""
+        },
+        "Restart": {
+            "values": ""
+        },
+        "RestartForceExitStatus": {
+            "values": ""
+        },
+        "RestartPreventExitStatus": {
+            "values": ""
+        },
+        "RestartSec": {
+            "values": ""
+        },
+        "RootDirectoryStartOnly": {
+            "values": ""
+        },
+        "RuntimeMaxSec": {
+            "values": ""
+        },
+        "Sockets": {
+            "values": ""
+        },
+        "SuccessExitStatus": {
+            "values": ""
+        },
+        "TimeoutSec": {
+            "values": ""
+        },
+        "TimeoutStartSec": {
+            "values": ""
+        },
+        "TimeoutStopSec": {
+            "values": ""
+        },
+        "Type": {
+            "values": ""
+        },
+        "USBFunctionDescriptors": {
+            "values": ""
+        },
+        "USBFunctionStrings": {
+            "values": ""
+        },
+        "WatchdogSec": {
             "values": ""
         }
-    ],
-    "Mount": [
-        {
-            "key": "What",
+    },
+    "Timer": {
+        "AccuracySec": {
             "values": ""
         },
-        {
-            "key": "Where",
+        "OnActiveSec": {
             "values": ""
         },
-        {
-            "key": "Type",
+        "OnBootSec": {
             "values": ""
         },
-        {
-            "key": "Options",
+        "OnCalendar": {
             "values": ""
         },
-        {
-            "key": "SloppyOptions",
+        "OnStartupSec": {
             "values": ""
         },
-        {
-            "key": "LazyUnmount",
+        "OnUnitActiveSec": {
             "values": ""
         },
-        {
-            "key": "ForceUnmount",
+        "OnUnitInactiveSec": {
             "values": ""
         },
-        {
-            "key": "DirectoryMode",
+        "Persistent": {
             "values": ""
         },
-        {
-            "key": "TimeoutSec",
+        "RandomizedDelaySec": {
+            "values": ""
+        },
+        "RemainAfterElapse": {
+            "values": ""
+        },
+        "Unit": {
+            "values": ""
+        },
+        "WakeSystem": {
             "values": ""
         }
-    ],
-    "Path": [
-        {
-            "key": "PathExists",
+    },
+    "Automount": {
+        "DirectoryMode": {
             "values": ""
         },
-        {
-            "key": "Unit",
+        "TimeoutIdleSec": {
             "values": ""
         },
-        {
-            "key": "MakeDirectory",
-            "values": ""
-        },
-        {
-            "key": "DirectoryMode",
+        "Where": {
             "values": ""
         }
-    ],
-    "Socket": [
-        {
-            "key": "ListenStream",
+    },
+    "Mount": {
+        "DirectoryMode": {
             "values": ""
         },
-        {
-            "key": "ListenFIFO",
+        "ForceUnmount": {
             "values": ""
         },
-        {
-            "key": "ListenSpecial",
+        "LazyUnmount": {
             "values": ""
         },
-        {
-            "key": "ListenNetlink",
+        "Options": {
             "values": ""
         },
-        {
-            "key": "ListenMessageQueue",
+        "SloppyOptions": {
             "values": ""
         },
-        {
-            "key": "ListenUSBFunction",
+        "TimeoutSec": {
             "values": ""
         },
-        {
-            "key": "SocketProtocol",
+        "Type": {
             "values": ""
         },
-        {
-            "key": "BindIPv6Only",
+        "What": {
             "values": ""
         },
-        {
-            "key": "Backlog",
-            "values": ""
-        },
-        {
-            "key": "BindToDevice",
-            "values": ""
-        },
-        {
-            "key": "SocketUser",
-            "values": ""
-        },
-        {
-            "key": "SocketMode",
-            "values": ""
-        },
-        {
-            "key": "DirectoryMode",
-            "values": ""
-        },
-        {
-            "key": "Accept",
-            "values": ""
-        },
-        {
-            "key": "Writable",
-            "values": ""
-        },
-        {
-            "key": "MaxConnections",
-            "values": ""
-        },
-        {
-            "key": "MaxConnectionsPerSource",
-            "values": ""
-        },
-        {
-            "key": "KeepAlive",
-            "values": ""
-        },
-        {
-            "key": "KeepAliveTimeSec",
-            "values": ""
-        },
-        {
-            "key": "KeepAliveIntervalSec",
-            "values": ""
-        },
-        {
-            "key": "KeepAliveProbes",
-            "values": ""
-        },
-        {
-            "key": "NoDelay",
-            "values": ""
-        },
-        {
-            "key": "Priority",
-            "values": ""
-        },
-        {
-            "key": "DeferAcceptSec",
-            "values": ""
-        },
-        {
-            "key": "ReceiveBuffer",
-            "values": ""
-        },
-        {
-            "key": "IPTOS",
-            "values": ""
-        },
-        {
-            "key": "IPTTL",
-            "values": ""
-        },
-        {
-            "key": "Mark",
-            "values": ""
-        },
-        {
-            "key": "ReusePort",
-            "values": ""
-        },
-        {
-            "key": "SmackLabel",
-            "values": ""
-        },
-        {
-            "key": "SELinuxContextFromNet",
-            "values": ""
-        },
-        {
-            "key": "PipeSize",
-            "values": ""
-        },
-        {
-            "key": "MessageQueueMaxMessages",
-            "values": ""
-        },
-        {
-            "key": "FreeBind",
-            "values": ""
-        },
-        {
-            "key": "Transparent",
-            "values": ""
-        },
-        {
-            "key": "Broadcast",
-            "values": ""
-        },
-        {
-            "key": "PassCredentials",
-            "values": ""
-        },
-        {
-            "key": "PassSecurity",
-            "values": ""
-        },
-        {
-            "key": "TCPCongestion",
-            "values": ""
-        },
-        {
-            "key": "ExecStartPre",
-            "values": ""
-        },
-        {
-            "key": "ExecStopPre",
-            "values": ""
-        },
-        {
-            "key": "TimeoutSec",
-            "values": ""
-        },
-        {
-            "key": "Service",
-            "values": ""
-        },
-        {
-            "key": "RemoveOnStop",
-            "values": ""
-        },
-        {
-            "key": "Symlinks",
-            "values": ""
-        },
-        {
-            "key": "FileDescriptorName",
-            "values": ""
-        },
-        {
-            "key": "TriggerLimitIntervalSec",
+        "Where": {
             "values": ""
         }
-    ],
-    "Swap": [
-        {
-            "key": "What",
+    },
+    "Path": {
+        "DirectoryMode": {
             "values": ""
         },
-        {
-            "key": "Priority",
+        "DirectoryNotEmpty": {
             "values": ""
         },
-        {
-            "key": "Options",
+        "MakeDirectory": {
             "values": ""
         },
-        {
-            "key": "TimeoutSec",
+        "PathChanged": {
+            "values": ""
+        },
+        "PathExists": {
+            "values": ""
+        },
+        "PathExistsGlob": {
+            "values": ""
+        },
+        "PathModified": {
+            "values": ""
+        },
+        "Unit": {
             "values": ""
         }
-    ]
+    },
+    "Socket": {
+        "Accept": {
+            "values": ""
+        },
+        "Backlog": {
+            "values": ""
+        },
+        "BindIPv6Only": {
+            "values": ""
+        },
+        "BindToDevice": {
+            "values": ""
+        },
+        "Broadcast": {
+            "values": ""
+        },
+        "DeferAcceptSec": {
+            "values": ""
+        },
+        "DirectoryMode": {
+            "values": ""
+        },
+        "ExecStartPost": {
+            "values": ""
+        },
+        "ExecStartPre": {
+            "values": ""
+        },
+        "ExecStopPost": {
+            "values": ""
+        },
+        "ExecStopPre": {
+            "values": ""
+        },
+        "FileDescriptorName": {
+            "values": ""
+        },
+        "FreeBind": {
+            "values": ""
+        },
+        "IPTOS": {
+            "values": ""
+        },
+        "IPTTL": {
+            "values": ""
+        },
+        "KeepAlive": {
+            "values": ""
+        },
+        "KeepAliveIntervalSec": {
+            "values": ""
+        },
+        "KeepAliveProbes": {
+            "values": ""
+        },
+        "KeepAliveTimeSec": {
+            "values": ""
+        },
+        "ListenDatagram": {
+            "values": ""
+        },
+        "ListenFIFO": {
+            "values": ""
+        },
+        "ListenMessageQueue": {
+            "values": ""
+        },
+        "ListenNetlink": {
+            "values": ""
+        },
+        "ListenSequentialPacket": {
+            "values": ""
+        },
+        "ListenSpecial": {
+            "values": ""
+        },
+        "ListenStream": {
+            "values": ""
+        },
+        "ListenUSBFunction": {
+            "values": ""
+        },
+        "Mark": {
+            "values": ""
+        },
+        "MaxConnections": {
+            "values": ""
+        },
+        "MaxConnectionsPerSource": {
+            "values": ""
+        },
+        "MessageQueueMaxMessages": {
+            "values": ""
+        },
+        "MessageQueueMessageSize": {
+            "values": ""
+        },
+        "NoDelay": {
+            "values": ""
+        },
+        "PassCredentials": {
+            "values": ""
+        },
+        "PassSecurity": {
+            "values": ""
+        },
+        "PipeSize": {
+            "values": ""
+        },
+        "Priority": {
+            "values": ""
+        },
+        "ReceiveBuffer": {
+            "values": ""
+        },
+        "RemoveOnStop": {
+            "values": ""
+        },
+        "ReusePort": {
+            "values": ""
+        },
+        "SELinuxContextFromNet": {
+            "values": ""
+        },
+        "SendBuffer": {
+            "values": ""
+        },
+        "Service": {
+            "values": ""
+        },
+        "SmackLabel": {
+            "values": ""
+        },
+        "SmackLabelIPIn": {
+            "values": ""
+        },
+        "SmackLabelIPOut": {
+            "values": ""
+        },
+        "SocketGroup": {
+            "values": ""
+        },
+        "SocketMode": {
+            "values": ""
+        },
+        "SocketProtocol": {
+            "values": ""
+        },
+        "SocketUser": {
+            "values": ""
+        },
+        "Symlinks": {
+            "values": ""
+        },
+        "TCPCongestion": {
+            "values": ""
+        },
+        "TimeoutSec": {
+            "values": ""
+        },
+        "Transparent": {
+            "values": ""
+        },
+        "TriggerLimitBurst": {
+            "values": ""
+        },
+        "TriggerLimitIntervalSec": {
+            "values": ""
+        },
+        "Writable": {
+            "values": ""
+        }
+    },
+    "Swap": {
+        "Options": {
+            "values": ""
+        },
+        "Priority": {
+            "values": ""
+        },
+        "TimeoutSec": {
+            "values": ""
+        },
+        "What": {
+            "values": ""
+        }
+    }
 }

@@ -3,9 +3,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import org.w3c.dom.NodeList
 import org.w3c.dom.Node
-import java.lang.IllegalStateException
+import org.w3c.dom.NodeList
 
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
@@ -35,10 +34,10 @@ import javax.xml.xpath.XPathFactory
 class ExtractValidKeysFromManPage extends DefaultTask {
 
   @InputDirectory
-  def File systemdSourceCodeRoot
+  File systemdSourceCodeRoot
 
   @OutputDirectory
-  def File generatedJsonFileLocation
+  File generatedJsonFileLocation
 
   /**
    * Map that stores for each file name, the name of an option attribute
@@ -106,7 +105,7 @@ class ExtractValidKeysFromManPage extends DefaultTask {
 
     File outputData = new File(this.generatedJsonFileLocation.getAbsolutePath() + "/sectionToKeywordMap.json")
 
-    outputData.write(json);
+    outputData.write(json)
 
     logger.error("Output: $json")
 
@@ -118,13 +117,13 @@ class ExtractValidKeysFromManPage extends DefaultTask {
 
     def xpath = XPathFactory.newInstance().newXPath()
 
-    def dbf = DocumentBuilderFactory.newInstance();
+    def dbf = DocumentBuilderFactory.newInstance()
     dbf.setValidating(false)
     dbf.setExpandEntityReferences(false)
     dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
-    dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-    dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-    dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+    dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+    dbf.setFeature("http://xml.org/sax/features/external-general-entities", false)
+    dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false)
 
     def builder     = dbf.newDocumentBuilder()
 
@@ -136,27 +135,36 @@ class ExtractValidKeysFromManPage extends DefaultTask {
     {
       Node node = result.item(i)
 
-      String option = xpath.evaluate("term/varname[text()]", node)
+      /*
+       * TODO clean up this garbage, all the warnings
+       */
+      NodeList variables = xpath.evaluate("term/varname", node, XPathConstants.NODESET)
 
-      def group = (option =~ /(\w+)=(.*)/)
+      for (Node variable : variables) {
 
-      if(group.size() != 1)
-      {
-        throw new IllegalStateException("Error while processing $filename, expected that $option should conform to <Name>=<Value> format but got $option and group.size() == " + group.size());
-      }
 
-      String name = group[0][1]
-      String value = group[0][2]
+        String option = variable.firstChild.getTextContent()
 
-      String titleOfSection = xpath.evaluate("../../title[text()]", node )
-      List<String> sections = fileAndSectionTitleToSectionName[filename]['sections'][titleOfSection]
+        def group = (option =~ /(\w+)=(.*)/)
 
-      for(String section: sections)
-      {
-        logger.error("Found options $section in $option")
-        sectionToKeyWordMap.putIfAbsent(section, [])
-        sectionToKeyWordMap[section] << [ "key" : name, "values" : value]
+        if (group.size() != 1) {
+          throw new IllegalStateException(
+            "Error while processing $filename, expected that $option should conform to <Name>=<Value> format but got $option and group.size() == " +
+            group.size())
+        }
 
+        String name = group[0][1]
+        String value = group[0][2]
+
+        String titleOfSection = xpath.evaluate("../../title[text()]", node)
+        List<String> sections = fileAndSectionTitleToSectionName[filename]['sections'][titleOfSection]
+
+        for (String section : sections) {
+          logger.error("Found options $section in $option")
+          Map<String, Map<String, String>> foo = new TreeMap<>()
+          sectionToKeyWordMap.putIfAbsent(section, foo)
+          sectionToKeyWordMap[section][name] = ["values": value]
+        }
       }
     }
   }
