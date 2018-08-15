@@ -46,6 +46,9 @@ apply plugin: "idea"
 idea {
   module {
     generatedSourceDirs += file('src/main/gen')
+
+    downloadJavadoc = true
+    downloadSources = true
   }
 }
 /*
