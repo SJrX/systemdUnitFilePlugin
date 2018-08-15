@@ -49,7 +49,7 @@ public class SemanticDataRepository {
     Map<String, Map<String, String>> sectionData = sectionNameToKeyValues.get(section);
 
     if (sectionData == null) {
-      throw new IllegalArgumentException(section + " does not seem to have any data :(");
+      return Collections.emptyMap();
     } else {
 
       return sectionData;

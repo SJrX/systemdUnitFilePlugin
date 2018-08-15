@@ -2,9 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections;
 
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemDescriptorBase;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -31,6 +29,8 @@ import java.util.Collection;
 public class UnknownKeyInSectionInspection extends LocalInspectionTool {
 
   private static final String IGNORED_SECTION_OR_KEY_PREFIX = "X-";
+  private static final String INSPECTION_TOOL_TIP_TEXT =
+    "This key is unrecognized which will cause systemd to generate a warning when loading this unit";
 
   @Override
   public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
@@ -57,13 +57,10 @@ public class UnknownKeyInSectionInspection extends LocalInspectionTool {
         }
 
         if (!sdr.getAllowedKeywordsInSection(section.getSectionName()).contains(keyAndValueProperty.getKey())) {
-
-
           // TODO Figure out what highlight to use
 
-          problems.add(new ProblemDescriptorBase(keyAndValueProperty, keyAndValueProperty, "This type is unknown", new LocalQuickFix[0],
-                                                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING, false,
-                                                 keyAndValueProperty.getKeyTextRange(), true, isOnTheFly));
+          problems.add(manager.createProblemDescriptor(keyAndValueProperty.getKeyNode().getPsi(), INSPECTION_TOOL_TIP_TEXT, true,
+                                                       ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly));
         }
       }
     }

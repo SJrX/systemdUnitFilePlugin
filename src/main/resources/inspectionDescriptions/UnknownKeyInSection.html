@@ -1,7 +1,17 @@
 <html>
 <body>
-<p>Write your description here.</p>
+Validates that the key used in the unit file matches a known value for the section (e.g., [Unit], [Install], [Service]). Consistent with the
+documentation, this inspection ignores keys or sections that start with <b>X-</b>.
+<p>
+  The valid keys depend on their section and are generated via scraping the documentation.
 <!-- tooltip end -->
-<p>Text after this comment will only be shown in the settings of the inspection.</p>
+<p>For more information on the general behaviour see: <a href="https://www.freedesktop.org/software/systemd/man/systemd.unit.html#">systemd.unit(5)</a>.
+</p>
+<p>
+  Individual section options are described both in their respective man pages (e.g., <a
+    href="https://www.freedesktop.org/software/systemd/man/systemd.service.html#">systemd.service(5)</a>), but
+  additional options are documented in shared sections (e.g., <a
+    href="https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#">systemd.resource-control(5)</a>).
+</p>
 </body>
 </html>
