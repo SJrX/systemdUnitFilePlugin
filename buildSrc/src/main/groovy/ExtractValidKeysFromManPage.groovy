@@ -9,6 +9,7 @@ import org.w3c.dom.NodeList
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
+import java.util.regex.Matcher
 
 /**
  * This task scans the systemd source code man pages to extract the set of available options as well as (eventually) documentation.
@@ -166,16 +167,17 @@ class ExtractValidKeysFromManPage extends DefaultTask {
 
         String option = variable.firstChild.getTextContent()
 
-        String[][] group = (option =~ /(\w+)=(.*)/)
+        Matcher match = (option =~ /(\w+)=(.*)/)
 
-        if (group.size() != 1) {
+        match.find()
+        if (match.groupCount() != 2) {
           throw new IllegalStateException(
             "Error while processing $filename, expected that $option should conform to <Name>=<Value> format but got $option and group.size() == " +
-            group.size())
+            match.groupCount())
         }
 
-        String name = group[0][1]
-        String value = group[0][2]
+        String name = match.group(1)
+        String value = match.group(2)
 
         String titleOfSection = xpath.evaluate("../../title[text()]", node)
         List<String> sections = fileAndSectionTitleToSectionName[filename]['sections'][titleOfSection]
