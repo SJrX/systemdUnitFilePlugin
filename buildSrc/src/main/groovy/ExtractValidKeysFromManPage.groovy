@@ -76,10 +76,30 @@ class ExtractValidKeysFromManPage extends DefaultTask {
     'systemd.swap.xml' :
       [ 'sections':
           ['Options': ['Swap']]
+      ],
+    'systemd.resource-control.xml':
+      ['sections':
+         ['Options': ['Slice', 'Scope', 'Service', 'Socket', 'Mount', 'Swap']]
+      ],
+    'systemd.exec.xml':
+      ['sections':
+         [
+           'Paths'                            : ['Service', 'Socket', 'Mount', 'Swap'],
+           'Credentials'                      : ['Service', 'Socket', 'Mount', 'Swap'],
+           'Capabilities'                     : ['Service', 'Socket', 'Mount', 'Swap'],
+           'Security'                         : ['Service', 'Socket', 'Mount', 'Swap'],
+           'Manadatory Access Control'        : ['Service', 'Socket', 'Mount', 'Swap'],
+           'Process Properties'               : ['Service', 'Socket', 'Mount', 'Swap'],
+           'Scheduling'                       : ['Service', 'Socket', 'Mount', 'Swap'],
+           'System Call Filtering'            : ['Service', 'Socket', 'Mount', 'Swap'],
+           'Environment'                      : ['Service', 'Socket', 'Mount', 'Swap'],
+           'Loggind and Standard Input/Output': ['Service', 'Socket', 'Mount', 'Swap'],
+           'System V Compatibility'           : ['Service', 'Socket', 'Mount', 'Swap']
+         ]
       ]
   ]
 
-  Map<String, Map<String, String>> sectionToKeyWordMap = [:]
+  Map<String /* Section */, Map<String /*Keyword*/, Map<String /*Attribute*/, String /*Value*/>>> sectionToKeyWordMap = [:]
 
   public ExtractValidKeysFromManPage()
   {
@@ -129,7 +149,8 @@ class ExtractValidKeysFromManPage extends DefaultTask {
 
     def records     = builder.parse(file).documentElement
 
-    NodeList result = xpath.evaluate("/refentry/refsect1/variablelist[@class='unit-directives']/varlistentry", records, XPathConstants.NODESET)
+    NodeList result = (NodeList)xpath.
+      evaluate("/refentry/refsect1/variablelist[@class='unit-directives']/varlistentry", records, XPathConstants.NODESET)
 
     for(int i = 0; i < result.getLength(); i++)
     {
@@ -138,14 +159,14 @@ class ExtractValidKeysFromManPage extends DefaultTask {
       /*
        * TODO clean up this garbage, all the warnings
        */
-      NodeList variables = xpath.evaluate("term/varname", node, XPathConstants.NODESET)
+      NodeList variables = (NodeList)xpath.evaluate("term/varname", node, XPathConstants.NODESET)
 
       for (Node variable : variables) {
 
 
         String option = variable.firstChild.getTextContent()
 
-        def group = (option =~ /(\w+)=(.*)/)
+        String[][] group = (option =~ /(\w+)=(.*)/)
 
         if (group.size() != 1) {
           throw new IllegalStateException(
@@ -161,8 +182,7 @@ class ExtractValidKeysFromManPage extends DefaultTask {
 
         for (String section : sections) {
           logger.error("Found options $section in $option")
-          Map<String, Map<String, String>> foo = new TreeMap<>()
-          sectionToKeyWordMap.putIfAbsent(section, foo)
+          sectionToKeyWordMap.putIfAbsent(section, new TreeMap<>())
           sectionToKeyWordMap[section][name] = ["values": value]
         }
       }
