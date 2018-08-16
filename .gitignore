@@ -5,3 +5,5 @@ out/
 /jflex
 *.iml
 git-dependencies/
+buildSrc/.gradle
+buildSrc/build
