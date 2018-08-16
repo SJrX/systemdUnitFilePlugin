@@ -156,10 +156,6 @@ class ExtractValidKeysFromManPage extends DefaultTask {
     for(int i = 0; i < result.getLength(); i++)
     {
       Node node = result.item(i)
-
-      /*
-       * TODO clean up this garbage, all the warnings
-       */
       NodeList variables = (NodeList)xpath.evaluate("term/varname", node, XPathConstants.NODESET)
 
       for (Node variable : variables) {

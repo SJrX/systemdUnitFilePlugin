@@ -29,7 +29,7 @@ import java.util.Collection;
 public class UnknownKeyInSectionInspection extends LocalInspectionTool {
 
   private static final String IGNORED_SECTION_OR_KEY_PREFIX = "X-";
-  private static final String INSPECTION_TOOL_TIP_TEXT =
+  static final String INSPECTION_TOOL_TIP_TEXT =
     "This key is unrecognized which will cause systemd to generate a warning when loading this unit";
 
   @Override
