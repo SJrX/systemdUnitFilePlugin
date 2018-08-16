@@ -1,0 +1,1305 @@
+{
+    "Unit": {
+        "After": {
+            "values": ""
+        },
+        "AllowIsolate": {
+            "values": ""
+        },
+        "AssertACPower": {
+            "values": ""
+        },
+        "AssertArchitecture": {
+            "values": ""
+        },
+        "AssertCapability": {
+            "values": ""
+        },
+        "AssertControlGroupController": {
+            "values": ""
+        },
+        "AssertDirectoryNotEmpty": {
+            "values": ""
+        },
+        "AssertFileIsExecutable": {
+            "values": ""
+        },
+        "AssertFileNotEmpty": {
+            "values": ""
+        },
+        "AssertFirstBoot": {
+            "values": ""
+        },
+        "AssertGroup": {
+            "values": ""
+        },
+        "AssertHost": {
+            "values": ""
+        },
+        "AssertKernelCommandLine": {
+            "values": ""
+        },
+        "AssertKernelVersion": {
+            "values": ""
+        },
+        "AssertNeedsUpdate": {
+            "values": ""
+        },
+        "AssertPathExists": {
+            "values": ""
+        },
+        "AssertPathExistsGlob": {
+            "values": ""
+        },
+        "AssertPathIsDirectory": {
+            "values": ""
+        },
+        "AssertPathIsMountPoint": {
+            "values": ""
+        },
+        "AssertPathIsReadWrite": {
+            "values": ""
+        },
+        "AssertPathIsSymbolicLink": {
+            "values": ""
+        },
+        "AssertSecurity": {
+            "values": ""
+        },
+        "AssertUser": {
+            "values": ""
+        },
+        "AssertVirtualization": {
+            "values": ""
+        },
+        "Before": {
+            "values": ""
+        },
+        "BindsTo": {
+            "values": ""
+        },
+        "CollectMode": {
+            "values": ""
+        },
+        "ConditionACPower": {
+            "values": ""
+        },
+        "ConditionArchitecture": {
+            "values": ""
+        },
+        "ConditionCapability": {
+            "values": ""
+        },
+        "ConditionControlGroupController": {
+            "values": ""
+        },
+        "ConditionDirectoryNotEmpty": {
+            "values": ""
+        },
+        "ConditionFileIsExecutable": {
+            "values": ""
+        },
+        "ConditionFileNotEmpty": {
+            "values": ""
+        },
+        "ConditionFirstBoot": {
+            "values": ""
+        },
+        "ConditionGroup": {
+            "values": ""
+        },
+        "ConditionHost": {
+            "values": ""
+        },
+        "ConditionKernelCommandLine": {
+            "values": ""
+        },
+        "ConditionKernelVersion": {
+            "values": ""
+        },
+        "ConditionNeedsUpdate": {
+            "values": ""
+        },
+        "ConditionPathExists": {
+            "values": ""
+        },
+        "ConditionPathExistsGlob": {
+            "values": ""
+        },
+        "ConditionPathIsDirectory": {
+            "values": ""
+        },
+        "ConditionPathIsMountPoint": {
+            "values": ""
+        },
+        "ConditionPathIsReadWrite": {
+            "values": ""
+        },
+        "ConditionPathIsSymbolicLink": {
+            "values": ""
+        },
+        "ConditionSecurity": {
+            "values": ""
+        },
+        "ConditionUser": {
+            "values": ""
+        },
+        "ConditionVirtualization": {
+            "values": ""
+        },
+        "Conflicts": {
+            "values": ""
+        },
+        "DefaultDependencies": {
+            "values": ""
+        },
+        "Description": {
+            "values": ""
+        },
+        "Documentation": {
+            "values": ""
+        },
+        "FailureAction": {
+            "values": ""
+        },
+        "IgnoreOnIsolate": {
+            "values": ""
+        },
+        "JobRunningTimeoutSec": {
+            "values": ""
+        },
+        "JobTimeoutAction": {
+            "values": ""
+        },
+        "JobTimeoutRebootArgument": {
+            "values": ""
+        },
+        "JobTimeoutSec": {
+            "values": ""
+        },
+        "JoinsNamespaceOf": {
+            "values": ""
+        },
+        "OnFailure": {
+            "values": ""
+        },
+        "OnFailureJobMode": {
+            "values": ""
+        },
+        "PartOf": {
+            "values": ""
+        },
+        "PropagatesReloadTo": {
+            "values": ""
+        },
+        "RebootArgument": {
+            "values": ""
+        },
+        "RefuseManualStart": {
+            "values": ""
+        },
+        "RefuseManualStop": {
+            "values": ""
+        },
+        "ReloadPropagatedFrom": {
+            "values": ""
+        },
+        "Requires": {
+            "values": ""
+        },
+        "RequiresMountsFor": {
+            "values": ""
+        },
+        "Requisite": {
+            "values": ""
+        },
+        "SourcePath": {
+            "values": ""
+        },
+        "StartLimitAction": {
+            "values": ""
+        },
+        "StartLimitBurst": {
+            "values": ""
+        },
+        "StartLimitIntervalSec": {
+            "values": ""
+        },
+        "StopWhenUnneeded": {
+            "values": ""
+        },
+        "SuccessAction": {
+            "values": ""
+        },
+        "Wants": {
+            "values": ""
+        }
+    },
+    "Install": {
+        "Alias": {
+            "values": ""
+        },
+        "Also": {
+            "values": ""
+        },
+        "DefaultInstance": {
+            "values": ""
+        },
+        "RequiredBy": {
+            "values": ""
+        },
+        "WantedBy": {
+            "values": ""
+        }
+    },
+    "Service": {
+        "AmbientCapabilities": {
+            "values": ""
+        },
+        "BindPaths": {
+            "values": ""
+        },
+        "BindReadOnlyPaths": {
+            "values": ""
+        },
+        "BusName": {
+            "values": ""
+        },
+        "CPUAccounting": {
+            "values": ""
+        },
+        "CPUQuota": {
+            "values": ""
+        },
+        "CPUWeight": {
+            "values": ""
+        },
+        "CapabilityBoundingSet": {
+            "values": ""
+        },
+        "Delegate": {
+            "values": ""
+        },
+        "DeviceAllow": {
+            "values": ""
+        },
+        "DevicePolicy": {
+            "values": "auto|closed|strict"
+        },
+        "DynamicUser": {
+            "values": ""
+        },
+        "ExecReload": {
+            "values": ""
+        },
+        "ExecStart": {
+            "values": ""
+        },
+        "ExecStartPost": {
+            "values": ""
+        },
+        "ExecStartPre": {
+            "values": ""
+        },
+        "ExecStop": {
+            "values": ""
+        },
+        "ExecStopPost": {
+            "values": ""
+        },
+        "FileDescriptorStoreMax": {
+            "values": ""
+        },
+        "Group": {
+            "values": ""
+        },
+        "GuessMainPID": {
+            "values": ""
+        },
+        "IOAccounting": {
+            "values": ""
+        },
+        "IODeviceWeight": {
+            "values": ""
+        },
+        "IOReadBandwidthMax": {
+            "values": ""
+        },
+        "IOReadIOPSMax": {
+            "values": ""
+        },
+        "IOWeight": {
+            "values": ""
+        },
+        "IOWriteBandwidthMax": {
+            "values": ""
+        },
+        "IOWriteIOPSMax": {
+            "values": ""
+        },
+        "IPAccounting": {
+            "values": ""
+        },
+        "IPAddressAllow": {
+            "values": ""
+        },
+        "IPAddressDeny": {
+            "values": ""
+        },
+        "MemoryAccounting": {
+            "values": ""
+        },
+        "MemoryHigh": {
+            "values": ""
+        },
+        "MemoryLow": {
+            "values": ""
+        },
+        "MemoryMax": {
+            "values": ""
+        },
+        "MemoryMin": {
+            "values": ""
+        },
+        "MemorySwapMax": {
+            "values": ""
+        },
+        "MountAPIVFS": {
+            "values": ""
+        },
+        "NoNewPrivileges": {
+            "values": ""
+        },
+        "NonBlocking": {
+            "values": ""
+        },
+        "NotifyAccess": {
+            "values": ""
+        },
+        "PAMName": {
+            "values": ""
+        },
+        "PIDFile": {
+            "values": ""
+        },
+        "PermissionsStartOnly": {
+            "values": ""
+        },
+        "RemainAfterExit": {
+            "values": ""
+        },
+        "Restart": {
+            "values": ""
+        },
+        "RestartForceExitStatus": {
+            "values": ""
+        },
+        "RestartPreventExitStatus": {
+            "values": ""
+        },
+        "RestartSec": {
+            "values": ""
+        },
+        "RootDirectory": {
+            "values": ""
+        },
+        "RootDirectoryStartOnly": {
+            "values": ""
+        },
+        "RootImage": {
+            "values": ""
+        },
+        "RuntimeMaxSec": {
+            "values": ""
+        },
+        "SecureBits": {
+            "values": ""
+        },
+        "Slice": {
+            "values": ""
+        },
+        "Sockets": {
+            "values": ""
+        },
+        "StartupCPUWeight": {
+            "values": ""
+        },
+        "StartupIOWeight": {
+            "values": ""
+        },
+        "SuccessExitStatus": {
+            "values": ""
+        },
+        "SupplementaryGroups": {
+            "values": ""
+        },
+        "TasksAccounting": {
+            "values": ""
+        },
+        "TasksMax": {
+            "values": ""
+        },
+        "TimeoutSec": {
+            "values": ""
+        },
+        "TimeoutStartSec": {
+            "values": ""
+        },
+        "TimeoutStopSec": {
+            "values": ""
+        },
+        "Type": {
+            "values": ""
+        },
+        "USBFunctionDescriptors": {
+            "values": ""
+        },
+        "USBFunctionStrings": {
+            "values": ""
+        },
+        "User": {
+            "values": ""
+        },
+        "WatchdogSec": {
+            "values": ""
+        },
+        "WorkingDirectory": {
+            "values": ""
+        }
+    },
+    "Timer": {
+        "AccuracySec": {
+            "values": ""
+        },
+        "OnActiveSec": {
+            "values": ""
+        },
+        "OnBootSec": {
+            "values": ""
+        },
+        "OnCalendar": {
+            "values": ""
+        },
+        "OnStartupSec": {
+            "values": ""
+        },
+        "OnUnitActiveSec": {
+            "values": ""
+        },
+        "OnUnitInactiveSec": {
+            "values": ""
+        },
+        "Persistent": {
+            "values": ""
+        },
+        "RandomizedDelaySec": {
+            "values": ""
+        },
+        "RemainAfterElapse": {
+            "values": ""
+        },
+        "Unit": {
+            "values": ""
+        },
+        "WakeSystem": {
+            "values": ""
+        }
+    },
+    "Automount": {
+        "DirectoryMode": {
+            "values": ""
+        },
+        "TimeoutIdleSec": {
+            "values": ""
+        },
+        "Where": {
+            "values": ""
+        }
+    },
+    "Mount": {
+        "AmbientCapabilities": {
+            "values": ""
+        },
+        "BindPaths": {
+            "values": ""
+        },
+        "BindReadOnlyPaths": {
+            "values": ""
+        },
+        "CPUAccounting": {
+            "values": ""
+        },
+        "CPUQuota": {
+            "values": ""
+        },
+        "CPUWeight": {
+            "values": ""
+        },
+        "CapabilityBoundingSet": {
+            "values": ""
+        },
+        "Delegate": {
+            "values": ""
+        },
+        "DeviceAllow": {
+            "values": ""
+        },
+        "DevicePolicy": {
+            "values": "auto|closed|strict"
+        },
+        "DirectoryMode": {
+            "values": ""
+        },
+        "DynamicUser": {
+            "values": ""
+        },
+        "ForceUnmount": {
+            "values": ""
+        },
+        "Group": {
+            "values": ""
+        },
+        "IOAccounting": {
+            "values": ""
+        },
+        "IODeviceWeight": {
+            "values": ""
+        },
+        "IOReadBandwidthMax": {
+            "values": ""
+        },
+        "IOReadIOPSMax": {
+            "values": ""
+        },
+        "IOWeight": {
+            "values": ""
+        },
+        "IOWriteBandwidthMax": {
+            "values": ""
+        },
+        "IOWriteIOPSMax": {
+            "values": ""
+        },
+        "IPAccounting": {
+            "values": ""
+        },
+        "IPAddressAllow": {
+            "values": ""
+        },
+        "IPAddressDeny": {
+            "values": ""
+        },
+        "LazyUnmount": {
+            "values": ""
+        },
+        "MemoryAccounting": {
+            "values": ""
+        },
+        "MemoryHigh": {
+            "values": ""
+        },
+        "MemoryLow": {
+            "values": ""
+        },
+        "MemoryMax": {
+            "values": ""
+        },
+        "MemoryMin": {
+            "values": ""
+        },
+        "MemorySwapMax": {
+            "values": ""
+        },
+        "MountAPIVFS": {
+            "values": ""
+        },
+        "NoNewPrivileges": {
+            "values": ""
+        },
+        "Options": {
+            "values": ""
+        },
+        "PAMName": {
+            "values": ""
+        },
+        "RootDirectory": {
+            "values": ""
+        },
+        "RootImage": {
+            "values": ""
+        },
+        "SecureBits": {
+            "values": ""
+        },
+        "Slice": {
+            "values": ""
+        },
+        "SloppyOptions": {
+            "values": ""
+        },
+        "StartupCPUWeight": {
+            "values": ""
+        },
+        "StartupIOWeight": {
+            "values": ""
+        },
+        "SupplementaryGroups": {
+            "values": ""
+        },
+        "TasksAccounting": {
+            "values": ""
+        },
+        "TasksMax": {
+            "values": ""
+        },
+        "TimeoutSec": {
+            "values": ""
+        },
+        "Type": {
+            "values": ""
+        },
+        "User": {
+            "values": ""
+        },
+        "What": {
+            "values": ""
+        },
+        "Where": {
+            "values": ""
+        },
+        "WorkingDirectory": {
+            "values": ""
+        }
+    },
+    "Path": {
+        "DirectoryMode": {
+            "values": ""
+        },
+        "DirectoryNotEmpty": {
+            "values": ""
+        },
+        "MakeDirectory": {
+            "values": ""
+        },
+        "PathChanged": {
+            "values": ""
+        },
+        "PathExists": {
+            "values": ""
+        },
+        "PathExistsGlob": {
+            "values": ""
+        },
+        "PathModified": {
+            "values": ""
+        },
+        "Unit": {
+            "values": ""
+        }
+    },
+    "Socket": {
+        "Accept": {
+            "values": ""
+        },
+        "AmbientCapabilities": {
+            "values": ""
+        },
+        "Backlog": {
+            "values": ""
+        },
+        "BindIPv6Only": {
+            "values": ""
+        },
+        "BindPaths": {
+            "values": ""
+        },
+        "BindReadOnlyPaths": {
+            "values": ""
+        },
+        "BindToDevice": {
+            "values": ""
+        },
+        "Broadcast": {
+            "values": ""
+        },
+        "CPUAccounting": {
+            "values": ""
+        },
+        "CPUQuota": {
+            "values": ""
+        },
+        "CPUWeight": {
+            "values": ""
+        },
+        "CapabilityBoundingSet": {
+            "values": ""
+        },
+        "DeferAcceptSec": {
+            "values": ""
+        },
+        "Delegate": {
+            "values": ""
+        },
+        "DeviceAllow": {
+            "values": ""
+        },
+        "DevicePolicy": {
+            "values": "auto|closed|strict"
+        },
+        "DirectoryMode": {
+            "values": ""
+        },
+        "DynamicUser": {
+            "values": ""
+        },
+        "ExecStartPost": {
+            "values": ""
+        },
+        "ExecStartPre": {
+            "values": ""
+        },
+        "ExecStopPost": {
+            "values": ""
+        },
+        "ExecStopPre": {
+            "values": ""
+        },
+        "FileDescriptorName": {
+            "values": ""
+        },
+        "FreeBind": {
+            "values": ""
+        },
+        "Group": {
+            "values": ""
+        },
+        "IOAccounting": {
+            "values": ""
+        },
+        "IODeviceWeight": {
+            "values": ""
+        },
+        "IOReadBandwidthMax": {
+            "values": ""
+        },
+        "IOReadIOPSMax": {
+            "values": ""
+        },
+        "IOWeight": {
+            "values": ""
+        },
+        "IOWriteBandwidthMax": {
+            "values": ""
+        },
+        "IOWriteIOPSMax": {
+            "values": ""
+        },
+        "IPAccounting": {
+            "values": ""
+        },
+        "IPAddressAllow": {
+            "values": ""
+        },
+        "IPAddressDeny": {
+            "values": ""
+        },
+        "IPTOS": {
+            "values": ""
+        },
+        "IPTTL": {
+            "values": ""
+        },
+        "KeepAlive": {
+            "values": ""
+        },
+        "KeepAliveIntervalSec": {
+            "values": ""
+        },
+        "KeepAliveProbes": {
+            "values": ""
+        },
+        "KeepAliveTimeSec": {
+            "values": ""
+        },
+        "ListenDatagram": {
+            "values": ""
+        },
+        "ListenFIFO": {
+            "values": ""
+        },
+        "ListenMessageQueue": {
+            "values": ""
+        },
+        "ListenNetlink": {
+            "values": ""
+        },
+        "ListenSequentialPacket": {
+            "values": ""
+        },
+        "ListenSpecial": {
+            "values": ""
+        },
+        "ListenStream": {
+            "values": ""
+        },
+        "ListenUSBFunction": {
+            "values": ""
+        },
+        "Mark": {
+            "values": ""
+        },
+        "MaxConnections": {
+            "values": ""
+        },
+        "MaxConnectionsPerSource": {
+            "values": ""
+        },
+        "MemoryAccounting": {
+            "values": ""
+        },
+        "MemoryHigh": {
+            "values": ""
+        },
+        "MemoryLow": {
+            "values": ""
+        },
+        "MemoryMax": {
+            "values": ""
+        },
+        "MemoryMin": {
+            "values": ""
+        },
+        "MemorySwapMax": {
+            "values": ""
+        },
+        "MessageQueueMaxMessages": {
+            "values": ""
+        },
+        "MessageQueueMessageSize": {
+            "values": ""
+        },
+        "MountAPIVFS": {
+            "values": ""
+        },
+        "NoDelay": {
+            "values": ""
+        },
+        "NoNewPrivileges": {
+            "values": ""
+        },
+        "PAMName": {
+            "values": ""
+        },
+        "PassCredentials": {
+            "values": ""
+        },
+        "PassSecurity": {
+            "values": ""
+        },
+        "PipeSize": {
+            "values": ""
+        },
+        "Priority": {
+            "values": ""
+        },
+        "ReceiveBuffer": {
+            "values": ""
+        },
+        "RemoveOnStop": {
+            "values": ""
+        },
+        "ReusePort": {
+            "values": ""
+        },
+        "RootDirectory": {
+            "values": ""
+        },
+        "RootImage": {
+            "values": ""
+        },
+        "SELinuxContextFromNet": {
+            "values": ""
+        },
+        "SecureBits": {
+            "values": ""
+        },
+        "SendBuffer": {
+            "values": ""
+        },
+        "Service": {
+            "values": ""
+        },
+        "Slice": {
+            "values": ""
+        },
+        "SmackLabel": {
+            "values": ""
+        },
+        "SmackLabelIPIn": {
+            "values": ""
+        },
+        "SmackLabelIPOut": {
+            "values": ""
+        },
+        "SocketGroup": {
+            "values": ""
+        },
+        "SocketMode": {
+            "values": ""
+        },
+        "SocketProtocol": {
+            "values": ""
+        },
+        "SocketUser": {
+            "values": ""
+        },
+        "StartupCPUWeight": {
+            "values": ""
+        },
+        "StartupIOWeight": {
+            "values": ""
+        },
+        "SupplementaryGroups": {
+            "values": ""
+        },
+        "Symlinks": {
+            "values": ""
+        },
+        "TCPCongestion": {
+            "values": ""
+        },
+        "TasksAccounting": {
+            "values": ""
+        },
+        "TasksMax": {
+            "values": ""
+        },
+        "TimeoutSec": {
+            "values": ""
+        },
+        "Transparent": {
+            "values": ""
+        },
+        "TriggerLimitBurst": {
+            "values": ""
+        },
+        "TriggerLimitIntervalSec": {
+            "values": ""
+        },
+        "User": {
+            "values": ""
+        },
+        "WorkingDirectory": {
+            "values": ""
+        },
+        "Writable": {
+            "values": ""
+        }
+    },
+    "Swap": {
+        "AmbientCapabilities": {
+            "values": ""
+        },
+        "BindPaths": {
+            "values": ""
+        },
+        "BindReadOnlyPaths": {
+            "values": ""
+        },
+        "CPUAccounting": {
+            "values": ""
+        },
+        "CPUQuota": {
+            "values": ""
+        },
+        "CPUWeight": {
+            "values": ""
+        },
+        "CapabilityBoundingSet": {
+            "values": ""
+        },
+        "Delegate": {
+            "values": ""
+        },
+        "DeviceAllow": {
+            "values": ""
+        },
+        "DevicePolicy": {
+            "values": "auto|closed|strict"
+        },
+        "DynamicUser": {
+            "values": ""
+        },
+        "Group": {
+            "values": ""
+        },
+        "IOAccounting": {
+            "values": ""
+        },
+        "IODeviceWeight": {
+            "values": ""
+        },
+        "IOReadBandwidthMax": {
+            "values": ""
+        },
+        "IOReadIOPSMax": {
+            "values": ""
+        },
+        "IOWeight": {
+            "values": ""
+        },
+        "IOWriteBandwidthMax": {
+            "values": ""
+        },
+        "IOWriteIOPSMax": {
+            "values": ""
+        },
+        "IPAccounting": {
+            "values": ""
+        },
+        "IPAddressAllow": {
+            "values": ""
+        },
+        "IPAddressDeny": {
+            "values": ""
+        },
+        "MemoryAccounting": {
+            "values": ""
+        },
+        "MemoryHigh": {
+            "values": ""
+        },
+        "MemoryLow": {
+            "values": ""
+        },
+        "MemoryMax": {
+            "values": ""
+        },
+        "MemoryMin": {
+            "values": ""
+        },
+        "MemorySwapMax": {
+            "values": ""
+        },
+        "MountAPIVFS": {
+            "values": ""
+        },
+        "NoNewPrivileges": {
+            "values": ""
+        },
+        "Options": {
+            "values": ""
+        },
+        "PAMName": {
+            "values": ""
+        },
+        "Priority": {
+            "values": ""
+        },
+        "RootDirectory": {
+            "values": ""
+        },
+        "RootImage": {
+            "values": ""
+        },
+        "SecureBits": {
+            "values": ""
+        },
+        "Slice": {
+            "values": ""
+        },
+        "StartupCPUWeight": {
+            "values": ""
+        },
+        "StartupIOWeight": {
+            "values": ""
+        },
+        "SupplementaryGroups": {
+            "values": ""
+        },
+        "TasksAccounting": {
+            "values": ""
+        },
+        "TasksMax": {
+            "values": ""
+        },
+        "TimeoutSec": {
+            "values": ""
+        },
+        "User": {
+            "values": ""
+        },
+        "What": {
+            "values": ""
+        },
+        "WorkingDirectory": {
+            "values": ""
+        }
+    },
+    "Slice": {
+        "CPUAccounting": {
+            "values": ""
+        },
+        "CPUQuota": {
+            "values": ""
+        },
+        "CPUWeight": {
+            "values": ""
+        },
+        "Delegate": {
+            "values": ""
+        },
+        "DeviceAllow": {
+            "values": ""
+        },
+        "DevicePolicy": {
+            "values": "auto|closed|strict"
+        },
+        "IOAccounting": {
+            "values": ""
+        },
+        "IODeviceWeight": {
+            "values": ""
+        },
+        "IOReadBandwidthMax": {
+            "values": ""
+        },
+        "IOReadIOPSMax": {
+            "values": ""
+        },
+        "IOWeight": {
+            "values": ""
+        },
+        "IOWriteBandwidthMax": {
+            "values": ""
+        },
+        "IOWriteIOPSMax": {
+            "values": ""
+        },
+        "IPAccounting": {
+            "values": ""
+        },
+        "IPAddressAllow": {
+            "values": ""
+        },
+        "IPAddressDeny": {
+            "values": ""
+        },
+        "MemoryAccounting": {
+            "values": ""
+        },
+        "MemoryHigh": {
+            "values": ""
+        },
+        "MemoryLow": {
+            "values": ""
+        },
+        "MemoryMax": {
+            "values": ""
+        },
+        "MemoryMin": {
+            "values": ""
+        },
+        "MemorySwapMax": {
+            "values": ""
+        },
+        "Slice": {
+            "values": ""
+        },
+        "StartupCPUWeight": {
+            "values": ""
+        },
+        "StartupIOWeight": {
+            "values": ""
+        },
+        "TasksAccounting": {
+            "values": ""
+        },
+        "TasksMax": {
+            "values": ""
+        }
+    },
+    "Scope": {
+        "CPUAccounting": {
+            "values": ""
+        },
+        "CPUQuota": {
+            "values": ""
+        },
+        "CPUWeight": {
+            "values": ""
+        },
+        "Delegate": {
+            "values": ""
+        },
+        "DeviceAllow": {
+            "values": ""
+        },
+        "DevicePolicy": {
+            "values": "auto|closed|strict"
+        },
+        "IOAccounting": {
+            "values": ""
+        },
+        "IODeviceWeight": {
+            "values": ""
+        },
+        "IOReadBandwidthMax": {
+            "values": ""
+        },
+        "IOReadIOPSMax": {
+            "values": ""
+        },
+        "IOWeight": {
+            "values": ""
+        },
+        "IOWriteBandwidthMax": {
+            "values": ""
+        },
+        "IOWriteIOPSMax": {
+            "values": ""
+        },
+        "IPAccounting": {
+            "values": ""
+        },
+        "IPAddressAllow": {
+            "values": ""
+        },
+        "IPAddressDeny": {
+            "values": ""
+        },
+        "MemoryAccounting": {
+            "values": ""
+        },
+        "MemoryHigh": {
+            "values": ""
+        },
+        "MemoryLow": {
+            "values": ""
+        },
+        "MemoryMax": {
+            "values": ""
+        },
+        "MemoryMin": {
+            "values": ""
+        },
+        "MemorySwapMax": {
+            "values": ""
+        },
+        "Slice": {
+            "values": ""
+        },
+        "StartupCPUWeight": {
+            "values": ""
+        },
+        "StartupIOWeight": {
+            "values": ""
+        },
+        "TasksAccounting": {
+            "values": ""
+        },
+        "TasksMax": {
+            "values": ""
+        }
+    }
+}

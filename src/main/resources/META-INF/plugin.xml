@@ -27,6 +27,12 @@
     <lang.syntaxHighlighterFactory language="Systemd Unit File" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.coloring.UnitSyntaxHighlighterFactory"/>
     <colorSettingsPage implementation="net.sjrx.intellij.plugins.systemdunitfiles.coloring.settings.UnitFileColorSettings"/>
     <fileTypeFactory implementation="net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileTypeFactory"/>
+
+
+    <localInspection implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.inspections.UnknownKeyInSectionInspection"
+                     groupPath="Unit files (systemd)"
+                     shortName="UnknownKeyInSection"     displayName="Unknown key in section"
+                     groupName="Validity"                                   enabledByDefault="true" level="WARNING"/>
   </extensions>
 
   <actions>

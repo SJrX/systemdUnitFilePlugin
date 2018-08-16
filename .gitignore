@@ -1,7 +1,7 @@
 out/
 /.idea
-/.idea/misc.xml
 /.gradle
 /build
 /jflex
 *.iml
+git-dependencies/

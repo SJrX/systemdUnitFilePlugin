@@ -11,12 +11,15 @@
   elementTypeHolderClass="net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder"
   elementTypeClass="net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileElementType"
   tokenTypeClass="net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileTokenType"
+
+  extends("section_groups") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType"
+  extends("property") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType"
 }
 
 
-unitFile ::= (COMMENT|CRLF)* section_groups_*
+unitFile ::= (COMMENT|CRLF)* section_groups*
 
-private section_groups_ ::= SECTION line_items_*
+section_groups ::= SECTION line_items_*
 
 private line_items_ ::= (property|COMMENT|CRLF)
 

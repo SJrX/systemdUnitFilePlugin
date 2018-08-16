@@ -11,6 +11,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.psi.impl.*;
 public interface UnitFileElementTypeHolder {
 
   IElementType PROPERTY = new UnitFileElementType("PROPERTY");
+  IElementType SECTION_GROUPS = new UnitFileElementType("SECTION_GROUPS");
 
   IElementType COMMENT = new UnitFileTokenType("COMMENT");
   IElementType CRLF = new UnitFileTokenType("CRLF");
@@ -24,6 +25,9 @@ public interface UnitFileElementTypeHolder {
       IElementType type = node.getElementType();
        if (type == PROPERTY) {
         return new UnitFilePropertyImpl(node);
+      }
+      else if (type == SECTION_GROUPS) {
+        return new UnitFileSectionGroupsImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

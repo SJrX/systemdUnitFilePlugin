@@ -1,3 +1,14 @@
+buildscript {
+  repositories {
+    jcenter()
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath 'com.palominolabs.gradle.task:gradle-git-clone-task:0.0.2'
+  }
+}
+
 plugins {
     id 'java'
     id 'org.jetbrains.intellij' version '0.3.5'
@@ -15,7 +26,7 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+  testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
 intellij {
@@ -30,6 +41,19 @@ patchPluginXml {
 // Add generated sources root
 sourceSets.main.java.srcDirs += 'src/main/gen'
 
+apply plugin: "idea"
+
+idea {
+  module {
+    generatedSourceDirs += file('src/main/gen')
+
+    downloadJavadoc = true
+    downloadSources = true
+  }
+}
+/*
+ * CI Tasks
+ */
 checkstyle {
   // Exclude the generated sources
   checkstyleMain.source = "src/main/java"
@@ -37,6 +61,28 @@ checkstyle {
 
 }
 
+
+/*
+ * Build Tasks
+ */
+
+import com.palominolabs.gradle.task.git.clone.GitCloneTask
+
+task cloneSystemdRepo(type: GitCloneTask) {
+  dir = file("git-dependencies/systemd")
+  uri = 'https://github.com/systemd/systemd.git'
+  treeish = 'origin/master' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
+}
+
+task extractValidKeys(type: ExtractValidKeysFromManPage) {
+  systemdSourceCodeRoot = file("git-dependencies/systemd")
+  generatedJsonFileLocation = file("src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata")
+
+}
+
+/*
+ * Lexing / Parsing and Grammar Tasks
+ */
 
 apply plugin: 'org.jetbrains.grammarkit'
 // import is optional to make task creation easier
@@ -64,4 +110,6 @@ task generateParser(type: GenerateParser) {
   dependsOn generateLexer
 }
 
-compileJava.dependsOn += generateParser
+
+generateLexer.mustRunAfter(compileJava)
+classes.dependsOn += generateParser
