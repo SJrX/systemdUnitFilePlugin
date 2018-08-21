@@ -29,7 +29,7 @@ section_groups ::= section_ line_items_*
 
 private line_items_ ::= (property|comment_|crlf_)
 
-property ::= key_ separator_ value_ { pin=1 }
+property ::= key_ separator_ (value_|crlf_) { pin=1 }
 
 // Single rules for tokens so that I can alias them for better error handling?
 private comment_ ::= COMMENT

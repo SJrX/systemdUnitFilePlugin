@@ -6,18 +6,15 @@ import com.intellij.testFramework.ParsingTestCase;
 /**
  * Tests for parsing of systemd unit files.
  *
- * <p>
- * Note: Unlike the tutorial (http://www.jetbrains.org/intellij/sdk/docs/tutorials/writing_tests_for_plugins/parsing_test.html) we
+ * <p>Note: Unlike the tutorial (http://www.jetbrains.org/intellij/sdk/docs/tutorials/writing_tests_for_plugins/parsing_test.html) we
  * keep the source and result _in_ the test. The author feels this is more readable and easier to debug then a bunch of random
  * files lying around, even it breaks convention.
- *
+ * <p>
  * One idea might be to use a different language for this other than Java, the author played with Groovy, but didn't like the multi-line
  * support in IntellIJ. Scala has problems subtyping ParsingTestCase as protected static members can't be used. Kotlin was also tried
  * but gradle was finicky, and I guess this is something that can be changed in the future.
  *
  * </p>
- *
- *
  */
 public class UnitFileParserTest extends ParsingTestCase {
   public UnitFileParserTest() {
@@ -292,7 +289,6 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "Second=Value2";
 
 
-
     String expectedPsiTree = "systemd service unit configuration(0,52)\n"
                              + "  PsiComment(UnitFileTokenType{COMMENT})('#Preamble')(0,9)\n"
                              + "  PsiWhiteSpace('\\n')(9,10)\n"
@@ -334,7 +330,6 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "Key=Value\n\n\n"
                         + ";Two\n\n"
                         + "Second=Value2";
-
 
 
     String expectedPsiTree = "systemd service unit configuration(0,52)\n"
@@ -384,7 +379,6 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "Second=Value2";
 
 
-
     String expectedPsiTree = "systemd service unit configuration(0,78)\n"
                              + "  PsiComment(UnitFileTokenType{COMMENT})(';Preamble')(0,9)\n"
                              + "  PsiWhiteSpace('\\n\\n')(9,11)\n"
@@ -420,6 +414,18 @@ public class UnitFileParserTest extends ParsingTestCase {
      * Verification
      */
     assertSameLines(expectedPsiTree, parseTree);
+  }
+
+  public void testEmptyValueInSectionWithStuffAfterItParsesSuccessfully() {
+    fail("Not implemneted");
+  }
+
+  public void testEmptyValueBeforeEofParsesSuccessfully() {
+    fail("Not implemneted");
+  }
+
+  public void testSomeErrorCases() {
+    fail("We really should test some error cases, to make sure the errors match what we expect");
   }
 
 

@@ -40,6 +40,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeH
 CRLF=\R
 
 // White space
+SAME_LINE_WHITESPACE = [\ \t]
 WHITE_SPACE=[\ \n\t\f]
 
 // Headers are [ Non-ASCII Control characters ]
@@ -67,8 +68,6 @@ SEPARATOR=[=]
 
 /*
  * Lexical rules http://jflex.de/manual.html#LexRules
- *
- * All the lexical rules assume we start at the start of a line (if something is multiple line, it should \\ before the end
  */
 
 <YYINITIAL, IN_SECTION> {COMMENT}                               { return UnitFileElementTypeHolder.COMMENT; }
@@ -79,9 +78,9 @@ SEPARATOR=[=]
 
 <IN_SECTION> {KEY_CHARACTER}+                                   { yybegin(WAITING_FOR_SEPARATOR); return UnitFileElementTypeHolder.KEY; }
 
-<WAITING_FOR_SEPARATOR> {WHITE_SPACE}*{SEPARATOR}{WHITE_SPACE}* { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR; }
+<WAITING_FOR_SEPARATOR> {SAME_LINE_WHITESPACE}*{SEPARATOR}{SAME_LINE_WHITESPACE}* { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR; }
 
-<WAITING_FOR_VALUE> {VALUE_CHARACTER}+                          { yybegin(IN_SECTION); return UnitFileElementTypeHolder.VALUE; }
+<WAITING_FOR_VALUE> {VALUE_CHARACTER}*                          { yybegin(IN_SECTION); return UnitFileElementTypeHolder.VALUE; }
 
 ({CRLF}|{WHITE_SPACE})+                                         { return TokenType.WHITE_SPACE; }
 

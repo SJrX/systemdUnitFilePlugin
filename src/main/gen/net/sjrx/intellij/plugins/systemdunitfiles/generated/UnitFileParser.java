@@ -81,7 +81,7 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // key_ separator_ value_
+  // key_ separator_ (value_|crlf_)
   public static boolean property(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "property")) return false;
     if (!nextTokenIs(builder_, KEY)) return false;
@@ -90,9 +90,18 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
     result_ = key_(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
     result_ = result_ && report_error_(builder_, separator_(builder_, level_ + 1));
-    result_ = pinned_ && value_(builder_, level_ + 1) && result_;
+    result_ = pinned_ && property_2(builder_, level_ + 1) && result_;
     exit_section_(builder_, level_, marker_, result_, pinned_, null);
     return result_ || pinned_;
+  }
+
+  // value_|crlf_
+  private static boolean property_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "property_2")) return false;
+    boolean result_;
+    result_ = value_(builder_, level_ + 1);
+    if (!result_) result_ = crlf_(builder_, level_ + 1);
+    return result_;
   }
 
   /* ********************************************************** */
