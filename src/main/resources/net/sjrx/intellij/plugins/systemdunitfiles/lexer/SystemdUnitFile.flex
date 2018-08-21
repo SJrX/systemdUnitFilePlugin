@@ -46,7 +46,7 @@ WHITE_SPACE=[\ \n\t\f]
 // TODO FIX this should also allow ASCII Characters, maybe try [:cntrl:]
 // https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s03.html
 // The \p{Cc} is a control character class (see Mastering Regular Expressions, p. 123)
-SECTION_HEADER= \[[A-Za-z0-9_-]+\]
+SECTION_HEADER= \[[^\]]+\]
 
 // We don't allow whitespace or the separator in the key characters
 KEY_CHARACTER=[^=\ \n\t\f\\] | "\\ "
@@ -65,13 +65,11 @@ SEPARATOR=[=]
 
 %%
 
-
 /*
  * Lexical rules http://jflex.de/manual.html#LexRules
  *
  * All the lexical rules assume we start at the start of a line (if something is multiple line, it should \\ before the end
  */
-
 
 <YYINITIAL, IN_SECTION> {COMMENT}                               { return UnitFileElementTypeHolder.COMMENT; }
 

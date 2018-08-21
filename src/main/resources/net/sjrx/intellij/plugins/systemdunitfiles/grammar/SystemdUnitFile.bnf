@@ -14,13 +14,28 @@
 
   extends("section_groups") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType"
   extends("property") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType"
+
+  name("separator_") = "key-value separator (=)"
+  name("comment_") = "comment"
+  name("section_groups") = "section header"
+  name("crlf_") = "new line"
+
 }
 
 
-unitFile ::= (COMMENT|CRLF)* section_groups*
+unitFile ::= (comment_|crlf_)* section_groups*
 
-section_groups ::= SECTION line_items_*
+section_groups ::= section_ line_items_*
 
-private line_items_ ::= (property|COMMENT|CRLF)
+private line_items_ ::= (property|comment_|crlf_)
 
-property ::= (KEY SEPARATOR VALUE)
+property ::= key_ separator_ value_ { pin=1 }
+
+// Single rules for tokens so that I can alias them for better error handling?
+private comment_ ::= COMMENT
+private crlf_ ::= CRLF
+private section_ ::= SECTION
+
+private key_ ::= KEY
+private separator_ ::= SEPARATOR
+private value_ ::= VALUE
