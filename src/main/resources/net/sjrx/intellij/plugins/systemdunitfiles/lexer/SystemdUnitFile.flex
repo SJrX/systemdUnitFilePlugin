@@ -84,4 +84,5 @@ SEPARATOR=[=]
 
 <YYINITIAL, IN_SECTION>({CRLF}|{WHITE_SPACE})+                  { return TokenType.WHITE_SPACE; }
 
+
 .                                                               { return TokenType.BAD_CHARACTER; }

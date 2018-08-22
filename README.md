@@ -29,5 +29,23 @@ Plugins > Install Plugins From Disk > build/distributions/systemdUnitFilePlugin-
 ```
  
  
+## Development Notes
+
+### Problems
+
+#### Weird Fonts In Linux
+
+When starting the development IDE, if the fonts are poor add the following **ENVIRONMENT VARIABLE** to the run configuration
+
+```bash
+_JAVA_OPTIONS=-Dawt.useSystemAAFontSettings\=lcd -Dsun.java2d.renderer\=sun.java2d.marlin.MarlinRenderingEngine
+```
+
+Note: If you are using the Gradle *runIde* task it must be passed as an environment variable and not a VM option, because it gets executed in a different VM.
+
+#### SLF4J Errors when running tests
+
+If you see errors related to duplicate SLF4J class bindings available switch the JRE in use from the Default which references IntelliJ, to a native one.
+
 
  

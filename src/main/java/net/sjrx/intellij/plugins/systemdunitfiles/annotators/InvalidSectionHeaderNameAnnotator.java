@@ -7,6 +7,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType;
 import org.jetbrains.annotations.NotNull;
 
 public class InvalidSectionHeaderNameAnnotator implements Annotator {
+
+  static final String ANNOTATION_ERROR_MSG = "Invalid section. Sections should start with an [, end with an ], and contain only ASCII"
+                                             + " characters except for [ and ] and control characters";
+
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
 
@@ -18,8 +22,7 @@ public class InvalidSectionHeaderNameAnnotator implements Annotator {
 
         // First child is the section group element
         holder.createErrorAnnotation(element.getFirstChild(),
-                                     "Invalid section. Sections should start with an [, end with an ], and contain only ASCII"
-                                     + " characters except for [ and ] and control characters");
+                                     ANNOTATION_ERROR_MSG);
       }
     }
   }
