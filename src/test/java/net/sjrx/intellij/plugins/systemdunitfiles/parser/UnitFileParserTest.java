@@ -600,6 +600,62 @@ public class UnitFileParserTest extends ParsingTestCase {
   }
 
 
+  public void testExampleCodeParsesSuccessfully() {
+
+
+    String sourceCode = "[Section A]\n"
+                        + "KeyOne=value 1\n"
+                        + "KeyTwo=value 2\n"
+                        + "\n"
+                        + "# a comment\n"
+                        + "\n"
+                        + "[Section B]\n"
+                        + "Setting=\"something\" \"some thing\" \"…\"\n"
+                        + "KeyTwo=value 2 \\\n"
+                        + "       value 2 continued";
+
+    String expectedPsiTree = "systemd service unit configuration(0,146)\n"
+                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,41)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[Section A]')(0,11)\n"
+                             + "    PsiWhiteSpace('\\n')(11,12)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(12,26)\n"
+                             + "      PsiElement(UnitFileTokenType{KEY})('KeyOne')(12,18)\n"
+                             + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(18,19)\n"
+                             + "      PsiElement(UnitFileTokenType{VALUE})('value 1')(19,26)\n"
+                             + "    PsiWhiteSpace('\\n')(26,27)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(27,41)\n"
+                             + "      PsiElement(UnitFileTokenType{KEY})('KeyTwo')(27,33)\n"
+                             + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(33,34)\n"
+                             + "      PsiElement(UnitFileTokenType{VALUE})('value 2')(34,41)\n"
+                             + "  PsiWhiteSpace('\\n\\n')(41,43)\n"
+                             + "  PsiComment(UnitFileTokenType{COMMENT})('# a comment')(43,54)\n"
+                             + "  PsiWhiteSpace('\\n\\n')(54,56)\n"
+                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(56,146)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[Section B]')(56,67)\n"
+                             + "    PsiWhiteSpace('\\n')(67,68)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(68,104)\n"
+                             + "      PsiElement(UnitFileTokenType{KEY})('Setting')(68,75)\n"
+                             + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(75,76)\n"
+                             + "      PsiElement(UnitFileTokenType{VALUE})('\"something\" \"some thing\" \"…\"')(76,104)\n"
+                             + "    PsiWhiteSpace('\\n')(104,105)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(105,146)\n"
+                             + "      PsiElement(UnitFileTokenType{KEY})('KeyTwo')(105,111)\n"
+                             + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(111,112)\n"
+                             + "      PsiElement(UnitFileTokenType{VALUE})('value 2 \\\\n       value 2 continued')(112,146)";
+
+    /*
+     * Exercise SUT
+     */
+
+    String parseTree = convertSourceToParseTree(sourceCode);
+
+    /*
+     * Verification
+     */
+    assertSameLines(expectedPsiTree, parseTree);
+  }
+
+
   /**
    * Converts the source code supplied as an argument to a parse tree.
    *

@@ -47,6 +47,9 @@ WHITE_SPACE=[\ \n\t\f]
 // TODO FIX this should also allow ASCII Characters, maybe try [:cntrl:]
 // https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s03.html
 // The \p{Cc} is a control character class (see Mastering Regular Expressions, p. 123)
+
+// The section header should actually be more restricted than this, however we will allow anything as a character
+
 SECTION_HEADER= \[[^\]]+\]
 
 // We don't allow whitespace or the separator in the key characters
