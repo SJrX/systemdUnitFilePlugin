@@ -40,13 +40,17 @@ import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeH
 CRLF=\R
 
 // White space
+SAME_LINE_WHITESPACE = [\ \t]
 WHITE_SPACE=[\ \n\t\f]
 
 // Headers are [ Non-ASCII Control characters ]
 // TODO FIX this should also allow ASCII Characters, maybe try [:cntrl:]
 // https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s03.html
 // The \p{Cc} is a control character class (see Mastering Regular Expressions, p. 123)
-SECTION_HEADER= \[[A-Za-z0-9_-]+\]
+
+// The section header should actually be more restricted than this, however we will allow anything as a character
+
+SECTION_HEADER= \[[^\]]+\]
 
 // We don't allow whitespace or the separator in the key characters
 KEY_CHARACTER=[^=\ \n\t\f\\] | "\\ "
@@ -65,13 +69,9 @@ SEPARATOR=[=]
 
 %%
 
-
 /*
  * Lexical rules http://jflex.de/manual.html#LexRules
- *
- * All the lexical rules assume we start at the start of a line (if something is multiple line, it should \\ before the end
  */
-
 
 <YYINITIAL, IN_SECTION> {COMMENT}                               { return UnitFileElementTypeHolder.COMMENT; }
 
@@ -81,10 +81,11 @@ SEPARATOR=[=]
 
 <IN_SECTION> {KEY_CHARACTER}+                                   { yybegin(WAITING_FOR_SEPARATOR); return UnitFileElementTypeHolder.KEY; }
 
-<WAITING_FOR_SEPARATOR> {WHITE_SPACE}*{SEPARATOR}{WHITE_SPACE}* { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR; }
+<WAITING_FOR_SEPARATOR> {SAME_LINE_WHITESPACE}*{SEPARATOR}{SAME_LINE_WHITESPACE}* { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR; }
 
-<WAITING_FOR_VALUE> {VALUE_CHARACTER}+                          { yybegin(IN_SECTION); return UnitFileElementTypeHolder.VALUE; }
+<WAITING_FOR_VALUE> {VALUE_CHARACTER}*                          { yybegin(IN_SECTION); return UnitFileElementTypeHolder.VALUE; }
 
-({CRLF}|{WHITE_SPACE})+                                         { return TokenType.WHITE_SPACE; }
+<YYINITIAL, IN_SECTION>({CRLF}|{WHITE_SPACE})+                  { return TokenType.WHITE_SPACE; }
+
 
 .                                                               { return TokenType.BAD_CHARACTER; }

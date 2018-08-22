@@ -40,38 +40,77 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // property|COMMENT|CRLF
+  // COMMENT
+  static boolean comment_(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "comment_")) return false;
+    if (!nextTokenIs(builder_, "<comment>", COMMENT)) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null, "<comment>");
+    result_ = consumeToken(builder_, COMMENT);
+    exit_section_(builder_, level_, marker_, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // CRLF
+  static boolean crlf_(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "crlf_")) return false;
+    if (!nextTokenIs(builder_, "<new line>", CRLF)) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null, "<new line>");
+    result_ = consumeToken(builder_, CRLF);
+    exit_section_(builder_, level_, marker_, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // KEY
+  static boolean key_(PsiBuilder builder_, int level_) {
+    return consumeToken(builder_, KEY);
+  }
+
+  /* ********************************************************** */
+  // property|comment_|crlf_
   static boolean line_items_(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "line_items_")) return false;
     boolean result_;
     result_ = property(builder_, level_ + 1);
-    if (!result_) result_ = consumeToken(builder_, COMMENT);
-    if (!result_) result_ = consumeToken(builder_, CRLF);
+    if (!result_) result_ = comment_(builder_, level_ + 1);
+    if (!result_) result_ = crlf_(builder_, level_ + 1);
     return result_;
   }
 
   /* ********************************************************** */
-  // KEY SEPARATOR VALUE
+  // key_ separator_ value_
   public static boolean property(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "property")) return false;
     if (!nextTokenIs(builder_, KEY)) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeTokens(builder_, 0, KEY, SEPARATOR, VALUE);
-    exit_section_(builder_, marker_, PROPERTY, result_);
-    return result_;
+    boolean result_, pinned_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, PROPERTY, null);
+    result_ = key_(builder_, level_ + 1);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, separator_(builder_, level_ + 1));
+    result_ = pinned_ && value_(builder_, level_ + 1) && result_;
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
   }
 
   /* ********************************************************** */
-  // SECTION line_items_*
+  // SECTION
+  static boolean section_(PsiBuilder builder_, int level_) {
+    return consumeToken(builder_, SECTION);
+  }
+
+  /* ********************************************************** */
+  // section_ line_items_*
   public static boolean section_groups(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "section_groups")) return false;
-    if (!nextTokenIs(builder_, SECTION)) return false;
+    if (!nextTokenIs(builder_, "<section header>", SECTION)) return false;
     boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, SECTION);
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, SECTION_GROUPS, "<section header>");
+    result_ = section_(builder_, level_ + 1);
     result_ = result_ && section_groups_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, SECTION_GROUPS, result_);
+    exit_section_(builder_, level_, marker_, result_, false, null);
     return result_;
   }
 
@@ -87,7 +126,19 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (COMMENT|CRLF)* section_groups*
+  // SEPARATOR
+  static boolean separator_(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "separator_")) return false;
+    if (!nextTokenIs(builder_, "<key-value separator (=)>", SEPARATOR)) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null, "<key-value separator (=)>");
+    result_ = consumeToken(builder_, SEPARATOR);
+    exit_section_(builder_, level_, marker_, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // (comment_|crlf_)* section_groups*
   static boolean unitFile(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "unitFile")) return false;
     boolean result_;
@@ -98,7 +149,7 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
     return result_;
   }
 
-  // (COMMENT|CRLF)*
+  // (comment_|crlf_)*
   private static boolean unitFile_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "unitFile_0")) return false;
     while (true) {
@@ -109,12 +160,12 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // COMMENT|CRLF
+  // comment_|crlf_
   private static boolean unitFile_0_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "unitFile_0_0")) return false;
     boolean result_;
-    result_ = consumeToken(builder_, COMMENT);
-    if (!result_) result_ = consumeToken(builder_, CRLF);
+    result_ = comment_(builder_, level_ + 1);
+    if (!result_) result_ = crlf_(builder_, level_ + 1);
     return result_;
   }
 
@@ -127,6 +178,12 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
       if (!empty_element_parsed_guard_(builder_, "unitFile_1", pos_)) break;
     }
     return true;
+  }
+
+  /* ********************************************************** */
+  // VALUE
+  static boolean value_(PsiBuilder builder_, int level_) {
+    return consumeToken(builder_, VALUE);
   }
 
 }
