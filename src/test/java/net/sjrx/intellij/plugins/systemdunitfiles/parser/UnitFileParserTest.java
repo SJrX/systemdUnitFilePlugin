@@ -557,11 +557,8 @@ public class UnitFileParserTest extends ParsingTestCase {
     String sourceCode = "[Uni\n";
 
     String expectedPsiTree = "systemd service unit configuration(0,5)\n"
-                             + "  PsiErrorElement:<comment>, <new line> or <section header> expected, got '['(0,1)\n"
-                             + "    PsiElement(BAD_CHARACTER)('[')(0,1)\n"
-                             + "  PsiElement(BAD_CHARACTER)('U')(1,2)\n"
-                             + "  PsiElement(BAD_CHARACTER)('n')(2,3)\n"
-                             + "  PsiElement(BAD_CHARACTER)('i')(3,4)\n"
+                             + "  PsiErrorElement:<comment>, <new line> or <section header> expected, got '[Uni'(0,4)\n"
+                             + "    PsiElement(BAD_CHARACTER)('[Uni')(0,4)\n"
                              + "  PsiWhiteSpace('\\n')(4,5)";
     /*
      * Exercise SUT

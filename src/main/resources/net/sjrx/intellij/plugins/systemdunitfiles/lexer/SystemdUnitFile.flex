@@ -43,14 +43,18 @@ CRLF=\R
 SAME_LINE_WHITESPACE = [\ \t]
 WHITE_SPACE=[\ \n\t\f]
 
-// Headers are [ Non-ASCII Control characters ]
-// TODO FIX this should also allow ASCII Characters, maybe try [:cntrl:]
-// https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s03.html
-// The \p{Cc} is a control character class (see Mastering Regular Expressions, p. 123)
 
 // The section header should actually be more restricted than this, however we will allow anything as a character
+// and use an annotator to flag the error.
 
 SECTION_HEADER= \[[^\]]+\]
+
+/* Keep track of incomplete section headers because fixing bad character sequences don't
+  cause enough relexing
+
+  https://intellij-support.jetbrains.com/hc/en-us/community/posts/206123189-Syntax-Highlighting-gets-stuck
+ */
+INCOMPLETE_SECTION_HEADER = \[[^\]\n]*
 
 // We don't allow whitespace or the separator in the key characters
 KEY_CHARACTER=[^=\ \n\t\f\\] | "\\ "
@@ -77,6 +81,8 @@ SEPARATOR=[=]
 
 <YYINITIAL, IN_SECTION> {SECTION_HEADER}                        { yybegin(IN_SECTION); return UnitFileElementTypeHolder.SECTION; }
 
+<YYINITIAL, IN_SECTION> {INCOMPLETE_SECTION_HEADER}             { return TokenType.BAD_CHARACTER; }
+
 <YYINITIAL, IN_SECTION> {CRLF}({CRLF}|{WHITE_SPACE})+           { return TokenType.WHITE_SPACE; }
 
 <IN_SECTION> {KEY_CHARACTER}+                                   { yybegin(WAITING_FOR_SEPARATOR); return UnitFileElementTypeHolder.KEY; }
@@ -86,6 +92,5 @@ SEPARATOR=[=]
 <WAITING_FOR_VALUE> {VALUE_CHARACTER}*                          { yybegin(IN_SECTION); return UnitFileElementTypeHolder.VALUE; }
 
 <YYINITIAL, IN_SECTION>({CRLF}|{WHITE_SPACE})+                  { return TokenType.WHITE_SPACE; }
-
 
 .                                                               { return TokenType.BAD_CHARACTER; }

@@ -48,7 +48,9 @@ public class UnitFileHighlighter extends SyntaxHighlighterBase {
   @NotNull
   @Override
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
-    if (tokenType.equals(UnitFileElementTypeHolder.SECTION)) {
+    if (tokenType == null) {
+      return EMPTY_KEYS;
+    } else if (tokenType.equals(UnitFileElementTypeHolder.SECTION)) {
       return SECTION_KEYS;
     } else if (tokenType.equals(UnitFileElementTypeHolder.SEPARATOR)) {
       return SEPARATOR_KEYS;
