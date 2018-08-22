@@ -82,6 +82,6 @@ SEPARATOR=[=]
 
 <WAITING_FOR_VALUE> {VALUE_CHARACTER}*                          { yybegin(IN_SECTION); return UnitFileElementTypeHolder.VALUE; }
 
-({CRLF}|{WHITE_SPACE})+                                         { return TokenType.WHITE_SPACE; }
+<YYINITIAL, IN_SECTION>({CRLF}|{WHITE_SPACE})+                  { return TokenType.WHITE_SPACE; }
 
 .                                                               { return TokenType.BAD_CHARACTER; }
