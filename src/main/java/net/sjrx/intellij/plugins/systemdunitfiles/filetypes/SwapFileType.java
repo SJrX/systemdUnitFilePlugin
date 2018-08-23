@@ -8,30 +8,30 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 
-public class ServiceFileType extends LanguageFileType {
-  public static final ServiceFileType INSTANCE = new ServiceFileType();
+public class SwapFileType extends LanguageFileType {
+  public static final SwapFileType INSTANCE = new SwapFileType();
 
-  private ServiceFileType() {
+  private SwapFileType() {
     super(SystemdUnitFileLanguage.INSTANCE);
   }
 
   @NotNull
   @Override
   public String getName() {
-    return "Service unit configuration for systemd";
+    return "Swap unit configuration for systemd";
   }
 
   @NotNull
   @Override
   public String getDescription() {
-    return "A unit configuration file whose name ends in \".service\" encodes information about a process controlled and supervised "
-           + "by systemd.";
+    return "A unit configuration file whose name ends in \".swap\" encodes information about a swap device or file for memory"
+           + " paging controlled and supervised by systemd.";
   }
 
   @NotNull
   @Override
   public String getDefaultExtension() {
-    return "service";
+    return "swap";
   }
 
   @Nullable

@@ -8,30 +8,30 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 
-public class ServiceFileType extends LanguageFileType {
-  public static final ServiceFileType INSTANCE = new ServiceFileType();
+public class PathFileType extends LanguageFileType {
+  public static final PathFileType INSTANCE = new PathFileType();
 
-  private ServiceFileType() {
+  private PathFileType() {
     super(SystemdUnitFileLanguage.INSTANCE);
   }
 
   @NotNull
   @Override
   public String getName() {
-    return "Service unit configuration for systemd";
+    return "Path unit configuration for systemd";
   }
 
   @NotNull
   @Override
   public String getDescription() {
-    return "A unit configuration file whose name ends in \".service\" encodes information about a process controlled and supervised "
-           + "by systemd.";
+    return "A unit configuration file whose name ends in \".path\" encodes information about a path monitored by systemd,"
+           + " for path-based activation.";
   }
 
   @NotNull
   @Override
   public String getDefaultExtension() {
-    return "service";
+    return "path";
   }
 
   @Nullable

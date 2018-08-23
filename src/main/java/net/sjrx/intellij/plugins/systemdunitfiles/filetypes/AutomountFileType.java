@@ -8,30 +8,30 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 
-public class ServiceFileType extends LanguageFileType {
-  public static final ServiceFileType INSTANCE = new ServiceFileType();
+public class AutomountFileType extends LanguageFileType {
+  public static final AutomountFileType INSTANCE = new AutomountFileType();
 
-  private ServiceFileType() {
+  private AutomountFileType() {
     super(SystemdUnitFileLanguage.INSTANCE);
   }
 
   @NotNull
   @Override
   public String getName() {
-    return "Service unit configuration for systemd";
+    return "Automount unit configuration for systemd";
   }
 
   @NotNull
   @Override
   public String getDescription() {
-    return "A unit configuration file whose name ends in \".service\" encodes information about a process controlled and supervised "
-           + "by systemd.";
+    return "A unit configuration file whose name ends in \".automount\" encodes information about a file system automount point "
+           + "controlled and supervised by systemd.";
   }
 
   @NotNull
   @Override
   public String getDefaultExtension() {
-    return "service";
+    return "automount";
   }
 
   @Nullable

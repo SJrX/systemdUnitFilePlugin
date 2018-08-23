@@ -8,30 +8,30 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 
-public class ServiceFileType extends LanguageFileType {
-  public static final ServiceFileType INSTANCE = new ServiceFileType();
+public class DeviceFileType extends LanguageFileType {
+  public static final DeviceFileType INSTANCE = new DeviceFileType();
 
-  private ServiceFileType() {
+  private DeviceFileType() {
     super(SystemdUnitFileLanguage.INSTANCE);
   }
 
   @NotNull
   @Override
   public String getName() {
-    return "Service unit configuration for systemd";
+    return "Device unit configuration for systemd";
   }
 
   @NotNull
   @Override
   public String getDescription() {
-    return "A unit configuration file whose name ends in \".service\" encodes information about a process controlled and supervised "
-           + "by systemd.";
+    return "A unit configuration file whose name ends in \".device\" encodes information about a device unit as exposed in the "
+           + "sysfs/udev(7) device tree.";
   }
 
   @NotNull
   @Override
   public String getDefaultExtension() {
-    return "service";
+    return "device";
   }
 
   @Nullable

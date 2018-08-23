@@ -8,30 +8,30 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 
-public class ServiceFileType extends LanguageFileType {
-  public static final ServiceFileType INSTANCE = new ServiceFileType();
+public class TimerFileType extends LanguageFileType {
+  public static final TimerFileType INSTANCE = new TimerFileType();
 
-  private ServiceFileType() {
+  private TimerFileType() {
     super(SystemdUnitFileLanguage.INSTANCE);
   }
 
   @NotNull
   @Override
   public String getName() {
-    return "Service unit configuration for systemd";
+    return "Timer unit configuration for systemd";
   }
 
   @NotNull
   @Override
   public String getDescription() {
-    return "A unit configuration file whose name ends in \".service\" encodes information about a process controlled and supervised "
-           + "by systemd.";
+    return "A unit configuration file whose name ends in \".timer\" encodes information about a timer controlled and supervised by "
+           + "systemd, for timer-based activation.";
   }
 
   @NotNull
   @Override
   public String getDefaultExtension() {
-    return "service";
+    return "timer";
   }
 
   @Nullable
