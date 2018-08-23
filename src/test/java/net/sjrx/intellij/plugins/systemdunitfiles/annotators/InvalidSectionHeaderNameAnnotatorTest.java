@@ -41,10 +41,8 @@ public class InvalidSectionHeaderNameAnnotatorTest extends AbstractInspectionTes
 
     setupFileInEditor("file.service", file);
 
-
     // Exercise SUT
     List<HighlightInfo> highlights = myFixture.doHighlighting();
-
 
     // Verification
     assertSize(1, highlights);
