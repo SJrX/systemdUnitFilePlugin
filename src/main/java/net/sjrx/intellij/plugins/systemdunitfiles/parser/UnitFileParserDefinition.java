@@ -14,7 +14,7 @@ import com.intellij.psi.tree.TokenSet;
 import net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileLanguage;
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder;
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileParser;
-import net.sjrx.intellij.plugins.systemdunitfiles.lexer.UnitFileLexerAdapter;
+import net.sjrx.intellij.plugins.systemdunitfiles.lexer.DebugLexerAdapter;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.ServiceUnitFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +29,7 @@ public class UnitFileParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public Lexer createLexer(Project project) {
-    return new UnitFileLexerAdapter();
+    return new DebugLexerAdapter();
   }
 
   @Override

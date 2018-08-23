@@ -84,12 +84,11 @@ public class UnitFileLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\3\0\1\1\1\2\1\3\1\2\1\4\2\5\3\2"+
-    "\1\6\1\1\2\2\2\0\1\3\2\2\2\0\1\1"+
-    "\2\7";
+    "\4\0\1\1\1\2\1\1\1\3\2\4\3\1\1\5"+
+    "\3\6\1\1\2\0\1\2\2\1\2\0\1\6\2\7";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[27];
+    int [] result = new int[28];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -115,12 +114,12 @@ public class UnitFileLexer implements FlexLexer {
 
   private static final String ZZ_ROWMAP_PACKED_0 =
     "\0\0\0\14\0\30\0\44\0\60\0\74\0\110\0\124"+
-    "\0\140\0\154\0\170\0\204\0\220\0\234\0\250\0\264"+
-    "\0\300\0\314\0\204\0\154\0\330\0\344\0\220\0\264"+
-    "\0\360\0\60\0\140";
+    "\0\140\0\154\0\170\0\204\0\220\0\234\0\250\0\60"+
+    "\0\264\0\300\0\314\0\204\0\154\0\330\0\344\0\220"+
+    "\0\264\0\360\0\60\0\140";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[27];
+    int [] result = new int[28];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -145,20 +144,20 @@ public class UnitFileLexer implements FlexLexer {
   private static final String ZZ_TRANS_PACKED_0 =
     "\1\5\5\6\1\7\3\5\1\6\1\10\1\11\1\12"+
     "\1\6\1\12\2\6\1\13\1\11\1\5\1\14\1\6"+
-    "\1\10\1\5\3\0\1\15\1\0\2\5\1\16\1\5"+
-    "\1\15\1\5\2\17\1\0\1\17\1\5\1\0\3\17"+
-    "\1\20\2\17\15\0\5\6\4\0\1\6\1\0\2\21"+
-    "\1\22\4\21\1\0\4\21\2\10\1\0\11\10\2\11"+
-    "\1\0\1\11\2\0\2\11\1\0\1\23\1\0\2\11"+
-    "\1\24\1\6\1\24\2\6\2\11\1\0\1\23\1\6"+
-    "\1\11\2\25\1\22\1\25\2\21\1\25\1\11\1\21"+
-    "\1\26\1\21\1\25\12\0\1\11\5\0\1\27\3\0"+
-    "\1\16\1\0\1\27\5\0\1\16\5\0\1\16\1\0"+
-    "\2\17\1\0\1\17\2\0\3\17\1\30\5\17\1\31"+
-    "\10\17\2\21\1\22\4\21\1\32\4\21\7\22\1\32"+
-    "\4\22\2\25\1\22\1\25\2\21\1\25\1\33\1\21"+
-    "\1\26\1\21\1\25\2\21\1\22\4\21\1\32\2\21"+
-    "\1\25\1\21\4\17\2\0\3\17\1\30\2\17";
+    "\1\10\4\5\1\15\3\5\1\16\1\5\1\15\1\5"+
+    "\2\17\1\20\1\17\2\20\3\17\1\21\2\17\15\0"+
+    "\5\6\4\0\1\6\1\0\2\22\1\23\4\22\1\0"+
+    "\4\22\2\10\1\0\11\10\2\11\1\0\1\11\2\0"+
+    "\2\11\1\0\1\24\1\0\2\11\1\25\1\6\1\25"+
+    "\2\6\2\11\1\0\1\24\1\6\1\11\2\26\1\23"+
+    "\1\26\2\22\1\26\1\11\1\22\1\27\1\22\1\26"+
+    "\12\0\1\11\5\0\1\30\3\0\1\16\1\0\1\30"+
+    "\5\0\1\16\5\0\1\16\1\0\2\17\1\0\1\17"+
+    "\2\0\3\17\1\31\5\17\1\32\10\17\2\22\1\23"+
+    "\4\22\1\33\4\22\7\23\1\33\4\23\2\26\1\23"+
+    "\1\26\2\22\1\26\1\34\1\22\1\27\1\22\1\26"+
+    "\2\22\1\23\4\22\1\33\2\22\1\26\1\22\4\17"+
+    "\2\0\3\17\1\31\2\17";
 
   private static int [] zzUnpackTrans() {
     int [] result = new int[252];
@@ -199,11 +198,11 @@ public class UnitFileLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\3\0\1\1\1\11\14\1\2\0\3\1\2\0\1\1"+
-    "\1\11\1\1";
+    "\4\0\1\11\12\1\1\11\2\1\2\0\3\1\2\0"+
+    "\1\1\1\11\1\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[27];
+    int [] result = new int[28];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -517,32 +516,32 @@ public class UnitFileLexer implements FlexLexer {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
-            { yybegin(IN_SECTION); return UnitFileElementTypeHolder.VALUE;
+            { return TokenType.BAD_CHARACTER;
             } 
             // fall through
           case 8: break;
           case 2: 
-            { return TokenType.BAD_CHARACTER;
+            { return TokenType.WHITE_SPACE;
             } 
             // fall through
           case 9: break;
           case 3: 
-            { return TokenType.WHITE_SPACE;
+            { return UnitFileElementTypeHolder.COMMENT;
             } 
             // fall through
           case 10: break;
           case 4: 
-            { return UnitFileElementTypeHolder.COMMENT;
+            { yybegin(WAITING_FOR_SEPARATOR); return UnitFileElementTypeHolder.KEY;
             } 
             // fall through
           case 11: break;
           case 5: 
-            { yybegin(WAITING_FOR_SEPARATOR); return UnitFileElementTypeHolder.KEY;
+            { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR;
             } 
             // fall through
           case 12: break;
           case 6: 
-            { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR;
+            { yybegin(IN_SECTION); return UnitFileElementTypeHolder.VALUE;
             } 
             // fall through
           case 13: break;
