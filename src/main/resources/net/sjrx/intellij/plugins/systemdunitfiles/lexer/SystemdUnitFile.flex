@@ -89,7 +89,7 @@ SEPARATOR=[=]
 
 <WAITING_FOR_SEPARATOR> {SAME_LINE_WHITESPACE}*{SEPARATOR}{SAME_LINE_WHITESPACE}* { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR; }
 
-<WAITING_FOR_VALUE> {VALUE_CHARACTER}*                          { yybegin(IN_SECTION); return UnitFileElementTypeHolder.VALUE; }
+<WAITING_FOR_VALUE> ({VALUE_CHARACTER}+|[^])   { yybegin(IN_SECTION); return UnitFileElementTypeHolder.VALUE; }
 
 <YYINITIAL, IN_SECTION>({CRLF}|{WHITE_SPACE})+                  { return TokenType.WHITE_SPACE; }
 

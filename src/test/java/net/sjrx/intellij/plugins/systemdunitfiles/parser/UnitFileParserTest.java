@@ -426,11 +426,10 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,30)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
                              + "    PsiWhiteSpace('\\n')(6,7)\n"
-                             + "    UnitFilePropertyImpl(PROPERTY)(7,18)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(7,19)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('EmptyValue')(7,17)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)\n"
-                             /*  I'm not sure why there is no empty token here, but c'est la vie */
-                             + "    PsiWhiteSpace('\\n')(18,19)\n"
+                             + "      PsiElement(UnitFileTokenType{VALUE})('\\n')(18,19)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(19,30)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Before')(19,25)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(25,26)\n"
@@ -479,13 +478,13 @@ public class UnitFileParserTest extends ParsingTestCase {
 
 
     String expectedPsiTree = "systemd service unit configuration(0,19)\n"
-                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,18)\n"
+                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,19)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
                              + "    PsiWhiteSpace('\\n')(6,7)\n"
-                             + "    UnitFilePropertyImpl(PROPERTY)(7,18)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(7,19)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('EmptyValue')(7,17)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)\n"
-                             + "  PsiWhiteSpace('\\n')(18,19)";
+                             + "      PsiElement(UnitFileTokenType{VALUE})('\\n')(18,19)";
     /*
      * Exercise SUT
      */
@@ -505,13 +504,13 @@ public class UnitFileParserTest extends ParsingTestCase {
 
 
     String expectedPsiTree = "systemd service unit configuration(0,25)\n"
-                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,18)\n"
+                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,19)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
                              + "    PsiWhiteSpace('\\n')(6,7)\n"
-                             + "    UnitFilePropertyImpl(PROPERTY)(7,18)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(7,19)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('EmptyValue')(7,17)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)\n"
-                             + "  PsiWhiteSpace('\\n')(18,19)\n"
+                             + "      PsiElement(UnitFileTokenType{VALUE})('\\n')(18,19)\n"
                              + "  PsiComment(UnitFileTokenType{COMMENT})('#Hello')(19,25)";
     /*
      * Exercise SUT
@@ -532,13 +531,13 @@ public class UnitFileParserTest extends ParsingTestCase {
 
 
     String expectedPsiTree = "systemd service unit configuration(0,28)\n"
-                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,18)\n"
+                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,19)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
                              + "    PsiWhiteSpace('\\n')(6,7)\n"
-                             + "    UnitFilePropertyImpl(PROPERTY)(7,18)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(7,19)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('EmptyValue')(7,17)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)\n"
-                             + "  PsiWhiteSpace('\\n')(18,19)\n"
+                             + "      PsiElement(UnitFileTokenType{VALUE})('\\n')(18,19)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(19,28)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[Install]')(19,28)";
     /*
