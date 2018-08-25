@@ -5,7 +5,7 @@
   <vendor email="commits@sjrx.net">Steve Ramage</vendor>
 
   <description><![CDATA[
-      Adds support for syntax
+      Adds support for parsing systemd unit files such as .service, etc.
     ]]></description>
 
   <change-notes><![CDATA[
