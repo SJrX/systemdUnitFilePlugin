@@ -457,9 +457,7 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    PsiWhiteSpace('\\n')(6,7)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(7,18)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('EmptyValue')(7,17)\n"
-                             + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)\n"
-                             + "      PsiErrorElement:UnitFileTokenType{VALUE} expected(18,18)\n"
-                             + "        <empty list>";
+                             + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)\n";
     /*
      * Exercise SUT
      */
