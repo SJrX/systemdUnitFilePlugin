@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+  compile 'commons-io:commons-io:2.6'
   testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
@@ -74,9 +75,9 @@ task cloneSystemdRepo(type: GitCloneTask) {
   treeish = 'origin/master' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
 }
 
-task extractValidKeys(type: ExtractValidKeysFromManPage) {
+task generateDataFromManPages(type: GenerateDataFromManPages) {
   systemdSourceCodeRoot = file("git-dependencies/systemd")
-  generatedJsonFileLocation = file("src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata")
+  generatedJsonFileLocation = file(sourceSets.main.output.resourcesDir.getAbsolutePath() + "/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata")
 
 }
 
@@ -113,3 +114,5 @@ task generateParser(type: GenerateParser) {
 
 generateLexer.mustRunAfter(compileJava)
 classes.dependsOn += generateParser
+
+jar.dependsOn += generateDataFromManPages
