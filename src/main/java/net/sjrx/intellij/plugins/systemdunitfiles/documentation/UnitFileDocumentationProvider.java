@@ -4,6 +4,7 @@ import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import net.sjrx.intellij.plugins.systemdunitfiles.SemanticDataRepository;
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.impl.UnitFileSectionGroupsImpl;
@@ -31,14 +32,12 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
 
   @Override
   public String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
-
-
     if (element.getNode().getElementType().equals(UnitFileElementTypeHolder.KEY)) {
 
       String sectionName = ((UnitFileSectionGroupsImpl)element.getParent().getParent()).getSectionName();
       String keyName = element.getNode().getText();
 
-      String keyComment = sdr.getDocumentationContent(sectionName, keyName);
+      String keyComment = sdr.getDocumentationContentForKeyInSection(sectionName, keyName);
 
       if (keyComment != null) {
         return DEFINITION_START + keyName + DEFINITION_END + CONTENT_START + keyComment + CONTENT_END;
@@ -47,11 +46,13 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
 
       String sectionName = ((UnitFileSectionGroupsImpl)element.getParent()).getSectionName();
 
-      String sectionComment = sdr.getDocumentionContentForSection(sectionName);
+      String sectionComment = sdr.getDocumentationContentForSection(sectionName);
 
       if (sectionComment != null) {
         return DEFINITION_START + sectionName + DEFINITION_END + CONTENT_START + sectionComment + CONTENT_END;
       }
+    } else if (element.getNode().getElementType().equals(UnitFileElementTypeHolder.SEPARATOR)) {
+      return generateDoc(((LeafPsiElement)element.getNode()).getPrevSibling().getNode().getPsi(), originalElement);
     } else {
       return null;
     }
@@ -76,8 +77,17 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
           "https://www.freedesktop.org/software/systemd/man/" + filename.replaceFirst(".xml$", ".html") + "#"
           + keyNameToPointTo + "=");
       }
-    }
+    } else if (element.getNode().getElementType().equals(UnitFileElementTypeHolder.SEPARATOR)) {
+      return getUrlFor(((LeafPsiElement)element.getNode()).getPrevSibling().getNode().getPsi(), originalElement);
+    } else if (element.getNode().getElementType().equals(UnitFileElementTypeHolder.SECTION)) {
 
+      String sectionName = ((UnitFileSectionGroupsImpl)element.getParent()).getSectionName();
+
+      String sectionComment = sdr.getUrlForSectionName(sectionName);
+
+      return Collections.singletonList(sectionComment);
+
+    }
 
     return null;
 

@@ -94,12 +94,53 @@ public class SemanticDataRepository {
 
 
   /**
+   * Returns a URL to the section name man page.
+   *
+   * @param sectionName - the name of the section name
+   * @return - best URL for the section name or null if the section is unknown
+   */
+  public String getUrlForSectionName(String sectionName) {
+    switch (sectionName) {
+      case "Mount":
+        return "https://www.freedesktop.org/software/systemd/man/systemd.mount.html";
+      case "Automount":
+        return "https://www.freedesktop.org/software/systemd/man/systemd.automount.html";
+
+      case "Install":
+        return "https://www.freedesktop.org/software/systemd/man/systemd.unit.html#%5BInstall%5D%20Section%20Options";
+      case "Path":
+        return "https://www.freedesktop.org/software/systemd/man/systemd.path.html";
+
+      case "Service":
+        return "https://www.freedesktop.org/software/systemd/man/systemd.service.html";
+      case "Slice":
+        return "https://www.freedesktop.org/software/systemd/man/systemd.slice.html";
+
+      case "Socket":
+        return "https://www.freedesktop.org/software/systemd/man/systemd.socket.html";
+
+      case "Swap":
+        return "https://www.freedesktop.org/software/systemd/man/systemd.swap.html";
+
+      case "Timer":
+        return "https://www.freedesktop.org/software/systemd/man/systemd.timer.html";
+
+      case "Unit":
+        return "https://www.freedesktop.org/software/systemd/man/systemd.unit.html#%5BUnit%5D%20Section%20Options";
+
+      default:
+        return null;
+    }
+  }
+
+
+  /**
    * Returns a document blurb for a Section.
    *
    * @param sectionName the name of the section.
    * @return string
    */
-  public String getDocumentionContentForSection(String sectionName) {
+  public String getDocumentationContentForSection(String sectionName) {
     switch (sectionName) {
       case "Mount":
         return " Mount files must include a [Mount] section, which carries information\n"
@@ -128,7 +169,7 @@ public class SemanticDataRepository {
                + "information about the service and the process it supervises. A number\n"
                + "of options that may be used in this section are shared with other\n"
                + "unit types. These options are documented in <a href=\"http://man7.org/linux/man-pages/man5/systemd.exec.5.html\">systemd.exec(5)</a>,\n"
-               + "<a href=\"http://man7.org/linux/man-pages/man5/systemd.kill.5.html\">systemd.kill(5)</a> and"
+               + "<a href=\"http://man7.org/linux/man-pages/man5/systemd.kill.5.html\">systemd.kill(5)</a> and "
                + "<a href=\"http://man7.org/linux/man-pages/man5/systemd.resource-control.5.html\">systemd.resource-control(5)</a>.";
       case "Slice":
         return "The slice specific configuration\n"
@@ -145,18 +186,18 @@ public class SemanticDataRepository {
                + "       systemd.exec(5)</a> and <a href=\"http://man7.org/linux/man-pages/man5/systemd.kill.5.html\">systemd.kill(5)</a>.";
       case "Swap":
         return "Swap files must include a [Swap] section, which carries information\n"
-               + "about the swap device it supervises. A number of options that may be\n"
-               + "used in this section are shared with other unit types. These options\n"
-               + "are documented in <a href=\"http://man7.org/linux/man-pages/man5/systemd.exec.5.html\">systemd.exec(5)</a>"
+               + " about the swap device it supervises. A number of options that may be\n"
+               + " used in this section are shared with other unit types. These options\n"
+               + " are documented in <a href=\"http://man7.org/linux/man-pages/man5/systemd.exec.5.html\">systemd.exec(5)</a>"
                + " and <a href=\"http://man7.org/linux/man-pages/man5/systemd.kill.5.html\">systemd.kill(5)</a>";
 
       case "Timer":
         return " Timer files must include a [Timer] section, which carries information\n"
-               + "       about the timer it defines.";
+               + " about the timer it defines.";
 
       case "Unit":
         return "The unit file may include a [Unit] section, which carries generic\n"
-               + "       information about the unit that is not dependent on the type of unit.";
+               + " information about the unit that is not dependent on the type of unit.";
 
       default:
         return null;
@@ -170,7 +211,7 @@ public class SemanticDataRepository {
    * @param keyName the key name to look up
    * @return either the first paragraph from the HTML description or null if no description was found
    */
-  public String getDocumentationContent(String sectionName, String keyName) {
+  public String getDocumentationContentForKeyInSection(String sectionName, String keyName) {
 
     InputStream htmlDocStream = this.getClass().getClassLoader().getResourceAsStream(SEMANTIC_DATA_ROOT + "/documents/completion/"
                                                                                      + sectionName + "/" + keyName + ".html");
