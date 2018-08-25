@@ -20,7 +20,8 @@
         <xsl:value-of select="manvolnum"/>
         <xsl:text>.html</xsl:text>
       </xsl:attribute>
-    <xsl:value-of select="refentrytitle"/>(<xsl:value-of select="manvolnum"/>)</a>
+      <xsl:value-of select="refentrytitle"/>(<xsl:value-of select="manvolnum"/>)
+    </a>
   </xsl:template>
 
   <!-- Convert varname tags to be wrapped with <var> elements for formatting -->
@@ -33,6 +34,15 @@
     <var><xsl:value-of select="."/></var>
   </xsl:template>
 
+  <!-- Convert ulink elements to a tags -->
+  <xsl:template match="ulink">
+    <a>
+      <xsl:attribute name="href">
+        <xsl:value-of select="@url"/>
+      </xsl:attribute>
+      <xsl:value-of select="text()"/>
+    </a>
+  </xsl:template>
 
   <!-- Convert varname tags to be wrapped with <var> elements for formatting -->
   <xsl:template match="/">
