@@ -1,5 +1,4 @@
 import groovy.json.JsonOutput
-import org.apache.commons.io.output.TeeOutputStream
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
@@ -138,16 +137,16 @@ class GenerateDataFromManPages extends DefaultTask {
 
   @TaskAction
   void start() {
-    logger.error("Regenerating valid keys")
+    logger.debug("Regenerating valid keys")
 
 
     fileAndSectionTitleToSectionName.keySet().each { file ->
-      logger.error("Starting $file")
-      processForFile(file)
+      logger.debug("Starting $file")
+      processFile(file)
 
     }
 
-    logger.error("Complete")
+    logger.debug("Complete")
 
     def json = JsonOutput.toJson(this.sectionToKeyWordMap)
     json = JsonOutput.prettyPrint(json)
@@ -157,56 +156,59 @@ class GenerateDataFromManPages extends DefaultTask {
     outputData.write(json)
 
 
-    logger.error("Output: $json")
+    logger.debug("Output: $json")
 
   }
 
-  void processForFile(String filename)
+  /**
+   * Processes a file from the systemd repository
+   *
+   *
+   * @param filename
+   */
+  void processFile(String filename)
   {
     File file = new File(this.systemdSourceCodeRoot.getAbsolutePath() + "/man/$filename")
 
+    generateKeywordAndValueJsonMapForFile(file)
+    
+    generateDocumentationHtmlFromManPages(file)
+  }
 
-    transformXMLWithXSLT(file)
+  /**
+   * Opens the file that will be scanned and extracts a list of variables from it storing it in JSON
+   *
+   * @param File file
+   */
+  private void generateKeywordAndValueJsonMapForFile(File file) {
 
+    String filename = file.getName()
 
-    def builder     = dbf.newDocumentBuilder()
+    def builder = dbf.newDocumentBuilder()
 
-    def records     = builder.parse(file).documentElement
-
-    //
-
+    def records = builder.parse(file).documentElement
 
     /*
-      We should only be using unit-directives as a class selector on the variable list,
-      however the man pages inconsistently use it in systemd.exec.xml.
-
-      "/refentry/refsect1/variablelist[@class='unit-directives']/varlistentry"
-
-
+      We technically should be looking for variablelist element with class 'unit-directives' however some sections in
+      systemd.exec.xml don't include it, and unfortunately we can't unconditionally use variablelist because another section uses it.
+      So we exclude the one other section, although this is super brittle. Yay!
      */
-    NodeList result = (NodeList)xpath.
-      evaluate("/refentry/refsect1/variablelist/varlistentry", records, XPathConstants.NODESET)
+    NodeList result = (NodeList) xpath.evaluate(
+      "/refentry/refsect1/variablelist[not(contains(@class,'environment-variables'))]/varlistentry",
+      records, XPathConstants.NODESET)
 
-    for(int i = 0; i < result.getLength(); i++)
-    {
+    for (int i = 0; i < result.getLength(); i++) {
       Node varListEntry = result.item(i)
 
-      Node variableListClass = varListEntry.getParentNode().getAttributes().getNamedItem("class")
-      if((variableListClass != null) && variableListClass.getTextContent().equals("environment-variables"))
-      {
-        continue
-      }
       NodeList variables = (NodeList)xpath.evaluate("term/varname", varListEntry, XPathConstants.NODESET)
 
       for (Node variable : variables) {
-
 
         String option = variable.firstChild.getTextContent()
 
         def (String keyName, String keyValue) = getOptionNameAndValue(option, filename)
 
         try {
-
 
           String titleOfSection = xpath.evaluate("../../title[text()]", varListEntry)
           List<String> sections = fileAndSectionTitleToSectionName[filename]['sections'][titleOfSection]
@@ -216,12 +218,13 @@ class GenerateDataFromManPages extends DefaultTask {
           String originalKeyName = getOptionNameAndValue(originalSection, filename)[0]
 
           for (String section : sections) {
-            logger.error("Found options $section in $option")
+            logger.debug("Found options $section in $option")
             sectionToKeyWordMap.putIfAbsent(section, new TreeMap<>())
-            sectionToKeyWordMap[section][keyName] = ["values": keyValue, "declaredUnderKeyword" : originalKeyName, "declaredInFile" : filename]
+            sectionToKeyWordMap[section][keyName] =
+              ["values": keyValue, "declaredUnderKeyword": originalKeyName, "declaredInFile": filename]
           }
-        } catch(IllegalStateException e)
-        {
+        }
+        catch (IllegalStateException e) {
           throw e
         }
       }
@@ -243,38 +246,60 @@ class GenerateDataFromManPages extends DefaultTask {
     [name, value]
   }
 
-  def transformXMLWithXSLT(File sourceFile)
+  /**
+   * Generates individual HTML files for use as inline documentation
+   *
+   * We proceed in two steps
+   *
+   * @param File sourceFile - the source file to extract
+   * @return
+   */
+  private generateDocumentationHtmlFromManPages(File sourceFile)
   {
-
     DocumentBuilder builder = dbf.newDocumentBuilder()
-
     Document document = builder.parse(sourceFile)
+    Transformer transformer = getXsltTransformer()
+
+    String xsltOutput = transformDocument(document, transformer)
+
+    segmentParametersIntoFiles(sourceFile.getName(), xsltOutput)
+
+  }
+
+  /**
+   * Transforms the supplied document with the supplied transformer
+   * @param document - XML Document to transform
+   * @param transformer - Transformer (i.e., a representation of the XSLT).
+   *
+   * @return XML output as string
+   */
+  private static String transformDocument(Document document, Transformer transformer) {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream()
+    StreamResult result = new StreamResult(baos)
+    DOMSource source = new DOMSource(document)
+
+    transformer.transform(source, result)
+    String xsltOutput = new String(baos.toByteArray(), "UTF-8")
+    xsltOutput
+  }
+
+  /**
+   * Constructs the XSLT transformer
+   *
+   * @param sourceFile
+   *
+   * @return a Transformer instance configured with the XSLT
+   */
+  private Transformer getXsltTransformer() {
 
     StreamSource styleSource = new StreamSource(this.getClass().getClassLoader().getResourceAsStream("transformManPages.xslt"))
 
     TransformerFactory teFactory = TransformerFactory.newInstance()
 
     Transformer transformer = teFactory.newTransformer(styleSource)
-    transformer.setParameter("systemd.version", "295")
+    //transformer.setParameter("systemd.version", "295")
 
-    new File(this.generatedJsonFileLocation.getAbsolutePath() + "/documents/").mkdirs()
-
-    File output = new File(this.generatedJsonFileLocation.getAbsolutePath() + "/documents/" + sourceFile.getName())
-
-    ByteArrayOutputStream baos = new ByteArrayOutputStream()
-
-    OutputStream out = new TeeOutputStream(new FileOutputStream(output), baos)
-
-    StreamResult result = new StreamResult(out)
-
-    DOMSource source = new DOMSource(document)
-
-    transformer.transform(source, result)
-
-    String xmlInput = new String(baos.toByteArray(), "UTF-8")
-
-    segmentParametersIntoFiles(sourceFile.getName(), xmlInput)
-
+    return transformer
   }
 
   /**
@@ -295,10 +320,10 @@ class GenerateDataFromManPages extends DefaultTask {
    * <parameterlist>
    *
    *
-   * @param sourceFileName
-   * @param parameterInfoXMLAsString
+   * @param sourceFileName - the name of the source file we pulled the data from
+   * @param parameterInfoXMLAsString - A transformed XML document representing the documentation for systemd
    */
-  def segmentParametersIntoFiles(String sourceFileName, String parameterInfoXMLAsString) {
+  private void segmentParametersIntoFiles(String sourceFileName, String parameterInfoXMLAsString) {
     def builder = dbf.newDocumentBuilder()
 
     ByteArrayInputStream bis = new ByteArrayInputStream(parameterInfoXMLAsString.getBytes("UTF-8"))
@@ -315,8 +340,6 @@ class GenerateDataFromManPages extends DefaultTask {
       String sectionTitle = ((Node) xpath.evaluate("section", parameterNode, XPathConstants.NODE)).getTextContent()
 
       NodeList paragraphList = (NodeList)xpath.evaluate("description/paragraph", parameterNode, XPathConstants.NODESET)
-
-
 
       Matcher match = (variableName =~ /(\w+)=(.*)/)
 
@@ -355,6 +378,20 @@ class GenerateDataFromManPages extends DefaultTask {
     }
   }
 
+  /**
+   * Hacky method which takes a node and converts it into an XML string again
+   *
+   * We are doing this essentially because we want to treat the inner nodes of <paragraph> as HTML and just include it's content.
+   *
+   * A better developer would likely have changed the XSLT to generate <paragraph><![CDATA[... HTML ...]]></paragraph>, but this
+   * developer couldn't figure that out, so here you, some hack I pulled off Stack Overflow.
+   *
+   * https://stackoverflow.com/questions/2784183/what-does-cdata-in-xml-mean
+   *
+   *
+   * @param node - the node to convert into a string
+   * @return XML representation of the node and all it's descendents.
+   */
   private static String innerXml(Node node) {
     DOMImplementationLS lsImpl = (DOMImplementationLS)node.getOwnerDocument().getImplementation().getFeature("LS", "3.0")
     LSSerializer lsSerializer = lsImpl.createLSSerializer()

@@ -70,12 +70,17 @@ checkstyle {
 import com.palominolabs.gradle.task.git.clone.GitCloneTask
 
 task cloneSystemdRepo(type: GitCloneTask) {
+  description "clone the systemd repository"
+
   dir = file("git-dependencies/systemd")
   uri = 'https://github.com/systemd/systemd.git'
   treeish = 'origin/master' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
 }
 
 task generateDataFromManPages(type: GenerateDataFromManPages) {
+  description "Regenerate semantic data (used for documentation and inspections) by parsing the documentation from systemd git repository"
+  group  "generation"
+
   systemdSourceCodeRoot = file("git-dependencies/systemd")
   generatedJsonFileLocation = file(sourceSets.main.output.resourcesDir.getAbsolutePath() + "/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata")
 
@@ -92,6 +97,9 @@ apply plugin: 'org.jetbrains.grammarkit'
 import org.jetbrains.grammarkit.tasks.*
 
 task generateLexer(type: GenerateLexer) {
+  description "Generate the lexer necessary for parsing unit files using JFlex"
+  group  "generation"
+
   source = "src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/lexer/SystemdUnitFile.flex"
   targetDir = "src/main/gen/net/sjrx/intellij/plugins/systemdunitfiles/generated/"
   targetClass = "UnitFileLexer"
@@ -99,6 +107,8 @@ task generateLexer(type: GenerateLexer) {
 }
 
 task generateParser(type: GenerateParser) {
+  description "Generate the grammar necessary for parsing unit files using GrammarKit"
+  group  "generation"
   source = "src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/grammar/SystemdUnitFile.bnf"
   targetRoot = "src/main/gen/"
 
