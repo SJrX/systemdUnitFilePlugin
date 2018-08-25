@@ -1,5 +1,7 @@
-package net.sjrx.intellij.plugins.systemdunitfiles.inspections;
+package net.sjrx.intellij.plugins.systemdunitfiles;
 
+import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -7,11 +9,13 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class AbstractInspectionTest extends LightPlatformCodeInsightFixtureTestCase {
+public abstract class AbstractUnitFileTest extends LightPlatformCodeInsightFixtureTestCase {
 
   @SuppressWarnings("unchecked")
   protected void enableInspection(Class<? extends LocalInspectionTool> cls) {
@@ -39,4 +43,13 @@ public abstract class AbstractInspectionTest extends LightPlatformCodeInsightFix
     return PsiTreeUtil.findChildrenOfType(psiFile, PsiElement.class).stream().filter(e -> e.getNode().getElementType().equals(
       iet)).collect(Collectors.toList());
   }
+  
+  
+  @NotNull
+  protected List<String> getBasicCompletionResultStrings() {
+    return Arrays.stream(myFixture.complete(CompletionType.BASIC)).map(LookupElement::getLookupString).collect(
+      Collectors.toList());
+  }
+  
+  
 }

@@ -3,11 +3,12 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.psi.PsiElement;
+import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest;
 
 import java.util.List;
 
 @SuppressWarnings("ConstantConditions")
-public class UnknownKeyInSectionInspectionTest extends AbstractInspectionTest {
+public class UnknownKeyInSectionInspectionTest extends AbstractUnitFileTest {
 
   public void testValidFileHasNoErrors() {
     // Fixture Setup
@@ -52,7 +53,7 @@ public class UnknownKeyInSectionInspectionTest extends AbstractInspectionTest {
 
     assertEquals("BadKey", highlightElement.getText());
   }
-
+  
   public void testUnknownKeyInInstallSectionGeneratesWarning() {
     // Fixture Setup
     String file = "[Install]\n"

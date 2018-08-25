@@ -35,6 +35,7 @@
                      groupPath="Unit files (systemd)"
                      shortName="UnknownKeyInSection"     displayName="Unknown key in section"
                      groupName="Validity"                                   enabledByDefault="true" level="WARNING"/>
+    <completion.contributor language="Systemd Unit File" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.completion.UnitFileKeyCompletionContributor"/>
   </extensions>
 
   <actions>
