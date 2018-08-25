@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -60,7 +61,7 @@ public class SemanticDataRepository {
    * @return String or null
    */
   public String getKeywordLocationInDocumentation(String section, String keyName) {
-    return this.getDataForSection(section).computeIfAbsent(keyName, k -> Collections.emptyMap())
+    return this.getDataForSection(section).computeIfAbsent(keyName, k -> new HashMap<>())
       .computeIfAbsent("declaredUnderKeyword", v -> null);
   }
 
@@ -75,7 +76,7 @@ public class SemanticDataRepository {
    * @return String or null
    */
   public String getKeywordFileLocationInDocumentation(String section, String keyName) {
-    return this.getDataForSection(section).computeIfAbsent(keyName, k -> Collections.emptyMap())
+    return this.getDataForSection(section).computeIfAbsent(keyName, k -> new HashMap<>())
       .computeIfAbsent("declaredInFile", v -> null);
   }
 
@@ -105,29 +106,22 @@ public class SemanticDataRepository {
         return "https://www.freedesktop.org/software/systemd/man/systemd.mount.html";
       case "Automount":
         return "https://www.freedesktop.org/software/systemd/man/systemd.automount.html";
-
       case "Install":
         return "https://www.freedesktop.org/software/systemd/man/systemd.unit.html#%5BInstall%5D%20Section%20Options";
       case "Path":
         return "https://www.freedesktop.org/software/systemd/man/systemd.path.html";
-
       case "Service":
         return "https://www.freedesktop.org/software/systemd/man/systemd.service.html";
       case "Slice":
         return "https://www.freedesktop.org/software/systemd/man/systemd.slice.html";
-
       case "Socket":
         return "https://www.freedesktop.org/software/systemd/man/systemd.socket.html";
-
       case "Swap":
         return "https://www.freedesktop.org/software/systemd/man/systemd.swap.html";
-
       case "Timer":
         return "https://www.freedesktop.org/software/systemd/man/systemd.timer.html";
-
       case "Unit":
         return "https://www.freedesktop.org/software/systemd/man/systemd.unit.html#%5BUnit%5D%20Section%20Options";
-
       default:
         return null;
     }

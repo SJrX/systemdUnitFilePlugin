@@ -83,13 +83,14 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
 
       String sectionName = ((UnitFileSectionGroupsImpl)element.getParent()).getSectionName();
 
-      String sectionComment = sdr.getUrlForSectionName(sectionName);
+      String sectionUrl = sdr.getUrlForSectionName(sectionName);
 
-      return Collections.singletonList(sectionComment);
-
+      if (sectionUrl != null) {
+        return Collections.singletonList(sectionUrl);
+      }
     }
 
-    return null;
+    return Collections.emptyList();
 
   }
 
