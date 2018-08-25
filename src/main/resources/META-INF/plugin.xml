@@ -28,6 +28,7 @@
     <colorSettingsPage implementation="net.sjrx.intellij.plugins.systemdunitfiles.coloring.settings.UnitFileColorSettings"/>
     <fileTypeFactory implementation="net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileTypeFactory"/>
     <lang.commenter language="Systemd Unit File" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.commenter.UnitFileCommenter"/>
+    <lang.documentationProvider language="Systemd Unit File" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.documentation.UnitFileDocumentationProvider"/>
     <annotator language="Systemd Unit File"
                implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.annotators.InvalidSectionHeaderNameAnnotator"/>
     <localInspection implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.inspections.UnknownKeyInSectionInspection"
