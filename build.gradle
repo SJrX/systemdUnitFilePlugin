@@ -81,6 +81,8 @@ task generateDataFromManPages(type: GenerateDataFromManPages) {
 
 }
 
+generateDataFromManPages.dependsOn += cloneSystemdRepo
+
 /*
  * Lexing / Parsing and Grammar Tasks
  */
