@@ -174,14 +174,13 @@ public class SemanticDataRepository {
 
     InputStream htmlDocStream = this.getClass().getClassLoader().getResourceAsStream(SEMANTIC_DATA_ROOT + "/documents/completion/"
                                                                                      + sectionName + "/" + keyName + ".html");
-
     if (htmlDocStream == null) {
       return null;
     }
 
     try {
-
       return IOUtils.toString(htmlDocStream, "UTF-8");
+
     } catch (IOException e) {
       LOG.warn("Could not convert html document stream to String", e);
     }
