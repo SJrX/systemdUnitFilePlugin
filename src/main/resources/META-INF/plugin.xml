@@ -42,6 +42,7 @@
 
     <completion.contributor language="Systemd Unit File" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.completion.UnitFileKeyCompletionContributor"/>
 
+    <completion.contributor language="Systemd Unit File" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.completion.UnitFileValueCompletionContributor"/>
   </extensions>
 
   <actions>

@@ -7,8 +7,7 @@ import java.util.List;
 
 public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
   
-  private static final String COMPLETION_POSITION = "<caret>";
-  
+
   public void testCompletionInInstallSectionReturnsExpectedValues() {
     // Fixture Setup
     String file = "[Install]\n"
@@ -18,8 +17,10 @@ public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
     
     myFixture.configureByText("file.service", file);
     
+    // Exercise SUT
     List<String> completions = getBasicCompletionResultStrings();
-    
+  
+    // Verification
     assertContainsElements(completions, "Alias=", "Also=");
   }
   
@@ -29,9 +30,11 @@ public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
                   + "Al" + COMPLETION_POSITION;
     
     myFixture.configureByText("file.service", file);
-    
+  
+    // Exercise SUT
     List<String> completions = getBasicCompletionResultStrings();
-    
+  
+    // Verification
     assertContainsElements(completions, "Alias=", "Also=");
     assertSize(2, completions);
   }
@@ -42,9 +45,11 @@ public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
                   + "ZzzZZZZ" + COMPLETION_POSITION;
     
     myFixture.configureByText("file.service", file);
-    
+  
+    // Exercise SUT
     List<String> completions = getBasicCompletionResultStrings();
-    
+  
+    // Verification
     assertEmpty(completions);
   }
   
@@ -54,9 +59,11 @@ public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
                   + "Al" + COMPLETION_POSITION;
     
     myFixture.configureByText("file.service", file);
-    
+  
+    // Exercise SUT
     List<String> completions = getBasicCompletionResultStrings();
-    
+  
+    // Verification
     assertEmpty(completions);
   }
   
@@ -66,9 +73,11 @@ public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
                   + "Pat" + COMPLETION_POSITION;
     
     myFixture.configureByText("file.service", file);
-    
+  
+    // Exercise SUT
     List<String> completions = getBasicCompletionResultStrings();
-    
+  
+    // Verification
     assertContainsElements(completions, "PathExists=", "PathExistsGlob=", "PathChanged=", "PathModified=");
     assertSize(4, completions);
   }
@@ -83,12 +92,12 @@ public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
                   + "M" + COMPLETION_POSITION + "\n"
                   + "\n";
     
-    
     myFixture.configureByText("file.service", file);
     
-    
+    // Exercise SUT
     List<String> completions = getBasicCompletionResultStrings();
     
+    // Verification
     assertEmpty(completions);
   }
 }
