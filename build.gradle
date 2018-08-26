@@ -94,7 +94,6 @@ task generateDataFromManPages(type: GenerateDataFromManPages) {
 
 }
 
-generateDataFromManPages.dependsOn += cloneSystemdRepo
 
 /*
  * Lexing / Parsing and Grammar Tasks
@@ -150,5 +149,9 @@ task generateOptionValidator(type: Exec) {
 generateLexer.mustRunAfter(compileJava)
 classes.dependsOn += generateParser
 classes.dependsOn += generateOptionValidator
+
+generateDataFromManPages.dependsOn += cloneSystemdRepo
+generateOptionValidator.dependsOn += cloneSystemdRepo
+
 
 jar.dependsOn += generateDataFromManPages
