@@ -131,8 +131,24 @@ task generateParser(type: GenerateParser) {
   dependsOn generateLexer
 }
 
+task generateOptionValidator(type: Exec) {
+  description "Generate the file we use to map options to validators"
+  group "generation"
+
+  commandLine('m4','-P','git-dependencies/systemd/src/core/load-fragment-gperf.gperf.m4')
+
+  doFirst {
+
+    def outputFile = new File(sourceSets.main.output.resourcesDir.getAbsolutePath() + "/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/load-fragment-gperf.gperf")
+    outputFile.parentFile.mkdirs()
+    standardOutput = new FileOutputStream(outputFile)
+  }
+
+
+}
 
 generateLexer.mustRunAfter(compileJava)
 classes.dependsOn += generateParser
+classes.dependsOn += generateOptionValidator
 
 jar.dependsOn += generateDataFromManPages

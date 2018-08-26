@@ -56,7 +56,7 @@ public class SemanticDataRepository {
     }
   
     try (BufferedReader fr = new BufferedReader(new InputStreamReader(
-      this.getClass().getClassLoader().getResourceAsStream("load-fragment-gperf.gperf")
+      this.getClass().getClassLoader().getResourceAsStream(SEMANTIC_DATA_ROOT + "load-fragment-gperf.gperf")
     ))) {
       String line;
     

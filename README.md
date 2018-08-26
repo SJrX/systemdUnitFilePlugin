@@ -14,6 +14,12 @@ The main goals were to actually learn more about plugin development, and refresh
 ## Installation
 
 At some point, this plugin should be available at the [JetBrains Plugin Repository](https://plugins.jetbrains.com/).
+ 
+## Development Notes
+
+### System Requirements
+
+On top of Java 8, you will need the [m4 macro processor](https://www.gnu.org/software/m4/m4.html) installed on your system and available in the path. 
 
 ### Manual Installation
 
@@ -27,9 +33,6 @@ Then in IntelliJ navigate to
 ```bash
 Plugins > Install Plugins From Disk > build/distributions/systemdUnitFilePlugin-X.X-SNAPSHOT.zip
 ```
- 
- 
-## Development Notes
 
 ### Problems
 
