@@ -3,12 +3,12 @@ package net.sjrx.intellij.plugins.systemdunitfiles.documentation;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import net.sjrx.intellij.plugins.systemdunitfiles.inspections.AbstractInspectionTest;
+import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest;
 
 import java.util.Collections;
 import java.util.List;
 
-public class UnitFileDocumentationProviderTest extends AbstractInspectionTest {
+public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
 
 
   private final DocumentationProvider sut = new UnitFileDocumentationProvider();

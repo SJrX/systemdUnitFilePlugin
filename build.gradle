@@ -52,6 +52,7 @@ idea {
     downloadSources = true
   }
 }
+
 /*
  * CI Tasks
  */
@@ -60,6 +61,12 @@ checkstyle {
   checkstyleMain.source = "src/main/java"
   toolVersion "8.11"
 
+}
+
+test {
+  testLogging {
+    exceptionFormat = 'full'
+  }
 }
 
 

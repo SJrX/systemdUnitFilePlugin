@@ -3,11 +3,11 @@ package net.sjrx.intellij.plugins.systemdunitfiles.annotators;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.psi.PsiElement;
-import net.sjrx.intellij.plugins.systemdunitfiles.inspections.AbstractInspectionTest;
+import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest;
 
 import java.util.List;
 
-public class InvalidSectionHeaderNameAnnotatorTest extends AbstractInspectionTest {
+public class InvalidSectionHeaderNameAnnotatorTest extends AbstractUnitFileTest {
 
   public void testThatInvalidSectionNamesAreAnnotated() {
     // Fixture Setup
