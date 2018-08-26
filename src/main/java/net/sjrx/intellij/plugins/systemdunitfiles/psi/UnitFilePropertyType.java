@@ -6,11 +6,11 @@ import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeH
 import org.jetbrains.annotations.NotNull;
 
 public class UnitFilePropertyType extends ASTWrapperPsiElement {
-
+  
   public UnitFilePropertyType(@NotNull ASTNode node) {
     super(node);
   }
-
+  
   /**
    * Returns the key for the property.
    *
@@ -18,10 +18,10 @@ public class UnitFilePropertyType extends ASTWrapperPsiElement {
    */
   public String getKey() {
     ASTNode keyNode = this.getKeyNode();
-
+    
     return keyNode.getText().replaceAll("\\\\ ", " ");
   }
-
+  
   /**
    * Returns the key for the property.
    *
@@ -35,19 +35,26 @@ public class UnitFilePropertyType extends ASTWrapperPsiElement {
       throw new IllegalStateException("Every instance of " + this.getClass() + "should have a key node underneath");
     }
   }
-
+  
+  /**
+   * Returns the key for the property.
+   *
+   * @return the key for this property
+   */
+  public ASTNode getValueNode() {
+    return this.getNode().findChildByType(UnitFileElementTypeHolder.VALUE);
+  }
+  
   /**
    * Returns the value for the property.
    *
    * @return the value for this property
    */
   public String getValue() {
-    ASTNode valueNode = this.getNode().findChildByType(UnitFileElementTypeHolder.VALUE);
-    if (valueNode != null) {
-      return valueNode.getText();
+    if (getValueNode() != null) {
+      return getValueNode().getText();
     } else {
-      throw new IllegalStateException("Every instance of " + this.getClass() + "should have a value node underneath");
+      return null;
     }
   }
-
 }

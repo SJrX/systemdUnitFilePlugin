@@ -51,5 +51,7 @@ public abstract class AbstractUnitFileTest extends LightPlatformCodeInsightFixtu
       Collectors.toList());
   }
   
-  
+  protected static void assertStringContains(String subject, String value) {
+    assertTrue("Expected that " + value + " contains " + subject, value.contains(subject));
+  }
 }

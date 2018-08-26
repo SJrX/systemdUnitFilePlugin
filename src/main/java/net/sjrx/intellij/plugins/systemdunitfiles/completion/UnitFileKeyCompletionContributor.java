@@ -8,11 +8,11 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.util.ProcessingContext;
-import net.sjrx.intellij.plugins.systemdunitfiles.SemanticDataRepository;
 import net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileIcon;
 import net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileLanguage;
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.impl.UnitFileSectionGroupsImpl;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository;
 import org.jetbrains.annotations.NotNull;
 
 /**
