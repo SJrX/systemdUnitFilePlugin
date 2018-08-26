@@ -6,9 +6,9 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
-import net.sjrx.intellij.plugins.systemdunitfiles.SemanticDataRepository;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

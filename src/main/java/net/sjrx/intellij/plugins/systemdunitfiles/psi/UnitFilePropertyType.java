@@ -35,19 +35,28 @@ public class UnitFilePropertyType extends ASTWrapperPsiElement {
       throw new IllegalStateException("Every instance of " + this.getClass() + "should have a key node underneath");
     }
   }
-
+  
+  /**
+   * Returns the key for the property.
+   *
+   * @return the key for this property
+   */
+  public ASTNode getValueNode() {
+    ASTNode keyNode = this.getNode().findChildByType(UnitFileElementTypeHolder.VALUE);
+    if (keyNode != null) {
+      return keyNode;
+    } else {
+      throw new IllegalStateException("Every instance of " + this.getClass() + "should have a key node underneath");
+    }
+  }
+  
   /**
    * Returns the value for the property.
    *
    * @return the value for this property
    */
   public String getValue() {
-    ASTNode valueNode = this.getNode().findChildByType(UnitFileElementTypeHolder.VALUE);
-    if (valueNode != null) {
-      return valueNode.getText();
-    } else {
-      throw new IllegalStateException("Every instance of " + this.getClass() + "should have a value node underneath");
-    }
+    return getValueNode().getText();
   }
 
 }

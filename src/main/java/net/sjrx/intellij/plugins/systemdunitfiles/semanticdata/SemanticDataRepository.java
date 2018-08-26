@@ -1,28 +1,49 @@
-package net.sjrx.intellij.plugins.systemdunitfiles;
+package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata;
 
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.diagnostic.Logger;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.BooleanOptionValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.DocumentationOptionValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.KillModeOptionValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ModeStringOptionValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.NullOptionValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.OptionValueInformation;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.RestartOptionValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ServiceTypeOptionValue;
 import org.apache.commons.io.IOUtils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 public class SemanticDataRepository {
   
   
   private static final Logger LOG = Logger.getInstance(SemanticDataRepository.class);
-  
+  private static final String SEMANTIC_DATA_ROOT = "net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/";
+  private static final OptionValueInformation NULL_VALIDATOR = new NullOptionValue();
+  private static final Map</* Section */ String, Map</* Key */ String, /* Validator */ String>> sectionToKeyAndValidatorMap
+    = new TreeMap<>();
+  private static final Pattern LINE_MATCHER = Pattern.compile("^(?<Section>[A-Z][a-z]+).(?<Key>\\w+),\\s*(?<Validator>\\w+)\\s*,.+$");
   private static SemanticDataRepository instance = null;
   private final Map<String, Map<String, Map<String, String>>> sectionNameToKeyValues;
-  
-  private static final String SEMANTIC_DATA_ROOT = "net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/";
+  private final Map<String, List<OptionValueInformation>> validatorMap;
   
   private SemanticDataRepository() {
     
@@ -35,6 +56,42 @@ public class SemanticDataRepository {
       sectionNameToKeyValues =
         mapper.readValue(sectionToKeywordMapJsonFile, new TypeReference<Map<String, Map<String, Map<String, String>>>>() {
         });
+    } catch (IOException e) {
+      throw new IllegalStateException("Unable to initialize data for systemd inspections plugin", e);
+    }
+  
+    try {
+    
+      BufferedReader fr = new BufferedReader(new InputStreamReader(
+        this.getClass().getClassLoader().getResourceAsStream("load-fragment-gperf.gperf")
+      ));
+      
+      String line;
+    
+      
+    
+      while ((line = fr.readLine()) != null) {
+      
+        Matcher m = LINE_MATCHER.matcher(line);
+      
+        if (m.find()) {
+          String section = m.group("Section");
+          String key = m.group("Key");
+          String validator = m.group("Validator");
+          
+          sectionToKeyAndValidatorMap.computeIfAbsent(section, k -> new TreeMap<>()).put(key, validator);
+        }
+      }
+  
+      validatorMap = ImmutableList.of(new BooleanOptionValue(),
+        new DocumentationOptionValue(),
+        new KillModeOptionValue(),
+        new ModeStringOptionValue(),
+        new RestartOptionValue(),
+        new ServiceTypeOptionValue(),
+        NULL_VALIDATOR
+      ).stream().collect(groupingBy(OptionValueInformation::getValidatorName, toList()));
+    
     } catch (IOException e) {
       throw new IllegalStateException("Unable to initialize data for systemd inspections plugin", e);
     }
@@ -89,7 +146,6 @@ public class SemanticDataRepository {
              .computeIfAbsent("declaredInFile", v -> null);
   }
   
-  
   private Map<String, Map<String, String>> getDataForSection(String section) {
     Map<String, Map<String, String>> sectionData = sectionNameToKeyValues.get(section);
     
@@ -100,7 +156,6 @@ public class SemanticDataRepository {
       return sectionData;
     }
   }
-  
   
   /**
    * Returns a URL to the section name man page.
@@ -134,7 +189,6 @@ public class SemanticDataRepository {
         return null;
     }
   }
-  
   
   /**
    * Returns a document blurb for a Section.
@@ -228,6 +282,21 @@ public class SemanticDataRepository {
     }
     return null;
   }
+  
+  /**
+   * Gets the validator for a section name and key name.
+   *
+   * @param sectionName the name of the section we are looking up
+   * @param keyName - the keyname to look up
+   * @return the validator
+   */
+  public OptionValueInformation getOptionValidator(String sectionName, String keyName) {
+    String validatorName = sectionToKeyAndValidatorMap.getOrDefault(sectionName, Collections.emptyMap()).get(keyName);
+    
+    return validatorMap.getOrDefault(validatorName, Collections.singletonList(NULL_VALIDATOR)).get(0);
+  }
+  
+  
   
   /**
    * Gets the Semantic Data Repository.
