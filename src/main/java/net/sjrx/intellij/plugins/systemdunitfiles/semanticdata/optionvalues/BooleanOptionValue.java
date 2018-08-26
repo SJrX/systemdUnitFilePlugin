@@ -15,7 +15,7 @@ public class BooleanOptionValue implements OptionValueInformation {
   private static final Set<String> validValuesLowerCase
     = ImmutableSet.of("1","yes","y","true","t", "on", "0","no", "n", "false", "f", "off");
   
-  private static final Set<String> autoCompleteValues = ImmutableSet.of("on", "off");
+  private static final Set<String> autoCompleteValues = ImmutableSet.of("on", "off", "yes", "no", "true", "false");
 
   @Override
   public Set<String> getAutoCompleteOptions() {

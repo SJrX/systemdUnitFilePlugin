@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class AbstractUnitFileTest extends LightPlatformCodeInsightFixtureTestCase {
-
+  
+  protected static final String COMPLETION_POSITION = "<caret>";
+  
   @SuppressWarnings("unchecked")
   protected void enableInspection(Class<? extends LocalInspectionTool> cls) {
     myFixture.enableInspections(cls);
