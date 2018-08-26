@@ -36,7 +36,7 @@
                      shortName="UnknownKeyInSection"     displayName="Unknown option in section"
                      groupName="Validity"                                   enabledByDefault="true" level="WARNING"/>
     <localInspection implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection"
-                     groupPath="Unit files(systemd)"
+                     groupPath="Unit files (systemd)"
                      shortName="InvalidValue" displayName="Invalid value for option"
                      groupName="Validity"     enabledByDefault="true" level="WARNING"/>
 

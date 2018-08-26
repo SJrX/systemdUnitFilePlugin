@@ -8,9 +8,8 @@ import java.util.Set;
  * This validator is for the config_service_type validator.
  * <p></p>
  * This seems to use the values referenced in:
- *<p></p>
+ * <p></p>
  * service_type_table ~ line 3990.
- *
  */
 public class ServiceTypeOptionValue implements OptionValueInformation {
   
@@ -22,8 +21,12 @@ public class ServiceTypeOptionValue implements OptionValueInformation {
   }
   
   @Override
-  public boolean isValidValue(String value) {
-    return validOptions.contains(value);
+  public String getErrorMessage(String value) {
+    if (validOptions.contains(value)) {
+      return null;
+    } else {
+      return "Expected value " + value + " does not match one of the expected options: " + validOptions;
+    }
   }
   
   @Override

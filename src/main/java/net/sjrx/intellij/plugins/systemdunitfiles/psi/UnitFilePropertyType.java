@@ -6,11 +6,11 @@ import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeH
 import org.jetbrains.annotations.NotNull;
 
 public class UnitFilePropertyType extends ASTWrapperPsiElement {
-
+  
   public UnitFilePropertyType(@NotNull ASTNode node) {
     super(node);
   }
-
+  
   /**
    * Returns the key for the property.
    *
@@ -18,10 +18,10 @@ public class UnitFilePropertyType extends ASTWrapperPsiElement {
    */
   public String getKey() {
     ASTNode keyNode = this.getKeyNode();
-
+    
     return keyNode.getText().replaceAll("\\\\ ", " ");
   }
-
+  
   /**
    * Returns the key for the property.
    *
@@ -42,12 +42,7 @@ public class UnitFilePropertyType extends ASTWrapperPsiElement {
    * @return the key for this property
    */
   public ASTNode getValueNode() {
-    ASTNode keyNode = this.getNode().findChildByType(UnitFileElementTypeHolder.VALUE);
-    if (keyNode != null) {
-      return keyNode;
-    } else {
-      throw new IllegalStateException("Every instance of " + this.getClass() + "should have a key node underneath");
-    }
+    return this.getNode().findChildByType(UnitFileElementTypeHolder.VALUE);
   }
   
   /**
@@ -56,7 +51,10 @@ public class UnitFilePropertyType extends ASTWrapperPsiElement {
    * @return the value for this property
    */
   public String getValue() {
-    return getValueNode().getText();
+    if (getValueNode() != null) {
+      return getValueNode().getText();
+    } else {
+      return null;
+    }
   }
-
 }

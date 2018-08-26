@@ -22,32 +22,34 @@ public class DocumentationOptionValue implements OptionValueInformation {
   }
   
   @Override
-  public boolean isValidValue(String value) {
-    
+  public String getErrorMessage(String values) {
+  
     // This loose validation is what systemd does
+    for (String value : values.split("\\s+")) {
+      if (value.startsWith("http://")) {
+        continue;
+      }
     
-    if (value.startsWith("http://")) {
-      return true;
+      if (value.startsWith("https://")) {
+        continue;
+      }
+    
+      if (value.startsWith("file:/")) {
+        continue;
+      }
+    
+      if (value.startsWith("info:")) {
+        continue;
+      }
+    
+      if (value.startsWith("man:")) {
+        continue;
+      }
+  
+      return "Documentation " + value + " does not match expected syntax, each value should be a space separated list beginning with (http://, https://, file:/, info:, man:)";
     }
 
-    if (value.startsWith("https://")) {
-      return true;
-    }
-  
-    if (value.startsWith("file:/")) {
-      return true;
-    }
-  
-    if (value.startsWith("info:")) {
-      return true;
-    }
-  
-    if (value.startsWith("man:")) {
-      return true;
-    }
-    
-    return false;
-  
+    return null;
   }
   
   @Override

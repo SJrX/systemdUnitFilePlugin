@@ -9,6 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.OptionValueInformation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -35,9 +36,19 @@ public class InvalidValueInspection extends LocalInspectionTool {
       
       for (final UnitFilePropertyType keyAndValueProperty : keyAndValuePropertiesInSection) {
   
-        if (!sdr.getOptionValidator(section.getSectionName(), keyAndValueProperty.getValue())
-               .isValidValue(keyAndValueProperty.getValue())) {
-          problems.add(manager.createProblemDescriptor(keyAndValueProperty.getValueNode().getPsi(), "Invalid value", true,
+        String key = keyAndValueProperty.getKey();
+        String value = keyAndValueProperty.getValue();
+  
+        if (value == null) {
+          continue;
+        }
+        
+        OptionValueInformation ovi = sdr.getOptionValidator(section.getSectionName(), key);
+        
+        String errorMessage = ovi.getErrorMessage(value);
+        
+        if (errorMessage != null) {
+          problems.add(manager.createProblemDescriptor(keyAndValueProperty.getValueNode().getPsi(), errorMessage, true,
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly));
         }
         

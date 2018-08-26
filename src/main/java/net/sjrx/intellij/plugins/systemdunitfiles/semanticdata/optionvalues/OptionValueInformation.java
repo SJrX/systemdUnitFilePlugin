@@ -13,9 +13,9 @@ public interface OptionValueInformation {
    * Validates whether or not the value passed is valid.
    *
    * @param value - the value
-   * @return <code>true</code> if the value is valid, <code>false</code> otherwise.
+   * @return <code>null</code> if the value is fine, some string describing the error if there is a problem.
    */
-  public boolean isValidValue(String value);
+  public String getErrorMessage(String value);
   
   /**
    * Get the name of the validator that this implements.

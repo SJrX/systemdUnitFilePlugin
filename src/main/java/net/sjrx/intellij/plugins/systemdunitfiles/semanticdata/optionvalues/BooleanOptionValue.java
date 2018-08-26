@@ -23,8 +23,12 @@ public class BooleanOptionValue implements OptionValueInformation {
   }
   
   @Override
-  public boolean isValidValue(String value) {
-    return validValuesLowerCase.contains(value.toLowerCase());
+  public String getErrorMessage(String value) {
+    if (validValuesLowerCase.contains(value.toLowerCase())) {
+      return null;
+    } else {
+      return "This option takes a boolean value, " + value + " must be one of: " + validValuesLowerCase;
+    }
   }
   
   @Override

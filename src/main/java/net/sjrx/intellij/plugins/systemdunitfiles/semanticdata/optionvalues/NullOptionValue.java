@@ -14,8 +14,8 @@ public class NullOptionValue implements OptionValueInformation {
   }
   
   @Override
-  public boolean isValidValue(String value) {
-    return true;
+  public String getErrorMessage(String value) {
+    return null;
   }
   
   @Override

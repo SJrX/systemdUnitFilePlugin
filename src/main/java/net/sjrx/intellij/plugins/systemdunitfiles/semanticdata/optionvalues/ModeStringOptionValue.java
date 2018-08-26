@@ -16,8 +16,12 @@ public class ModeStringOptionValue implements OptionValueInformation {
   }
   
   @Override
-  public boolean isValidValue(String value) {
-    return value.matches("[0-9]?[0-9]{3}");
+  public String getErrorMessage(String value) {
+    if (value.matches("[0-7]{3,4}")) {
+      return null;
+    } else {
+      return "Value is expected to be a 3 or 4 digit octal number not: " + value;
+    }
   }
   
   @Override

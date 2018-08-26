@@ -3,7 +3,6 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.diagnostic.Logger;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.BooleanOptionValue;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.DocumentationOptionValue;
@@ -22,15 +21,11 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 
 public class SemanticDataRepository {
   
@@ -43,7 +38,7 @@ public class SemanticDataRepository {
   private static final Pattern LINE_MATCHER = Pattern.compile("^(?<Section>[A-Z][a-z]+).(?<Key>\\w+),\\s*(?<Validator>\\w+)\\s*,.+$");
   private static SemanticDataRepository instance = null;
   private final Map<String, Map<String, Map<String, String>>> sectionNameToKeyValues;
-  private final Map<String, List<OptionValueInformation>> validatorMap;
+  private final Map<String, OptionValueInformation> validatorMap;
   
   private SemanticDataRepository() {
     
@@ -60,15 +55,11 @@ public class SemanticDataRepository {
       throw new IllegalStateException("Unable to initialize data for systemd inspections plugin", e);
     }
   
-    try {
-    
-      BufferedReader fr = new BufferedReader(new InputStreamReader(
-        this.getClass().getClassLoader().getResourceAsStream("load-fragment-gperf.gperf")
-      ));
-      
+    try (BufferedReader fr = new BufferedReader(new InputStreamReader(
+      this.getClass().getClassLoader().getResourceAsStream("load-fragment-gperf.gperf")
+    ))) {
       String line;
     
-      
     
       while ((line = fr.readLine()) != null) {
       
@@ -78,20 +69,24 @@ public class SemanticDataRepository {
           String section = m.group("Section");
           String key = m.group("Key");
           String validator = m.group("Validator");
-          
+        
           sectionToKeyAndValidatorMap.computeIfAbsent(section, k -> new TreeMap<>()).put(key, validator);
         }
       }
-  
-      validatorMap = ImmutableList.of(new BooleanOptionValue(),
+    
+      OptionValueInformation[] ovis = {new BooleanOptionValue(),
         new DocumentationOptionValue(),
         new KillModeOptionValue(),
         new ModeStringOptionValue(),
         new RestartOptionValue(),
         new ServiceTypeOptionValue(),
-        NULL_VALIDATOR
-      ).stream().collect(groupingBy(OptionValueInformation::getValidatorName, toList()));
-    
+        NULL_VALIDATOR };
+      validatorMap = new HashMap<>();
+      
+      for (OptionValueInformation ovi : ovis) {
+        validatorMap.put(ovi.getValidatorName(), ovi);
+      }
+      
     } catch (IOException e) {
       throw new IllegalStateException("Unable to initialize data for systemd inspections plugin", e);
     }
@@ -293,7 +288,7 @@ public class SemanticDataRepository {
   public OptionValueInformation getOptionValidator(String sectionName, String keyName) {
     String validatorName = sectionToKeyAndValidatorMap.getOrDefault(sectionName, Collections.emptyMap()).get(keyName);
     
-    return validatorMap.getOrDefault(validatorName, Collections.singletonList(NULL_VALIDATOR)).get(0);
+    return validatorMap.getOrDefault(validatorName, NULL_VALIDATOR);
   }
   
   

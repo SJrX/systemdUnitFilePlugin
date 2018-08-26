@@ -24,8 +24,13 @@ public class RestartOptionValue implements OptionValueInformation {
   }
   
   @Override
-  public boolean isValidValue(String value) {
-    return validOptions.contains(value);
+  public String getErrorMessage(String value) {
+  
+    if (validOptions.contains(value)) {
+      return null;
+    } else {
+      return "Expected value " + value + " does not match one of the expected options: " + validOptions;
+    }
   }
   
   @Override
