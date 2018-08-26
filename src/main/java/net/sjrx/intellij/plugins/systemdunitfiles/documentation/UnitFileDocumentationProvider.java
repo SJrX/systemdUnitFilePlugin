@@ -4,6 +4,7 @@ import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.impl.UnitFileSectionGroupsImpl;
@@ -93,11 +94,23 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
     return Collections.emptyList();
 
   }
+  
+  @Override
+  public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
+    return null;
+  }
+  
 
   @Override
   public PsiElement getCustomDocumentationElement(@NotNull final Editor editor,
                                                   @NotNull final PsiFile file,
                                                   @Nullable PsiElement contextElement) {
-    return contextElement;
+  
+    if (contextElement.getNode().getElementType().equals(UnitFileElementTypeHolder.SEPARATOR)) {
+      return ((LeafPsiElement)contextElement.getNode()).getPrevSibling().getNode().getPsi();
+    } else {
+      return contextElement;
+    }
+    
   }
 }
