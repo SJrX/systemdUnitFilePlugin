@@ -38,6 +38,10 @@ public abstract class AbstractUnitFileTest extends LightPlatformCodeInsightFixtu
   protected List<PsiElement> getAllSeparatorsInFile(PsiFile psiFile) {
     return getAllElementsByElementType(psiFile, UnitFileElementTypeHolder.SEPARATOR);
   }
+  
+  protected List<PsiElement> getAllValuesInFile(PsiFile psiFile) {
+    return getAllElementsByElementType(psiFile, UnitFileElementTypeHolder.VALUE);
+  }
 
   private List<PsiElement> getAllElementsByElementType(PsiFile psiFile, IElementType iet) {
     return PsiTreeUtil.findChildrenOfType(psiFile, PsiElement.class).stream().filter(e -> e.getNode().getElementType().equals(

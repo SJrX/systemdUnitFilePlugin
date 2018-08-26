@@ -79,7 +79,7 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
           + keyNameToPointTo + "=");
       }
     } else if (element.getNode().getElementType().equals(UnitFileElementTypeHolder.SEPARATOR)) {
-      return getUrlFor(((LeafPsiElement)element.getNode()).getPrevSibling().getNode().getPsi(), originalElement);
+      return getUrlFor(((LeafPsiElement)element.getNode()).getPrevSibling(), originalElement);
     } else if (element.getNode().getElementType().equals(UnitFileElementTypeHolder.SECTION)) {
 
       String sectionName = ((UnitFileSectionGroupsImpl)element.getParent()).getSectionName();
@@ -106,8 +106,17 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
                                                   @NotNull final PsiFile file,
                                                   @Nullable PsiElement contextElement) {
   
+    if (contextElement == null) {
+      // If no context element just return null
+      return null;
+    }
+  
+    if (contextElement.getNode().getElementType().equals(UnitFileElementTypeHolder.VALUE)) {
+      return getCustomDocumentationElement(editor, file, ((LeafPsiElement)contextElement.getNode()).getPrevSibling());
+    }
+    
     if (contextElement.getNode().getElementType().equals(UnitFileElementTypeHolder.SEPARATOR)) {
-      return ((LeafPsiElement)contextElement.getNode()).getPrevSibling().getNode().getPsi();
+      return ((LeafPsiElement)contextElement.getNode()).getPrevSibling();
     } else {
       return contextElement;
     }
