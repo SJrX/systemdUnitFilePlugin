@@ -17,7 +17,7 @@ plugins {
 
 }
 group 'net.sjrx.intellij.plugins'
-version '0.1-SNAPSHOT'
+version '0.1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
@@ -35,9 +35,12 @@ intellij {
     version '2018.2'
 }
 patchPluginXml {
-    changeNotes """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
+    changeNotes """      
+  <h3>v0.1.0</h3>
+      <li>
+      Initial Release
+      </li>
+"""
 }
 
 // Add generated sources root

@@ -8,8 +8,8 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.util.ProcessingContext;
-import net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileIcon;
-import net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileLanguage;
+import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileIcon;
+import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileLanguage;
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.impl.UnitFileSectionGroupsImpl;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository;
@@ -27,7 +27,7 @@ public class UnitFileKeyCompletionContributor extends CompletionContributor {
    * Default constructor.
    */
   public UnitFileKeyCompletionContributor() {
-    extend(CompletionType.BASIC, PlatformPatterns.psiElement(UnitFileElementTypeHolder.KEY).withLanguage(SystemdUnitFileLanguage.INSTANCE),
+    extend(CompletionType.BASIC, PlatformPatterns.psiElement(UnitFileElementTypeHolder.KEY).withLanguage(UnitFileLanguage.INSTANCE),
       new CompletionProvider<CompletionParameters>() {
 
         @Override
@@ -49,7 +49,7 @@ public class UnitFileKeyCompletionContributor extends CompletionContributor {
           for (String keyword : sdr.getAllowedKeywordsInSection(sectionName)) {
             LookupElementBuilder builder =
               LookupElementBuilder.create(keyword + "=").withPresentableText(keyword)
-                .withIcon(SystemdUnitFileIcon.FILE).appendTailText("(Option)", true);
+                .withIcon(UnitFileIcon.FILE).appendTailText("(Option)", true);
 
             resultSet.addElement(builder);
 

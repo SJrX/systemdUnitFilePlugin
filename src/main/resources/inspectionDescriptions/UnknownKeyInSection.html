@@ -1,11 +1,13 @@
 <html>
 <body>
-Validates that the key used in the unit file matches a known value for the section (e.g., [Unit], [Install], [Service]). Consistent with the
-documentation, this inspection ignores keys or sections that start with <b>X-</b>.
+
 <p>
-  The valid keys depend on their section and are generated via scraping the documentation.
+  Validates that the options used in a section are valid for htat section.
+  The valid keys depend on their section and are generated via scraping the documentation.</p>
 <!-- tooltip end -->
-<p>For more information on the general behaviour see: <a href="https://www.freedesktop.org/software/systemd/man/systemd.unit.html#">systemd.unit(5)</a>.
+<p>Consistent with the documentation, this inspection ignores options or sections that start with <b>X-</b>.
+
+  For more information on the general behaviour see: <a href="https://www.freedesktop.org/software/systemd/man/systemd.unit.html#">systemd.unit(5)</a>.
 </p>
 <p>
   Individual section options are described both in their respective man pages (e.g., <a
