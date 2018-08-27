@@ -27,7 +27,7 @@ public class UnitFileParserTest extends ParsingTestCase {
      */
     String sourceCode = "";
 
-    String expectedPsiTree = "systemd service unit configuration(0,0)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,0)\n"
                              + "  <empty list>";
     /*
      * Exercise SUT
@@ -45,7 +45,7 @@ public class UnitFileParserTest extends ParsingTestCase {
     // Fixture Setup
     String sourceCode = "\n\n";
 
-    String expectedPsiTree = "systemd service unit configuration(0,2)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,2)\n"
                              + "  PsiWhiteSpace('\\n\\n')(0,2)";
 
 
@@ -60,7 +60,7 @@ public class UnitFileParserTest extends ParsingTestCase {
     // Fixture Setup
     String sourceCode = "#Hello";
 
-    String expectedPsiTree = "systemd service unit configuration(0,6)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,6)\n"
                              + "  PsiComment(UnitFileTokenType{COMMENT})('#Hello')(0,6)";
 
     // Exercise SUT
@@ -75,7 +75,7 @@ public class UnitFileParserTest extends ParsingTestCase {
     // Fixture Setup
     String sourceCode = "#Hello  \n \n \n";
 
-    String expectedPsiTree = "systemd service unit configuration(0,13)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,13)\n"
                              + "  PsiComment(UnitFileTokenType{COMMENT})('#Hello  ')(0,8)\n"
                              + "  PsiWhiteSpace('\\n \\n \\n')(8,13)";
 
@@ -90,7 +90,7 @@ public class UnitFileParserTest extends ParsingTestCase {
     // Fixture Setup
     String sourceCode = "\n \n \n#Hello  ";
 
-    String expectedPsiTree = "systemd service unit configuration(0,13)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,13)\n"
                              + "  PsiWhiteSpace('\\n \\n \\n')(0,5)\n"
                              + "  PsiComment(UnitFileTokenType{COMMENT})('#Hello  ')(5,13)\n";
 
@@ -109,7 +109,7 @@ public class UnitFileParserTest extends ParsingTestCase {
     String sourceCode = "[One]\n"
                         + "Key=Value";
 
-    String expectedPsiTree = "systemd service unit configuration(0,15)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,15)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,15)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
                              + "    PsiWhiteSpace('\\n')(5,6)\n"
@@ -137,7 +137,7 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "Key=Value \\\n"
                         + "Hello";
 
-    String expectedPsiTree = "systemd service unit configuration(0,23)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,23)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,23)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
                              + "    PsiWhiteSpace('\\n')(5,6)\n"
@@ -166,7 +166,7 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "Key=Value \\\n"
                         + "Foo=Bar";
 
-    String expectedPsiTree = "systemd service unit configuration(0,25)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,25)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,25)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
                              + "    PsiWhiteSpace('\\n')(5,6)\n"
@@ -194,7 +194,7 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "Key=Value \\\n"
                         + ";comment";
 
-    String expectedPsiTree = "systemd service unit configuration(0,26)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,26)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,26)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
                              + "    PsiWhiteSpace('\\n')(5,6)\n"
@@ -223,7 +223,7 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "[Hello]\n"
                         + "Foo=Bar";
 
-    String expectedPsiTree = "systemd service unit configuration(0,33)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,33)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,33)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
                              + "    PsiWhiteSpace('\\n')(5,6)\n"
@@ -256,7 +256,7 @@ public class UnitFileParserTest extends ParsingTestCase {
     String sourceCode = "[One]\n"
                         + "Key=Value\n";
 
-    String expectedPsiTree = "systemd service unit configuration(0,16)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,16)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,15)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
                              + "    PsiWhiteSpace('\\n')(5,6)\n"
@@ -289,7 +289,7 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "Second=Value2";
 
 
-    String expectedPsiTree = "systemd service unit configuration(0,52)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,52)\n"
                              + "  PsiComment(UnitFileTokenType{COMMENT})('#Preamble')(0,9)\n"
                              + "  PsiWhiteSpace('\\n')(9,10)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(10,52)\n"
@@ -332,7 +332,7 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "Second=Value2";
 
 
-    String expectedPsiTree = "systemd service unit configuration(0,52)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,52)\n"
                              + "  PsiComment(UnitFileTokenType{COMMENT})(';Preamble')(0,9)\n"
                              + "  PsiWhiteSpace('\\n')(9,10)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(10,52)\n"
@@ -379,7 +379,7 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "Second=Value2";
 
 
-    String expectedPsiTree = "systemd service unit configuration(0,78)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,78)\n"
                              + "  PsiComment(UnitFileTokenType{COMMENT})(';Preamble')(0,9)\n"
                              + "  PsiWhiteSpace('\\n\\n')(9,11)\n"
                              + "  PsiComment(UnitFileTokenType{COMMENT})('#Preable 2')(11,21)\n"
@@ -422,7 +422,7 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "Before=test";
 
 
-    String expectedPsiTree = "systemd service unit configuration(0,30)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,30)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,30)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
                              + "    PsiWhiteSpace('\\n')(6,7)\n"
@@ -451,7 +451,7 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "EmptyValue=";
 
 
-    String expectedPsiTree = "systemd service unit configuration(0,18)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,18)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,18)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
                              + "    PsiWhiteSpace('\\n')(6,7)\n"
@@ -475,7 +475,7 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "EmptyValue=\n";
 
 
-    String expectedPsiTree = "systemd service unit configuration(0,19)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,19)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,19)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
                              + "    PsiWhiteSpace('\\n')(6,7)\n"
@@ -501,7 +501,7 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "#Hello";
 
 
-    String expectedPsiTree = "systemd service unit configuration(0,25)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,25)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,19)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
                              + "    PsiWhiteSpace('\\n')(6,7)\n"
@@ -528,7 +528,7 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "[Install]";
 
 
-    String expectedPsiTree = "systemd service unit configuration(0,28)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,28)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,19)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
                              + "    PsiWhiteSpace('\\n')(6,7)\n"
@@ -553,7 +553,7 @@ public class UnitFileParserTest extends ParsingTestCase {
   public void testIncompleteSectionHeaderHasError() {
     String sourceCode = "[Uni\n";
 
-    String expectedPsiTree = "systemd service unit configuration(0,5)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,5)\n"
                              + "  PsiErrorElement:<comment>, <new line> or <section header> expected, got '[Uni'(0,4)\n"
                              + "    PsiElement(BAD_CHARACTER)('[Uni')(0,4)\n"
                              + "  PsiWhiteSpace('\\n')(4,5)";
@@ -573,7 +573,7 @@ public class UnitFileParserTest extends ParsingTestCase {
     String sourceCode = "[Unit]\n"
                         + "Foo";
 
-    String expectedPsiTree = "systemd service unit configuration(0,10)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,10)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,10)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
                              + "    PsiWhiteSpace('\\n')(6,7)\n"
@@ -608,7 +608,7 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "KeyTwo=value 2 \\\n"
                         + "       value 2 continued";
 
-    String expectedPsiTree = "systemd service unit configuration(0,146)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,146)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,41)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[Section A]')(0,11)\n"
                              + "    PsiWhiteSpace('\\n')(11,12)\n"
