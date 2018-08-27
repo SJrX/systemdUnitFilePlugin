@@ -55,7 +55,7 @@ Acknowledgements
 
 ### System Requirements
 
-On top of Java 8, you will need the [m4 macro processor](https://www.gnu.org/software/m4/m4.html) installed on your system and available in the path. 
+On top of Java 8, you will need the [m4 macro processor](https://www.gnu.org/software/m4/m4.html) installed on your system and available on the path. 
 
 ### Manual Installation
 
