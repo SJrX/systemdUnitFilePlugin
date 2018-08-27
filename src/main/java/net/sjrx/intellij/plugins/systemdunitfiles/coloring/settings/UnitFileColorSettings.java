@@ -5,7 +5,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
-import net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileIcon;
+import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileIcon;
 import net.sjrx.intellij.plugins.systemdunitfiles.coloring.UnitFileHighlighter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +26,7 @@ public class UnitFileColorSettings implements ColorSettingsPage {
   @Nullable
   @Override
   public Icon getIcon() {
-    return SystemdUnitFileIcon.FILE;
+    return UnitFileIcon.FILE;
   }
 
   @NotNull

@@ -14,7 +14,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.filetypes.TargetFileType;
 import net.sjrx.intellij.plugins.systemdunitfiles.filetypes.TimerFileType;
 import org.jetbrains.annotations.NotNull;
 
-public class SystemdUnitFileTypeFactory extends FileTypeFactory {
+public class UnitFileTypeFactory extends FileTypeFactory {
 
   @Override
   public void createFileTypes(@NotNull FileTypeConsumer consumer) {

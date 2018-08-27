@@ -1,35 +1,47 @@
 <idea-plugin>
   <id>net.sjrx.intellij.plugins.systemdunitfiles</id>
-  <name>systemd unit file support</name>
+  <name>Unit File Support (systemd)</name>
   <version>0.1</version>
   <vendor email="commits@sjrx.net">Steve Ramage</vendor>
 
   <description><![CDATA[
-      Adds support for parsing systemd unit files such as .service, etc.
+      Adds support for systemd unit files, including the following features:
+      <ul>
+       <li>Syntax highlighting for unit files</li>
+        <li>Auto-completion for:
+          <ul>
+            <li>Option names in a section</li>
+            <li>Boolean options</li>
+            <li>Octal options</li>
+            <li>Some other common options (<var>KillMode=</var>, <var>Type=</var>, <var>Restart=</var>)
+          </ul>
+        </li>
+        <li>Inspections:
+          <ul>
+            <li>Invalid values for boolean options</li>
+            <li>Unknown option in section (ignoring those starting with <em>X-</em>)</li>
+          </ul>
+        </li>
     ]]></description>
 
-  <change-notes><![CDATA[
-      Initial Release
-    ]]>
-  </change-notes>
+  <change-notes><!-- From gradle --></change-notes>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
   <idea-version since-build="173.0"/>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
-  <!-- uncomment to enable plugin in all products
+
   <depends>com.intellij.modules.lang</depends>
-  -->
 
   <extensions defaultExtensionNs="com.intellij">
-    <lang.parserDefinition language="Systemd Unit File" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.parser.UnitFileParserDefinition"/>
-    <lang.syntaxHighlighterFactory language="Systemd Unit File" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.coloring.UnitSyntaxHighlighterFactory"/>
+    <lang.parserDefinition language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.parser.UnitFileParserDefinition"/>
+    <lang.syntaxHighlighterFactory language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.coloring.UnitSyntaxHighlighterFactory"/>
     <colorSettingsPage implementation="net.sjrx.intellij.plugins.systemdunitfiles.coloring.settings.UnitFileColorSettings"/>
-    <fileTypeFactory implementation="net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileTypeFactory"/>
-    <lang.commenter language="Systemd Unit File" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.commenter.UnitFileCommenter"/>
-    <lang.documentationProvider language="Systemd Unit File" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.documentation.UnitFileDocumentationProvider"/>
-    <annotator language="Systemd Unit File"
+    <fileTypeFactory implementation="net.sjrx.intellij.plugins.systemdunitfiles.UnitFileTypeFactory"/>
+    <lang.commenter language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.commenter.UnitFileCommenter"/>
+    <lang.documentationProvider language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.documentation.UnitFileDocumentationProvider"/>
+    <annotator language="Unit File (systemd)"
                implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.annotators.InvalidSectionHeaderNameAnnotator"/>
     <localInspection implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.inspections.UnknownKeyInSectionInspection"
                      groupPath="Unit files (systemd)"
@@ -40,9 +52,8 @@
                      shortName="InvalidValue" displayName="Invalid value for option"
                      groupName="Validity"     enabledByDefault="true" level="WARNING"/>
 
-    <completion.contributor language="Systemd Unit File" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.completion.UnitFileKeyCompletionContributor"/>
-
-    <completion.contributor language="Systemd Unit File" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.completion.UnitFileValueCompletionContributor"/>
+    <completion.contributor language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.completion.UnitFileKeyCompletionContributor"/>
+    <completion.contributor language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.completion.UnitFileValueCompletionContributor"/>
   </extensions>
 
   <actions>

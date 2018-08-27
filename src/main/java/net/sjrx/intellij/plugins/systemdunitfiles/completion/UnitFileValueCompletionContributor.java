@@ -8,8 +8,8 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.util.ProcessingContext;
-import net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileIcon;
-import net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileLanguage;
+import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileIcon;
+import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileLanguage;
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.impl.UnitFileSectionGroupsImpl;
@@ -25,7 +25,7 @@ public class UnitFileValueCompletionContributor extends CompletionContributor {
    */
   public UnitFileValueCompletionContributor() {
     extend(CompletionType.BASIC,
-      PlatformPatterns.psiElement(UnitFileElementTypeHolder.VALUE).withLanguage(SystemdUnitFileLanguage.INSTANCE),
+      PlatformPatterns.psiElement(UnitFileElementTypeHolder.VALUE).withLanguage(UnitFileLanguage.INSTANCE),
       new CompletionProvider<CompletionParameters>() {
         
         @Override
@@ -47,7 +47,7 @@ public class UnitFileValueCompletionContributor extends CompletionContributor {
           for (String value : sdr.getOptionValidator(sectionName, keyName).getAutoCompleteOptions()) {
             LookupElementBuilder builder =
               LookupElementBuilder.create(value)
-                .withIcon(SystemdUnitFileIcon.FILE).appendTailText("(" + keyName + " value)", true);
+                .withIcon(UnitFileIcon.FILE).appendTailText("(" + keyName + " value)", true);
     
             resultSet.addElement(builder);
     

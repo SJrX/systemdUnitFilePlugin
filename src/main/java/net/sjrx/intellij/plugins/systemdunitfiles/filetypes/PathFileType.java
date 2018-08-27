@@ -1,8 +1,8 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.filetypes;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileIcon;
-import net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileLanguage;
+import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileIcon;
+import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +12,7 @@ public class PathFileType extends LanguageFileType {
   public static final PathFileType INSTANCE = new PathFileType();
 
   private PathFileType() {
-    super(SystemdUnitFileLanguage.INSTANCE);
+    super(UnitFileLanguage.INSTANCE);
   }
 
   @NotNull
@@ -37,6 +37,6 @@ public class PathFileType extends LanguageFileType {
   @Nullable
   @Override
   public Icon getIcon() {
-    return SystemdUnitFileIcon.FILE;
+    return UnitFileIcon.FILE;
   }
 }

@@ -11,11 +11,11 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
-import net.sjrx.intellij.plugins.systemdunitfiles.SystemdUnitFileLanguage;
+import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileLanguage;
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder;
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileParser;
 import net.sjrx.intellij.plugins.systemdunitfiles.lexer.UnitFileLexerAdapter;
-import net.sjrx.intellij.plugins.systemdunitfiles.psi.ServiceUnitFile;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFile;
 import org.jetbrains.annotations.NotNull;
 
 public class UnitFileParserDefinition implements ParserDefinition {
@@ -24,7 +24,7 @@ public class UnitFileParserDefinition implements ParserDefinition {
 
   private static final TokenSet COMMENTS = TokenSet.create(UnitFileElementTypeHolder.COMMENT);
 
-  private static final IFileElementType FILE = new IFileElementType(SystemdUnitFileLanguage.INSTANCE);
+  private static final IFileElementType FILE = new IFileElementType(UnitFileLanguage.INSTANCE);
 
   @NotNull
   @Override
@@ -62,7 +62,7 @@ public class UnitFileParserDefinition implements ParserDefinition {
 
   @Override
   public PsiFile createFile(FileViewProvider viewProvider) {
-    return new ServiceUnitFile(viewProvider);
+    return new UnitFile(viewProvider);
   }
 
   @NotNull
