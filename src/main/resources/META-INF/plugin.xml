@@ -27,7 +27,10 @@
   <change-notes><!-- From gradle --></change-notes>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+
+  <!-- Gradle ignores this value -->
   <idea-version since-build="182.0"/>
+  <!-- Gradle ignores this value -->
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
        on how to target different products -->
