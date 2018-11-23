@@ -1,0 +1,5183 @@
+[
+  {
+    "pluginId": "de.uniorg.ui5helper",
+    "implementationName": "*..ui5.bind",
+    "bundled": false
+  },
+  {
+    "pluginId": "jetbrains.mps.core",
+    "implementationName": "*./\\NO_SUCH_EXT/\\",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.android",
+    "pluginName": "Android Support",
+    "description": "Supports development of Open Handset Alliance Android applications with IntelliJ IDEA.",
+    "implementationName": "*.9.png",
+    "bundled": true
+  },
+  {
+    "pluginId": "io.github.lizhangqu.intellij.plugin.android.bundle",
+    "implementationName": "*.aab",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.github.lizhangqu.intellij.plugin.android.bundle",
+    "implementationName": "*.aar",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.github.b3er.idea.plugins.arc.browser",
+    "implementationName": "*.aar",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.demonwav.minecraft-dev",
+    "implementationName": "*.Access Transformers",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.actionLinkGroupTemplate",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.asciidoctor.intellij.asciidoc",
+    "implementationName": "*.ad",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.asciidoctor.intellij.asciidoc",
+    "implementationName": "*.adoc",
+    "bundled": false
+  },
+  {
+    "pluginId": "Android Support",
+    "implementationName": "*.aidl",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.android",
+    "pluginName": "Android Support",
+    "description": "Supports development of Open Handset Alliance Android applications with IntelliJ IDEA.",
+    "implementationName": "*.aidl",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.aspectj",
+    "implementationName": "*.aj",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.aspectj",
+    "pluginName": "AspectJ Support",
+    "description": "Enables AspectJ support in IntelliJ IDEA.",
+    "implementationName": "*.aj",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.al",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.soywiz.korge.korge-intellij-plugin",
+    "implementationName": "*.ani",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.softbank.robot.sdkplugin",
+    "implementationName": "*.anim",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.github.lizhangqu.intellij.plugin.android.bundle",
+    "implementationName": "*.ap",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.apex",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud2.intellij",
+    "implementationName": "*.apex",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.github.b3er.idea.plugins.arc.browser",
+    "implementationName": "*.apk",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.erlang",
+    "implementationName": "*.app",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.app",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.app",
+    "bundled": false
+  },
+  {
+    "pluginId": "JavaScript",
+    "pluginName": "JavaScript Support",
+    "description": "Provides support for the JavaScript, ActionScript and TypeScript languages",
+    "implementationName": "*.applejs",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.plugin.applescript",
+    "implementationName": "*.applescript",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.appMenu",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.approvalProcess",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.approvalProcess",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.github.lizhangqu.intellij.plugin.android.bundle",
+    "implementationName": "*.ap_",
+    "bundled": false
+  },
+  {
+    "pluginId": "Arc",
+    "implementationName": "*.arc",
+    "bundled": false
+  },
+  {
+    "pluginId": "JavaScript",
+    "pluginName": "JavaScript Support",
+    "description": "Provides support for the JavaScript, ActionScript and TypeScript languages",
+    "implementationName": "*.as",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.asciidoctor.intellij.asciidoc",
+    "implementationName": "*.asc",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.asciidoctor.intellij.asciidoc",
+    "implementationName": "*.asciidoc",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.plugins.asp",
+    "pluginName": "ASP",
+    "description": "Active Server Pages editing support",
+    "implementationName": "*.ascx",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.nasmlanguage",
+    "implementationName": "*.asm",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.NASMSupport",
+    "implementationName": "*.asm",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.plugins.asp",
+    "pluginName": "ASP",
+    "description": "Active Server Pages editing support",
+    "implementationName": "*.asp",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.google.idea.bazel.ijwb",
+    "implementationName": "*.asproject",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.google.idea.bazel.aswb",
+    "implementationName": "*.asproject",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.plugins.asp",
+    "pluginName": "ASP",
+    "description": "Active Server Pages editing support",
+    "implementationName": "*.aspx",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.assignmentRules",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.assignmentRules",
+    "bundled": false
+  },
+  {
+    "pluginId": "edu.vub.ideAT",
+    "implementationName": "*.at",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.qrdn.coco_idea",
+    "implementationName": "*.atg",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.scheinecker.intellij.coco",
+    "implementationName": "*.ATG",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.gmail.blueboxware.libgdxplugin",
+    "implementationName": "*.atlas",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.auradoc",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud2.intellij",
+    "implementationName": "*.auradoc",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.authprovider",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.autoResponseRules",
+    "bundled": false
+  },
+  {
+    "pluginId": "claims.bold.intellij.avro",
+    "implementationName": "*.avdl",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.github.lizhangqu.intellij.plugin.android.bundle",
+    "implementationName": "*.awb",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.ballerina",
+    "implementationName": "*.bal",
+    "bundled": false
+  },
+  {
+    "pluginId": "BashSupport",
+    "implementationName": "*.bash",
+    "bundled": false
+  },
+  {
+    "pluginId": "Batch Scripts Support",
+    "implementationName": "*.bat",
+    "bundled": false
+  },
+  {
+    "pluginId": "CMD Support",
+    "implementationName": "*.bat",
+    "bundled": false
+  },
+  {
+    "pluginId": "tanvd.bayou.plugin",
+    "implementationName": "*.Bayou",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.google.idea.bazel.ijwb",
+    "implementationName": "*.bazelproject",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.google.idea.bazel.aswb",
+    "implementationName": "*.bazelproject",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.elixir_lang",
+    "implementationName": "*.beam",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.elixir_lang",
+    "implementationName": "*.beam.asm",
+    "bundled": false
+  },
+  {
+    "pluginId": "BEM Support",
+    "implementationName": "*.bemhtml",
+    "bundled": false
+  },
+  {
+    "pluginId": "nl.rubensten.texifyidea",
+    "implementationName": "*.bib",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.uniorg.ui5helper",
+    "implementationName": "*.binding",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.google.idea.bazel.ijwb",
+    "implementationName": "*.blazeproject",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.google.idea.bazel.aswb",
+    "implementationName": "*.blazeproject",
+    "bundled": false
+  },
+  {
+    "pluginId": "Camelry",
+    "implementationName": "*.blueprintinjectionlanguage",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.liferay.ide.intellij.plugin",
+    "implementationName": "*.bnd",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.idea.grammar",
+    "implementationName": "*.bnf",
+    "bundled": false
+  },
+  {
+    "pluginId": "Parser for IDEA",
+    "implementationName": "*.bp",
+    "bundled": false
+  },
+  {
+    "pluginId": "actiBPM",
+    "implementationName": "*.bpmn",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.yaoqiang.bpmn.editor.plugin",
+    "implementationName": "*.bpmn",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "*.builder",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.google.idea.bazel.ijwb",
+    "implementationName": "*.bzl",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.google.idea.bazel.aswb",
+    "implementationName": "*.bzl",
+    "bundled": false
+  },
+  {
+    "pluginId": "Haskell",
+    "implementationName": "*.cabal",
+    "bundled": false
+  },
+  {
+    "pluginId": "intellij.haskell",
+    "implementationName": "*.cabal",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.haskforce",
+    "implementationName": "*.cabal",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.cachePartition",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.callCenter",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.callCenter",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.sercapnp",
+    "implementationName": "*.Capnp",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.plugins.ceylon.ide",
+    "implementationName": "*.car",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.makeapp.cocoseditor",
+    "implementationName": "*.ccb",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.makeapp.cocos2dx",
+    "implementationName": "*.ccb",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.makeapp.cocoseditor",
+    "implementationName": "*.ccbx",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.cce",
+    "implementationName": "*.ccbx",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.makeapp.cocos2dx",
+    "implementationName": "*.ccbx",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.cce",
+    "implementationName": "*.cce",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.cce.appcode",
+    "implementationName": "*.cce",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.aemtools",
+    "implementationName": "*.cd",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.intino.plugin",
+    "implementationName": "*.cesar",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.plugins.ceylon.ide",
+    "implementationName": "*.ceylon",
+    "bundled": false
+  },
+  {
+    "pluginId": "CFML Support",
+    "pluginName": "CFML Support",
+    "description": "ColdFusion Markup Language (CFML) support.",
+    "implementationName": "*.cfc",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.jetbrains.plugins.ini4idea",
+    "implementationName": "*.cfg",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.demonwav.minecraft-dev",
+    "implementationName": "*.cfg",
+    "bundled": false
+  },
+  {
+    "pluginId": "Twelf Plugin",
+    "implementationName": "*.cfg",
+    "bundled": false
+  },
+  {
+    "pluginId": "codes.rudolph.idea.cfg",
+    "implementationName": "*.cfg",
+    "bundled": false
+  },
+  {
+    "pluginId": "codes.rudolph.idea.cfg",
+    "implementationName": "*.cfgr",
+    "bundled": false
+  },
+  {
+    "pluginId": "CFML Support",
+    "pluginName": "CFML Support",
+    "description": "ColdFusion Markup Language (CFML) support.",
+    "implementationName": "*.cfm",
+    "bundled": true
+  },
+  {
+    "pluginId": "CFML Support",
+    "pluginName": "CFML Support",
+    "description": "ColdFusion Markup Language (CFML) support.",
+    "implementationName": "*.cfml",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.cgi",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.go",
+    "implementationName": "*.cgo",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.channelLayout",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.idea.eclipse",
+    "pluginName": "Eclipse Integration",
+    "description": "Provides possibility to import, export and synchronize Eclipse project files",
+    "implementationName": "*.classpath",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.intellij.clojure",
+    "implementationName": "*.clj",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.idea.clojure",
+    "implementationName": "*.clj",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.cursiveclojure.cursive",
+    "implementationName": "*.clj",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.idea.clojure",
+    "implementationName": "*.cljc",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.cursiveclojure.cursive",
+    "implementationName": "*.cljc",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.idea.clojure",
+    "implementationName": "*.cljs",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.cursiveclojure.cursive",
+    "implementationName": "*.cljs",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.cursiveclojure.cursive",
+    "implementationName": "*.cljx",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.cls",
+    "bundled": false
+  },
+  {
+    "pluginId": "nl.rubensten.texifyidea",
+    "implementationName": "*.cls",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.cls",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud2.intellij",
+    "implementationName": "*.cls",
+    "bundled": false
+  },
+  {
+    "pluginId": "Batch Scripts Support",
+    "implementationName": "*.cmd",
+    "bundled": false
+  },
+  {
+    "pluginId": "CMD Support",
+    "implementationName": "*.cmd",
+    "bundled": false
+  },
+  {
+    "pluginId": "Pythonid",
+    "implementationName": "*.cmdline",
+    "bundled": false
+  },
+  {
+    "pluginId": "PythonCore",
+    "implementationName": "*.cmdline",
+    "bundled": false
+  },
+  {
+    "pluginId": "reasonml",
+    "implementationName": "*.cmi",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.cmp",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud2.intellij",
+    "implementationName": "*.cmp",
+    "bundled": false
+  },
+  {
+    "pluginId": "reasonml",
+    "implementationName": "*.cmt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.codename1.plugin.intellij",
+    "implementationName": "*.cn1lib",
+    "bundled": false
+  },
+  {
+    "pluginId": "fr.tolc.jahia.intellij.plugin",
+    "implementationName": "*.cnd",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.coffeescript",
+    "pluginName": "CoffeeScript",
+    "description": "Plugin for CoffeeScript language support",
+    "implementationName": "*.coffee",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.community",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.community",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.communityTemplateDefinition",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.communityThemeDefinition",
+    "bundled": false
+  },
+  {
+    "pluginId": "GLSL",
+    "implementationName": "*.comp",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.component",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.component",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud2.intellij",
+    "implementationName": "*.component",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.concordion.plugin.idea.lang",
+    "implementationName": "*.concordion",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "pluginName": "PHP",
+    "description": "PHP 5.3/5.4/5.5 editing and debugging, PHPUnit, Smarty and various frameworks support",
+    "implementationName": "*.conf",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "implementationName": "*.conf",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.hocon",
+    "implementationName": "*.conf",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.erlang",
+    "implementationName": "*.config",
+    "bundled": false
+  },
+  {
+    "pluginId": "AWSElasticBeanstalkWeb",
+    "implementationName": "*.config",
+    "bundled": false
+  },
+  {
+    "pluginId": "AWS Elastic Beanstalk",
+    "implementationName": "*.config",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.connectedApp",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.hoho.coocoo",
+    "implementationName": "*.coo",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.corsWhitelistOrigin",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.coursera.courier.plugin",
+    "implementationName": "*.courier",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.kaylerrenslow.plugin.armaplugin.id",
+    "implementationName": "*.cpp",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.thoughtworks.gauge",
+    "implementationName": "*.cpt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.neueda4j.intellij.plugin.cypher",
+    "implementationName": "*.cql",
+    "bundled": false
+  },
+  {
+    "pluginId": "net.kenro.ji.jin.intellij.crystal",
+    "implementationName": "*.cr",
+    "bundled": false
+  },
+  {
+    "pluginId": "in.xiv.cs",
+    "implementationName": "*.cs",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.covscript",
+    "implementationName": "*.csc",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.covscript",
+    "implementationName": "*.cse",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.covscript",
+    "implementationName": "*.csp",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.css",
+    "pluginName": "CSS Support",
+    "description": "Provides syntax and error highlighting, completion, navigation and other editing aids for CSS",
+    "implementationName": "*.css",
+    "bundled": true
+  },
+  {
+    "pluginId": "net.seesharpsoft.intellij.plugins.csv",
+    "implementationName": "*.csv",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.hoho.conkitty",
+    "implementationName": "*.ctpl",
+    "bundled": false
+  },
+  {
+    "pluginId": "tirke.cupPlugin",
+    "implementationName": "*.cup",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.customApplicationComponent",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.customPermission",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.cwlplugin",
+    "implementationName": "*.cwl",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.neueda4j.intellij.plugin.cypher",
+    "implementationName": "*.cyp",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.neueda4j.intellij.plugin.cypher",
+    "implementationName": "*.cypher",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.avallach.daedalus.ide",
+    "implementationName": "*.d",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.dlangplugin",
+    "implementationName": "*.d",
+    "bundled": false
+  },
+  {
+    "pluginId": "net.masterthought.dlanguage",
+    "implementationName": "*.d",
+    "bundled": false
+  },
+  {
+    "pluginId": "Dart",
+    "pluginName": "Dart",
+    "description": "Support for Dart programming language",
+    "implementationName": "*.dart",
+    "bundled": true
+  },
+  {
+    "pluginId": "Dart",
+    "implementationName": "*.dart",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.dashboard",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.datacategorygroup",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.dataSource",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.siberika.idea.pascal",
+    "implementationName": "*.dcu",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.database",
+    "pluginName": "SQL support",
+    "description": "SQL language support: syntax highlighting, code completion, coding assistance etc.",
+    "implementationName": "*.ddl",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.sql",
+    "pluginName": "SQL support",
+    "description": "SQL language support: syntax highlighting, code completion, coding assistance etc.",
+    "implementationName": "*.ddl",
+    "bundled": true
+  },
+  {
+    "pluginId": "OdpsStudio",
+    "implementationName": "*.ddl",
+    "bundled": false
+  },
+  {
+    "pluginId": "fr.ensimag.deca.intellijplugin.id",
+    "implementationName": "*.deca",
+    "bundled": false
+  },
+  {
+    "pluginId": "ru.mipt.acsl.decode.idea.plugin",
+    "implementationName": "*.decode",
+    "bundled": false
+  },
+  {
+    "pluginId": "spy-js",
+    "implementationName": "*.dependency diagram",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.design",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud2.intellij",
+    "implementationName": "*.design",
+    "bundled": false
+  },
+  {
+    "pluginId": "jetbrains.mps.core",
+    "implementationName": "*.devkit",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.dropbox.djinni.ideaplugin",
+    "implementationName": "*.djinni",
+    "bundled": false
+  },
+  {
+    "pluginId": "Lua",
+    "implementationName": "*.doclua",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.webschik.doT",
+    "implementationName": "*.dot",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.plugin.dot.id",
+    "implementationName": "*.dot",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.siberika.idea.pascal",
+    "implementationName": "*.dpr",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.drools",
+    "pluginName": "Drools Support",
+    "description": "JBoss Drools support",
+    "implementationName": "*.drl",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.dslplatform.ideaplugin",
+    "implementationName": "*.dsl",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.linecorp.games.cs.quaty.helper",
+    "implementationName": "*.dtp",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.mule.tooling.intellij.dataweave.v2",
+    "implementationName": "*.dwl",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.dylanfoundry.deft",
+    "implementationName": "*.dylan",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.e2dit.e2tml",
+    "implementationName": "*.e2t",
+    "bundled": false
+  },
+  {
+    "pluginId": "pl.psi.jls.wuff.plugin",
+    "implementationName": "*.e4xmi",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.cursiveclojure.cursive",
+    "implementationName": "*.edn",
+    "bundled": false
+  },
+  {
+    "pluginId": "EditorGroups",
+    "implementationName": "*.egroups",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.lang.ejs",
+    "implementationName": "*.ejs",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.testvagrant.optimus.elements",
+    "implementationName": "*.elements",
+    "bundled": false
+  },
+  {
+    "pluginId": "Twelf Plugin",
+    "implementationName": "*.elf",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.elmlang.intellijplugin",
+    "implementationName": "*.elm",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.elm.klazuka",
+    "implementationName": "*.elm",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.davidmis.elmplugin",
+    "implementationName": "*.elm",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.email",
+    "bundled": false
+  },
+  {
+    "pluginId": "ru.adelf.idea.dotenv",
+    "implementationName": "*.env",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.ep",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "*.epp",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.github.b3er.idea.plugins.arc.browser",
+    "implementationName": "*.epub",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "*.erb",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.erlang",
+    "implementationName": "*.erl",
+    "bundled": false
+  },
+  {
+    "pluginId": "JavaScript",
+    "pluginName": "JavaScript Support",
+    "description": "Provides support for the JavaScript, ActionScript and TypeScript languages",
+    "implementationName": "*.es",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.escalationRules",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.wix.eslint",
+    "implementationName": "*.eslintrc",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.evt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud2.intellij",
+    "implementationName": "*.evt",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.elixir_lang",
+    "implementationName": "*.ex",
+    "bundled": false
+  },
+  {
+    "pluginId": "net.jangaroo.idea.0.9",
+    "implementationName": "*.exml",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.elixir_lang",
+    "implementationName": "*.exs",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.kaylerrenslow.plugin.armaplugin.id",
+    "implementationName": "*.ext",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.fortran",
+    "implementationName": "*.f",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.fortran",
+    "implementationName": "*.f03",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.fortran",
+    "implementationName": "*.f08",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.fortran",
+    "implementationName": "*.f90",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.fortran",
+    "implementationName": "*.f95",
+    "bundled": false
+  },
+  {
+    "pluginId": "Fantom Support",
+    "implementationName": "*.fan",
+    "bundled": false
+  },
+  {
+    "pluginId": "gherkin",
+    "implementationName": "*.feature",
+    "bundled": false
+  },
+  {
+    "pluginId": "cucumber",
+    "implementationName": "*.feature",
+    "bundled": false
+  },
+  {
+    "pluginId": "cucumber-java",
+    "pluginName": "Gherkin",
+    "description": "Provides support of Gherkin language",
+    "implementationName": "*.feature",
+    "bundled": true
+  },
+  {
+    "pluginId": "uk.co.itmoore.intellisubsteps",
+    "implementationName": "*.feature",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.fatfractal.plugins.idea.ffdl",
+    "implementationName": "*.ffdl",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.pdehaan.idea-plugin-flatbuffers",
+    "implementationName": "*.flatbuffers",
+    "bundled": false
+  },
+  {
+    "pluginId": "JFlex Support",
+    "implementationName": "*.flex",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.idea.grammar",
+    "implementationName": "*.flex",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.flexipage",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.flow",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.flow",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.flowDefinition",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.siani.javafmi",
+    "implementationName": "*.fmu",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.soywiz.korge.korge-intellij-plugin",
+    "implementationName": "*.fnt",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.fortran",
+    "implementationName": "*.for",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.uiDesigner",
+    "pluginName": "UI Designer",
+    "description": "Provides visual editing support for Swing UI forms",
+    "implementationName": "*.form",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.fregelang.plugin.idea",
+    "implementationName": "*.fr",
+    "bundled": false
+  },
+  {
+    "pluginId": "GLSL",
+    "implementationName": "*.frag",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.android",
+    "pluginName": "Android Support",
+    "description": "Supports development of Open Handset Alliance Android applications with IntelliJ IDEA.",
+    "implementationName": "*.fs",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.velocity",
+    "pluginName": "Velocity support",
+    "description": "Provides syntax and error highlighting, smart editing and inspections for the Velocity template language.",
+    "implementationName": "*.ft",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.freemarker",
+    "pluginName": "FreeMarker support",
+    "description": "Provides syntax and error highlighting, smart editing, code completion and inspections for the FreeMarker template language.",
+    "implementationName": "*.ftl",
+    "bundled": true
+  },
+  {
+    "pluginId": "vette.neos",
+    "implementationName": "*.fusion",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.sgalinski.typoscript.plugin.id",
+    "implementationName": "*.fusion",
+    "bundled": false
+  },
+  {
+    "pluginId": "JavaFx Support",
+    "implementationName": "*.fx",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.flex",
+    "pluginName": "Flash/Flex Support",
+    "description": "Provides integration with the Flex SDK and thus lets you develop content for the various Adobe runtimes. Using this plugin, you can:\u003cbr\u003e\n      - Write, analyze and refactor your ActionScript and MXML code.\u003cbr\u003e\n      - Build applications for the various platforms such as Adobe Flash Player, Adobe AIR and Adobe AIR mobile.\u003cbr\u003e\n      - Run, debug, test, package and deploy your applications.",
+    "implementationName": "*.fxg",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.javaFX",
+    "pluginName": "JavaFX",
+    "description": "This plugin provides JavaFX2 support.",
+    "implementationName": "*.fxml",
+    "bundled": true
+  },
+  {
+    "pluginId": "ccom.intellij.idea.plugin.hybris.impex",
+    "implementationName": "*.fxs",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.glagol",
+    "implementationName": "*.g",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.antlr.intellij.plugin",
+    "implementationName": "*.g4",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.google.gct.core",
+    "implementationName": "*.gaedocker",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.groovy",
+    "pluginName": "Groovy",
+    "description": "Plugin for Groovy language support, including Groovy++, Grape, Gant and Griffon",
+    "implementationName": "*.gant",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.datathings.greycat.idea",
+    "implementationName": "*.gcm",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.gdlplugin",
+    "implementationName": "*.gdl",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.groovy",
+    "pluginName": "Groovy",
+    "description": "Plugin for Groovy language support, including Groovy++, Grape, Gant and Griffon",
+    "implementationName": "*.gdsl",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "*.gemspec",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "*.gemspec",
+    "bundled": false
+  },
+  {
+    "pluginId": "GLSL",
+    "implementationName": "*.geom",
+    "bundled": false
+  },
+  {
+    "pluginId": "GLSL",
+    "implementationName": "*.glsl",
+    "bundled": false
+  },
+  {
+    "pluginId": "ro.redeul.google.go",
+    "implementationName": "*.go",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.go",
+    "implementationName": "*.go.html",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.aopphp.go.framework",
+    "implementationName": "*.goaop",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.groovy",
+    "pluginName": "Groovy",
+    "description": "Plugin for Groovy language support, including Groovy++, Grape, Gant and Griffon",
+    "implementationName": "*.gpp",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.lang.graql",
+    "implementationName": "*.gql",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.groovy",
+    "pluginName": "Groovy",
+    "description": "Plugin for Groovy language support, including Groovy++, Grape, Gant and Griffon",
+    "implementationName": "*.gradle",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.jetbrains.idear",
+    "implementationName": "*.gram",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.lang.jsgraphql",
+    "implementationName": "*.graphql",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.lang.jsgraphql",
+    "implementationName": "*.graphqld",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.lang.jsgraphql",
+    "implementationName": "*.graphqle",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.lang.jsgraphql",
+    "implementationName": "*.graphqls",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.groovy",
+    "pluginName": "Groovy",
+    "description": "Plugin for Groovy language support, including Groovy++, Grape, Gant and Griffon",
+    "implementationName": "*.groovy",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.group",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.group",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.groovy",
+    "pluginName": "Groovy",
+    "description": "Plugin for Groovy language support, including Groovy++, Grape, Gant and Griffon",
+    "implementationName": "*.grunit",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.guidewire.gosu",
+    "implementationName": "*.gs",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.grails",
+    "pluginName": "Grails",
+    "description": "Support for Grails framework",
+    "implementationName": "*.gsp",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.guidewire.gosu",
+    "implementationName": "*.gsp",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.galenframework.specs.idea",
+    "implementationName": "*.gspec",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.guidewire.gosu",
+    "implementationName": "*.gst",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.guidewire.gosu",
+    "implementationName": "*.gsx",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.plugin.dot.id",
+    "implementationName": "*.gv",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.github.b3er.idea.plugins.arc.browser",
+    "implementationName": "*.gz",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.kaylerrenslow.plugin.armaplugin.id",
+    "implementationName": "*.h",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.haml",
+    "pluginName": "HAML",
+    "description": "HAML language support",
+    "implementationName": "*.haml",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.haskforce",
+    "implementationName": "*.hamlet",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.dmarcotte.handlebars",
+    "implementationName": "*.handlebars",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.dmarcotte.handlebars",
+    "implementationName": "*.hbs",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.plugins.hcl",
+    "implementationName": "*.hcl",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.dylanfoundry.deft",
+    "implementationName": "*.hdp",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.kaylerrenslow.plugin.armaplugin.id",
+    "implementationName": "*.hh",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.homePageComponent",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.homePageComponent",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.homePageLayout",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.homePageLayout",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "pluginName": "PHP",
+    "description": "PHP 5.3/5.4/5.5 editing and debugging, PHPUnit, Smarty and various frameworks support",
+    "implementationName": "*.hphp",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "implementationName": "*.hphp",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.kaylerrenslow.plugin.armaplugin.id",
+    "implementationName": "*.hpp",
+    "bundled": false
+  },
+  {
+    "pluginId": "JProfiler",
+    "implementationName": "*.hprof",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.javaee",
+    "pluginName": "Java EE: EJB, JPA, Servlets",
+    "description": "Provides support for Servlets, EJB, JPA and other Java EE technologies.",
+    "implementationName": "*.hql",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.erlang",
+    "implementationName": "*.hrl",
+    "bundled": false
+  },
+  {
+    "pluginId": "Haskell",
+    "implementationName": "*.hs",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.haskforce",
+    "implementationName": "*.hs",
+    "bundled": false
+  },
+  {
+    "pluginId": "intellij.haskell",
+    "implementationName": "*.hs",
+    "bundled": false
+  },
+  {
+    "pluginId": "ideah",
+    "implementationName": "*.hs",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.aemtools",
+    "implementationName": "*.htl",
+    "bundled": false
+  },
+  {
+    "pluginId": "co.nums.intellij.aem",
+    "implementationName": "*.htl",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.escalon.idea.plugin.svelte",
+    "implementationName": "*.html",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.github.bjansen.intellij.pebble",
+    "implementationName": "*.html.peb",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.github.b3er.idea.plugins.arc.browser",
+    "implementationName": "*.htmlz",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.restClient",
+    "pluginName": "HTTP Client",
+    "description": "Supports composing, executing and storing HTTP Requests",
+    "implementationName": "*.http",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.plugins.haxe",
+    "implementationName": "*.hx",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.plugins.haxe",
+    "implementationName": "*.hxml",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.persistence.database",
+    "pluginName": "Database Support",
+    "description": "Database Support: Schema Browser, Database Console, etc.",
+    "implementationName": "*.ids",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.seventh7.widget.iedis",
+    "implementationName": "*.iedis",
+    "bundled": false
+  },
+  {
+    "pluginId": "ccom.intellij.idea.plugin.hybris.impex",
+    "implementationName": "*.impex",
+    "bundled": false
+  },
+  {
+    "pluginId": "jetbrains.mps.core",
+    "implementationName": "*.impossibleext",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.siberika.idea.pascal",
+    "implementationName": "*.inc",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "pluginName": "PHP",
+    "description": "PHP 5.3/5.4/5.5 editing and debugging, PHPUnit, Smarty and various frameworks support",
+    "implementationName": "*.inc",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "implementationName": "*.inc",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.plugins.ini4idea",
+    "pluginName": "Ini4Idea",
+    "description": "Provides \".ini\" files support.",
+    "implementationName": "*.ini",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.jetbrains.plugins.ini4idea",
+    "implementationName": "*.ini",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.installedPackage",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.installedPackage",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.intf",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud2.intellij",
+    "implementationName": "*.intf",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.dylanfoundry.deft",
+    "implementationName": "*.intr",
+    "bundled": false
+  },
+  {
+    "pluginId": "software.amazon.ion.intellj",
+    "implementationName": "*.ion",
+    "bundled": false
+  },
+  {
+    "pluginId": "Pythonid",
+    "implementationName": "*.ipynb",
+    "bundled": false
+  },
+  {
+    "pluginId": "PythonCore",
+    "implementationName": "*.ipynb",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.demandware.studio",
+    "implementationName": "*.isml",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.pcsoft.plugins.intellij.iss",
+    "implementationName": "*.iss",
+    "bundled": false
+  },
+  {
+    "pluginId": "siani.dev.itrules",
+    "implementationName": "*.itr",
+    "bundled": false
+  },
+  {
+    "pluginId": "PlantUML integration",
+    "implementationName": "*.iuml",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.moe.designer.ios",
+    "implementationName": "*.ixml",
+    "bundled": false
+  },
+  {
+    "pluginId": "cappuccino.intellij.plugin",
+    "implementationName": "*.j",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.plugins.jade",
+    "implementationName": "*.jade",
+    "bundled": false
+  },
+  {
+    "pluginId": "JaggeryEditorSupport",
+    "implementationName": "*.jag",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.argus.intellij",
+    "implementationName": "*.jawa",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.argus.cit.intellij",
+    "implementationName": "*.jawa",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "*.jbuilder",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.github.jhsx.GoJetPlugin",
+    "implementationName": "*.jet",
+    "bundled": false
+  },
+  {
+    "pluginId": "JFormDesigner",
+    "implementationName": "*.jfd",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.adamweigold.idea-plugin-jibx",
+    "implementationName": "*.jibx",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.duncanjauncey.autosysplugin",
+    "implementationName": "*.jil",
+    "bundled": false
+  },
+  {
+    "pluginId": "Pythonid",
+    "implementationName": "*.jinja2",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.ice1000.julia",
+    "implementationName": "*.jl",
+    "bundled": false
+  },
+  {
+    "pluginId": "JMeter plugin",
+    "implementationName": "*.jmx",
+    "bundled": false
+  },
+  {
+    "pluginId": "JProfiler",
+    "implementationName": "*.jps",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.tasks",
+    "pluginName": "Task Management",
+    "description": "Enables task and context management",
+    "implementationName": "*.jql",
+    "bundled": true
+  },
+  {
+    "pluginId": "lsfusion.idea.plugin",
+    "implementationName": "*.jrxml",
+    "bundled": false
+  },
+  {
+    "pluginId": "JavaScript",
+    "pluginName": "JavaScript Support",
+    "description": "Provides support for the JavaScript, ActionScript and TypeScript languages",
+    "implementationName": "*.js",
+    "bundled": true
+  },
+  {
+    "pluginId": "JavaScript",
+    "pluginName": "JavaScript Support",
+    "description": "Provides support for the JavaScript, ActionScript and TypeScript languages",
+    "implementationName": "*.js2",
+    "bundled": true
+  },
+  {
+    "pluginId": "JavaScript",
+    "pluginName": "JavaScript Support",
+    "description": "Provides support for the JavaScript, ActionScript and TypeScript languages",
+    "implementationName": "*.jsb2",
+    "bundled": true
+  },
+  {
+    "pluginId": "JavaScript",
+    "pluginName": "JavaScript Support",
+    "description": "Provides support for the JavaScript, ActionScript and TypeScript languages",
+    "implementationName": "*.jsb3",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.jsp",
+    "pluginName": "Java Server Pages Integration",
+    "description": "Provides editing, code insight and refactoring support for JSP and JSPX files.",
+    "implementationName": "*.jsf",
+    "bundled": true
+  },
+  {
+    "pluginId": "JSFL Support",
+    "implementationName": "*.jsfl",
+    "bundled": false
+  },
+  {
+    "pluginId": "JavaScript",
+    "pluginName": "JavaScript Support",
+    "description": "Provides support for the JavaScript, ActionScript and TypeScript languages",
+    "implementationName": "*.jshintrc",
+    "bundled": true
+  },
+  {
+    "pluginId": "jVb_Designer",
+    "implementationName": "*.jsl",
+    "bundled": false
+  },
+  {
+    "pluginId": "JavaScript",
+    "pluginName": "JavaScript Support",
+    "description": "Provides support for the JavaScript, ActionScript and TypeScript languages",
+    "implementationName": "*.json",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.remoterapp.adbremote.jsonviewer.id",
+    "implementationName": "*.jsonviewer",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.jsp",
+    "pluginName": "Java Server Pages Integration",
+    "description": "Provides editing, code insight and refactoring support for JSP and JSPX files.",
+    "implementationName": "*.jsp",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.jsp",
+    "pluginName": "Java Server Pages Integration",
+    "description": "Provides editing, code insight and refactoring support for JSP and JSPX files.",
+    "implementationName": "*.jspf",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.jsp",
+    "pluginName": "Java Server Pages Integration",
+    "description": "Provides editing, code insight and refactoring support for JSP and JSPX files.",
+    "implementationName": "*.jspx",
+    "bundled": true
+  },
+  {
+    "pluginId": "JSTestDriver Plugin",
+    "pluginName": "JSTestDriver Plugin",
+    "description": "Allows running, debugging JavaScript unit tests and measure test coverage.",
+    "implementationName": "*.jstd",
+    "bundled": true
+  },
+  {
+    "pluginId": "JSTestDriver Plugin",
+    "implementationName": "*.jstd",
+    "bundled": false
+  },
+  {
+    "pluginId": "idea.k",
+    "implementationName": "*.k",
+    "bundled": false
+  },
+  {
+    "pluginId": "idea.k3",
+    "implementationName": "*.k",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.kevoree.idea.plugin",
+    "implementationName": "*.kevs",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin.native.clion",
+    "implementationName": "*.kjsm",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin.native.appcode",
+    "implementationName": "*.kjsm",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin",
+    "implementationName": "*.kjsm",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin.native.clion",
+    "implementationName": "*.knm",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin.native.appcode",
+    "implementationName": "*.knm",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin.native",
+    "implementationName": "*.knm",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.intino.plugin",
+    "implementationName": "*.konos",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin.native.clion",
+    "implementationName": "*.kotlin_builtins",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin.native.appcode",
+    "implementationName": "*.kotlin_builtins",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin",
+    "implementationName": "*.kotlin_builtins",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin",
+    "implementationName": "*.kotlin_class",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin.native.clion",
+    "implementationName": "*.kotlin_metadata",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin.native.appcode",
+    "implementationName": "*.kotlin_metadata",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin",
+    "implementationName": "*.kotlin_metadata",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin.native.clion",
+    "implementationName": "*.kotlin_module",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin.native.appcode",
+    "implementationName": "*.kotlin_module",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin",
+    "implementationName": "*.kotlin_module",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin",
+    "implementationName": "*.kotlin_package",
+    "bundled": false
+  },
+  {
+    "pluginId": "k-infinity",
+    "implementationName": "*.kpath",
+    "bundled": false
+  },
+  {
+    "pluginId": "kos-ksp.idea-plugin",
+    "implementationName": "*.ks",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin.native.clion",
+    "implementationName": "*.kt",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin.native.appcode",
+    "implementationName": "*.kt",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin",
+    "implementationName": "*.kt",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin",
+    "implementationName": "*.ktm",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin.native.clion",
+    "implementationName": "*.kts",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin.native.appcode",
+    "implementationName": "*.kts",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.kotlin",
+    "implementationName": "*.kts",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.github.tinselspoon.intellij.kubernetes",
+    "implementationName": "*.kubernetes",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.labels",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.labels",
+    "bundled": false
+  },
+  {
+    "pluginId": "lasca.intellij.plugin",
+    "implementationName": "*.lasca",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jantvrdik.intellij.latte",
+    "implementationName": "*.latte",
+    "bundled": false
+  },
+  {
+    "pluginId": "edu.umontreal.hatchery",
+    "implementationName": "*.launch",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.kukido.eclipser",
+    "implementationName": "*.launch",
+    "bundled": false
+  },
+  {
+    "pluginId": "edu.umontreal.hatchery",
+    "implementationName": "*.launch.old",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.layout",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.layout",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.majki.intellij.ldapbrowser",
+    "implementationName": "*.ldapnode",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.intino.plugin",
+    "implementationName": "*.legio",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.less",
+    "pluginName": "LESS support",
+    "description": "Provides support for \u003ca href\u003d\"http://lesscss.org/\"\u003eLESS\u003c/a\u003e, a dialect of CSS that extends it with dynamic behavior such as variables,\nmixins, operators and functions.",
+    "implementationName": "*.less",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.letter",
+    "bundled": false
+  },
+  {
+    "pluginId": "Twelf Plugin",
+    "implementationName": "*.lf",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.sireum.intellij",
+    "implementationName": "*.lgk",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.logtalk",
+    "implementationName": "*.lgt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.haskforce",
+    "implementationName": "*.lhs",
+    "bundled": false
+  },
+  {
+    "pluginId": "intellij.haskell",
+    "implementationName": "*.lhs",
+    "bundled": false
+  },
+  {
+    "pluginId": "ideah",
+    "implementationName": "*.lhs",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.dmserver",
+    "pluginName": "dmServer Support",
+    "description": "This plugin supports development of the OSGI (Osmorc) bundles targeting Spring dmServer Runtime.\n      Following features are available:\n      \u003cul\u003e\n        \u003cli\u003eoption on \"Technologies\" page of the module wizard to quickly configure OSGI \u0026 dmServer module\u003c/li\u003e\n        \u003cli\u003eSpring DM OSGI/Bean context XML templates (from \"Technologies\" page or Facet settings)\u003c/li\u003e\n        \u003cli\u003erun configuration for local/remote dmServer\u003c/li\u003e\n        \u003cli\u003ePlatform Archive (PAR) modules (from Facet settings)\u003c/li\u003e\n        \u003cli\u003edmServer specific OSGI framework instance (from OSGI Project / IDE settings)\u003c/li\u003e\n        \u003cli\u003e1.0 / 2.0 specific server configuration, (from Settings / Application servers)\u003c/li\u003e\n        \u003cli\u003eautomatic management of pre-installed server library bundles\u003c/li\u003e\n        \u003cli\u003edownload libraries from SpringSource Bundle Repository\u003c/li\u003e\n        \u003cli\u003edmShell for local server\u0027s -- tool window accessible when server is started\u003c/li\u003e\n      \u003c/ul\u003e\n      \u003cp/\u003e",
+    "implementationName": "*.libd",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.dmserver",
+    "implementationName": "*.libd",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.lice.lang",
+    "implementationName": "*.lice",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.dylanfoundry.deft",
+    "implementationName": "*.lid",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.lift.intellij-lift",
+    "implementationName": "*.lift",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.plopiplop.leekwars",
+    "implementationName": "*.lks",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.alef.vypa",
+    "implementationName": "*.ll",
+    "bundled": false
+  },
+  {
+    "pluginId": "Twelf Plugin",
+    "implementationName": "*.llf",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.ideolog",
+    "implementationName": "*.log",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.alayouni.ansiHighlight",
+    "implementationName": "*.log",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.sireum.intellij",
+    "implementationName": "*.logika",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.logtalk",
+    "implementationName": "*.logtalk",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.siberika.idea.pascal",
+    "implementationName": "*.lpr",
+    "bundled": false
+  },
+  {
+    "pluginId": "lv.modo.livescriptbrains",
+    "implementationName": "*.ls",
+    "bundled": false
+  },
+  {
+    "pluginId": "lsfusion.idea.plugin",
+    "implementationName": "*.lsf",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.textmapper.idea",
+    "implementationName": "*.ltp",
+    "bundled": false
+  },
+  {
+    "pluginId": "Libretto",
+    "implementationName": "*.ltt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.tang",
+    "implementationName": "*.lua",
+    "bundled": false
+  },
+  {
+    "pluginId": "Lua",
+    "implementationName": "*.lua",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.halirutan.mathematica",
+    "implementationName": "*.m",
+    "bundled": false
+  },
+  {
+    "pluginId": "Pythonid",
+    "implementationName": "*.mako",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.dnltsk.mapfileplugin",
+    "implementationName": "*.map",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.concordion.plugin.idea.lang",
+    "implementationName": "*.markdown",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.plugins.markdown",
+    "implementationName": "*.markdown",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.vladsch.idea.multimarkdown",
+    "implementationName": "*.markdown",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.mas",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.matchingRule",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.halirutan.mathematica",
+    "implementationName": "*.mb",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.mc",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.github.liias.monkey",
+    "implementationName": "*.mc",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.plugins.markdown",
+    "implementationName": "*.md",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.vladsch.idea.multimarkdown",
+    "implementationName": "*.md",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.thoughtworks.gauge",
+    "implementationName": "*.md",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.mule.intellij.plugin",
+    "implementationName": "*.mel",
+    "bundled": false
+  },
+  {
+    "pluginId": "Osmorc",
+    "implementationName": "*.MF",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.mi",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.mirah.idea.plugin",
+    "implementationName": "*.mirah",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.vladsch.idea.multimarkdown",
+    "implementationName": "*.mkd",
+    "bundled": false
+  },
+  {
+    "pluginId": "reasonml",
+    "implementationName": "*.ml",
+    "bundled": false
+  },
+  {
+    "pluginId": "reasonml",
+    "implementationName": "*.ml4",
+    "bundled": false
+  },
+  {
+    "pluginId": "reasonml",
+    "implementationName": "*.mli",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.kevoree.modeling.idea.plugin",
+    "implementationName": "*.mm",
+    "bundled": false
+  },
+  {
+    "pluginId": "nb-mind-map-idea",
+    "implementationName": "*.mmd",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "pluginName": "PHP",
+    "description": "PHP 5.3/5.4/5.5 editing and debugging, PHPUnit, Smarty and various frameworks support",
+    "implementationName": "*.module",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "implementationName": "*.module",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.monkeyscriptplugin",
+    "implementationName": "*.monkey",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.mp",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.soywiz.korge.korge-intellij-plugin",
+    "implementationName": "*.mp3",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.cce",
+    "implementationName": "*.mp3",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.cce.appcode",
+    "implementationName": "*.mp3",
+    "bundled": false
+  },
+  {
+    "pluginId": "jetbrains.mps.core",
+    "implementationName": "*.mpb",
+    "bundled": false
+  },
+  {
+    "pluginId": "jetbrains.mps.core",
+    "implementationName": "*.mpl",
+    "bundled": false
+  },
+  {
+    "pluginId": "jetbrains.mps.core",
+    "implementationName": "*.mpr",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.github.mprops.idea",
+    "implementationName": "*.mproperties",
+    "bundled": false
+  },
+  {
+    "pluginId": "jetbrains.mps.core",
+    "implementationName": "*.mps",
+    "bundled": false
+  },
+  {
+    "pluginId": "jetbrains.mps.core",
+    "implementationName": "*.mpsr",
+    "bundled": false
+  },
+  {
+    "pluginId": "ru.investflow.mql",
+    "implementationName": "*.mq4",
+    "bundled": false
+  },
+  {
+    "pluginId": "jetbrains.mps.core",
+    "implementationName": "*.msd",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.halirutan.mathematica",
+    "implementationName": "*.mt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.vladsch.idea.multimarkdown",
+    "implementationName": "*.multimarkdown",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.dmarcotte.handlebars",
+    "implementationName": "*.mustache",
+    "bundled": false
+  },
+  {
+    "pluginId": "repl.simple.mathematica.id",
+    "implementationName": "*.mws",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.flex",
+    "pluginName": "Flash/Flex Support",
+    "description": "Provides integration with the Flex SDK and thus lets you develop content for the various Adobe runtimes. Using this plugin, you can:\u003cbr\u003e\n      - Write, analyze and refactor your ActionScript and MXML code.\u003cbr\u003e\n      - Build applications for the various platforms such as Adobe Flash Player, Adobe AIR and Adobe AIR mobile.\u003cbr\u003e\n      - Run, debug, test, package and deploy your applications.",
+    "implementationName": "*.mxml",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.namedCredential",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.halirutan.mathematica",
+    "implementationName": "*.nb",
+    "bundled": false
+  },
+  {
+    "pluginId": "NEON support",
+    "implementationName": "*.neon",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.sgalinski.typoscript.plugin.id",
+    "implementationName": "*.nf",
+    "bundled": false
+  },
+  {
+    "pluginId": "AngularJS",
+    "implementationName": "*.ng",
+    "bundled": false
+  },
+  {
+    "pluginId": "ideanginx9",
+    "implementationName": "*.nginx",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.deflatedpickle.nim",
+    "implementationName": "*.nim",
+    "bundled": false
+  },
+  {
+    "pluginId": "nim.lang",
+    "implementationName": "*.nim",
+    "bundled": false
+  },
+  {
+    "pluginId": "nix-idea",
+    "implementationName": "*.nix",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.plugins.haxe",
+    "implementationName": "*.nmml",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.plugins.hcl",
+    "implementationName": "*.nomad",
+    "bundled": false
+  },
+  {
+    "pluginId": "NodeJS",
+    "implementationName": "*.npmignore",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jotc.nsis.plugin.nsis",
+    "implementationName": "*.nsh",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.krylysov.nsisplugin",
+    "implementationName": "*.nsh",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jotc.nsis.plugin.nsis",
+    "implementationName": "*.nsi",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.krylysov.nsisplugin",
+    "implementationName": "*.nsi",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.sqide.test",
+    "implementationName": "*.nut",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.android",
+    "pluginName": "Android Support",
+    "description": "Supports development of Open Handset Alliance Android applications with IntelliJ IDEA.",
+    "implementationName": "*.nvg.xml",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.illuminatedcloud2.intellij",
+    "implementationName": "*.object",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.object",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.object",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.objectTranslation",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.objectTranslation",
+    "bundled": false
+  },
+  {
+    "pluginId": "OdpsStudio",
+    "implementationName": "*.odpsql",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.soywiz.korge.korge-intellij-plugin",
+    "implementationName": "*.ogg",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "*.opts",
+    "bundled": false
+  },
+  {
+    "pluginId": "Org4Idea",
+    "implementationName": "*.org",
+    "bundled": false
+  },
+  {
+    "pluginId": "OdpsStudio",
+    "implementationName": "*.osql",
+    "bundled": false
+  },
+  {
+    "pluginId": "Parser for IDEA",
+    "implementationName": "*.p",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.p4.p4plugin",
+    "implementationName": "*.p4",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.gmail.blueboxware.libgdxplugin",
+    "implementationName": "*.pack",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.page",
+    "bundled": false
+  },
+  {
+    "pluginId": "idea.plugins.prado",
+    "implementationName": "*.page",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.page",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud2.intellij",
+    "implementationName": "*.page",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.siberika.idea.pascal",
+    "implementationName": "*.pas",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.moe",
+    "implementationName": "*.pbxproj",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.plugins.postcss",
+    "implementationName": "*.pcss",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.github.bjansen.intellij.pebble",
+    "implementationName": "*.peb",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.permissionset",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.permissionset",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud2.intellij",
+    "implementationName": "*.permissionset",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.soywiz.korge.korge-intellij-plugin",
+    "implementationName": "*.pex",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.plugins.pants",
+    "implementationName": "*.pex",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.ph",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "pluginName": "PHP",
+    "description": "PHP 5.3/5.4/5.5 editing and debugging, PHPUnit, Smarty and various frameworks support",
+    "implementationName": "*.phar",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "implementationName": "*.phar",
+    "bundled": false
+  },
+  {
+    "pluginId": "JProfiler",
+    "implementationName": "*.phd",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "pluginName": "PHP",
+    "description": "PHP 5.3/5.4/5.5 editing and debugging, PHPUnit, Smarty and various frameworks support",
+    "implementationName": "*.php",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "implementationName": "*.php",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "pluginName": "PHP",
+    "description": "PHP 5.3/5.4/5.5 editing and debugging, PHPUnit, Smarty and various frameworks support",
+    "implementationName": "*.php4",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "implementationName": "*.php4",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "pluginName": "PHP",
+    "description": "PHP 5.3/5.4/5.5 editing and debugging, PHPUnit, Smarty and various frameworks support",
+    "implementationName": "*.php5",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "implementationName": "*.php5",
+    "bundled": false
+  },
+  {
+    "pluginId": "cz.jiripudil.intellij.nette.tester",
+    "implementationName": "*.phpt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "pluginName": "PHP",
+    "description": "PHP 5.3/5.4/5.5 editing and debugging, PHPUnit, Smarty and various frameworks support",
+    "implementationName": "*.phtml",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "implementationName": "*.phtml",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.phtml",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.apache.pig.plugin.idea",
+    "implementationName": "*.pig",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.argus.cit.intellij",
+    "implementationName": "*.pilar",
+    "bundled": false
+  },
+  {
+    "pluginId": "SQL",
+    "implementationName": "*.pkb",
+    "bundled": false
+  },
+  {
+    "pluginId": "SQL",
+    "implementationName": "*.pks",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.logtalk",
+    "implementationName": "*.pl",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.pl",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.dmserver",
+    "pluginName": "dmServer Support",
+    "description": "This plugin supports development of the OSGI (Osmorc) bundles targeting Spring dmServer Runtime.\n      Following features are available:\n      \u003cul\u003e\n        \u003cli\u003eoption on \"Technologies\" page of the module wizard to quickly configure OSGI \u0026 dmServer module\u003c/li\u003e\n        \u003cli\u003eSpring DM OSGI/Bean context XML templates (from \"Technologies\" page or Facet settings)\u003c/li\u003e\n        \u003cli\u003erun configuration for local/remote dmServer\u003c/li\u003e\n        \u003cli\u003ePlatform Archive (PAR) modules (from Facet settings)\u003c/li\u003e\n        \u003cli\u003edmServer specific OSGI framework instance (from OSGI Project / IDE settings)\u003c/li\u003e\n        \u003cli\u003e1.0 / 2.0 specific server configuration, (from Settings / Application servers)\u003c/li\u003e\n        \u003cli\u003eautomatic management of pre-installed server library bundles\u003c/li\u003e\n        \u003cli\u003edownload libraries from SpringSource Bundle Repository\u003c/li\u003e\n        \u003cli\u003edmShell for local server\u0027s -- tool window accessible when server is started\u003c/li\u003e\n      \u003c/ul\u003e\n      \u003cp/\u003e",
+    "implementationName": "*.plan",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.dmserver",
+    "implementationName": "*.plan",
+    "bundled": false
+  },
+  {
+    "pluginId": "PlantUML integration",
+    "implementationName": "*.plantuml",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.play",
+    "pluginName": "Playframework Support",
+    "description": "Generic Playframework support",
+    "implementationName": "*.play",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.pm",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.softbank.robot.sdkplugin",
+    "implementationName": "*.pmt",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.localization",
+    "pluginName": "GNU GetText files support (*.po)",
+    "description": "This plugin enables support for GNU GetText files (*.po)",
+    "implementationName": "*.po",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.localization",
+    "implementationName": "*.po",
+    "bundled": false
+  },
+  {
+    "pluginId": "Fantom Support",
+    "implementationName": "*.pod",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.pod",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.idea.maven",
+    "pluginName": "Maven Integration",
+    "description": "Import Maven projects and execute Maven goals",
+    "implementationName": "*.pom",
+    "bundled": true
+  },
+  {
+    "pluginId": "me.piotrbuda.intellij.pony",
+    "implementationName": "*.pony",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.portal",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.postTemplate",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.localization",
+    "pluginName": "GNU GetText files support (*.po)",
+    "description": "This plugin enables support for GNU GetText files (*.po)",
+    "implementationName": "*.pot",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.localization",
+    "implementationName": "*.pot",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.lang.puppet",
+    "pluginName": "Puppet Support",
+    "description": "This plugin provides Puppet language support",
+    "implementationName": "*.pp",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.lang.puppet",
+    "implementationName": "*.pp",
+    "bundled": false
+  },
+  {
+    "pluginId": "Parser for IDEA",
+    "implementationName": "*.pp",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.siberika.idea.pascal",
+    "implementationName": "*.pp",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.siberika.idea.pascal",
+    "implementationName": "*.ppu",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.idea.grammar",
+    "implementationName": "*.preview",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.ky-proj.spjplugin",
+    "implementationName": "*.prj",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.profile",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.profile",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud2.intellij",
+    "implementationName": "*.profile",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.idea.eclipse",
+    "pluginName": "Eclipse Integration",
+    "description": "Provides possibility to import, export and synchronize Eclipse project files",
+    "implementationName": "*.project",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.logtalk",
+    "implementationName": "*.prolog",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.properties",
+    "pluginName": "Properties Support",
+    "description": "This plugin enables smart editing of properties files.",
+    "implementationName": "*.properties",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jodd.idea.props",
+    "implementationName": "*.props",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.protostuff.protostuff-jetbrains-plugin",
+    "implementationName": "*.proto",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.nmatveev.idea-plugin-protobuf",
+    "implementationName": "*.proto",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.plugin.adernov.powershell",
+    "implementationName": "*.ps1",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.plugin.adernov.powershell",
+    "implementationName": "*.psd1",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.bewalt.intellij.plugin.psl",
+    "implementationName": "*.psf",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.plugin.adernov.powershell",
+    "implementationName": "*.psm1",
+    "bundled": false
+  },
+  {
+    "pluginId": "DBN",
+    "implementationName": "*.psql",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.plugin.adernov.powershell",
+    "implementationName": "*.psrc",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.plugin.adernov.powershell",
+    "implementationName": "*.pssc",
+    "bundled": false
+  },
+  {
+    "pluginId": "Pythonid",
+    "implementationName": "*.pt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.plugins.jade",
+    "implementationName": "*.pug",
+    "bundled": false
+  },
+  {
+    "pluginId": "PlantUML integration",
+    "implementationName": "*.puml",
+    "bundled": false
+  },
+  {
+    "pluginId": "net.kenro.ji.jin.intellij.purescript",
+    "implementationName": "*.purs",
+    "bundled": false
+  },
+  {
+    "pluginId": "in.twbs.pure",
+    "implementationName": "*.purs",
+    "bundled": false
+  },
+  {
+    "pluginId": "Pythonid",
+    "implementationName": "*.pxd",
+    "bundled": false
+  },
+  {
+    "pluginId": "Pythonid",
+    "implementationName": "*.pxi",
+    "bundled": false
+  },
+  {
+    "pluginId": "Parser for IDEA",
+    "implementationName": "*.pxml",
+    "bundled": false
+  },
+  {
+    "pluginId": "PythonCore",
+    "implementationName": "*.py",
+    "bundled": false
+  },
+  {
+    "pluginId": "Pythonid",
+    "implementationName": "*.py",
+    "bundled": false
+  },
+  {
+    "pluginId": "Pythonid",
+    "implementationName": "*.pyi",
+    "bundled": false
+  },
+  {
+    "pluginId": "PythonCore",
+    "implementationName": "*.pyi",
+    "bundled": false
+  },
+  {
+    "pluginId": "PythonCore",
+    "implementationName": "*.pyw",
+    "bundled": false
+  },
+  {
+    "pluginId": "Pythonid",
+    "implementationName": "*.pyw",
+    "bundled": false
+  },
+  {
+    "pluginId": "Pythonid",
+    "implementationName": "*.pyx",
+    "bundled": false
+  },
+  {
+    "pluginId": "idea.k",
+    "implementationName": "*.q",
+    "bundled": false
+  },
+  {
+    "pluginId": "OdpsStudio",
+    "implementationName": "*.q",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.softbank.robot.sdkplugin",
+    "implementationName": "*.qianim",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.q-ide",
+    "implementationName": "*.ql",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.javaee",
+    "pluginName": "Java EE: EJB, JPA, Servlets",
+    "description": "Provides support for Servlets, EJB, JPA and other Java EE technologies.",
+    "implementationName": "*.ql",
+    "bundled": true
+  },
+  {
+    "pluginId": "PythonCore",
+    "implementationName": "*.qrc",
+    "bundled": false
+  },
+  {
+    "pluginId": "Pythonid",
+    "implementationName": "*.qrc",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.queue",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.queue",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.quickAction",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.quickAction",
+    "bundled": false
+  },
+  {
+    "pluginId": "Twelf Plugin",
+    "implementationName": "*.quy",
+    "bundled": false
+  },
+  {
+    "pluginId": "R4Intellij",
+    "implementationName": "*.R",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "*.rake",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "*.rake",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.mule.tooling.intellij.raml",
+    "implementationName": "*.raml",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "*.rb",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "*.rb",
+    "bundled": false
+  },
+  {
+    "pluginId": "Randori Compiler",
+    "implementationName": "*.rbl",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "*.rbw",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "*.rbw",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "*.rdoc",
+    "bundled": false
+  },
+  {
+    "pluginId": "reasonml",
+    "implementationName": "*.re",
+    "bundled": false
+  },
+  {
+    "pluginId": "reasonml",
+    "implementationName": "*.rei",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.erlang",
+    "implementationName": "*.rel",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.remoteSite",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.report",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.report",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.reportType",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.reportType",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.codename1.plugin.intellij",
+    "implementationName": "*.res",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.dtforce.resman.plugin",
+    "implementationName": "*.resman",
+    "bundled": false
+  },
+  {
+    "pluginId": "edu.clemson.resolve.jetbrains",
+    "implementationName": "*.resolve",
+    "bundled": false
+  },
+  {
+    "pluginId": "ru.basecode.ide.rest.plugin",
+    "implementationName": "*.rest",
+    "bundled": false
+  },
+  {
+    "pluginId": "ru.fix.completable.reactor.plugin.idea",
+    "implementationName": "*.rg",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.netease.regular",
+    "implementationName": "*.rgl",
+    "bundled": false
+  },
+  {
+    "pluginId": "coop.rchain.lang",
+    "implementationName": "*.rho",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "*.rhtml",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "*.rjs",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.techern.oxidize",
+    "implementationName": "*.rlib",
+    "bundled": false
+  },
+  {
+    "pluginId": "RelaxNG-Support",
+    "implementationName": "*.rnc",
+    "bundled": false
+  },
+  {
+    "pluginId": "amailp.intellij.robot",
+    "implementationName": "*.robot",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.millennialmedia.intellibot",
+    "implementationName": "*.robot",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jivesoftware.robot.intellij.plugin",
+    "implementationName": "*.robot",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.role",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.role",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.spring.roo",
+    "pluginName": "Spring Roo Console",
+    "description": "Allows to run Roo tool from IDE",
+    "implementationName": "*.roo",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.erlang",
+    "implementationName": "*.routes",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.scala",
+    "implementationName": "*.routes",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.scala.play2template",
+    "implementationName": "*.routes",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.techern.oxidize",
+    "implementationName": "*.rs",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.rust.lang",
+    "implementationName": "*.rs",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.android",
+    "pluginName": "Android Support",
+    "description": "Supports development of Open Handset Alliance Android applications with IntelliJ IDEA.",
+    "implementationName": "*.rs",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.android",
+    "pluginName": "Android Support",
+    "description": "Supports development of Open Handset Alliance Android applications with IntelliJ IDEA.",
+    "implementationName": "*.rsh",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.rest",
+    "implementationName": "*.rst",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.rest",
+    "pluginName": "ReStructuredText Support",
+    "description": "This plugin enables support for reStructuredText files (*.rst)",
+    "implementationName": "*.rst",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.wix.react-templates",
+    "implementationName": "*.rt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.lichfaker.plugin.id",
+    "implementationName": "*.rtpl",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "*.ru",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "*.ru",
+    "bundled": false
+  },
+  {
+    "pluginId": "edu.umontreal.hatchery",
+    "implementationName": "*.rviz",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "*.rxml",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.scireum.rythmengine.detector",
+    "implementationName": "*.rythm",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.go",
+    "implementationName": "*.s",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.sass",
+    "pluginName": "SASS support",
+    "description": "SASS language support",
+    "implementationName": "*.sass",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.intellij.scala",
+    "implementationName": "*.sbt",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.scala",
+    "implementationName": "*.sbts",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.scala",
+    "implementationName": "*.sc",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.scala",
+    "implementationName": "*.scala",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.scala.play2template",
+    "implementationName": "*.scala.html",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.scf",
+    "bundled": false
+  },
+  {
+    "pluginId": "schemely",
+    "implementationName": "*.scm",
+    "bundled": false
+  },
+  {
+    "pluginId": "intellij-scheme",
+    "implementationName": "*.scm",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.soywiz.korge.korge-intellij-plugin",
+    "implementationName": "*.scml",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.soywiz.korge.korge-intellij-plugin",
+    "implementationName": "*.scon",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.plugin.applescript",
+    "implementationName": "*.scpt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.hand.hec.aurora.ide.plugin.idea",
+    "implementationName": "*.screen",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.sass",
+    "pluginName": "SASS support",
+    "description": "SASS language support",
+    "implementationName": "*.scss",
+    "bundled": true
+  },
+  {
+    "pluginId": "de.monticore.lang.montisecarc.MontiSecArcLanguagePlugin",
+    "implementationName": "*.secarc",
+    "bundled": false
+  },
+  {
+    "pluginId": "fr.assoba.open.sel.plugin",
+    "implementationName": "*.sel",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.tinygroup.studio.service",
+    "implementationName": "*.service",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.tinygroup.studio.service",
+    "implementationName": "*.service.xml",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.settings",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.settings",
+    "bundled": false
+  },
+  {
+    "pluginId": "cz.ladicek.intellifrog",
+    "implementationName": "*.sf",
+    "bundled": false
+  },
+  {
+    "pluginId": "google-sceneform-tools",
+    "implementationName": "*.sfa",
+    "bundled": false
+  },
+  {
+    "pluginId": "google-sceneform-tools",
+    "implementationName": "*.sfb",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.sflog",
+    "bundled": false
+  },
+  {
+    "pluginId": "BashSupport",
+    "implementationName": "*.sh",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.sharingRules",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.sharingRules",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.sharingSet",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.sharingSet",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.wso2.siddhi",
+    "implementationName": "*.siddhi",
+    "bundled": false
+  },
+  {
+    "pluginId": "Camelry",
+    "implementationName": "*.simple",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.github.tomasmilata.intelliroutes",
+    "implementationName": "*.simple",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.site",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.site",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jspresso.plugin.ijds",
+    "implementationName": "*.sjs",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.slim",
+    "implementationName": "*.slim",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.slim",
+    "pluginName": "Slim",
+    "description": "Slim language support",
+    "implementationName": "*.slim",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.smcplugin.leonid.menshenin.plugin.id",
+    "implementationName": "*.sm",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.snapshot",
+    "bundled": false
+  },
+  {
+    "pluginId": "ActionScript Profiler",
+    "pluginName": "ActionScript Profiler",
+    "description": "The plugin allows you to profile your Flash and Flex applications.\u003cbr\u003e\n  CPU profiling: self and cumulative execution time, caller and callee hierarchy, sorting, navigation to source code and scope filtering.\u003cbr/\u003e\n  Memory profiling\u003cbr/\u003e\n  Please find more details on \u003ca href\u003d\"http://confluence.jetbrains.com/display/IDEADEV/Profiling+Flash+and+Flex+Applications\"\u003eplugin wiki page\u003c/a\u003e.",
+    "implementationName": "*.snapshot",
+    "bundled": true
+  },
+  {
+    "pluginId": "ActionScript Profiler",
+    "implementationName": "*.snapshot",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.github.lizhangqu.intellij.plugin.android.bundle",
+    "implementationName": "*.so",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.soql",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud2.intellij",
+    "implementationName": "*.soql",
+    "bundled": false
+  },
+  {
+    "pluginId": "Non-Dairy Soy Plugin",
+    "implementationName": "*.soy",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.google.bamboo.id",
+    "implementationName": "*.soy",
+    "bundled": false
+  },
+  {
+    "pluginId": "sparql4idea",
+    "implementationName": "*.sparql",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.thoughtworks.gauge",
+    "implementationName": "*.spec",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.ky-proj.spjplugin",
+    "implementationName": "*.spj",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.squareup.sqldelight",
+    "implementationName": "*.sq",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.kaylerrenslow.plugin.armaplugin.id",
+    "implementationName": "*.sqf",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.database",
+    "pluginName": "SQL support",
+    "description": "SQL language support: syntax highlighting, code completion, coding assistance etc.",
+    "implementationName": "*.sql",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.sql",
+    "pluginName": "SQL support",
+    "description": "SQL language support: syntax highlighting, code completion, coding assistance etc.",
+    "implementationName": "*.sql",
+    "bundled": true
+  },
+  {
+    "pluginId": "OdpsStudio",
+    "implementationName": "*.sql",
+    "bundled": false
+  },
+  {
+    "pluginId": "DBN",
+    "implementationName": "*.sql",
+    "bundled": false
+  },
+  {
+    "pluginId": "SQL",
+    "implementationName": "*.sql",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.squareup.sqldelight",
+    "implementationName": "*.sqm",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.plugins.ceylon.ide",
+    "implementationName": "*.src",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.google.idea.bazel.ijwb",
+    "implementationName": "*.srcjar",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.google.idea.bazel.aswb",
+    "implementationName": "*.srcjar",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.google.idea.bazel.clwb",
+    "implementationName": "*.srcjar",
+    "bundled": false
+  },
+  {
+    "pluginId": "schemely",
+    "implementationName": "*.ss",
+    "bundled": false
+  },
+  {
+    "pluginId": "intellij-scheme",
+    "implementationName": "*.ss",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.raket.silverstripe",
+    "implementationName": "*.ss",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.scala",
+    "implementationName": "*.ssp",
+    "bundled": false
+  },
+  {
+    "pluginId": "Redline Smalltalk",
+    "implementationName": "*.st",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.intino.tara",
+    "implementationName": "*.stash",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.antlr.jetbrains.st4plugin",
+    "implementationName": "*.stg",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.stoneplugin.unique.plugin.id",
+    "implementationName": "*.stone",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.bigtesting.jbehave.buddy",
+    "implementationName": "*.story",
+    "bundled": false
+  },
+  {
+    "pluginId": "jbehave-syntax-support",
+    "implementationName": "*.story",
+    "bundled": false
+  },
+  {
+    "pluginId": "jbehave-support-plugin",
+    "implementationName": "*.story",
+    "bundled": false
+  },
+  {
+    "pluginId": "IntelliJBehave",
+    "implementationName": "*.story",
+    "bundled": false
+  },
+  {
+    "pluginId": "nl.rubensten.texifyidea",
+    "implementationName": "*.sty",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.stylus",
+    "pluginName": "Stylus support",
+    "description": "Stylus language support",
+    "implementationName": "*.styl",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.stylus",
+    "implementationName": "*.styl",
+    "bundled": false
+  },
+  {
+    "pluginId": "uk.co.itmoore.intellisubsteps",
+    "implementationName": "*.substeps",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.slalom.idea.aws.avs.sutr",
+    "implementationName": "*.sutr",
+    "bundled": false
+  },
+  {
+    "pluginId": "studio.edaphic.sv",
+    "implementationName": "*.sv",
+    "bundled": false
+  },
+  {
+    "pluginId": "studio.edaphic.sv",
+    "implementationName": "*.sva",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.escalon.idea.plugin.svelte",
+    "implementationName": "*.svelte",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.moxun.plugin.s2v",
+    "implementationName": "*.svg",
+    "bundled": false
+  },
+  {
+    "pluginId": "studio.edaphic.sv",
+    "implementationName": "*.svh",
+    "bundled": false
+  },
+  {
+    "pluginId": "studio.edaphic.sv",
+    "implementationName": "*.svp",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.soywiz.korge.korge-intellij-plugin",
+    "implementationName": "*.swf",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.flex",
+    "pluginName": "Flash/Flex Support",
+    "description": "Provides integration with the Flex SDK and thus lets you develop content for the various Adobe runtimes. Using this plugin, you can:\u003cbr\u003e\n      - Write, analyze and refactor your ActionScript and MXML code.\u003cbr\u003e\n      - Build applications for the various platforms such as Adobe Flash Player, Adobe AIR and Adobe AIR mobile.\u003cbr\u003e\n      - Run, debug, test, package and deploy your applications.",
+    "implementationName": "*.swf",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.clion-swift",
+    "implementationName": "*.swift",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.synonymDictionary",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.t",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.sgalinski.typoscript.plugin.id",
+    "implementationName": "*.t3s",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.tab",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.tab",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.jsp",
+    "pluginName": "Java Server Pages Integration",
+    "description": "Provides editing, code insight and refactoring support for JSP and JSPX files.",
+    "implementationName": "*.tag",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.jsp",
+    "pluginName": "Java Server Pages Integration",
+    "description": "Provides editing, code insight and refactoring support for JSP and JSPX files.",
+    "implementationName": "*.tagf",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.jsp",
+    "pluginName": "Java Server Pages Integration",
+    "description": "Provides editing, code insight and refactoring support for JSP and JSPX files.",
+    "implementationName": "*.tagx",
+    "bundled": true
+  },
+  {
+    "pluginId": "io.intino.tara",
+    "implementationName": "*.tara",
+    "bundled": false
+  },
+  {
+    "pluginId": "tea",
+    "implementationName": "*.tea",
+    "bundled": false
+  },
+  {
+    "pluginId": "AWSCloudFormation",
+    "implementationName": "*.template",
+    "bundled": false
+  },
+  {
+    "pluginId": "GLSL",
+    "implementationName": "*.tesc",
+    "bundled": false
+  },
+  {
+    "pluginId": "GLSL",
+    "implementationName": "*.tese",
+    "bundled": false
+  },
+  {
+    "pluginId": "edu.umontreal.hatchery",
+    "implementationName": "*.test",
+    "bundled": false
+  },
+  {
+    "pluginId": "mobi.hsz.idea.latex",
+    "implementationName": "*.tex",
+    "bundled": false
+  },
+  {
+    "pluginId": "nl.rubensten.texifyidea",
+    "implementationName": "*.tex",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.plugins.hcl",
+    "implementationName": "*.tf",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.plugins.hcl",
+    "implementationName": "*.tfvars",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "*.thor",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "*.thor",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.plugins.thrift",
+    "implementationName": "*.thrift",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.thtml",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.plugins.tickscript",
+    "implementationName": "*.tick",
+    "bundled": false
+  },
+  {
+    "pluginId": "net.pavelk.tlschema.colorer",
+    "implementationName": "*.tl",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.linkedin.intellij.dust",
+    "implementationName": "*.tl",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.textmapper.idea",
+    "implementationName": "*.tm",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jspresso.plugin.tmar",
+    "implementationName": "*.tmar",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.tapestry",
+    "pluginName": "Tapestry support",
+    "description": "Provides Tapestry 5.1 integration.",
+    "implementationName": "*.tml",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.basisjs",
+    "implementationName": "*.tmpl",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.go",
+    "implementationName": "*.tmpl",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.soywiz.korge.korge-intellij-plugin",
+    "implementationName": "*.tmx",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.tokens",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud2.intellij",
+    "implementationName": "*.tokens",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.toml.lang",
+    "implementationName": "*.toml",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.softbank.robot.sdkplugin",
+    "implementationName": "*.top",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "pluginName": "PHP",
+    "description": "PHP 5.3/5.4/5.5 editing and debugging, PHPUnit, Smarty and various frameworks support",
+    "implementationName": "*.tpl",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "implementationName": "*.tpl",
+    "bundled": false
+  },
+  {
+    "pluginId": "idea.plugins.prado",
+    "implementationName": "*.tpl",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.translation",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.translation",
+    "bundled": false
+  },
+  {
+    "pluginId": "ru.hyoo.jin.tree",
+    "implementationName": "*.tree",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.trigger",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.trigger",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud2.intellij",
+    "implementationName": "*.trigger",
+    "bundled": false
+  },
+  {
+    "pluginId": "JavaScript",
+    "pluginName": "JavaScript Support",
+    "description": "Provides support for the JavaScript, ActionScript and TypeScript languages",
+    "implementationName": "*.ts",
+    "bundled": true
+  },
+  {
+    "pluginId": "de.sgalinski.typoscript.plugin.id",
+    "implementationName": "*.ts",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.typoscript",
+    "implementationName": "*.ts",
+    "bundled": false
+  },
+  {
+    "pluginId": "vette.neos",
+    "implementationName": "*.ts2",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.sgalinski.typoscript.plugin.id",
+    "implementationName": "*.ts2",
+    "bundled": false
+  },
+  {
+    "pluginId": "be.programaths.idea.plugins.editors.tss",
+    "implementationName": "*.tss",
+    "bundled": false
+  },
+  {
+    "pluginId": "net.seesharpsoft.intellij.plugins.csv",
+    "implementationName": "*.tsv",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.tt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.tt2",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "implementationName": "*.twig",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.twig",
+    "implementationName": "*.twig",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.sgalinski.typoscript.plugin.id",
+    "implementationName": "*.typoscript",
+    "bundled": false
+  },
+  {
+    "pluginId": "PythonCore",
+    "implementationName": "*.ui",
+    "bundled": false
+  },
+  {
+    "pluginId": "Pythonid",
+    "implementationName": "*.ui",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.uiplugin",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.diagram",
+    "pluginName": "UML Support",
+    "description": "Support for diagrams",
+    "implementationName": "*.uml",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.slalom.idea.aws.avs.sutr",
+    "implementationName": "*.utr",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.hapjs.tools.plugin.idea.hap-plugin",
+    "implementationName": "*.ux",
+    "bundled": false
+  },
+  {
+    "pluginId": "studio.edaphic.sv",
+    "implementationName": "*.v",
+    "bundled": false
+  },
+  {
+    "pluginId": "rocks.blackcat.vcl",
+    "implementationName": "*.VCL",
+    "bundled": false
+  },
+  {
+    "pluginId": "io.v.vdl",
+    "implementationName": "*.vdl",
+    "bundled": false
+  },
+  {
+    "pluginId": "GLSL",
+    "implementationName": "*.vert",
+    "bundled": false
+  },
+  {
+    "pluginId": "studio.edaphic.sv",
+    "implementationName": "*.vh",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.activemesa.hdline",
+    "implementationName": "*.vhd",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.victorsaar.intellij.aem",
+    "implementationName": "*.vlt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.velocity",
+    "pluginName": "Velocity support",
+    "description": "Provides syntax and error highlighting, smart editing and inspections for the Velocity template language.",
+    "implementationName": "*.vm",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.velocity",
+    "pluginName": "Velocity support",
+    "description": "Provides syntax and error highlighting, smart editing and inspections for the Velocity template language.",
+    "implementationName": "*.vsl",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.vue",
+    "implementationName": "*.vue",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.restWebServices",
+    "pluginName": "REST WebServices",
+    "implementationName": "*.wadl",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.soywiz.korge.korge-intellij-plugin",
+    "implementationName": "*.wav",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.cce",
+    "implementationName": "*.wav",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.cce.appcode",
+    "implementationName": "*.wav",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.broadinstitute.winstanley",
+    "implementationName": "*.wdl",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.taobao.weex.lang",
+    "implementationName": "*.we",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.weex.darin",
+    "implementationName": "*.we",
+    "bundled": false
+  },
+  {
+    "pluginId": "Pythonid",
+    "implementationName": "*.web2py",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.weblink",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.mule.tooling.intellij.dataweave",
+    "implementationName": "*.wev",
+    "bundled": false
+  },
+  {
+    "pluginId": "FitNesse",
+    "implementationName": "*.wiki",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.github.kassak.geo-support",
+    "implementationName": "*.wkt",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.halirutan.mathematica",
+    "implementationName": "*.wl",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.halirutan.mathematica",
+    "implementationName": "*.wlt",
+    "bundled": false
+  },
+  {
+    "pluginId": "Lua",
+    "implementationName": "*.wlua",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.workflow",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jedide.apex",
+    "implementationName": "*.workflow",
+    "bundled": false
+  },
+  {
+    "pluginId": "WebServicesPlugin",
+    "pluginName": "WebServicesPlugin",
+    "description": "Web services support",
+    "implementationName": "*.wsdd",
+    "bundled": true
+  },
+  {
+    "pluginId": "Java EE: Web Services (JAX-WS)",
+    "pluginName": "Java EE: Web Services (JAX-WS)",
+    "description": "Web services support",
+    "implementationName": "*.wsdd",
+    "bundled": true
+  },
+  {
+    "pluginId": "edu.umontreal.hatchery",
+    "implementationName": "*.xacro",
+    "bundled": false
+  },
+  {
+    "pluginId": "WebServicesPlugin",
+    "pluginName": "WebServicesPlugin",
+    "description": "Web services support",
+    "implementationName": "*.xjb",
+    "bundled": true
+  },
+  {
+    "pluginId": "Java EE: Web Services (JAX-WS)",
+    "pluginName": "Java EE: Web Services (JAX-WS)",
+    "description": "Web services support",
+    "implementationName": "*.xjb",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.jsp",
+    "pluginName": "Java Server Pages Integration",
+    "description": "Provides editing, code insight and refactoring support for JSP and JSPX files.",
+    "implementationName": "*.xjsp",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.cedricziel.idea.xliff",
+    "implementationName": "*.xlf",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.illuminatedcloud.intellij",
+    "implementationName": "*.xorghub",
+    "bundled": false
+  },
+  {
+    "pluginId": "uk.co.reecedunn.intellij.plugin.xquery",
+    "implementationName": "*.xq",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.xquery",
+    "implementationName": "*.xq",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.xquery.marklogic",
+    "implementationName": "*.xq",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.xquery.marklogic",
+    "implementationName": "*.xqi",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.xquery",
+    "implementationName": "*.xqi",
+    "bundled": false
+  },
+  {
+    "pluginId": "uk.co.reecedunn.intellij.plugin.xquery",
+    "implementationName": "*.xql",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.xquery.marklogic",
+    "implementationName": "*.xql",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.xquery",
+    "implementationName": "*.xql",
+    "bundled": false
+  },
+  {
+    "pluginId": "uk.co.reecedunn.intellij.plugin.xquery",
+    "implementationName": "*.xqm",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.xquery",
+    "implementationName": "*.xqm",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.xquery.marklogic",
+    "implementationName": "*.xqm",
+    "bundled": false
+  },
+  {
+    "pluginId": "uk.co.reecedunn.intellij.plugin.xquery",
+    "implementationName": "*.xqu",
+    "bundled": false
+  },
+  {
+    "pluginId": "uk.co.reecedunn.intellij.plugin.xquery",
+    "implementationName": "*.xquery",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.xquery",
+    "implementationName": "*.xquery",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.xquery.marklogic",
+    "implementationName": "*.xquery",
+    "bundled": false
+  },
+  {
+    "pluginId": "uk.co.reecedunn.intellij.plugin.xquery",
+    "implementationName": "*.xqws",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.xquery",
+    "implementationName": "*.xqws",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.xquery.marklogic",
+    "implementationName": "*.xqws",
+    "bundled": false
+  },
+  {
+    "pluginId": "uk.co.reecedunn.intellij.plugin.xquery",
+    "implementationName": "*.xqy",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.xquery",
+    "implementationName": "*.xqy",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.xquery.marklogic",
+    "implementationName": "*.xqy",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "*.xs",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.eclipse.xtend.idea",
+    "implementationName": "*.xtend",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.eclipse.xtext.xtext.idea",
+    "implementationName": "*.xtext",
+    "bundled": false
+  },
+  {
+    "pluginId": "SnakeYAML plugin",
+    "implementationName": "*.yaml",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.yaml",
+    "pluginName": "YAML",
+    "description": "YAML support",
+    "implementationName": "*.yaml",
+    "bundled": true
+  },
+  {
+    "pluginId": "YAML/Ansible support",
+    "implementationName": "*.yaml",
+    "bundled": false
+  },
+  {
+    "pluginId": "SnakeYAML plugin",
+    "implementationName": "*.yml",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.yaml",
+    "pluginName": "YAML",
+    "description": "YAML support",
+    "implementationName": "*.yml",
+    "bundled": true
+  },
+  {
+    "pluginId": "YAML/Ansible support",
+    "implementationName": "*.yml",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.tasks",
+    "pluginName": "Task Management",
+    "description": "Enables task and context management",
+    "implementationName": "*.youtrack",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.github.jk1.ytplugin",
+    "implementationName": "*.youtrack",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.zephir",
+    "implementationName": "*.zep",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.ziglang",
+    "implementationName": "*.zig",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.github.b3er.idea.plugins.arc.browser",
+    "implementationName": "*.zip",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.zkoss.zkidea",
+    "implementationName": "*.zul",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.sgalinski.typoscript.plugin.id",
+    "implementationName": "*?constants.txt",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.sgalinski.typoscript.plugin.id",
+    "implementationName": "*?setup.txt",
+    "bundled": false
+  },
+  {
+    "pluginId": "Dart",
+    "implementationName": ".analysis_options",
+    "bundled": false
+  },
+  {
+    "pluginId": "ru.adelf.idea.dotenv",
+    "implementationName": ".env",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.wix.eslint",
+    "implementationName": ".eslintrc",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.plugins.ini4idea",
+    "implementationName": ".flowconfig",
+    "bundled": false
+  },
+  {
+    "pluginId": "Git4Idea",
+    "pluginName": "Git Integration",
+    "description": "Provides integration with Git version control system",
+    "implementationName": ".gitignore",
+    "bundled": true
+  },
+  {
+    "pluginId": "Git4Idea",
+    "pluginName": "Git Integration",
+    "description": "Provides integration with Git version control system",
+    "implementationName": ".gitmodules",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.apacheConfig",
+    "pluginName": "Apache config (.htaccess) support",
+    "description": "Apache config (.htaccess) support",
+    "implementationName": ".htaccess",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.apacheConfig",
+    "implementationName": ".htaccess",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.wix.jscs",
+    "implementationName": ".jscsrc",
+    "bundled": false
+  },
+  {
+    "pluginId": "jetbrains.mps.core",
+    "implementationName": ".model",
+    "bundled": false
+  },
+  {
+    "pluginId": "intellij.prettierJS",
+    "implementationName": ".prettierrc",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": ".rbenv-gemsets",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": ".ruby-gemset",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": ".rvmrc",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.stylint",
+    "implementationName": ".stylintrc",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.sgalinski.typoscript.plugin.id",
+    "implementationName": "?*constants.txt",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.sgalinski.typoscript.plugin.id",
+    "implementationName": "?*setup.txt",
+    "bundled": false
+  },
+  {
+    "pluginId": "intellij.buck.plugin",
+    "implementationName": "BUCK",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.google.idea.bazel.ijwb",
+    "implementationName": "BUILD",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.google.idea.bazel.aswb",
+    "implementationName": "BUILD",
+    "bundled": false
+  },
+  {
+    "pluginId": "PythonCore",
+    "implementationName": "buildout.cfg",
+    "bundled": false
+  },
+  {
+    "pluginId": "Pythonid",
+    "implementationName": "buildout.cfg",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.coffeescript",
+    "pluginName": "CoffeeScript",
+    "description": "Plugin for CoffeeScript language support",
+    "implementationName": "Cakefile",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "capfile",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "capfile",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.toml.lang",
+    "implementationName": "Cargo.lock",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.techern.oxidize",
+    "implementationName": "Cargo.toml",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "implementationName": "composer.lock",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.sgalinski.typoscript.plugin.id",
+    "implementationName": "constants.txt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.typoscript",
+    "implementationName": "constants.txt",
+    "bundled": false
+  },
+  {
+    "pluginId": "FitNesse",
+    "implementationName": "content.txt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.perl5",
+    "implementationName": "cpanfile",
+    "bundled": false
+  },
+  {
+    "pluginId": "dal-mpe",
+    "implementationName": "cpp.dal",
+    "bundled": false
+  },
+  {
+    "pluginId": "dal-mpe",
+    "implementationName": "cpp.dalmpe",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.emblem.unique.plugin.idid234234",
+    "implementationName": "createFileType",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.makeapp.cocoseditor",
+    "implementationName": "createFileTypes",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.makeapp.cocos2dx",
+    "implementationName": "createFileTypes",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "cucumber",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "cucumber",
+    "bundled": false
+  },
+  {
+    "pluginId": "Docker",
+    "implementationName": "Dockerfile",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.wix.eslint",
+    "implementationName": "eslint.json",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.sgalinski.typoscript.plugin.id",
+    "implementationName": "ext_conf_template.txt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.typoscript",
+    "implementationName": "ext_conf_template.txt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.typoscript",
+    "implementationName": "ext_typoscript_constants.txt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.typoscript",
+    "implementationName": "ext_typoscript_setup.txt",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.sgalinski.typoscript.plugin.id",
+    "implementationName": "ext_typoscript_setup.txt",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "gemfile",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "gemfile",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "gemfile.lock",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "gemfile.lock",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.toml.lang",
+    "implementationName": "Gopkg.lock",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "guardfile",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "guardfile",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "isolate",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "isolate",
+    "bundled": false
+  },
+  {
+    "pluginId": "dal-mpe",
+    "implementationName": "java.dal",
+    "bundled": false
+  },
+  {
+    "pluginId": "dal-mpe",
+    "implementationName": "java.dalmpe",
+    "bundled": false
+  },
+  {
+    "pluginId": "reasonml",
+    "implementationName": "jbuild",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.oliverlockwood.plugins.jenkinsfile",
+    "implementationName": "Jenkinsfile",
+    "bundled": false
+  },
+  {
+    "pluginId": "JavaScript",
+    "pluginName": "JavaScript Support",
+    "description": "Provides support for the JavaScript, ActionScript and TypeScript languages",
+    "implementationName": "jshint.json",
+    "bundled": true
+  },
+  {
+    "pluginId": "JSTestDriver Plugin",
+    "implementationName": "jsTestDriver.conf",
+    "bundled": false
+  },
+  {
+    "pluginId": "Lombook Plugin",
+    "implementationName": "lombok.config",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.play",
+    "pluginName": "Playframework Support",
+    "description": "Generic Playframework support",
+    "implementationName": "messages",
+    "bundled": true
+  },
+  {
+    "pluginId": "lsfusion.idea.plugin",
+    "implementationName": "migration.script",
+    "bundled": false
+  },
+  {
+    "pluginId": "dal-mpe",
+    "implementationName": "objc.dal",
+    "bundled": false
+  },
+  {
+    "pluginId": "dal-mpe",
+    "implementationName": "objc.dalmpe",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.intellij.groovy",
+    "pluginName": "Groovy",
+    "description": "Plugin for Groovy language support, including Groovy++, Grape, Gant and Griffon",
+    "implementationName": "org.codehaus.groovy.runtime.ExtensionModule",
+    "bundled": true
+  },
+  {
+    "pluginId": "dal-mpe",
+    "implementationName": "php.dal",
+    "bundled": false
+  },
+  {
+    "pluginId": "dal-mpe",
+    "implementationName": "php.dalmpe",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "pluginName": "PHP",
+    "description": "PHP 5.3/5.4/5.5 editing and debugging, PHPUnit, Smarty and various frameworks support",
+    "implementationName": "phpunit.xml.dist",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.jetbrains.php",
+    "implementationName": "phpunit.xml.dist",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.toml.lang",
+    "implementationName": "Pipfile",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "Puppetfile",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "Puppetfile.lock",
+    "bundled": false
+  },
+  {
+    "pluginId": "dal-mpe",
+    "implementationName": "python.dal",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "rails",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "rails",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "rake",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "rake",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "rakefile",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "rakefile",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "rcov",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "rcov",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "readme",
+    "bundled": false
+  },
+  {
+    "pluginId": "dal-mpe",
+    "implementationName": "ruby.dal",
+    "bundled": false
+  },
+  {
+    "pluginId": "de.sgalinski.typoscript.plugin.id",
+    "implementationName": "setup.txt",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.jetbrains.typoscript",
+    "implementationName": "setup.txt",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "spec",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "spec",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "spork",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "spork",
+    "bundled": false
+  },
+  {
+    "pluginId": "com.intellij.spring",
+    "pluginName": "Spring Support",
+    "description": "Spring Support",
+    "implementationName": "spring.handlers",
+    "bundled": true
+  },
+  {
+    "pluginId": "com.intellij.spring",
+    "pluginName": "Spring Support",
+    "description": "Spring Support",
+    "implementationName": "spring.schemas",
+    "bundled": true
+  },
+  {
+    "pluginId": "AngularJS",
+    "implementationName": "tsconfig.app.json",
+    "bundled": false
+  },
+  {
+    "pluginId": "AngularJS",
+    "implementationName": "tsconfig.e2e.json",
+    "bundled": false
+  },
+  {
+    "pluginId": "AngularJS",
+    "implementationName": "tsconfig.spec.json",
+    "bundled": false
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "pluginName": "Ruby",
+    "description": "The Ruby plug-in makes IntelliJ IDEA the smart Ruby and Ruby on Rails editor, ideal for the full cycle application development.\nResources:\u003cbr\u003e\n\u003ca href\u003d\"http://blogs.jetbrains.com/ruby\"\u003eRubyMine and Ruby plugin blog\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby\"\u003eDiscussion forum\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://youtrack.jetbrains.com/issues/RUBY\"\u003eIssue tracker\u003c/a\u003e\u003cbr\u003e\n\u003ca href\u003d\"http://devnet.jetbrains.com/community/ruby?view\u003ddocuments\"\u003eTroubleshooting and FAQs\u003c/a\u003e",
+    "implementationName": "vagrantfile",
+    "bundled": true
+  },
+  {
+    "pluginId": "org.jetbrains.plugins.ruby",
+    "implementationName": "vagrantfile",
+    "bundled": false
+  }
+]
