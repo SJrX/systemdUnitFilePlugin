@@ -157,6 +157,62 @@ public class UnitFileParserTest extends ParsingTestCase {
     assertSameLines(expectedPsiTree, parseTree);
   }
 
+  public void testLineContinuationWithTabInlineSimple() {
+    /*
+     * Fixture Setup
+     */
+    String sourceCode = "[One]\n"
+                        + "Key=Val\tue \\\n"
+                        + "Hello";
+    
+    String expectedPsiTree = "unit configuration file (systemd)(0,24)\n"
+                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,24)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
+                             + "    PsiWhiteSpace('\\n')(5,6)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(6,24)\n"
+                             + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
+                             + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
+                             + "      PsiElement(UnitFileTokenType{VALUE})('Val\\tue \\\\nHello')(10,24)";
+    /*
+     * Exercise SUT
+     */
+    
+    String parseTree = convertSourceToParseTree(sourceCode);
+    
+    /*
+     * Verification
+     */
+    assertSameLines(expectedPsiTree, parseTree);
+  }
+  
+  public void testLineContinuationWithWhitespaceStartingNextLine() {
+    /*
+     * Fixture Setup
+     */
+    String sourceCode = "[One]\n"
+                        + "Key=Value \\\n"
+                        + "\tHello";
+    
+    String expectedPsiTree = "unit configuration file (systemd)(0,24)\n"
+                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,24)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
+                             + "    PsiWhiteSpace('\\n')(5,6)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(6,24)\n"
+                             + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
+                             + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
+                             + "      PsiElement(UnitFileTokenType{VALUE})('Value \\\\n\\tHello')(10,24)";
+    /*
+     * Exercise SUT
+     */
+    
+    String parseTree = convertSourceToParseTree(sourceCode);
+    
+    /*
+     * Verification
+     */
+    assertSameLines(expectedPsiTree, parseTree);
+  }
+
 
   public void testLineContinuationWithKeys() {
     /*
