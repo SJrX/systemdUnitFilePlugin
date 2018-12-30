@@ -722,4 +722,24 @@ public class UnknownKeyInSectionInspectionTest extends AbstractUnitFileTest {
 
     assertEquals("BusName", highlightElement.getText());
   }
+  
+  public void testSomeNewKeysFromSystemdV240HasNoWarnings() {
+    // Fixture Setup
+    String file = "[Unit]\n"
+                  + "FailureActionExitStatus=249\n"
+                  + "[Service]\n"
+                  + "Type=exec\n"
+                  + "MemoryMin=2549M\n"
+                  + "LogRateLimitIntervalSec=152";
+  
+    enableInspection(UnknownKeyInSectionInspection.class);
+    setupFileInEditor("systemd-v240-smoke-test.service", file);
+  
+    // Exercise SUT
+    List<HighlightInfo> highlights = myFixture.doHighlighting();
+  
+    // Verification
+    assertEmpty(highlights);
+    
+  }
 }
