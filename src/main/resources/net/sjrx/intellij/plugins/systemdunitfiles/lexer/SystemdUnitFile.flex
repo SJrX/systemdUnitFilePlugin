@@ -35,8 +35,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeH
 %eof}
 %public
 
-
-// New Line Character
+// New Line Character (See JFlex manual)
 CRLF=\R
 
 // White space
@@ -60,7 +59,7 @@ INCOMPLETE_SECTION_HEADER = \[[^\]\n]*
 KEY_CHARACTER=[^=\ \n\t\f\\] | "\\ "
 
 // First value doesn't allow spaces
-VALUE_CHARACTER=[^\n\t\f\\] | "\\"{CRLF} | "\\".
+VALUE_CHARACTER=[^\n\f\\] | "\\"{CRLF} | "\\".
 
 // Comments can start with either ; or a #
 COMMENT=("#"|";")[^\n]*
@@ -89,7 +88,7 @@ SEPARATOR=[=]
 
 <WAITING_FOR_SEPARATOR> {SAME_LINE_WHITESPACE}*{SEPARATOR}{SAME_LINE_WHITESPACE}* { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR; }
 
-// Pull a value character or really any character and mark it as it's value, this is really a hack :(
+// Pull a value character or really any character and mark it as its value, this is really a hack :(
 <WAITING_FOR_VALUE> ({VALUE_CHARACTER}+|[^])   { yybegin(IN_SECTION); return UnitFileElementTypeHolder.VALUE; }
 
 <YYINITIAL, IN_SECTION>({CRLF}|{WHITE_SPACE})+                  { return TokenType.WHITE_SPACE; }
