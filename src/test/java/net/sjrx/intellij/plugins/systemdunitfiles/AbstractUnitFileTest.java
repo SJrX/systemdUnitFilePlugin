@@ -41,7 +41,11 @@ public abstract class AbstractUnitFileTest extends LightPlatformCodeInsightFixtu
     return getAllElementsByElementType(psiFile, UnitFileElementTypeHolder.SEPARATOR);
   }
   
-  protected List<PsiElement> getAllValuesInFile(PsiFile psiFile) {
+  protected List<PsiElement> getAllContinuingValuesInFile(PsiFile psiFile) {
+    return getAllElementsByElementType(psiFile, UnitFileElementTypeHolder.CONTINUING_VALUE);
+  }
+  
+  protected List<PsiElement> getAllCompletedValuesInFile(PsiFile psiFile) {
     return getAllElementsByElementType(psiFile, UnitFileElementTypeHolder.COMPLETED_VALUE);
   }
 

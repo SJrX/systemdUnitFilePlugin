@@ -37,7 +37,7 @@ public class InvalidValueInspection extends LocalInspectionTool {
       for (final UnitFilePropertyType keyAndValueProperty : keyAndValuePropertiesInSection) {
   
         String key = keyAndValueProperty.getKey();
-        String value = keyAndValueProperty.getValue();
+        String value = keyAndValueProperty.getValueText();
   
         if (value == null) {
           continue;

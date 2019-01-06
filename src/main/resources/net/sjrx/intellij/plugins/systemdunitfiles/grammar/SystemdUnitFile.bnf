@@ -14,6 +14,7 @@
 
   extends("section_groups") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType"
   extends("property") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType"
+  extends("value") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileValueType"
 }
 
 unitFile ::= (comment_|crlf_)* section_groups*
@@ -22,9 +23,9 @@ section_groups ::= section_ line_items_* {name="section header"}
 
 private line_items_ ::= ((property crlf_?)|(comment_ crlf_?)|crlf_)
 
-property ::= key_ separator_ value_? { pin=1 }
+property ::= key_ separator_ value? { pin=1 }
 
-private value_ ::= (CONTINUING_VALUE| comment_ )* COMPLETED_VALUE
+value ::= (CONTINUING_VALUE| comment_ )* COMPLETED_VALUE
 //private value_ ::= CONTINUING_VALUE CRLF COMMENT CRLF COMPLETED_VALUE
 
 // Single rules for tokens so that I can alias them for better error handling shown above.

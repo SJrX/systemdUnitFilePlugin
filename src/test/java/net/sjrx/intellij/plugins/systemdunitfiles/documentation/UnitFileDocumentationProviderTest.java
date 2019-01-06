@@ -215,7 +215,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
 
   }
   
-  public void testGenerateDocForValueOfKnownKeyReturnsSomeValidText() {
+  public void testGenerateDocForCompletedValueOfKnownKeyReturnsSomeValidText() {
     // Fixture Setup
     String file = "[Unit]\n"
                   + "Documentation=http://www.google.com";
@@ -223,7 +223,64 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     PsiFile psiFile = setupFileInEditor("file.service", file);
     
     // Exercise SUT
-    PsiElement documentationValue = getAllValuesInFile(psiFile).get(0);
+    PsiElement documentationValue = getAllCompletedValuesInFile(psiFile).get(0);
+    
+    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
+    
+    String doc = sut.generateDoc(documentationValue, documentationValue);
+    
+    // Verification
+    assertNotNull(doc);
+    assertTrue((doc.length() > 0));
+  }
+  
+  public void testGenerateDocForCompletedValueOfUnknownSectionReturnsNull() {
+    // Fixture Setup
+    String file = "[X-Unit]\n"
+                  + "Documentation=http://www.google.com";
+    
+    PsiFile psiFile = setupFileInEditor("file.service", file);
+    
+    // Exercise SUT
+    PsiElement documentationValue = getAllCompletedValuesInFile(psiFile).get(0);
+    
+    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
+    
+    String doc = sut.generateDoc(documentationValue, documentationValue);
+    
+    // Verification
+    assertNull(doc);
+  }
+  
+  
+  public void testGenerateDocForCompletedValueOfUnknownKeyReturnsNull() {
+    // Fixture Setup
+    String file = "[Unit]\n"
+                  + "HelpPage=http://www.google.com";
+    
+    PsiFile psiFile = setupFileInEditor("file.service", file);
+    
+    // Exercise SUT
+    PsiElement documentationValue = getAllCompletedValuesInFile(psiFile).get(0);
+    
+    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
+    
+    String doc = sut.generateDoc(documentationValue, documentationValue);
+    
+    // Verification
+    assertNull(doc);
+  }
+  
+  public void testGenerateDocForContinuingValueOfKnownKeyReturnsSomeValidText() {
+    // Fixture Setup
+    String file = "[Unit]\n"
+                  + "Documentation=http://www.google.com\\\n"
+                  + "hello sir";
+    
+    PsiFile psiFile = setupFileInEditor("file.service", file);
+    
+    // Exercise SUT
+    PsiElement documentationValue = getAllContinuingValuesInFile(psiFile).get(0);
   
     documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
     
@@ -234,15 +291,16 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     assertTrue((doc.length() > 0));
   }
   
-  public void testGenerateDocForValueOfUnknownSectionReturnsNull() {
+  public void testGenerateDocForContinuingValueOfUnknownSectionReturnsNull() {
     // Fixture Setup
     String file = "[X-Unit]\n"
-                  + "Documentation=http://www.google.com";
+                  + "Documentation=http://www.google.com\\\n"
+                  + "hello sir";
     
     PsiFile psiFile = setupFileInEditor("file.service", file);
     
     // Exercise SUT
-    PsiElement documentationValue = getAllValuesInFile(psiFile).get(0);
+    PsiElement documentationValue = getAllContinuingValuesInFile(psiFile).get(0);
   
     documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
     
@@ -253,16 +311,82 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
   }
   
   
-  public void testGenerateDocForValueOfUnknownKeyReturnsNull() {
+  public void testGenerateDocForContinuingValueOfUnknownKeyReturnsNull() {
     // Fixture Setup
     String file = "[Unit]\n"
-                  + "HelpPage=http://www.google.com";
+                  + "HelpPage=http://www.google.com\\\n"
+                  + "hello sir";
     
     PsiFile psiFile = setupFileInEditor("file.service", file);
     
     // Exercise SUT
-    PsiElement documentationValue = getAllValuesInFile(psiFile).get(0);
+    PsiElement documentationValue = getAllContinuingValuesInFile(psiFile).get(0);
   
+    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
+    
+    String doc = sut.generateDoc(documentationValue, documentationValue);
+    
+    // Verification
+    assertNull(doc);
+  }
+  
+  public void testGenerateDocForContinuingValueAfterCommentsOfKnownKeyReturnsSomeValidText() {
+    // Fixture Setup
+    String file = "[Unit]\n"
+                  + "Documentation=http://www.google.com\\\n"
+                  + ";Good bye\n"
+                  + "#See ya later!\n"
+                  + "hello sir";
+    
+    PsiFile psiFile = setupFileInEditor("file.service", file);
+    
+    // Exercise SUT
+    PsiElement documentationValue = getAllContinuingValuesInFile(psiFile).get(0);
+    
+    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
+    
+    String doc = sut.generateDoc(documentationValue, documentationValue);
+    
+    // Verification
+    assertNotNull(doc);
+    assertTrue((doc.length() > 0));
+  }
+  
+  public void testGenerateDocForContinuingValueAfterCommentsOfUnknownSectionReturnsNull() {
+    // Fixture Setup
+    String file = "[X-Unit]\n"
+                  + "Documentation=http://www.google.com\\\n"
+                  + ";Good bye\n"
+                  + "#See ya later!\n"
+                  + "hello sir";
+    
+    PsiFile psiFile = setupFileInEditor("file.service", file);
+    
+    // Exercise SUT
+    PsiElement documentationValue = getAllContinuingValuesInFile(psiFile).get(0);
+    
+    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
+    
+    String doc = sut.generateDoc(documentationValue, documentationValue);
+    
+    // Verification
+    assertNull(doc);
+  }
+  
+  
+  public void testGenerateDocForContinuingValueAfterCommentsOfUnknownKeyReturnsNull() {
+    // Fixture Setup
+    String file = "[Unit]\n"
+                  + "HelpPage=http://www.google.com\\\n"
+                  + ";Good bye\n"
+                  + "#See ya later!\n"
+                  + "hello sir";
+    
+    PsiFile psiFile = setupFileInEditor("file.service", file);
+    
+    // Exercise SUT
+    PsiElement documentationValue = getAllContinuingValuesInFile(psiFile).get(0);
+    
     documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
     
     String doc = sut.generateDoc(documentationValue, documentationValue);

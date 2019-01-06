@@ -7,6 +7,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.impl.UnitFileSectionGroupsImpl;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository;
 import org.jetbrains.annotations.NotNull;
@@ -111,18 +112,12 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
       return null;
     }
   
-    if (contextElement.getNode().getElementType().equals(UnitFileElementTypeHolder.COMPLETED_VALUE)) {
-      
-      // Probably fix this to properly handle CONTINUING_VALUE.
-      
-      return getCustomDocumentationElement(editor, file, ((LeafPsiElement)contextElement.getNode()).getPrevSibling());
+    if ((contextElement.getParent() != null)
+        && (contextElement.getParent().getParent() != null)
+        && (contextElement.getParent().getParent() instanceof UnitFilePropertyType)) {
+      return ((UnitFilePropertyType) contextElement.getParent().getParent()).getKeyNode().getPsi();
     }
     
-    if (contextElement.getNode().getElementType().equals(UnitFileElementTypeHolder.SEPARATOR)) {
-      return ((LeafPsiElement)contextElement.getNode()).getPrevSibling();
-    } else {
-      return contextElement;
-    }
-    
+    return contextElement;
   }
 }

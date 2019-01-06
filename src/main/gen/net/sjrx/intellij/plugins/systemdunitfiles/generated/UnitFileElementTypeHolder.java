@@ -12,6 +12,7 @@ public interface UnitFileElementTypeHolder {
 
   IElementType PROPERTY = new UnitFileElementType("PROPERTY");
   IElementType SECTION_GROUPS = new UnitFileElementType("SECTION_GROUPS");
+  IElementType VALUE = new UnitFileElementType("VALUE");
 
   IElementType COMMENT = new UnitFileTokenType("COMMENT");
   IElementType COMPLETED_VALUE = new UnitFileTokenType("COMPLETED_VALUE");
@@ -29,6 +30,9 @@ public interface UnitFileElementTypeHolder {
       }
       else if (type == SECTION_GROUPS) {
         return new UnitFileSectionGroupsImpl(node);
+      }
+      else if (type == VALUE) {
+        return new UnitFileValueImpl(node);
       }
       throw new AssertionError("Unknown element type: " + type);
     }

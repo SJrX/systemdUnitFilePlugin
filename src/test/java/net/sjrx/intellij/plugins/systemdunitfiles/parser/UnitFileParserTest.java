@@ -115,7 +115,8 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(6,15)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value')(10,15)";
+                             + "      UnitFileValueImpl(VALUE)(10,15)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value')(10,15)";
     /*
      * Exercise SUT
      */
@@ -142,11 +143,13 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(6,16)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(10,16)\n"
+                             + "      UnitFileValueImpl(VALUE)(10,16)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(10,16)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(16,37)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('SecondKey')(16,25)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(25,26)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('SecondValue')(26,37)";
+                             + "      UnitFileValueImpl(VALUE)(26,37)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('SecondValue')(26,37)";
     /*
      * Exercise SUT
      */
@@ -208,8 +211,9 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(6,23)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Value \\\\n')(10,18)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Hello')(18,23)";
+                             + "      UnitFileValueImpl(VALUE)(10,23)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Value \\\\n')(10,18)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Hello')(18,23)";
     /*
      * Exercise SUT
      */
@@ -236,8 +240,9 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(6,24)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Val\\tue \\\\n')(10,19)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Hello')(19,24)";
+                             + "      UnitFileValueImpl(VALUE)(10,24)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Val\\tue \\\\n')(10,19)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Hello')(19,24)";
     /*
      * Exercise SUT
      */
@@ -264,8 +269,9 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(6,24)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Value \\\\n')(10,18)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\\tHello')(18,24)";
+                             + "      UnitFileValueImpl(VALUE)(10,24)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Value \\\\n')(10,18)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\\tHello')(18,24)";
     /*
      * Exercise SUT
      */
@@ -293,8 +299,9 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(6,25)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Value \\\\n')(10,18)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Foo=Bar')(18,25)";
+                             + "      UnitFileValueImpl(VALUE)(10,25)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Value \\\\n')(10,18)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Foo=Bar')(18,25)";
     /*
      * Exercise SUT
      */
@@ -322,9 +329,10 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(6,32)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Value \\\\n')(10,18)\n"
-                             + "      PsiComment(UnitFileTokenType{COMMENT})(';comment\\n')(18,27)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Hello')(27,32)";
+                             + "      UnitFileValueImpl(VALUE)(10,32)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Value \\\\n')(10,18)\n"
+                             + "        PsiComment(UnitFileTokenType{COMMENT})(';comment\\n')(18,27)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Hello')(27,32)";
     /*
      * Exercise SUT
      */
@@ -352,12 +360,14 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(6,26)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Value \\\\n')(10,18)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('[Hello]\\n')(18,26)\n"
+                             + "      UnitFileValueImpl(VALUE)(10,26)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Value \\\\n')(10,18)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('[Hello]\\n')(18,26)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(26,33)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Foo')(26,29)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(29,30)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Bar')(30,33)";
+                             + "      UnitFileValueImpl(VALUE)(30,33)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Bar')(30,33)";
     /*
      * Exercise SUT
      */
@@ -384,7 +394,8 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(6,16)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(10,16)";
+                             + "      UnitFileValueImpl(VALUE)(10,16)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(10,16)";
     /*
      * Exercise SUT
      */
@@ -417,14 +428,16 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(21,31)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(21,24)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(24,25)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(25,31)\n"
+                             + "      UnitFileValueImpl(VALUE)(25,31)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(25,31)\n"
                              + "    PsiElement(UnitFileTokenType{CRLF})('\\n\\n')(31,33)\n"
                              + "    PsiComment(UnitFileTokenType{COMMENT})('#Two\\n')(33,38)\n"
                              + "    PsiElement(UnitFileTokenType{CRLF})('\\n')(38,39)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(39,52)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Second')(39,45)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(45,46)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value2')(46,52)";
+                             + "      UnitFileValueImpl(VALUE)(46,52)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value2')(46,52)";
     /*
      * Exercise SUT
      */
@@ -457,14 +470,16 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(21,31)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(21,24)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(24,25)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(25,31)\n"
+                             + "      UnitFileValueImpl(VALUE)(25,31)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(25,31)\n"
                              + "    PsiElement(UnitFileTokenType{CRLF})('\\n\\n')(31,33)\n"
                              + "    PsiComment(UnitFileTokenType{COMMENT})(';Two\\n')(33,38)\n"
                              + "    PsiElement(UnitFileTokenType{CRLF})('\\n')(38,39)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(39,52)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Second')(39,45)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(45,46)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value2')(46,52)";
+                             + "      UnitFileValueImpl(VALUE)(46,52)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value2')(46,52)";
     /*
      * Exercise SUT
      */
@@ -504,7 +519,8 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(38,48)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(38,41)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(41,42)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(42,48)\n"
+                             + "      UnitFileValueImpl(VALUE)(42,48)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(42,48)\n"
                              + "    PsiElement(UnitFileTokenType{CRLF})('\\n\\n')(48,50)\n"
                              + "    PsiComment(UnitFileTokenType{COMMENT})(';Three\\n')(50,57)\n"
                              + "    PsiElement(UnitFileTokenType{CRLF})('\\n')(57,58)\n"
@@ -513,7 +529,8 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(65,78)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Second')(65,71)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(71,72)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value2')(72,78)";
+                             + "      UnitFileValueImpl(VALUE)(72,78)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value2')(72,78)";
     /*
      * Exercise SUT
      */
@@ -538,11 +555,13 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(7,19)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('EmptyValue')(7,17)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\\n')(18,19)\n"
+                             + "      UnitFileValueImpl(VALUE)(18,19)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\\n')(18,19)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(19,30)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Before')(19,25)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(25,26)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('test')(26,30)";
+                             + "      UnitFileValueImpl(VALUE)(26,30)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('test')(26,30)";
     /*
      * Exercise SUT
      */
@@ -589,7 +608,8 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(7,19)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('EmptyValue')(7,17)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\\n')(18,19)";
+                             + "      UnitFileValueImpl(VALUE)(18,19)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\\n')(18,19)";
     /*
      * Exercise SUT
      */
@@ -614,7 +634,8 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(7,19)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('EmptyValue')(7,17)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\\n')(18,19)\n"
+                             + "      UnitFileValueImpl(VALUE)(18,19)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\\n')(18,19)\n"
                              + "  PsiComment(UnitFileTokenType{COMMENT})('#Hello')(19,25)";
     /*
      * Exercise SUT
@@ -640,7 +661,8 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(7,19)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('EmptyValue')(7,17)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\\n')(18,19)\n"
+                             + "      UnitFileValueImpl(VALUE)(18,19)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\\n')(18,19)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(19,28)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[Install]')(19,28)";
     /*
@@ -723,11 +745,13 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(12,27)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('KeyOne')(12,18)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(18,19)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('value 1\\n')(19,27)\n"
+                             + "      UnitFileValueImpl(VALUE)(19,27)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('value 1\\n')(19,27)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(27,42)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('KeyTwo')(27,33)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(33,34)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('value 2\\n')(34,42)\n"
+                             + "      UnitFileValueImpl(VALUE)(34,42)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('value 2\\n')(34,42)\n"
                              + "    PsiElement(UnitFileTokenType{CRLF})('\\n')(42,43)\n"
                              + "    PsiComment(UnitFileTokenType{COMMENT})('# a comment\\n')(43,55)\n"
                              + "    PsiElement(UnitFileTokenType{CRLF})('\\n')(55,56)\n"
@@ -736,22 +760,25 @@ public class UnitFileParserTest extends ParsingTestCase {
                              + "    UnitFilePropertyImpl(PROPERTY)(68,105)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Setting')(68,75)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(75,76)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\"something\" \"some thing\" \"…\"\\n')(76,105)\n"
+                             + "      UnitFileValueImpl(VALUE)(76,105)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\"something\" \"some thing\" \"…\"\\n')(76,105)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(105,147)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('KeyTwo')(105,111)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(111,112)\n"
-                             + "      PsiElement(UnitFileTokenType{CONTINUING_VALUE})('value 2 \\\\n')(112,122)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('       value 2 continued\\n')(122,147)\n"
+                             + "      UnitFileValueImpl(VALUE)(112,147)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('value 2 \\\\n')(112,122)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('       value 2 continued\\n')(122,147)\n"
                              + "    PsiElement(UnitFileTokenType{CRLF})('\\n')(147,148)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(148,253)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[Section C]\\n')(148,160)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(160,253)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('KeyThree')(160,168)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(168,169)\n"
-                             + "      PsiElement(UnitFileTokenType{CONTINUING_VALUE})('value 2\\\\n')(169,178)\n"
-                             + "      PsiComment(UnitFileTokenType{COMMENT})('# this line is ignored\\n')(178,201)\n"
-                             + "      PsiComment(UnitFileTokenType{COMMENT})('; this line is ignored too\\n')(201,228)\n"
-                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('       value 2 continued\\n')(228,253)";
+                             + "      UnitFileValueImpl(VALUE)(169,253)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('value 2\\\\n')(169,178)\n"
+                             + "        PsiComment(UnitFileTokenType{COMMENT})('# this line is ignored\\n')(178,201)\n"
+                             + "        PsiComment(UnitFileTokenType{COMMENT})('; this line is ignored too\\n')(201,228)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('       value 2 continued\\n')(228,253)";
 
     /*
      * Exercise SUT
