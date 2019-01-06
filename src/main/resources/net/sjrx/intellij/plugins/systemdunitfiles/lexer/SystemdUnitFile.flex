@@ -41,7 +41,7 @@ CRLF=\n
 NONCRLF=[^\r\n\u2028\u2029\u000B\u000C\u0085]
 
 // White space
-SAME_LINE_WHITESPACE = [\ \t]
+SAME_LINE_WHITESPACE=[\ \t]*
 
 WHITE_SPACE=[\ \n\t\f]
 
@@ -49,14 +49,14 @@ WHITE_SPACE=[\ \n\t\f]
 // The section header should actually be more restricted than this, however we will allow anything as a character
 // and use an annotator to flag the error.
 
-SECTION_HEADER= \[[^\]]+\]
+SECTION_HEADER=\[[^\]]+\]{SAME_LINE_WHITESPACE}{CRLF}?
 
 /* Keep track of incomplete section headers because fixing bad character sequences don't
   cause enough relexing
 
   https://intellij-support.jetbrains.com/hc/en-us/community/posts/206123189-Syntax-Highlighting-gets-stuck
  */
-INCOMPLETE_SECTION_HEADER = \[[^\]\n]*
+INCOMPLETE_SECTION_HEADER = \[[^\]\n]*{CRLF}?
 
 // We don't allow whitespace or the separator in the key characters
 KEY_CHARACTER=[^=\ \n\t\f\\] | "\\ "
@@ -66,8 +66,11 @@ VALUE_CHARACTERS={NONCRLF}*
 
 LINE_CONTINUATION="\\"
 
+CONTINUING_VALUE={VALUE_CHARACTERS}*{LINE_CONTINUATION}{CRLF}?
+COMPLETED_VALUE={VALUE_CHARACTERS}*{CRLF}?
+
 // Comments can start with either ; or a #
-COMMENT=[#;]{NONCRLF}*
+COMMENT=[#;]{NONCRLF}*{CRLF}?
 
 SEPARATOR=[=]
 
@@ -95,10 +98,10 @@ SEPARATOR=[=]
 
 <WAITING_FOR_SEPARATOR> {SAME_LINE_WHITESPACE}*{SEPARATOR}{SAME_LINE_WHITESPACE}*    { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR; }
 
-<WAITING_FOR_VALUE, VALUE_CONTINUATION> {VALUE_CHARACTERS}{LINE_CONTINUATION}        { yybegin(VALUE_CONTINUATION); return UnitFileElementTypeHolder.CONTINUING_VALUE; }
+<WAITING_FOR_VALUE, VALUE_CONTINUATION> {CONTINUING_VALUE}                           { yybegin(VALUE_CONTINUATION); return UnitFileElementTypeHolder.CONTINUING_VALUE; }
 
 // Pull a value character or really any character and mark it as its value, this is really a hack :(
-<WAITING_FOR_VALUE, VALUE_CONTINUATION> {VALUE_CHARACTERS}                           { yybegin(IN_SECTION); return UnitFileElementTypeHolder.COMPLETED_VALUE; }
+<WAITING_FOR_VALUE, VALUE_CONTINUATION> {COMPLETED_VALUE}                           { yybegin(IN_SECTION); return UnitFileElementTypeHolder.COMPLETED_VALUE; }
 
 <YYINITIAL, IN_SECTION, VALUE_CONTINUATION>({CRLF}|{WHITE_SPACE})+                                       { return UnitFileElementTypeHolder.CRLF; }
 

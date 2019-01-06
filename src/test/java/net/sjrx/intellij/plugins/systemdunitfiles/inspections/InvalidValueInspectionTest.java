@@ -63,7 +63,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
   
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
   
-    assertEquals("Most Def", highlightElement.getText());
+    assertEquals("Most Def\n", highlightElement.getText());
     
   }
   
@@ -131,7 +131,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
   
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
   
-    assertEquals("ftp://www.google.com/rules.txt", highlightElement.getText());
+    assertEquals("ftp://www.google.com/rules.txt\n", highlightElement.getText());
   }
   
   public void testInvalidDocumentationValuesOnSingleLineTriggersInspection() {
@@ -208,7 +208,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     assertEquals(HighlightInfoType.WARNING, info.type);
     
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
-    assertEquals("sigkill", highlightElement.getText());
+    assertEquals("sigkill\n", highlightElement.getText());
   }
   
   public void testAllRestartOptionValuesDoNotThrowError() {
@@ -220,7 +220,8 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
                   + "Restart=on-failure\n"
                   + "Restart=on-abnormal\n"
                   + "Restart=on-abort\n"
-                  + "Restart=on-watchdog\n";
+                  + "Restart=on-watchdog\n"
+                  + "Restart=on-watchdog";
       
     
     // Exercise SUT
@@ -266,7 +267,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     assertEquals(HighlightInfoType.WARNING, info.type);
     
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
-    assertEquals("yes", highlightElement.getText());
+    assertEquals("yes\n", highlightElement.getText());
   }
   
   public void testValidModeStringOptionsDoNotTriggerInspection() {
@@ -317,7 +318,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
       assertStringContains("Value is expected to be a 3 or 4 digit octal number not:", info.getDescription());
       assertEquals(HighlightInfoType.WARNING, info.type);
       PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
-      assertStringContains(highlightElement.getText(), info.getDescription());
+      assertStringContains(highlightElement.getText().trim(), info.getDescription());
     }
   }
   
@@ -344,7 +345,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     assertSize(0, highlights);
   }
   
-  public void testIllegalServiceTypeValueTriggersInspection() {
+  public void testIllegalServiceTypeValueTriggersInspectionWithNewLine() {
     // Fixture Setup
     String file = "[Service]\n"
                   + "Type=remote\n";
@@ -375,6 +376,40 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     assertEquals(HighlightInfoType.WARNING, info.type);
     
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
-    assertEquals("remote", highlightElement.getText());
+    assertEquals("remote\n", highlightElement.getText());
+  }
+  
+  public void testIllegalServiceTypeValueTriggersInspectionWithoutNewLine() {
+    // Fixture Setup
+    String file = "[Service]\n"
+                  + "Type=remote\n";
+    
+    // Exercise SUT
+    setupFileInEditor("file.service", file);
+    enableInspection(InvalidValueInspection.class);
+    
+    // Verification
+    List<HighlightInfo> highlights = myFixture.doHighlighting();
+    
+    
+    // Verification
+    assertSize(1, highlights);
+    HighlightInfo info = highlights.get(0);
+    
+    assertStringContains("remote", info.getDescription());
+    assertStringContains("match one of", info.getDescription());
+    assertStringContains("simple", info.getDescription());
+    assertStringContains("forking", info.getDescription());
+    assertStringContains("oneshot", info.getDescription());
+    assertStringContains("dbus", info.getDescription());
+    assertStringContains("notify", info.getDescription());
+    assertStringContains("idle", info.getDescription());
+    assertStringContains("exec", info.getDescription());
+    
+    
+    assertEquals(HighlightInfoType.WARNING, info.type);
+    
+    PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
+    assertEquals("remote\n", highlightElement.getText());
   }
 }

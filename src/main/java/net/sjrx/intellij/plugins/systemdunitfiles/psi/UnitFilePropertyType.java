@@ -53,7 +53,7 @@ public class UnitFilePropertyType extends ASTWrapperPsiElement {
    */
   public String getValue() {
     if (getValueNode() != null) {
-      return getValueNode().getText();
+      return getValueNode().getText().trim();
     } else {
       return null;
     }

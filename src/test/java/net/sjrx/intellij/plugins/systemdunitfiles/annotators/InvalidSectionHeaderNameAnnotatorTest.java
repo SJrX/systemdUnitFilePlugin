@@ -30,7 +30,7 @@ public class InvalidSectionHeaderNameAnnotatorTest extends AbstractUnitFileTest 
 
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
 
-    assertEquals("[Serv\tice]", highlightElement.getText());
+    assertEquals("[Serv\tice]\n", highlightElement.getText());
   }
 
 
@@ -53,7 +53,7 @@ public class InvalidSectionHeaderNameAnnotatorTest extends AbstractUnitFileTest 
 
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
 
-    assertEquals("[Serv[ice]", highlightElement.getText());
+    assertEquals("[Serv[ice]\n", highlightElement.getText());
   }
 
   public void testThatValidSectionNamesAreNotAnnotated() {

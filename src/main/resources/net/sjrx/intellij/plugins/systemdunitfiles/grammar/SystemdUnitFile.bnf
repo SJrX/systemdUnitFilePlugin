@@ -22,9 +22,9 @@ section_groups ::= section_ line_items_* {name="section header"}
 
 private line_items_ ::= ((property crlf_?)|(comment_ crlf_?)|crlf_)
 
-property ::= key_ separator_ value_//? { pin=1 }
+property ::= key_ separator_ value_? { pin=1 }
 
-private value_ ::= (CONTINUING_VALUE CRLF ((CONTINUING_VALUE CRLF)|(COMMENT CRLF))*)? COMPLETED_VALUE
+private value_ ::= (CONTINUING_VALUE| comment_ )* COMPLETED_VALUE
 //private value_ ::= CONTINUING_VALUE CRLF COMMENT CRLF COMPLETED_VALUE
 
 // Single rules for tokens so that I can alias them for better error handling shown above.
