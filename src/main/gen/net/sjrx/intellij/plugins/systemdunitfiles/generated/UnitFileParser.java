@@ -70,36 +70,66 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // property|comment_|crlf_
+  // (property crlf_?)|(comment_ crlf_?)|crlf_
   static boolean line_items_(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "line_items_")) return false;
     boolean result_;
-    result_ = property(builder_, level_ + 1);
-    if (!result_) result_ = comment_(builder_, level_ + 1);
+    Marker marker_ = enter_section_(builder_);
+    result_ = line_items__0(builder_, level_ + 1);
+    if (!result_) result_ = line_items__1(builder_, level_ + 1);
     if (!result_) result_ = crlf_(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
+  // property crlf_?
+  private static boolean line_items__0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "line_items__0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = property(builder_, level_ + 1);
+    result_ = result_ && line_items__0_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // crlf_?
+  private static boolean line_items__0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "line_items__0_1")) return false;
+    crlf_(builder_, level_ + 1);
+    return true;
+  }
+
+  // comment_ crlf_?
+  private static boolean line_items__1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "line_items__1")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = comment_(builder_, level_ + 1);
+    result_ = result_ && line_items__1_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // crlf_?
+  private static boolean line_items__1_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "line_items__1_1")) return false;
+    crlf_(builder_, level_ + 1);
+    return true;
+  }
+
   /* ********************************************************** */
-  // key_ separator_ value_?
+  // key_ separator_ value_
   public static boolean property(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "property")) return false;
     if (!nextTokenIs(builder_, KEY)) return false;
-    boolean result_, pinned_;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, PROPERTY, null);
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
     result_ = key_(builder_, level_ + 1);
-    pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, separator_(builder_, level_ + 1));
-    result_ = pinned_ && property_2(builder_, level_ + 1) && result_;
-    exit_section_(builder_, level_, marker_, result_, pinned_, null);
-    return result_ || pinned_;
-  }
-
-  // value_?
-  private static boolean property_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "property_2")) return false;
-    value_(builder_, level_ + 1);
-    return true;
+    result_ = result_ && separator_(builder_, level_ + 1);
+    result_ = result_ && value_(builder_, level_ + 1);
+    exit_section_(builder_, marker_, PROPERTY, result_);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -188,9 +218,15 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // VALUE
+  // CONTINUING_VALUE CRLF COMMENT CRLF COMPLETED_VALUE
   static boolean value_(PsiBuilder builder_, int level_) {
-    return consumeToken(builder_, VALUE);
+    if (!recursion_guard_(builder_, level_, "value_")) return false;
+    if (!nextTokenIs(builder_, CONTINUING_VALUE)) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeTokens(builder_, 0, CONTINUING_VALUE, CRLF, COMMENT, CRLF, COMPLETED_VALUE);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
 }

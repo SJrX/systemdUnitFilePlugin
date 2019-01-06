@@ -42,7 +42,8 @@ public class UnitFilePropertyType extends ASTWrapperPsiElement {
    * @return the key for this property
    */
   public ASTNode getValueNode() {
-    return this.getNode().findChildByType(UnitFileElementTypeHolder.VALUE);
+    // Probably need to fix this as well
+    return this.getNode().findChildByType(UnitFileElementTypeHolder.COMPLETED_VALUE);
   }
   
   /**

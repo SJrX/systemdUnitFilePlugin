@@ -14,11 +14,12 @@ public interface UnitFileElementTypeHolder {
   IElementType SECTION_GROUPS = new UnitFileElementType("SECTION_GROUPS");
 
   IElementType COMMENT = new UnitFileTokenType("COMMENT");
+  IElementType COMPLETED_VALUE = new UnitFileTokenType("COMPLETED_VALUE");
+  IElementType CONTINUING_VALUE = new UnitFileTokenType("CONTINUING_VALUE");
   IElementType CRLF = new UnitFileTokenType("CRLF");
   IElementType KEY = new UnitFileTokenType("KEY");
   IElementType SECTION = new UnitFileTokenType("SECTION");
   IElementType SEPARATOR = new UnitFileTokenType("SEPARATOR");
-  IElementType VALUE = new UnitFileTokenType("VALUE");
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {

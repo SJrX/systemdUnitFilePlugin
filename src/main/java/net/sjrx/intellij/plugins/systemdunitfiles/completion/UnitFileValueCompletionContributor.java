@@ -24,8 +24,9 @@ public class UnitFileValueCompletionContributor extends CompletionContributor {
    * Default constructor.
    */
   public UnitFileValueCompletionContributor() {
+    // Maybe also fix this
     extend(CompletionType.BASIC,
-      PlatformPatterns.psiElement(UnitFileElementTypeHolder.VALUE).withLanguage(UnitFileLanguage.INSTANCE),
+      PlatformPatterns.psiElement(UnitFileElementTypeHolder.COMPLETED_VALUE).withLanguage(UnitFileLanguage.INSTANCE),
       new CompletionProvider<CompletionParameters>() {
         
         @Override

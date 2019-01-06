@@ -111,7 +111,10 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
       return null;
     }
   
-    if (contextElement.getNode().getElementType().equals(UnitFileElementTypeHolder.VALUE)) {
+    if (contextElement.getNode().getElementType().equals(UnitFileElementTypeHolder.COMPLETED_VALUE)) {
+      
+      // Probably fix this to properly handle CONTINUING_VALUE.
+      
       return getCustomDocumentationElement(editor, file, ((LeafPsiElement)contextElement.getNode()).getPrevSibling());
     }
     
