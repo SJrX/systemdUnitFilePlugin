@@ -74,7 +74,9 @@ public class UnitFileValueType extends ASTWrapperPsiElement {
     
     do {
       elements.add(child);
-    }  while (child != getLastChild());
+      child = child.getNextSibling();
+
+    }  while (child != null);
     
     return elements.stream();
   }

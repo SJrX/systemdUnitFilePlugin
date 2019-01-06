@@ -394,4 +394,17 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     // Verification
     assertNull(doc);
   }
+  
+  public void testHrmInternalDocumentationError() {
+    String file = "[Section A]\n"
+                  + "KeyOne=value 1\n"
+                  + "KeyTwo=value 2\n"
+                  + "\n"
+                  + "# a comment\n"
+                  + "\n"
+                  + "[Section B]\n"
+                  + "Setting=\"something\" \"some thing\" \"…\"\n"
+                  + "KeyTwo=value 2 \\\n"
+                  + "       value 2 continued";
+  }
 }

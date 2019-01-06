@@ -24,7 +24,7 @@
         </li>
     ]]></description>
 
-  <change-notes><!-- From gradle --></change-notes>
+  <change-notes><!-- From gradle, this section must be 40 characters long, so here you go -->0123456789012345678901234567890123456789</change-notes>
 
   <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
 

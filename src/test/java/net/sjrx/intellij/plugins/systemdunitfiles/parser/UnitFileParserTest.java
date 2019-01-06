@@ -717,8 +717,13 @@ public class UnitFileParserTest extends ParsingTestCase {
      */
     assertSameLines(expectedPsiTree, parseTree);
   }
+  
+  public void testValueConcatenationWorksProperly() {
+    fail("Not implemented");
+  }
 
-
+  
+  
   public void testExampleCodeParsesSuccessfully() {
 
 
@@ -791,6 +796,7 @@ public class UnitFileParserTest extends ParsingTestCase {
      */
     assertSameLines(expectedPsiTree, parseTree);
   }
+  
 
 
   /**
