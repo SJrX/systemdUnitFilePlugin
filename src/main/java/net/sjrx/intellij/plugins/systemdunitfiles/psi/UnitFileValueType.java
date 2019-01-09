@@ -51,10 +51,11 @@ public class UnitFileValueType extends ASTWrapperPsiElement {
     String value = getAllChildrenForRealzies()
       .filter(child -> valueTypes.contains(child.getNode().getElementType()))
        .map(PsiElement::getText)
+                     .map(text -> text.trim().replaceFirst("\\\\$"," "))
        .collect(Collectors.joining());
     
     // Transform \\n (trailing line to a space), as per: https://www.freedesktop.org/software/systemd/man/systemd.syntax.html#
-    return value.replaceAll("\\\n", " ").trim();
+    return value.trim();
   }
   
   /**

@@ -2,6 +2,9 @@ package net.sjrx.intellij.plugins.systemdunitfiles.parser;
 
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.ParsingTestCase;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileProperty;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileValueType;
 
 /**
  * Tests for parsing of systemd unit files.
@@ -718,8 +721,41 @@ public class UnitFileParserTest extends ParsingTestCase {
     assertSameLines(expectedPsiTree, parseTree);
   }
   
-  public void testValueConcatenationWorksProperly() {
-    fail("Not implemented");
+  public void testValueConcatenationWorksAccordingToSpec() {
+  
+    /*
+     * Fixture Setup
+     *
+     */
+    String sourceCode = "[Unit]\n"
+                        + "KeyOne=ValueOne\n"
+                        + "Foo=Alpha \\\n"
+                        + ";Comment One\n"
+                        + "#Test Eero\n"
+                        + "Omega\n"
+                        + "Oh=Noes";
+  
+    // Lines ending in a backslash are concatenated with the following non-comment line while reading and
+    // the backslash is replaced by a space character.
+    // https://www.freedesktop.org/software/systemd/man/systemd.syntax.html#
+    String expectedValue = "Alpha  Omega";
+    
+    /*
+     * Exercise SUT
+     */
+  
+    PsiFile myFile = createPsiFile("a", sourceCode);
+    ensureParsed(myFile);
+    
+    UnitFileSectionGroups sectionGroup = (UnitFileSectionGroups) myFile.getFirstChild();
+    UnitFileProperty property = sectionGroup.getPropertyList().get(1);
+    UnitFileValueType ufvt = (UnitFileValueType) property.getValue();
+    
+    /*
+     * Verification
+     */
+    
+    assertSameLines(expectedValue, ufvt.getValue());
   }
 
   
