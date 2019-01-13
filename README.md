@@ -50,6 +50,7 @@ Changelog
 
 * Add warning when whitespace exists between line continuation character and next new line.
 * Refactored syntax highlighting to properly support comments between line continuations as added here [commit (2ca4d779)](https://github.com/systemd/systemd/commit/2ca4d779e021fdd94f4445980baa0aa8af6ffdc4).
+* Add support for deprecated keys.
 
 ### [v0.1.2](https://github.com/SJrX/systemdUnitFilePlugin/releases/tag/v0.1.2)
 * Fixed bug with tab characters in values.
