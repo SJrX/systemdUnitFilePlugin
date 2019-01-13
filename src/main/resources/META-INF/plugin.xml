@@ -46,6 +46,8 @@
     <lang.documentationProvider language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.documentation.UnitFileDocumentationProvider"/>
     <annotator language="Unit File (systemd)"
                implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.annotators.InvalidSectionHeaderNameAnnotator"/>
+
+    <annotator language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.annotators.LineContinuationCharacterFollowedByWhitespaceAnnotator"/>
     <localInspection implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.inspections.UnknownKeyInSectionInspection"
                      groupPath="Unit files (systemd)"
                      shortName="UnknownKeyInSection"     displayName="Unknown option in section"
