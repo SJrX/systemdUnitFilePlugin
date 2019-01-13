@@ -167,6 +167,3 @@ generateOptionValidator.dependsOn += cloneSystemdRepo
 
 
 jar.dependsOn += generateDataFromManPages
-
-
-runIde.jvmArgs("-Xmx2048m")
