@@ -16,7 +16,7 @@ public class LineContinuationCharacterFollowedByWhitespaceAnnotatorTest extends 
   
     setupFileInEditor("file.service", file);
 
-    // Exercuse SUT
+    // Exercise SUT
     
     List<HighlightInfo> highlights = myFixture.doHighlighting();
     
@@ -41,7 +41,7 @@ public class LineContinuationCharacterFollowedByWhitespaceAnnotatorTest extends 
     
     setupFileInEditor("file.service", file);
     
-    // Exercuse SUT
+    // Exercise SUT
     
     List<HighlightInfo> highlights = myFixture.doHighlighting();
     
@@ -68,7 +68,7 @@ public class LineContinuationCharacterFollowedByWhitespaceAnnotatorTest extends 
   
     setupFileInEditor("file.service", file);
   
-    // Exercuse SUT
+    // Exercise SUT
   
     List<HighlightInfo> highlights = myFixture.doHighlighting();
   
@@ -95,7 +95,7 @@ public class LineContinuationCharacterFollowedByWhitespaceAnnotatorTest extends 
   
     setupFileInEditor("file.service", file);
   
-    // Exercuse SUT
+    // Exercise SUT
   
     List<HighlightInfo> highlights = myFixture.doHighlighting();
   
@@ -121,7 +121,7 @@ public class LineContinuationCharacterFollowedByWhitespaceAnnotatorTest extends 
   
     setupFileInEditor("file.service", file);
   
-    // Exercuse SUT
+    // Exercise SUT
   
     List<HighlightInfo> highlights = myFixture.doHighlighting();
   
@@ -140,10 +140,8 @@ public class LineContinuationCharacterFollowedByWhitespaceAnnotatorTest extends 
   
     setupFileInEditor("file.service", file);
   
-    // Exercuse SUT
-  
+    // Exercise SUT
     List<HighlightInfo> highlights = myFixture.doHighlighting();
-  
   
     // Verification
     assertSize(0, highlights);

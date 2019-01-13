@@ -29,6 +29,7 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
   @Nullable
   @Override
   public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
+    // Hrm not sure what this does
     return "Hello, is it me you're looking for";
   }
 

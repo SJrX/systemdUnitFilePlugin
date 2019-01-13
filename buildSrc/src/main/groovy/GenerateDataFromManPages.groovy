@@ -90,7 +90,10 @@ class GenerateDataFromManPages extends DefaultTask {
       ],
     'systemd.resource-control.xml':
       ['sections':
-         ['Options': ['Slice', 'Service', 'Socket', 'Mount', 'Swap']]
+         [
+           'Options': ['Slice', 'Service', 'Socket', 'Mount', 'Swap'],
+           'Deprecated Options': ['Slice', 'Service', 'Socket', 'Mount', 'Swap'],
+         ]
       ],
     'systemd.kill.xml':
       [ 'sections':

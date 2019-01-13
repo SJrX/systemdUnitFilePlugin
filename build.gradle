@@ -36,6 +36,11 @@ intellij {
 }
 patchPluginXml {
     changeNotes """
+  <h3>v0.2.0</h3>
+  <ul>
+    <li>Updating syntax highlighting to properly handle comments with line continuations.</li>
+    <li>Warning when line continuation character is followed by whitespace</li>
+    <li>New inspection for deprecated options</li>
   <h3>v0.1.2</h3>
   <ul>
       <li>Added support for systemd v240 keywords.</li>

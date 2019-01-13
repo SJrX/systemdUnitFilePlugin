@@ -30,7 +30,7 @@ public class UnknownKeyInSectionInspection extends LocalInspectionTool {
 
   private static final String IGNORED_SECTION_OR_KEY_PREFIX = "X-";
   static final String INSPECTION_TOOL_TIP_TEXT =
-    "This key is unrecognized which will cause systemd to generate a warning when loading this unit";
+    "This key is unrecognized which will cause systemd to generate a warning when loading this unit.";
 
   @Override
   public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
