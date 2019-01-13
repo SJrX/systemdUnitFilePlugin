@@ -35,6 +35,8 @@ To create a file simply right click on a folder and <kbd>New</kbd> > <kbd>File</
  * `.timer` 
  
 The file should then be associated with this plugin and the above features should work.
+ 
+__NOTE__: `.scope` units are not configured via unit configuration files and so we don't support them. 
 
 ## Installation
 

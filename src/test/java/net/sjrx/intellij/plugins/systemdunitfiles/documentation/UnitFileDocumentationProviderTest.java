@@ -78,6 +78,22 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     // Verification
     assertEquals(Collections.singletonList("https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Documentation="), urls);
   }
+  
+  public void testGetUrlForDeprecatedOptionReturnsAValidUrl() {
+    // Fixture Setup
+    String file = "[Service]\n"
+                  + "BlockIOAccounting=true";
+    
+    PsiFile psiFile = setupFileInEditor("file.service", file);
+    
+    // Exercise SUT
+    PsiElement documentationKeySeparator = getAllSeparatorsInFile(psiFile).get(0);
+  
+    List<String> urls = sut.getUrlFor(documentationKeySeparator, documentationKeySeparator);
+    
+    // Verification
+    assertEquals(Collections.singletonList("https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="), urls);
+  }
 
   public void testGetUrlForUnknownSectionReturnsAnEmptyListOfUrls() {
     // Fixture Setup
@@ -103,9 +119,9 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     PsiFile psiFile = setupFileInEditor("file.service", file);
 
     // Exercise SUT
-    PsiElement unknownSectionHeader = getAllSectionInFile(psiFile).get(0);
+    PsiElement sectionHeader = getAllSectionInFile(psiFile).get(0);
 
-    List<String> urls = sut.getUrlFor(unknownSectionHeader, unknownSectionHeader);
+    List<String> urls = sut.getUrlFor(sectionHeader, sectionHeader);
 
     // Verification
     assertEquals(Collections.singletonList("https://www.freedesktop.org/software/systemd/man/systemd.unit.html#%5BUnit%5D%20Section%20Options"), urls);
