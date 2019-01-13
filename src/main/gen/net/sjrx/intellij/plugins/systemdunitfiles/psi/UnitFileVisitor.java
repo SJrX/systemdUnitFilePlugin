@@ -15,6 +15,10 @@ public class UnitFileVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitValue(@NotNull UnitFileValue o) {
+    visitPsiElement(o);
+  }
+
   public void visitPsiElement(@NotNull PsiElement o) {
     visitElement(o);
   }

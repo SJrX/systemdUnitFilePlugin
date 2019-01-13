@@ -2,6 +2,9 @@ package net.sjrx.intellij.plugins.systemdunitfiles.parser;
 
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.ParsingTestCase;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileProperty;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileValueType;
 
 /**
  * Tests for parsing of systemd unit files.
@@ -46,7 +49,7 @@ public class UnitFileParserTest extends ParsingTestCase {
     String sourceCode = "\n\n";
 
     String expectedPsiTree = "unit configuration file (systemd)(0,2)\n"
-                             + "  PsiWhiteSpace('\\n\\n')(0,2)";
+                             + "  PsiElement(UnitFileTokenType{CRLF})('\\n\\n')(0,2)";
 
 
     // Exercise SUT
@@ -76,8 +79,8 @@ public class UnitFileParserTest extends ParsingTestCase {
     String sourceCode = "#Hello  \n \n \n";
 
     String expectedPsiTree = "unit configuration file (systemd)(0,13)\n"
-                             + "  PsiComment(UnitFileTokenType{COMMENT})('#Hello  ')(0,8)\n"
-                             + "  PsiWhiteSpace('\\n \\n \\n')(8,13)";
+                             + "  PsiComment(UnitFileTokenType{COMMENT})('#Hello  \\n')(0,9)\n"
+                             + "  PsiElement(UnitFileTokenType{CRLF})(' \\n \\n')(9,13)";
 
     // Exercise SUT
     String parseTree = convertSourceToParseTree(sourceCode);
@@ -91,8 +94,8 @@ public class UnitFileParserTest extends ParsingTestCase {
     String sourceCode = "\n \n \n#Hello  ";
 
     String expectedPsiTree = "unit configuration file (systemd)(0,13)\n"
-                             + "  PsiWhiteSpace('\\n \\n \\n')(0,5)\n"
-                             + "  PsiComment(UnitFileTokenType{COMMENT})('#Hello  ')(5,13)\n";
+                             + "  PsiElement(UnitFileTokenType{CRLF})('\\n \\n \\n')(0,5)\n"
+                             + "  PsiComment(UnitFileTokenType{COMMENT})('#Hello  ')(5,13)";
 
 
     // Exercise SUT
@@ -111,12 +114,12 @@ public class UnitFileParserTest extends ParsingTestCase {
 
     String expectedPsiTree = "unit configuration file (systemd)(0,15)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,15)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
-                             + "    PsiWhiteSpace('\\n')(5,6)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]\\n')(0,6)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(6,15)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('Value')(10,15)";
+                             + "      UnitFileValueImpl(VALUE)(10,15)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value')(10,15)";
     /*
      * Exercise SUT
      */
@@ -127,6 +130,74 @@ public class UnitFileParserTest extends ParsingTestCase {
      * Verification
      */
     assertSameLines(expectedPsiTree, parseTree);
+  }
+  
+  public void testOneSectionAndTwoKeyValuePairMatchesExpectedValue() {
+    /*
+     * Fixture Setup
+     */
+    String sourceCode = "[One]\n"
+                        + "Key=Value\n"
+                        + "SecondKey=SecondValue";
+    
+    String expectedPsiTree = "unit configuration file (systemd)(0,37)\n"
+                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,37)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]\\n')(0,6)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(6,16)\n"
+                             + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
+                             + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
+                             + "      UnitFileValueImpl(VALUE)(10,16)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(10,16)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(16,37)\n"
+                             + "      PsiElement(UnitFileTokenType{KEY})('SecondKey')(16,25)\n"
+                             + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(25,26)\n"
+                             + "      UnitFileValueImpl(VALUE)(26,37)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('SecondValue')(26,37)";
+    /*
+     * Exercise SUT
+     */
+    
+    String parseTree = convertSourceToParseTree(sourceCode);
+    
+    /*
+     * Verification
+     */
+    assertSameLines(expectedPsiTree, parseTree);
+  }
+  
+  
+  /*
+   * This test won't pass presently, because we pushed the new line processing into the Lexer.
+   */
+  private void ignoredTestOneSectionAndKeyValueOnSameLineResultsInAnError() {
+    /*
+     * Fixture Setup
+     */
+    String sourceCode = "[One] Key=Value";
+    
+    String expectedPsiTree = "unit configuration file (systemd)(0,37)\n"
+                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,37)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]\\n')(0,6)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(6,16)\n"
+                             + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
+                             + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
+                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(10,16)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(16,37)\n"
+                             + "      PsiElement(UnitFileTokenType{KEY})('SecondKey')(16,25)\n"
+                             + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(25,26)\n"
+                             + "      PsiElement(UnitFileTokenType{COMPLETED_VALUE})('SecondValue')(26,37)";
+    /*
+     * Exercise SUT
+     */
+    
+    String parseTree = convertSourceToParseTree(sourceCode);
+    
+    /*
+     * Verification
+     */
+    fail();
+    //assertSameLines(expectedPsiTree, parseTree);
+   
   }
 
   public void testLineContinuationSimple() {
@@ -139,12 +210,13 @@ public class UnitFileParserTest extends ParsingTestCase {
 
     String expectedPsiTree = "unit configuration file (systemd)(0,23)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,23)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
-                             + "    PsiWhiteSpace('\\n')(5,6)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]\\n')(0,6)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(6,23)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('Value \\\\nHello')(10,23)";
+                             + "      UnitFileValueImpl(VALUE)(10,23)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Value \\\\n')(10,18)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Hello')(18,23)";
     /*
      * Exercise SUT
      */
@@ -167,12 +239,13 @@ public class UnitFileParserTest extends ParsingTestCase {
     
     String expectedPsiTree = "unit configuration file (systemd)(0,24)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,24)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
-                             + "    PsiWhiteSpace('\\n')(5,6)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]\\n')(0,6)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(6,24)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('Val\\tue \\\\nHello')(10,24)";
+                             + "      UnitFileValueImpl(VALUE)(10,24)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Val\\tue \\\\n')(10,19)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Hello')(19,24)";
     /*
      * Exercise SUT
      */
@@ -195,12 +268,13 @@ public class UnitFileParserTest extends ParsingTestCase {
     
     String expectedPsiTree = "unit configuration file (systemd)(0,24)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,24)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
-                             + "    PsiWhiteSpace('\\n')(5,6)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]\\n')(0,6)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(6,24)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('Value \\\\n\\tHello')(10,24)";
+                             + "      UnitFileValueImpl(VALUE)(10,24)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Value \\\\n')(10,18)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\\tHello')(18,24)";
     /*
      * Exercise SUT
      */
@@ -224,12 +298,13 @@ public class UnitFileParserTest extends ParsingTestCase {
 
     String expectedPsiTree = "unit configuration file (systemd)(0,25)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,25)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
-                             + "    PsiWhiteSpace('\\n')(5,6)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]\\n')(0,6)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(6,25)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('Value \\\\nFoo=Bar')(10,25)";
+                             + "      UnitFileValueImpl(VALUE)(10,25)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Value \\\\n')(10,18)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Foo=Bar')(18,25)";
     /*
      * Exercise SUT
      */
@@ -248,16 +323,19 @@ public class UnitFileParserTest extends ParsingTestCase {
      */
     String sourceCode = "[One]\n"
                         + "Key=Value \\\n"
-                        + ";comment";
+                        + ";comment\n"
+                        + "Hello";
 
-    String expectedPsiTree = "unit configuration file (systemd)(0,26)\n"
-                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,26)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
-                             + "    PsiWhiteSpace('\\n')(5,6)\n"
-                             + "    UnitFilePropertyImpl(PROPERTY)(6,26)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,32)\n"
+                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,32)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]\\n')(0,6)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(6,32)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('Value \\\\n;comment')(10,26)";
+                             + "      UnitFileValueImpl(VALUE)(10,32)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Value \\\\n')(10,18)\n"
+                             + "        PsiComment(UnitFileTokenType{COMMENT})(';comment\\n')(18,27)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Hello')(27,32)";
     /*
      * Exercise SUT
      */
@@ -281,17 +359,18 @@ public class UnitFileParserTest extends ParsingTestCase {
 
     String expectedPsiTree = "unit configuration file (systemd)(0,33)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,33)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
-                             + "    PsiWhiteSpace('\\n')(5,6)\n"
-                             + "    UnitFilePropertyImpl(PROPERTY)(6,25)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]\\n')(0,6)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(6,26)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('Value \\\\n[Hello]')(10,25)\n"
-                             + "    PsiWhiteSpace('\\n')(25,26)\n"
+                             + "      UnitFileValueImpl(VALUE)(10,26)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('Value \\\\n')(10,18)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('[Hello]\\n')(18,26)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(26,33)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Foo')(26,29)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(29,30)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('Bar')(30,33)";
+                             + "      UnitFileValueImpl(VALUE)(30,33)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Bar')(30,33)";
     /*
      * Exercise SUT
      */
@@ -313,14 +392,13 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "Key=Value\n";
 
     String expectedPsiTree = "unit configuration file (systemd)(0,16)\n"
-                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,15)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(0,5)\n"
-                             + "    PsiWhiteSpace('\\n')(5,6)\n"
-                             + "    UnitFilePropertyImpl(PROPERTY)(6,15)\n"
+                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,16)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]\\n')(0,6)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(6,16)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(6,9)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(9,10)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('Value')(10,15)\n"
-                             + "  PsiWhiteSpace('\\n')(15,16)";
+                             + "      UnitFileValueImpl(VALUE)(10,16)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(10,16)";
     /*
      * Exercise SUT
      */
@@ -346,24 +424,23 @@ public class UnitFileParserTest extends ParsingTestCase {
 
 
     String expectedPsiTree = "unit configuration file (systemd)(0,52)\n"
-                             + "  PsiComment(UnitFileTokenType{COMMENT})('#Preamble')(0,9)\n"
-                             + "  PsiWhiteSpace('\\n')(9,10)\n"
+                             + "  PsiComment(UnitFileTokenType{COMMENT})('#Preamble\\n')(0,10)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(10,52)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(10,15)\n"
-                             + "    PsiWhiteSpace('\\n')(15,16)\n"
-                             + "    PsiComment(UnitFileTokenType{COMMENT})('#One')(16,20)\n"
-                             + "    PsiWhiteSpace('\\n')(20,21)\n"
-                             + "    UnitFilePropertyImpl(PROPERTY)(21,30)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]\\n')(10,16)\n"
+                             + "    PsiComment(UnitFileTokenType{COMMENT})('#One\\n')(16,21)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(21,31)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(21,24)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(24,25)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('Value')(25,30)\n"
-                             + "    PsiWhiteSpace('\\n\\n\\n')(30,33)\n"
-                             + "    PsiComment(UnitFileTokenType{COMMENT})('#Two')(33,37)\n"
-                             + "    PsiWhiteSpace('\\n\\n')(37,39)\n"
+                             + "      UnitFileValueImpl(VALUE)(25,31)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(25,31)\n"
+                             + "    PsiElement(UnitFileTokenType{CRLF})('\\n\\n')(31,33)\n"
+                             + "    PsiComment(UnitFileTokenType{COMMENT})('#Two\\n')(33,38)\n"
+                             + "    PsiElement(UnitFileTokenType{CRLF})('\\n')(38,39)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(39,52)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Second')(39,45)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(45,46)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('Value2')(46,52)";
+                             + "      UnitFileValueImpl(VALUE)(46,52)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value2')(46,52)";
     /*
      * Exercise SUT
      */
@@ -389,24 +466,23 @@ public class UnitFileParserTest extends ParsingTestCase {
 
 
     String expectedPsiTree = "unit configuration file (systemd)(0,52)\n"
-                             + "  PsiComment(UnitFileTokenType{COMMENT})(';Preamble')(0,9)\n"
-                             + "  PsiWhiteSpace('\\n')(9,10)\n"
+                             + "  PsiComment(UnitFileTokenType{COMMENT})(';Preamble\\n')(0,10)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(10,52)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(10,15)\n"
-                             + "    PsiWhiteSpace('\\n')(15,16)\n"
-                             + "    PsiComment(UnitFileTokenType{COMMENT})(';One')(16,20)\n"
-                             + "    PsiWhiteSpace('\\n')(20,21)\n"
-                             + "    UnitFilePropertyImpl(PROPERTY)(21,30)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]\\n')(10,16)\n"
+                             + "    PsiComment(UnitFileTokenType{COMMENT})(';One\\n')(16,21)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(21,31)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(21,24)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(24,25)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('Value')(25,30)\n"
-                             + "    PsiWhiteSpace('\\n\\n\\n')(30,33)\n"
-                             + "    PsiComment(UnitFileTokenType{COMMENT})(';Two')(33,37)\n"
-                             + "    PsiWhiteSpace('\\n\\n')(37,39)\n"
+                             + "      UnitFileValueImpl(VALUE)(25,31)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(25,31)\n"
+                             + "    PsiElement(UnitFileTokenType{CRLF})('\\n\\n')(31,33)\n"
+                             + "    PsiComment(UnitFileTokenType{COMMENT})(';Two\\n')(33,38)\n"
+                             + "    PsiElement(UnitFileTokenType{CRLF})('\\n')(38,39)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(39,52)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Second')(39,45)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(45,46)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('Value2')(46,52)";
+                             + "      UnitFileValueImpl(VALUE)(46,52)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value2')(46,52)";
     /*
      * Exercise SUT
      */
@@ -436,30 +512,28 @@ public class UnitFileParserTest extends ParsingTestCase {
 
 
     String expectedPsiTree = "unit configuration file (systemd)(0,78)\n"
-                             + "  PsiComment(UnitFileTokenType{COMMENT})(';Preamble')(0,9)\n"
-                             + "  PsiWhiteSpace('\\n\\n')(9,11)\n"
-                             + "  PsiComment(UnitFileTokenType{COMMENT})('#Preable 2')(11,21)\n"
-                             + "  PsiWhiteSpace('\\n')(21,22)\n"
+                             + "  PsiComment(UnitFileTokenType{COMMENT})(';Preamble\\n')(0,10)\n"
+                             + "  PsiElement(UnitFileTokenType{CRLF})('\\n')(10,11)\n"
+                             + "  PsiComment(UnitFileTokenType{COMMENT})('#Preable 2\\n')(11,22)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(22,78)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]')(22,27)\n"
-                             + "    PsiWhiteSpace('\\n')(27,28)\n"
-                             + "    PsiComment(UnitFileTokenType{COMMENT})('#One')(28,32)\n"
-                             + "    PsiWhiteSpace('\\n')(32,33)\n"
-                             + "    PsiComment(UnitFileTokenType{COMMENT})(';Two')(33,37)\n"
-                             + "    PsiWhiteSpace('\\n')(37,38)\n"
-                             + "    UnitFilePropertyImpl(PROPERTY)(38,47)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[One]\\n')(22,28)\n"
+                             + "    PsiComment(UnitFileTokenType{COMMENT})('#One\\n')(28,33)\n"
+                             + "    PsiComment(UnitFileTokenType{COMMENT})(';Two\\n')(33,38)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(38,48)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Key')(38,41)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(41,42)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('Value')(42,47)\n"
-                             + "    PsiWhiteSpace('\\n\\n\\n')(47,50)\n"
-                             + "    PsiComment(UnitFileTokenType{COMMENT})(';Three')(50,56)\n"
-                             + "    PsiWhiteSpace('\\n\\n')(56,58)\n"
-                             + "    PsiComment(UnitFileTokenType{COMMENT})('#Four')(58,63)\n"
-                             + "    PsiWhiteSpace('\\n\\n')(63,65)\n"
+                             + "      UnitFileValueImpl(VALUE)(42,48)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value\\n')(42,48)\n"
+                             + "    PsiElement(UnitFileTokenType{CRLF})('\\n\\n')(48,50)\n"
+                             + "    PsiComment(UnitFileTokenType{COMMENT})(';Three\\n')(50,57)\n"
+                             + "    PsiElement(UnitFileTokenType{CRLF})('\\n')(57,58)\n"
+                             + "    PsiComment(UnitFileTokenType{COMMENT})('#Four\\n')(58,64)\n"
+                             + "    PsiElement(UnitFileTokenType{CRLF})('\\n')(64,65)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(65,78)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Second')(65,71)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(71,72)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('Value2')(72,78)";
+                             + "      UnitFileValueImpl(VALUE)(72,78)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('Value2')(72,78)";
     /*
      * Exercise SUT
      */
@@ -480,16 +554,17 @@ public class UnitFileParserTest extends ParsingTestCase {
 
     String expectedPsiTree = "unit configuration file (systemd)(0,30)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,30)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
-                             + "    PsiWhiteSpace('\\n')(6,7)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]\\n')(0,7)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(7,19)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('EmptyValue')(7,17)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('\\n')(18,19)\n"
+                             + "      UnitFileValueImpl(VALUE)(18,19)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\\n')(18,19)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(19,30)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Before')(19,25)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(25,26)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('test')(26,30)";
+                             + "      UnitFileValueImpl(VALUE)(26,30)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('test')(26,30)";
     /*
      * Exercise SUT
      */
@@ -509,11 +584,10 @@ public class UnitFileParserTest extends ParsingTestCase {
 
     String expectedPsiTree = "unit configuration file (systemd)(0,18)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,18)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
-                             + "    PsiWhiteSpace('\\n')(6,7)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]\\n')(0,7)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(7,18)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('EmptyValue')(7,17)\n"
-                             + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)\n";
+                             + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)";
     /*
      * Exercise SUT
      */
@@ -533,12 +607,12 @@ public class UnitFileParserTest extends ParsingTestCase {
 
     String expectedPsiTree = "unit configuration file (systemd)(0,19)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,19)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
-                             + "    PsiWhiteSpace('\\n')(6,7)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]\\n')(0,7)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(7,19)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('EmptyValue')(7,17)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('\\n')(18,19)";
+                             + "      UnitFileValueImpl(VALUE)(18,19)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\\n')(18,19)";
     /*
      * Exercise SUT
      */
@@ -559,12 +633,12 @@ public class UnitFileParserTest extends ParsingTestCase {
 
     String expectedPsiTree = "unit configuration file (systemd)(0,25)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,19)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
-                             + "    PsiWhiteSpace('\\n')(6,7)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]\\n')(0,7)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(7,19)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('EmptyValue')(7,17)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('\\n')(18,19)\n"
+                             + "      UnitFileValueImpl(VALUE)(18,19)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\\n')(18,19)\n"
                              + "  PsiComment(UnitFileTokenType{COMMENT})('#Hello')(19,25)";
     /*
      * Exercise SUT
@@ -586,12 +660,12 @@ public class UnitFileParserTest extends ParsingTestCase {
 
     String expectedPsiTree = "unit configuration file (systemd)(0,28)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,19)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
-                             + "    PsiWhiteSpace('\\n')(6,7)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]\\n')(0,7)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(7,19)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('EmptyValue')(7,17)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(17,18)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('\\n')(18,19)\n"
+                             + "      UnitFileValueImpl(VALUE)(18,19)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\\n')(18,19)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(19,28)\n"
                              + "    PsiElement(UnitFileTokenType{SECTION})('[Install]')(19,28)";
     /*
@@ -610,9 +684,8 @@ public class UnitFileParserTest extends ParsingTestCase {
     String sourceCode = "[Uni\n";
 
     String expectedPsiTree = "unit configuration file (systemd)(0,5)\n"
-                             + "  PsiErrorElement:<comment>, <new line> or <section header> expected, got '[Uni'(0,4)\n"
-                             + "    PsiElement(BAD_CHARACTER)('[Uni')(0,4)\n"
-                             + "  PsiWhiteSpace('\\n')(4,5)";
+                             + "  PsiErrorElement:<comment>, <new line> or <section header> expected, got '[Uni'(0,5)\n"
+                             + "    PsiElement(BAD_CHARACTER)('[Uni\\n')(0,5)";
     /*
      * Exercise SUT
      */
@@ -631,8 +704,7 @@ public class UnitFileParserTest extends ParsingTestCase {
 
     String expectedPsiTree = "unit configuration file (systemd)(0,10)\n"
                              + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,10)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]')(0,6)\n"
-                             + "    PsiWhiteSpace('\\n')(6,7)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[Unit]\\n')(0,7)\n"
                              + "    UnitFilePropertyImpl(PROPERTY)(7,10)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Foo')(7,10)\n"
                              + "      PsiErrorElement:<key-value separator (=)> expected(10,10)\n"
@@ -648,8 +720,46 @@ public class UnitFileParserTest extends ParsingTestCase {
      */
     assertSameLines(expectedPsiTree, parseTree);
   }
+  
+  public void testValueConcatenationWorksAccordingToSpec() {
+  
+    /*
+     * Fixture Setup
+     *
+     */
+    String sourceCode = "[Unit]\n"
+                        + "KeyOne=ValueOne\n"
+                        + "Foo=Alpha \\\n"
+                        + ";Comment One\n"
+                        + "#Test Eero\n"
+                        + "Omega\n"
+                        + "Oh=Noes";
+  
+    // Lines ending in a backslash are concatenated with the following non-comment line while reading and
+    // the backslash is replaced by a space character.
+    // https://www.freedesktop.org/software/systemd/man/systemd.syntax.html#
+    String expectedValue = "Alpha  Omega";
+    
+    /*
+     * Exercise SUT
+     */
+  
+    PsiFile myFile = createPsiFile("a", sourceCode);
+    ensureParsed(myFile);
+    
+    UnitFileSectionGroups sectionGroup = (UnitFileSectionGroups) myFile.getFirstChild();
+    UnitFileProperty property = sectionGroup.getPropertyList().get(1);
+    UnitFileValueType ufvt = (UnitFileValueType) property.getValue();
+    
+    /*
+     * Verification
+     */
+    
+    assertSameLines(expectedValue, ufvt.getValue());
+  }
 
-
+  
+  
   public void testExampleCodeParsesSuccessfully() {
 
 
@@ -662,36 +772,54 @@ public class UnitFileParserTest extends ParsingTestCase {
                         + "[Section B]\n"
                         + "Setting=\"something\" \"some thing\" \"…\"\n"
                         + "KeyTwo=value 2 \\\n"
-                        + "       value 2 continued";
+                        + "       value 2 continued\n"
+                        + "\n"
+                        + "[Section C]\n"
+                        + "KeyThree=value 2\\\n"
+                        + "# this line is ignored\n"
+                        + "; this line is ignored too\n"
+                        + "       value 2 continued\n";
 
-    String expectedPsiTree = "unit configuration file (systemd)(0,146)\n"
-                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,41)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[Section A]')(0,11)\n"
-                             + "    PsiWhiteSpace('\\n')(11,12)\n"
-                             + "    UnitFilePropertyImpl(PROPERTY)(12,26)\n"
+    String expectedPsiTree = "unit configuration file (systemd)(0,253)\n"
+                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,56)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[Section A]\\n')(0,12)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(12,27)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('KeyOne')(12,18)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(18,19)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('value 1')(19,26)\n"
-                             + "    PsiWhiteSpace('\\n')(26,27)\n"
-                             + "    UnitFilePropertyImpl(PROPERTY)(27,41)\n"
+                             + "      UnitFileValueImpl(VALUE)(19,27)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('value 1\\n')(19,27)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(27,42)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('KeyTwo')(27,33)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(33,34)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('value 2')(34,41)\n"
-                             + "  PsiWhiteSpace('\\n\\n')(41,43)\n"
-                             + "  PsiComment(UnitFileTokenType{COMMENT})('# a comment')(43,54)\n"
-                             + "  PsiWhiteSpace('\\n\\n')(54,56)\n"
-                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(56,146)\n"
-                             + "    PsiElement(UnitFileTokenType{SECTION})('[Section B]')(56,67)\n"
-                             + "    PsiWhiteSpace('\\n')(67,68)\n"
-                             + "    UnitFilePropertyImpl(PROPERTY)(68,104)\n"
+                             + "      UnitFileValueImpl(VALUE)(34,42)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('value 2\\n')(34,42)\n"
+                             + "    PsiElement(UnitFileTokenType{CRLF})('\\n')(42,43)\n"
+                             + "    PsiComment(UnitFileTokenType{COMMENT})('# a comment\\n')(43,55)\n"
+                             + "    PsiElement(UnitFileTokenType{CRLF})('\\n')(55,56)\n"
+                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(56,148)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[Section B]\\n')(56,68)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(68,105)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('Setting')(68,75)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(75,76)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('\"something\" \"some thing\" \"…\"')(76,104)\n"
-                             + "    PsiWhiteSpace('\\n')(104,105)\n"
-                             + "    UnitFilePropertyImpl(PROPERTY)(105,146)\n"
+                             + "      UnitFileValueImpl(VALUE)(76,105)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('\"something\" \"some thing\" \"…\"\\n')(76,105)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(105,147)\n"
                              + "      PsiElement(UnitFileTokenType{KEY})('KeyTwo')(105,111)\n"
                              + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(111,112)\n"
-                             + "      PsiElement(UnitFileTokenType{VALUE})('value 2 \\\\n       value 2 continued')(112,146)";
+                             + "      UnitFileValueImpl(VALUE)(112,147)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('value 2 \\\\n')(112,122)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('       value 2 continued\\n')(122,147)\n"
+                             + "    PsiElement(UnitFileTokenType{CRLF})('\\n')(147,148)\n"
+                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(148,253)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[Section C]\\n')(148,160)\n"
+                             + "    UnitFilePropertyImpl(PROPERTY)(160,253)\n"
+                             + "      PsiElement(UnitFileTokenType{KEY})('KeyThree')(160,168)\n"
+                             + "      PsiElement(UnitFileTokenType{SEPARATOR})('=')(168,169)\n"
+                             + "      UnitFileValueImpl(VALUE)(169,253)\n"
+                             + "        PsiElement(UnitFileTokenType{CONTINUING_VALUE})('value 2\\\\n')(169,178)\n"
+                             + "        PsiComment(UnitFileTokenType{COMMENT})('# this line is ignored\\n')(178,201)\n"
+                             + "        PsiComment(UnitFileTokenType{COMMENT})('; this line is ignored too\\n')(201,228)\n"
+                             + "        PsiElement(UnitFileTokenType{COMPLETED_VALUE})('       value 2 continued\\n')(228,253)";
 
     /*
      * Exercise SUT
@@ -704,6 +832,7 @@ public class UnitFileParserTest extends ParsingTestCase {
      */
     assertSameLines(expectedPsiTree, parseTree);
   }
+  
 
 
   /**

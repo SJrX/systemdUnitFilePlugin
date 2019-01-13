@@ -56,7 +56,8 @@ public class UnitFileHighlighter extends SyntaxHighlighterBase {
       return SEPARATOR_KEYS;
     } else if (tokenType.equals(UnitFileElementTypeHolder.KEY)) {
       return KEY_KEYS;
-    } else if (tokenType.equals(UnitFileElementTypeHolder.VALUE)) {
+    } else if (tokenType.equals(UnitFileElementTypeHolder.CONTINUING_VALUE)
+               || tokenType.equals(UnitFileElementTypeHolder.COMPLETED_VALUE)) {
       return VALUE_KEYS;
     } else if (tokenType.equals(UnitFileElementTypeHolder.COMMENT)) {
       return COMMENT_KEYS;

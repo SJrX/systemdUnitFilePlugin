@@ -23,9 +23,9 @@ public class UnitFilePropertyType extends ASTWrapperPsiElement {
   }
   
   /**
-   * Returns the key for the property.
+   * Returns the key node for the property.
    *
-   * @return the key for this property
+   * @return the key node for this property
    */
   public ASTNode getKeyNode() {
     ASTNode keyNode = this.getNode().findChildByType(UnitFileElementTypeHolder.KEY);
@@ -37,11 +37,12 @@ public class UnitFilePropertyType extends ASTWrapperPsiElement {
   }
   
   /**
-   * Returns the key for the property.
+   * Returns the value for the property.
    *
-   * @return the key for this property
+   * @return the value for this property
    */
   public ASTNode getValueNode() {
+    // Probably need to fix this as well
     return this.getNode().findChildByType(UnitFileElementTypeHolder.VALUE);
   }
   
@@ -50,9 +51,9 @@ public class UnitFilePropertyType extends ASTWrapperPsiElement {
    *
    * @return the value for this property
    */
-  public String getValue() {
+  public String getValueText() {
     if (getValueNode() != null) {
-      return getValueNode().getText();
+      return ((UnitFileValueType) getValueNode().getPsi()).getValue();
     } else {
       return null;
     }

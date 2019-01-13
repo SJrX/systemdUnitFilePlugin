@@ -8,28 +8,22 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder.*;
-import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileValueType;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.*;
 
-public class UnitFilePropertyImpl extends UnitFilePropertyType implements UnitFileProperty {
+public class UnitFileValueImpl extends UnitFileValueType implements UnitFileValue {
 
-  public UnitFilePropertyImpl(ASTNode node) {
+  public UnitFileValueImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull UnitFileVisitor visitor) {
-    visitor.visitProperty(this);
+    visitor.visitValue(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof UnitFileVisitor) accept((UnitFileVisitor)visitor);
     else super.accept(visitor);
-  }
-
-  @Override
-  @Nullable
-  public UnitFileValue getValue() {
-    return findChildByClass(UnitFileValue.class);
   }
 
 }
