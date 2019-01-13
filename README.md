@@ -41,6 +41,10 @@ At some point, this plugin should be available at the [JetBrains Plugin Reposito
 Changelog
 --------- 
 
+### [v0.2.0](https://github.com/SJrX/systemdUnitFilePlugin/releases/tag/v0.2.0)
+
+* Add warning when whitespace exists between line continuation character and next new line.
+
 ### [v0.1.0](https://github.com/SJrX/systemdUnitFilePlugin/releases/tag/v0.1.0)
 
 * Initial release
@@ -50,6 +54,7 @@ Acknowledgements
 ----------------
 * The documentation is extracted from the systemd source code.
 * A number of users of the [IntelliJ Plugin Developers Gitter Room](https://gitter.im/IntelliJ-Plugin-Developers/Lobby) provided a lot of useful advice.
+* As with every project I work on the help and patient tutelage of members of [##java on Freenode](http://https://javachannel.org/).
  
 ## Development Notes
 
