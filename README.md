@@ -18,6 +18,7 @@ This plugin adds support for [systemd unit files](https://www.freedesktop.org/so
  * Annotations
    * When the section name is invalid.
    * Whitespace after a line continuation \ character.
+   * When a key has been deprecated.
  * Built-in documentation for options or section name (available when hitting <kbd>CTRL+Q</kbd> or <kbd>F1</kbd> on Mac)   
 
       
@@ -51,6 +52,7 @@ Changelog
 * Add warning when whitespace exists between line continuation character and next new line.
 * Refactored syntax highlighting to properly support comments between line continuations as added here [commit (2ca4d779)](https://github.com/systemd/systemd/commit/2ca4d779e021fdd94f4445980baa0aa8af6ffdc4).
 * Add support for deprecated keys.
+* Fixed typo in UnknownKeyInSection description.
 
 ### [v0.1.2](https://github.com/SJrX/systemdUnitFilePlugin/releases/tag/v0.1.2)
 * Fixed bug with tab characters in values.
