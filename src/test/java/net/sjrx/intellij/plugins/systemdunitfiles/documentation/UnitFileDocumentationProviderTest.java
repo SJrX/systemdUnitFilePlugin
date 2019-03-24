@@ -430,7 +430,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
                                                                   + "</div><div class='content'><p>The key <var>PropagateReloadTo</var> in"
                                                                   + " section <b>Unit</b> has been moved to <var>PropagateReloadsTo</var>"
                                                                   + " in section <b>Unit</b><p>NOTE: The semantics of the new value may not"
-                                                                  + " match the existing value."
+                                                                  + " match the existing value.<p>"
                                                                   + "<a href='https://github.com/systemd/systemd/commit/7f2cddae09'>More"
                                                                   + " information is available here</a></div>", doc);
     
@@ -453,7 +453,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
   
     assertEquals("Expected the generated documentation to match", "<div class='definition'><pre>PermissionsStartOnly"
                                                                   + "</pre></div><div class='content'><p><var>PermissionsStartOnly</var> in"
-                                                                  + " section <b>Service</b> is not officially supported."
+                                                                  + " section <b>Service</b> is not officially supported.<p>"
                                                                   + "<a href='https://github.com/systemd/systemd/blob/v241/NEWS#L561'>"
                                                                   + "More information is available here</a></div>", doc);
   }

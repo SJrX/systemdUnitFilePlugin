@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DeprecatedOptionsInspection extends LocalInspectionTool {
@@ -42,50 +41,14 @@ public class DeprecatedOptionsInspection extends LocalInspectionTool {
         PsiTreeUtil.collectElementsOfType(section, UnitFilePropertyType.class);
       
       for (final UnitFilePropertyType keyAndValueProperty : keyAndValuePropertiesInSection) {
-        String text = getDeprecatedOptionText(section, keyAndValueProperty);
-        
-        if (text != null) {
-          problems.add(manager.createProblemDescriptor(keyAndValueProperty.getKeyNode().getPsi(), text, true,
+        if (sdr.isDeprecated(section.getSectionName(), keyAndValueProperty.getKey())) {
+          String text = sdr.getDocumentationContentForKeyInSection(section.getSectionName(), keyAndValueProperty.getKey());
+          problems.add(manager.createProblemDescriptor(keyAndValueProperty.getKeyNode().getPsi(), text.replaceAll("</?var>",""), true,
             ProblemHighlightType.LIKE_DEPRECATED, isOnTheFly));
         }
       }
     }
     
     return problems.toArray(new ProblemDescriptor[0]);
-  }
-  
-  private String getDeprecatedOptionText(UnitFileSectionType section, UnitFilePropertyType keyAndValueProperty) {
-    
-    
-    String sectionName = section.getSectionName();
-    String key = keyAndValueProperty.getKey();
-    
-    String deprecationText =
-      deprecatedKeyAndValueToText.computeIfAbsent(sectionName, k -> new HashMap<>()).computeIfAbsent(key, keyName -> {
-        
-        // We store empty strings in our cache for values that don't matter
-        String documentation = sdr.getDocumentationContentForKeyInSection(section.getSectionName(), keyAndValueProperty.getKey());
-        
-        if (documentation == null) {
-          return "";
-        }
-
-        Matcher m = DEPRECATED_COMMENT_REGEX.matcher(documentation);
-        
-        if (m.find()) {
-          String replacement = m.group(1);
-          // Get rid of the var tags.
-          return "This option is deprecated. Use " + replacement.replaceAll("</?var>","") + " instead.";
-        } else {
-          return "";
-        }
-      });
-    
-    
-    if (deprecationText.isEmpty()) {
-      return null;
-    } else {
-      return deprecationText;
-    }
   }
 }
