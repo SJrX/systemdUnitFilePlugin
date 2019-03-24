@@ -326,12 +326,13 @@ public class SemanticDataRepository {
   
       switch (options.get("reason")) {
         case "unsupported":
-          return "<p><var>" + keyName + "</var> in section <b>" + sectionName + "</b> is not officially supported."
+          return "<p><var>" + keyName + "</var> in section <b>" + sectionName + "</b> is not officially supported.<p>"
                  + "<a href='" + options.get("documentationLink") + "'>More information is available here</a>";
         case "moved":
           return "<p>The key <var>" + keyName + "</var> in section <b>" + sectionName + "</b> has been moved to "
-                 + "<var>" + options.get("replacedWithKey") + "</var> in section <b>" + options.get("replacedWithSection") + "</b>"
-                 + "<p>NOTE: The semantics of the new value may not match the existing value."
+                 + "<var>" + options.getOrDefault("replacedWithKey", keyName) + "</var> in section <b>"
+                 + options.getOrDefault("replacedWithSection", sectionName) + "</b>"
+                 + "<p>NOTE: The semantics of the new value may not match the existing value.<p>"
                  + "<a href='" + options.get("documentationLink") + "'>More information is available here</a>";
         default:
           LOG.warn("Found unsupported " + sectionName + " => " + keyName);
@@ -345,6 +346,19 @@ public class SemanticDataRepository {
       LOG.warn("Could not convert html document stream to String", e);
     }
     return null;
+  }
+  
+  /**
+   * Checks whether the option is deprecated or unsupported.
+   *
+   * @param sectionName the section name to lookup (e.g., Unit, Install, Service)
+   * @param keyName the key name to look up.
+   * @return true if we know the option is deprecated
+   */
+  public boolean isDeprecated(String sectionName, String keyName) {
+    Map<String, String> options = this.getKeyValuePairsForSectionFromUndocumentedInformation(sectionName).get(keyName);
+  
+    return options != null;
   }
   
   /**
@@ -390,7 +404,7 @@ public class SemanticDataRepository {
    * @return set
    */
   public Set<String> getAllowedKeywordsInSectionFromValidators(String sectionName) {
-    return Collections.unmodifiableSet(this.sectionToKeyAndValidatorMap.get(sectionName).keySet());
+    return Collections.unmodifiableSet(this.sectionToKeyAndValidatorMap.getOrDefault(sectionName, Collections.emptyMap()).keySet());
   }
   
 }

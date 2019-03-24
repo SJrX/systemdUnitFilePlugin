@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>net.sjrx.intellij.plugins.systemdunitfiles</id>
   <name>Unit File Support (systemd)</name>
-  <version>0.2</version>
+  <version>0.2.1</version>
   <vendor email="commits@sjrx.net">Steve Ramage</vendor>
 
   <description><![CDATA[

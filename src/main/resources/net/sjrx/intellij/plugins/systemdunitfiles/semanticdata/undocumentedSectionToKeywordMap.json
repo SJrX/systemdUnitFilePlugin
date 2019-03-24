@@ -1,165 +1,371 @@
 {
   "Mount": {
-    "InaccessibleDirectories" : {
+    "BlockIOAccounting": {
       "reason": "moved",
-      "replacedWithKey" : "InaccessiblePath",
-      "replacedWithSection" : "Mount",
+      "replacedWithKey": "IOAccounting",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="
+    },
+    "BlockIODeviceWeight": {
+      "reason": "moved",
+      "replacedWithKey": "IODeviceWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIODeviceWeight=device%20weight"
+    },
+    "BlockIOReadBandwidth": {
+      "reason": "moved",
+      "replacedWithKey": "IOReadBandwidthMax",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+    },
+    "BlockIOWeight": {
+      "reason": "moved",
+      "replacedWithKey": "IOWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+    },
+    "BlockIOWriteBandwidth": {
+      "reason": "moved",
+      "replacedWithKey": "IOWriteBandwidthMax",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+    },
+    "CPUShares": {
+      "reason": "moved",
+      "replacedWithKey": "CPUWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+    },
+    "InaccessibleDirectories": {
+      "reason": "moved",
+      "replacedWithKey": "InaccessiblePath",
       "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
     },
-    "ReadOnlyDirectories" : {
+    "MemoryLimit": {
       "reason": "moved",
-      "replacedWithKey" : "ReadOnlyPaths",
-      "replacedWithSection" : "Mount",
+      "replacedWithKey": "MemoryMax",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLimit=bytes"
+    },
+    "ReadOnlyDirectories": {
+      "reason": "moved",
+      "replacedWithKey": "ReadOnlyPaths",
       "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
     },
-    "ReadWriteDirectories" : {
+    "ReadWriteDirectories": {
       "reason": "moved",
-      "replacedWithKey" : "ReadWritePaths",
-      "replacedWithSection" : "Mount",
+      "replacedWithKey": "ReadWritePaths",
       "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+    },
+    "StartupBlockIOWeight": {
+      "reason": "moved",
+      "replacedWithKey": "StartupIOWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+    },
+    "StartupCPUShares": {
+      "reason": "moved",
+      "replacedWithKey": "StartupCPUWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
     }
   },
   "Service": {
-    "FailureAction" : {
+    "BlockIOAccounting": {
       "reason": "moved",
-      "replacedWithKey" : "FailureAction",
-      "replacedWithSection" : "Unit",
-      "documentationLink" : "https://github.com/systemd/systemd/commit/53c35a766f"
+      "replacedWithKey": "IOAccounting",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="
     },
-    "InaccessibleDirectories" : {
+    "BlockIODeviceWeight": {
       "reason": "moved",
-      "replacedWithKey" : "InaccessiblePath",
-      "replacedWithSection" : "Service",
+      "replacedWithKey": "IODeviceWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIODeviceWeight=device%20weight"
+    },
+    "BlockIOReadBandwidth": {
+      "reason": "moved",
+      "replacedWithKey": "IOReadBandwidthMax",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+    },
+    "BlockIOWeight": {
+      "reason": "moved",
+      "replacedWithKey": "IOWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+    },
+    "BlockIOWriteBandwidth": {
+      "reason": "moved",
+      "replacedWithKey": "IOWriteBandwidthMax",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+    },
+    "CPUShares": {
+      "reason": "moved",
+      "replacedWithKey": "CPUWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+    },
+    "FailureAction": {
+      "reason": "moved",
+      "replacedWithSection": "Unit",
+      "documentationLink": "https://github.com/systemd/systemd/commit/53c35a766f"
+    },
+    "InaccessibleDirectories": {
+      "reason": "moved",
+      "replacedWithKey": "InaccessiblePath",
       "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
     },
-    "PermissionsStartOnly" : {
+    "MemoryLimit": {
+      "reason": "moved",
+      "replacedWithKey": "MemoryMax",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLimit=bytes"
+    },
+    "PermissionsStartOnly": {
       "reason": "unsupported",
       "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L561"
     },
-    "ReadOnlyDirectories" : {
+    "ReadOnlyDirectories": {
       "reason": "moved",
-      "replacedWithKey" : "ReadOnlyPaths",
-      "replacedWithSection" : "Service",
+      "replacedWithKey": "ReadOnlyPaths",
       "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
     },
-    "ReadWriteDirectories" : {
+    "ReadWriteDirectories": {
       "reason": "moved",
-      "replacedWithKey" : "ReadWritePaths",
-      "replacedWithSection" : "Service",
+      "replacedWithKey": "ReadWritePaths",
       "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
     },
-    "RebootArgument" : {
+    "RebootArgument": {
       "reason": "moved",
-      "replacedWithKey" : "RebootArgument",
-      "replacedWithSection" : "Unit",
-      "documentationLink" : "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
+      "replacedWithKey": "RebootArgument",
+      "replacedWithSection": "Unit",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
     },
-    "StartLimitAction" : {
+    "StartLimitAction": {
       "reason": "moved",
-      "replacedWithKey" : "StartLimitAction",
-      "replacedWithSection" : "Unit",
-      "documentationLink" : "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
+      "replacedWithSection": "Unit",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
     },
-    "StartLimitInterval" : {
+    "StartLimitInterval": {
       "reason": "moved",
-      "replacedWithKey" : "StartLimitInterval",
-      "replacedWithSection" : "Unit",
-      "documentationLink" : "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
+      "replacedWithSection": "Unit",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
     },
-    "StartLimitBurst" : {
+    "StartLimitBurst": {
       "reason": "moved",
-      "replacedWithKey" : "StartLimitBurst",
-      "replacedWithSection" : "Unit",
-      "documentationLink" : "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
+      "replacedWithSection": "Unit",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
+    },
+    "StartupBlockIOWeight": {
+      "reason": "moved",
+      "replacedWithKey": "StartupIOWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+    },
+    "StartupCPUShares": {
+      "reason": "moved",
+      "replacedWithKey": "StartupCPUWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+    }
+  },
+  "Slice": {
+    "BlockIOAccounting": {
+      "reason": "moved",
+      "replacedWithKey": "IOAccounting",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="
+    },
+    "BlockIODeviceWeight": {
+      "reason": "moved",
+      "replacedWithKey": "IODeviceWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIODeviceWeight=device%20weight"
+    },
+    "BlockIOReadBandwidth": {
+      "reason": "moved",
+      "replacedWithKey": "IOReadBandwidthMax",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+    },
+    "BlockIOWeight": {
+      "reason": "moved",
+      "replacedWithKey": "IOWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+    },
+    "BlockIOWriteBandwidth": {
+      "reason": "moved",
+      "replacedWithKey": "IOWriteBandwidthMax",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+    },
+    "CPUShares": {
+      "reason": "moved",
+      "replacedWithKey": "CPUWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+    },
+    "MemoryLimit": {
+      "reason": "moved",
+      "replacedWithKey": "MemoryMax",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLimit=bytes"
+    },
+    "StartupBlockIOWeight": {
+      "reason": "moved",
+      "replacedWithKey": "StartupIOWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+    },
+    "StartupCPUShares": {
+      "reason": "moved",
+      "replacedWithKey": "StartupCPUWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
     }
   },
   "Socket": {
-    "InaccessibleDirectories" : {
+    "BlockIOAccounting": {
       "reason": "moved",
-      "replacedWithKey" : "InaccessiblePath",
-      "replacedWithSection" : "Socket",
+      "replacedWithKey": "IOAccounting",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="
+    },
+    "BlockIODeviceWeight": {
+      "reason": "moved",
+      "replacedWithKey": "IODeviceWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIODeviceWeight=device%20weight"
+    },
+    "BlockIOReadBandwidth": {
+      "reason": "moved",
+      "replacedWithKey": "IOReadBandwidthMax",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+    },
+    "BlockIOWeight": {
+      "reason": "moved",
+      "replacedWithKey": "IOWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+    },
+    "BlockIOWriteBandwidth": {
+      "reason": "moved",
+      "replacedWithKey": "IOWriteBandwidthMax",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+    },
+    "CPUShares": {
+      "reason": "moved",
+      "replacedWithKey": "CPUWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+    },
+    "InaccessibleDirectories": {
+      "reason": "moved",
+      "replacedWithKey": "InaccessiblePath",
       "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
     },
-    "ReadOnlyDirectories" : {
+    "MemoryLimit": {
       "reason": "moved",
-      "replacedWithKey" : "ReadOnlyPaths",
-      "replacedWithSection" : "Socket",
+      "replacedWithKey": "MemoryMax",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLimit=bytes"
+    },
+    "ReadOnlyDirectories": {
+      "reason": "moved",
+      "replacedWithKey": "ReadOnlyPaths",
       "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
     },
-    "ReadWriteDirectories" : {
+    "ReadWriteDirectories": {
       "reason": "moved",
-      "replacedWithKey" : "ReadWritePaths",
-      "replacedWithSection" : "Socket",
+      "replacedWithKey": "ReadWritePaths",
       "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+    },
+    "StartupBlockIOWeight": {
+      "reason": "moved",
+      "replacedWithKey": "StartupIOWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+    },
+    "StartupCPUShares": {
+      "reason": "moved",
+      "replacedWithKey": "StartupCPUWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
     }
   },
   "Swap": {
-    "InaccessibleDirectories" : {
+    "BlockIOAccounting": {
       "reason": "moved",
-      "replacedWithKey" : "InaccessiblePath",
-      "replacedWithSection" : "Swap",
+      "replacedWithKey": "IOAccounting",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="
+    },
+    "BlockIODeviceWeight": {
+      "reason": "moved",
+      "replacedWithKey": "IODeviceWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIODeviceWeight=device%20weight"
+    },
+    "BlockIOReadBandwidth": {
+      "reason": "moved",
+      "replacedWithKey": "IOReadBandwidthMax",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+    },
+    "BlockIOWeight": {
+      "reason": "moved",
+      "replacedWithKey": "IOWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+    },
+    "BlockIOWriteBandwidth": {
+      "reason": "moved",
+      "replacedWithKey": "IOWriteBandwidthMax",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+    },
+    "CPUShares": {
+      "reason": "moved",
+      "replacedWithKey": "CPUWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+    },
+    "InaccessibleDirectories": {
+      "reason": "moved",
+      "replacedWithKey": "InaccessiblePath",
       "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
     },
-    "ReadOnlyDirectories" : {
+    "MemoryLimit": {
       "reason": "moved",
-      "replacedWithKey" : "ReadOnlyPaths",
-      "replacedWithSection" : "Swap",
+      "replacedWithKey": "MemoryMax",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLimit=bytes"
+    },
+    "ReadOnlyDirectories": {
+      "reason": "moved",
+      "replacedWithKey": "ReadOnlyPaths",
       "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
     },
-    "ReadWriteDirectories" : {
+    "ReadWriteDirectories": {
       "reason": "moved",
-      "replacedWithKey" : "ReadWritePaths",
-      "replacedWithSection" : "Swap",
+      "replacedWithKey": "ReadWritePaths",
       "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+    },
+    "StartupBlockIOWeight": {
+      "reason": "moved",
+      "replacedWithKey": "StartupIOWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+    },
+    "StartupCPUShares": {
+      "reason": "moved",
+      "replacedWithKey": "StartupCPUWeight",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
     }
   },
   "Unit": {
-    "AssertNull" : {
+    "AssertNull": {
       "reason": "unsupported",
-      "documentationLink" : "https://github.com/systemd/systemd/issues/11812"
+      "documentationLink": "https://github.com/systemd/systemd/issues/11812"
     },
-    "BindTo" : {
+    "BindTo": {
       "reason": "moved",
-      "replacedWithKey" : "BindsTo",
-      "replacedWithSection" : "Unit",
-      "documentationLink" : "https://github.com/systemd/systemd/commit/7f2cddae09"
+      "replacedWithKey": "BindsTo",
+      "documentationLink": "https://github.com/systemd/systemd/commit/7f2cddae09"
     },
-    "ConditionNull" : {
+    "ConditionNull": {
       "reason": "unsupported",
-      "documentationLink" : "https://github.com/systemd/systemd/issues/11812"
+      "documentationLink": "https://github.com/systemd/systemd/issues/11812"
     },
-    "PropagateReloadTo" : {
+    "PropagateReloadTo": {
       "reason": "moved",
-      "replacedWithKey" : "PropagateReloadsTo",
-      "replacedWithSection" : "Unit",
-      "documentationLink" : "https://github.com/systemd/systemd/commit/7f2cddae09"
+      "replacedWithKey": "PropagateReloadsTo",
+      "documentationLink": "https://github.com/systemd/systemd/commit/7f2cddae09"
     },
-    "PropagateReloadFrom" : {
+    "PropagateReloadFrom": {
       "reason": "moved",
-      "replacedWithKey" : "ReloadPropagatedFrom",
-      "replacedWithSection" : "Unit",
-      "documentationLink" : "https://github.com/systemd/systemd/commit/7f2cddae09"
+      "replacedWithKey": "ReloadPropagatedFrom",
+      "documentationLink": "https://github.com/systemd/systemd/commit/7f2cddae09"
     },
-    "OnFailureIsolate" : {
+    "OnFailureIsolate": {
       "reason": "moved",
-      "replacedWithKey" : "OnFailureJobMode",
-      "replacedWithSection" : "Unit",
-      "documentationLink" : "https://github.com/systemd/systemd/commit/d420282b28"
+      "replacedWithKey": "OnFailureJobMode",
+      "documentationLink": "https://github.com/systemd/systemd/commit/d420282b28"
     },
-    "RequiresOverridable" : {
+    "RequiresOverridable": {
       "reason": "unsupported",
-      "unsupported" : true,
-      "documentationLink" : "https://github.com/systemd/systemd/blob/v241/NEWS#L3608"
+      "unsupported": true,
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3608"
     },
-    "RequisiteOverridable" : {
+    "RequisiteOverridable": {
       "reason": "unsupported",
-      "unsupported" : true,
-      "documentationLink" : "https://github.com/systemd/systemd/blob/v241/NEWS#L3608"
+      "unsupported": true,
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3608"
     },
-    "StartLimitInterval" : {
+    "StartLimitInterval": {
       "reason": "moved",
-      "replacedWithKey" : "StartLimitIntervalSec",
-      "replaceWithSection": "Unit",
+      "replacedWithKey": "StartLimitIntervalSec",
       "documentationLink": "https://github.com/systemd/systemd/pull/3148/commits/f0367da7d1a61ad698a55d17b5c28ddce0dc265a"
     }
   }

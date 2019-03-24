@@ -17,7 +17,7 @@ plugins {
 
 }
 group 'net.sjrx.intellij.plugins'
-version '0.2.0'
+version '0.2.1'
 
 sourceCompatibility = 1.8
 
@@ -34,8 +34,14 @@ dependencies {
 intellij {
     version '2018.3'
 }
+
 patchPluginXml {
     changeNotes """
+  <h3>v0.2.1</h3>
+  <ul>
+    <li>Add support for <em>all</em> deprecated / undocumented options <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/67">#67</a>
+    , <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/71">#71</a></li>
+  </ul>
   <h3>v0.2.0</h3>
   <ul>
     <li>Updating syntax highlighting to properly handle comments with line continuations.</li>
@@ -43,18 +49,19 @@ patchPluginXml {
     <li>New inspection for deprecated options</li>
   <h3>v0.1.2</h3>
   <ul>
-      <li>Added support for systemd v240 keywords.</li>
-      <li>Fixed bug with tab character causing issues with syntax highlighting <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/51">#51</a>.</li>
+    <li>Added support for systemd v240 keywords.</li>
+    <li>Fixed bug with tab character causing issues with syntax highlighting <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/51">#51</a>.</li>
   </ul>
   <h3>v0.1.1</h3>
   <ul>
-      <li>Added support for IntelliJ 2018.3.</li>
+    <li>Added support for IntelliJ 2018.3.</li>
   </ul>      
   <h3>v0.1.0</h3>
   <ul>
-      <li>Initial Release.</li>
+    <li>Initial Release.</li>
   </ul>
 """
+  sinceBuild '182.0'
 }
 
 // Add generated sources root
@@ -99,7 +106,7 @@ task cloneSystemdRepo(type: GitCloneTask) {
 
   dir = file("git-dependencies/systemd")
   uri = 'https://github.com/systemd/systemd.git'
-  treeish = 'v240' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
+  treeish = 'v241' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
 }
 
 task generateDataFromManPages(type: GenerateDataFromManPages) {
