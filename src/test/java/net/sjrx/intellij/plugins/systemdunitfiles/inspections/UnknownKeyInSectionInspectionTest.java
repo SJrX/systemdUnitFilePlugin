@@ -742,4 +742,23 @@ public class UnknownKeyInSectionInspectionTest extends AbstractUnitFileTest {
     assertEmpty(highlights);
     
   }
+  
+  public void testThatMovedKeysFromServiceToUnitInSystemd229ThrowNoWarnings() {
+    // Fixture Setup
+    String file = "[Service]\n"
+              + "StartLimitBurst=24\n"
+              + "StartLimitInterval=24s\n"
+              + "StartLimitAction=none\n"
+              + "RebootArgument=yoyo\n";
+  
+    enableInspection(UnknownKeyInSectionInspection.class);
+    setupFileInEditor("systemd-v229-moved.service", file);
+  
+    // Exercise SUT
+    List<HighlightInfo> highlights = myFixture.doHighlighting();
+  
+    // Verification
+    assertEmpty(highlights);
+    
+  }
 }

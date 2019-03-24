@@ -46,7 +46,7 @@ public class UnitFileKeyCompletionContributor extends CompletionContributor {
           
           String sectionName = ((UnitFileSectionGroupsImpl) parameters.getPosition().getParent().getParent()).getSectionName();
 
-          for (String keyword : sdr.getAllowedKeywordsInSection(sectionName)) {
+          for (String keyword : sdr.getDocumentedKeywordsInSection(sectionName)) {
             LookupElementBuilder builder =
               LookupElementBuilder.create(keyword + "=").withPresentableText(keyword)
                 .withIcon(UnitFileIcon.FILE).appendTailText("(Option)", true);

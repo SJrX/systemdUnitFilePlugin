@@ -410,17 +410,51 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     // Verification
     assertNull(doc);
   }
+
+  public void testGenerateDocMovedSectionReturnsSomeText() {
+    // Fixture Setup
+    String file = "[Unit]\n"
+                  + "PropagateReloadTo=cpu.mount";
+    
+    PsiFile psiFile = setupFileInEditor("file.service", file);
+    
+    // Exercise SUT
+    PsiElement renamedSection = getAllKeysInFile(psiFile).get(0);
+    
+    String doc = sut.generateDoc(renamedSection, renamedSection);
+    
+    // Verification
+    assertNotNull(doc);
+    
+    assertEquals("Expected the generated documentation to match", "<div class='definition'><pre>PropagateReloadTo</pre>"
+                                                                  + "</div><div class='content'><p>The key <var>PropagateReloadTo</var> in"
+                                                                  + " section <b>Unit</b> has been moved to <var>PropagateReloadsTo</var>"
+                                                                  + " in section <b>Unit</b><p>NOTE: The semantics of the new value may not"
+                                                                  + " match the existing value."
+                                                                  + "<a href='https://github.com/systemd/systemd/commit/7f2cddae09'>More"
+                                                                  + " information is available here</a></div>", doc);
+    
+  }
   
-  public void testHrmInternalDocumentationError() {
-    String file = "[Section A]\n"
-                  + "KeyOne=value 1\n"
-                  + "KeyTwo=value 2\n"
-                  + "\n"
-                  + "# a comment\n"
-                  + "\n"
-                  + "[Section B]\n"
-                  + "Setting=\"something\" \"some thing\" \"…\"\n"
-                  + "KeyTwo=value 2 \\\n"
-                  + "       value 2 continued";
+  public void testGenerateDocForUnsupportedSectionReturnsSomeValidText() {
+    // Fixture Setup
+    String file = "[Service]\n"
+                  + "PermissionsStartOnly=true";
+    
+    PsiFile psiFile = setupFileInEditor("file.service", file);
+    
+    // Exercise SUT
+    PsiElement unsupportedSection = getAllKeysInFile(psiFile).get(0);
+    
+    String doc = sut.generateDoc(unsupportedSection, unsupportedSection);
+    
+    // Verification
+    assertNotNull(doc);
+  
+    assertEquals("Expected the generated documentation to match", "<div class='definition'><pre>PermissionsStartOnly"
+                                                                  + "</pre></div><div class='content'><p><var>PermissionsStartOnly</var> in"
+                                                                  + " section <b>Service</b> is not officially supported."
+                                                                  + "<a href='https://github.com/systemd/systemd/blob/v241/NEWS#L561'>"
+                                                                  + "More information is available here</a></div>", doc);
   }
 }

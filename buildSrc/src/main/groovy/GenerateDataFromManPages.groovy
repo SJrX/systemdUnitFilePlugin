@@ -118,7 +118,7 @@ class GenerateDataFromManPages extends DefaultTask {
       ]
   ]
 
-  Map<String /* Section */, Map<String /*Keyword*/, Map<String /*Attribute*/, String /*Value*/>>> sectionToKeyWordMap = [:]
+  Map<String /* Section */, Map<String /*Keyword*/, Map<String /*Attribute*/, String /*Value*/>>> sectionToKeyWordMapFromDoc = [:]
 
   final XPath xpath
 
@@ -151,10 +151,10 @@ class GenerateDataFromManPages extends DefaultTask {
 
     logger.debug("Complete")
 
-    def json = JsonOutput.toJson(this.sectionToKeyWordMap)
+    def json = JsonOutput.toJson(this.sectionToKeyWordMapFromDoc)
     json = JsonOutput.prettyPrint(json)
 
-    File outputData = new File(this.generatedJsonFileLocation.getAbsolutePath() + "/sectionToKeywordMap.json")
+    File outputData = new File(this.generatedJsonFileLocation.getAbsolutePath() + "/sectionToKeywordMapFromDoc.json")
 
     outputData.write(json)
 
@@ -222,8 +222,8 @@ class GenerateDataFromManPages extends DefaultTask {
 
           for (String section : sections) {
             logger.debug("Found options $section in $option")
-            sectionToKeyWordMap.putIfAbsent(section, new TreeMap<>())
-            sectionToKeyWordMap[section][keyName] =
+            sectionToKeyWordMapFromDoc.putIfAbsent(section, new TreeMap<>())
+            sectionToKeyWordMapFromDoc[section][keyName] =
               ["values": keyValue, "declaredUnderKeyword": originalKeyName, "declaredInFile": filename]
           }
         }
