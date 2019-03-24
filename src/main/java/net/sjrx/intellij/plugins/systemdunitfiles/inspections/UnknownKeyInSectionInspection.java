@@ -56,7 +56,7 @@ public class UnknownKeyInSectionInspection extends LocalInspectionTool {
           continue;
         }
 
-        if (!sdr.getAllowedKeywordsInSection(section.getSectionName()).contains(keyAndValueProperty.getKey())) {
+        if (!sdr.getAllowedKeywordsInSectionFromValidators(section.getSectionName()).contains(keyAndValueProperty.getKey())) {
           // TODO Figure out what highlight to use
 
           problems.add(manager.createProblemDescriptor(keyAndValueProperty.getKeyNode().getPsi(), INSPECTION_TOOL_TIP_TEXT, true,

@@ -1,0 +1,166 @@
+{
+  "Mount": {
+    "InaccessibleDirectories" : {
+      "reason": "moved",
+      "replacedWithKey" : "InaccessiblePath",
+      "replacedWithSection" : "Mount",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+    },
+    "ReadOnlyDirectories" : {
+      "reason": "moved",
+      "replacedWithKey" : "ReadOnlyPaths",
+      "replacedWithSection" : "Mount",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+    },
+    "ReadWriteDirectories" : {
+      "reason": "moved",
+      "replacedWithKey" : "ReadWritePaths",
+      "replacedWithSection" : "Mount",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+    }
+  },
+  "Service": {
+    "FailureAction" : {
+      "reason": "moved",
+      "replacedWithKey" : "FailureAction",
+      "replacedWithSection" : "Unit",
+      "documentationLink" : "https://github.com/systemd/systemd/commit/53c35a766f"
+    },
+    "InaccessibleDirectories" : {
+      "reason": "moved",
+      "replacedWithKey" : "InaccessiblePath",
+      "replacedWithSection" : "Service",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+    },
+    "PermissionsStartOnly" : {
+      "reason": "unsupported",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L561"
+    },
+    "ReadOnlyDirectories" : {
+      "reason": "moved",
+      "replacedWithKey" : "ReadOnlyPaths",
+      "replacedWithSection" : "Service",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+    },
+    "ReadWriteDirectories" : {
+      "reason": "moved",
+      "replacedWithKey" : "ReadWritePaths",
+      "replacedWithSection" : "Service",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+    },
+    "RebootArgument" : {
+      "reason": "moved",
+      "replacedWithKey" : "RebootArgument",
+      "replacedWithSection" : "Unit",
+      "documentationLink" : "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
+    },
+    "StartLimitAction" : {
+      "reason": "moved",
+      "replacedWithKey" : "StartLimitAction",
+      "replacedWithSection" : "Unit",
+      "documentationLink" : "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
+    },
+    "StartLimitInterval" : {
+      "reason": "moved",
+      "replacedWithKey" : "StartLimitInterval",
+      "replacedWithSection" : "Unit",
+      "documentationLink" : "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
+    },
+    "StartLimitBurst" : {
+      "reason": "moved",
+      "replacedWithKey" : "StartLimitBurst",
+      "replacedWithSection" : "Unit",
+      "documentationLink" : "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
+    }
+  },
+  "Socket": {
+    "InaccessibleDirectories" : {
+      "reason": "moved",
+      "replacedWithKey" : "InaccessiblePath",
+      "replacedWithSection" : "Socket",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+    },
+    "ReadOnlyDirectories" : {
+      "reason": "moved",
+      "replacedWithKey" : "ReadOnlyPaths",
+      "replacedWithSection" : "Socket",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+    },
+    "ReadWriteDirectories" : {
+      "reason": "moved",
+      "replacedWithKey" : "ReadWritePaths",
+      "replacedWithSection" : "Socket",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+    }
+  },
+  "Swap": {
+    "InaccessibleDirectories" : {
+      "reason": "moved",
+      "replacedWithKey" : "InaccessiblePath",
+      "replacedWithSection" : "Swap",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+    },
+    "ReadOnlyDirectories" : {
+      "reason": "moved",
+      "replacedWithKey" : "ReadOnlyPaths",
+      "replacedWithSection" : "Swap",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+    },
+    "ReadWriteDirectories" : {
+      "reason": "moved",
+      "replacedWithKey" : "ReadWritePaths",
+      "replacedWithSection" : "Swap",
+      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+    }
+  },
+  "Unit": {
+    "AssertNull" : {
+      "reason": "unsupported",
+      "documentationLink" : "https://github.com/systemd/systemd/issues/11812"
+    },
+    "BindTo" : {
+      "reason": "moved",
+      "replacedWithKey" : "BindsTo",
+      "replacedWithSection" : "Unit",
+      "documentationLink" : "https://github.com/systemd/systemd/commit/7f2cddae09"
+    },
+    "ConditionNull" : {
+      "reason": "unsupported",
+      "documentationLink" : "https://github.com/systemd/systemd/issues/11812"
+    },
+    "PropagateReloadTo" : {
+      "reason": "moved",
+      "replacedWithKey" : "PropagateReloadsTo",
+      "replacedWithSection" : "Unit",
+      "documentationLink" : "https://github.com/systemd/systemd/commit/7f2cddae09"
+    },
+    "PropagateReloadFrom" : {
+      "reason": "moved",
+      "replacedWithKey" : "ReloadPropagatedFrom",
+      "replacedWithSection" : "Unit",
+      "documentationLink" : "https://github.com/systemd/systemd/commit/7f2cddae09"
+    },
+    "OnFailureIsolate" : {
+      "reason": "moved",
+      "replacedWithKey" : "OnFailureJobMode",
+      "replacedWithSection" : "Unit",
+      "documentationLink" : "https://github.com/systemd/systemd/commit/d420282b28"
+    },
+    "RequiresOverridable" : {
+      "reason": "unsupported",
+      "unsupported" : true,
+      "documentationLink" : "https://github.com/systemd/systemd/blob/v241/NEWS#L3608"
+    },
+    "RequisiteOverridable" : {
+      "reason": "unsupported",
+      "unsupported" : true,
+      "documentationLink" : "https://github.com/systemd/systemd/blob/v241/NEWS#L3608"
+    },
+    "StartLimitInterval" : {
+      "reason": "moved",
+      "replacedWithKey" : "StartLimitIntervalSec",
+      "replaceWithSection": "Unit",
+      "documentationLink": "https://github.com/systemd/systemd/pull/3148/commits/f0367da7d1a61ad698a55d17b5c28ddce0dc265a"
+    }
+  }
+}
