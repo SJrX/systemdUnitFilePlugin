@@ -46,9 +46,14 @@ At some point, this plugin should be available at the [JetBrains Plugin Reposito
 
 Changelog
 --------- 
+### [v0.2.2](https://github.com/SJrX/systemdUnitFilePlugin/releases/tag/v0.2.2)
+* Add support for IntelliJ 2019.2
+
+### [v0.2.1](https://github.com/SJrX/systemdUnitFilePlugin/releases/tag/v0.2.1)
+* Add support for IntelliJ 2019.1
+* Add support for all deprecated / undocumented options.
 
 ### [v0.2.0](https://github.com/SJrX/systemdUnitFilePlugin/releases/tag/v0.2.0)
-
 * Add warning when whitespace exists between line continuation character and next new line.
 * Refactored syntax highlighting to properly support comments between line continuations as added here [commit (2ca4d779)](https://github.com/systemd/systemd/commit/2ca4d779e021fdd94f4445980baa0aa8af6ffdc4).
 * Add support for deprecated keys.
