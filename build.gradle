@@ -32,12 +32,16 @@ dependencies {
 }
 
 intellij {
-    //version '2018.3'
-    version '191-EAP-SNAPSHOT'
+    version '2019.2'
+    //version '191-EAP-SNAPSHOT'
 }
 
 patchPluginXml {
     changeNotes """
+  <h3>v0.2.2</h3>
+  <ul>
+    <li>Add support for IntelliJ 2019.2 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/76">#76</a></li>
+  </ul>
   <h3>v0.2.1</h3>
   <ul>
     <li>Add support for IntelliJ 2019.1 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/73">#73</a></li>
@@ -64,7 +68,7 @@ patchPluginXml {
   </ul>
 """
   sinceBuild '183.1'
-  untilBuild '192.0'
+  untilBuild '193.0'
 }
 
 // Add generated sources root
