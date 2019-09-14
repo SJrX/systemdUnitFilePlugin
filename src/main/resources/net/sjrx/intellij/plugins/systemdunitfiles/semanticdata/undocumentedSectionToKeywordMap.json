@@ -30,6 +30,16 @@
       "replacedWithKey": "CPUWeight",
       "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
     },
+    "DefaultMemoryLow": {
+      "reason": "manual",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLow=bytes",
+      "description": "<p><var>DefaultMemoryLow=</var> controls the 'memory.low' value of children. This setting has the same semantics as <var>MemoryLow=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+    },
+    "DefaultMemoryMin": {
+      "reason": "manual",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryMin=bytes",
+      "description": "<p><var>DefaultMemoryMin=</var> controls the 'memory.min' value of children. This setting has the same semantics as <var>MemoryMin=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+    },
     "InaccessibleDirectories": {
       "reason": "moved",
       "replacedWithKey": "InaccessiblePath",
@@ -91,6 +101,16 @@
       "reason": "moved",
       "replacedWithKey": "CPUWeight",
       "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+    },
+    "DefaultMemoryLow": {
+      "reason": "manual",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLow=bytes",
+      "description": "<p><var>DefaultMemoryLow=</var> controls the 'memory.low' value of children. This setting has the same semantics as <var>MemoryLow=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+    },
+    "DefaultMemoryMin": {
+      "reason": "manual",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryMin=bytes",
+      "description": "<p><var>DefaultMemoryMin=</var> controls the 'memory.min' value of children. This setting has the same semantics as <var>MemoryMin=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
     },
     "FailureAction": {
       "reason": "moved",
@@ -184,6 +204,16 @@
       "replacedWithKey": "CPUWeight",
       "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
     },
+    "DefaultMemoryLow": {
+      "reason": "manual",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLow=bytes",
+      "description": "<p><var>DefaultMemoryLow=</var> controls the 'memory.low' value of children. This setting has the same semantics as <var>MemoryLow=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+    },
+    "DefaultMemoryMin": {
+      "reason": "manual",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryMin=bytes",
+      "description": "<p><var>DefaultMemoryMin=</var> controls the 'memory.min' value of children. This setting has the same semantics as <var>MemoryMin=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+    },
     "MemoryLimit": {
       "reason": "moved",
       "replacedWithKey": "MemoryMax",
@@ -230,6 +260,16 @@
       "reason": "moved",
       "replacedWithKey": "CPUWeight",
       "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+    },
+    "DefaultMemoryLow": {
+      "reason": "manual",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLow=bytes",
+      "description": "<p><var>DefaultMemoryLow=</var> controls the 'memory.low' value of children. This setting has the same semantics as <var>MemoryLow=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+    },
+    "DefaultMemoryMin": {
+      "reason": "manual",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryMin=bytes",
+      "description": "<p><var>DefaultMemoryMin=</var> controls the 'memory.min' value of children. This setting has the same semantics as <var>MemoryMin=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
     },
     "InaccessibleDirectories": {
       "reason": "moved",
@@ -292,6 +332,16 @@
       "reason": "moved",
       "replacedWithKey": "CPUWeight",
       "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+    },
+    "DefaultMemoryLow": {
+      "reason": "manual",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLow=bytes",
+      "description": "<p><var>DefaultMemoryLow=</var> controls the 'memory.low' value of children. This setting has the same semantics as <var>MemoryLow=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+    },
+    "DefaultMemoryMin": {
+      "reason": "manual",
+      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryMin=bytes",
+      "description": "<p><var>DefaultMemoryMin=</var> controls the 'memory.min' value of children. This setting has the same semantics as <var>MemoryMin=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
     },
     "InaccessibleDirectories": {
       "reason": "moved",

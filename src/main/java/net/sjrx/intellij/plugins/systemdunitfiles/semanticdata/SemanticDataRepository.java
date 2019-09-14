@@ -334,6 +334,8 @@ public class SemanticDataRepository {
                  + options.getOrDefault("replacedWithSection", sectionName) + "</b>"
                  + "<p>NOTE: The semantics of the new value may not match the existing value.<p>"
                  + "<a href='" + options.get("documentationLink") + "'>More information is available here</a>";
+        case "manual":
+          return options.get("description");
         default:
           LOG.warn("Found unsupported " + sectionName + " => " + keyName);
           return null;
