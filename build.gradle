@@ -5,7 +5,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.palominolabs.gradle.task:gradle-git-clone-task:0.0.2'
+    classpath 'com.palominolabs.gradle.task:gradle-git-clone-task:0.0.3'
   }
 }
 
@@ -17,7 +17,7 @@ plugins {
 
 }
 group 'net.sjrx.intellij.plugins'
-version '0.2.2'
+version '0.2.3'
 
 sourceCompatibility = 1.8
 
@@ -38,6 +38,10 @@ intellij {
 
 patchPluginXml {
     changeNotes """
+  <h3>v0.2.3</h3>
+  <ul>
+    <li>Add support for systemd v243 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/79">#79</a></li>
+  </ul>
   <h3>v0.2.2</h3>
   <ul>
     <li>Add support for IntelliJ 2019.2 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/76">#76</a></li>
@@ -113,7 +117,10 @@ task cloneSystemdRepo(type: GitCloneTask) {
 
   dir = file("git-dependencies/systemd")
   uri = 'https://github.com/systemd/systemd.git'
-  treeish = 'v241' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
+  treeish = 'origin/master' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
+
+  reset = true
+  forceFetch = true
 }
 
 task generateDataFromManPages(type: GenerateDataFromManPages) {
@@ -186,3 +193,4 @@ generateOptionValidator.dependsOn += cloneSystemdRepo
 
 
 jar.dependsOn += generateDataFromManPages
+jar.dependsOn += generateOptionValidator
