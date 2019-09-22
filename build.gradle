@@ -11,7 +11,7 @@ buildscript {
 
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.3.5'
+    id 'org.jetbrains.intellij' version '0.4.10'
     id "org.jetbrains.grammarkit" version "2018.1.7"
     id 'checkstyle'
 
@@ -32,8 +32,10 @@ dependencies {
 }
 
 intellij {
-    version '2019.2'
-    //version '191-EAP-SNAPSHOT'
+    //version '2019.2'
+    version 'LATEST-EAP-SNAPSHOT'
+
+  plugins = ['java']
 }
 
 patchPluginXml {
