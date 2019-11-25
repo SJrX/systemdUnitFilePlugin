@@ -1,3 +1,5 @@
+import org.gradle.internal.os.OperatingSystem
+
 buildscript {
   repositories {
     jcenter()
@@ -11,13 +13,13 @@ buildscript {
 
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.4.10'
-    id "org.jetbrains.grammarkit" version "2019.2.1"
+    id 'org.jetbrains.intellij' version '0.4.13'
+    id "org.jetbrains.grammarkit" version "2019.3"
     id 'checkstyle'
 
 }
 group 'net.sjrx.intellij.plugins'
-version '0.2.3'
+version '0.2.4'
 
 sourceCompatibility = 1.8
 
@@ -40,6 +42,12 @@ intellij {
 
 patchPluginXml {
     changeNotes """
+  <h3>v0.2.4</h3>
+  <ul>
+    <li>Add support for systemd v244 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/85">#85</a></li>
+    <li>Change Logo<a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/84">#84</a></li>
+    <li>Add support IntelliJ 2019.3 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/82">#82</a>
+  </ul>
   <h3>v0.2.3</h3>
   <ul>
     <li>Add support for systemd v243 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/79">#79</a></li>
@@ -74,7 +82,7 @@ patchPluginXml {
   </ul>
 """
   sinceBuild '183.1'
-  untilBuild '193.0'
+  untilBuild '201.0'
 }
 
 // Add generated sources root
@@ -107,7 +115,6 @@ test {
   }
 }
 
-
 /*
  * Build Tasks
  */
@@ -118,8 +125,8 @@ task cloneSystemdRepo(type: GitCloneTask) {
   description "clone the systemd repository"
 
   dir = file("git-dependencies/systemd")
-  uri = 'https://github.com/systemd/systemd.git'
-  treeish = 'origin/master' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
+  uri = 'https://github.com/SJrX/systemd.git'
+  treeish = '4e901081189bf9f81e4259e70c27d1d903d03d42' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
 
   reset = true
   forceFetch = true
@@ -133,8 +140,6 @@ task generateDataFromManPages(type: GenerateDataFromManPages) {
   generatedJsonFileLocation = file(sourceSets.main.output.resourcesDir.getAbsolutePath() + "/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata")
 
 }
-
-
 /*
  * Lexing / Parsing and Grammar Tasks
  */
@@ -184,6 +189,16 @@ task generateOptionValidator(type: Exec) {
   }
 
 
+}
+
+if(OperatingSystem.current().isLinux()) {
+  /**
+   * This setting controls how IntelliJ looks on linux, if you explore idea64.vmoptions you will see
+   * these options included in the file.
+   *
+   * When the runIde task is being executed however it doesn't go through those files, and so the fonts end up looking like garbage.
+   */
+  runIde.environment("_JAVA_OPTIONS", "-Dawt.useSystemAAFontSettings=lcd -Dsun.java2d.renderer=sun.java2d.marlin.MarlinRenderingEngine")
 }
 
 generateLexer.mustRunAfter(compileJava)

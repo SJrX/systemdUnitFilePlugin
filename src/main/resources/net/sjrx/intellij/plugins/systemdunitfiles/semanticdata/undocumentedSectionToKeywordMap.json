@@ -25,6 +25,16 @@
       "replacedWithKey": "IOWriteBandwidthMax",
       "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
     },
+    "CPUSetCpus": {
+      "reason": "manual",
+      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
+      "description":"<p><var>CPUSetsCpu=</var> not supported</p>."
+    },
+    "CPUSetMems": {
+      "reason": "manual",
+      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
+      "description":"<p><var>CPUSetsMem=</var> not supported</p>."
+    },
     "CPUShares": {
       "reason": "moved",
       "replacedWithKey": "CPUWeight",
@@ -96,6 +106,16 @@
       "reason": "moved",
       "replacedWithKey": "IOWriteBandwidthMax",
       "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+    },
+    "CPUSetCpus": {
+      "reason": "manual",
+      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
+      "description":"<p><var>CPUSetsCpu=</var> not supported</p>."
+    },
+    "CPUSetMems": {
+      "reason": "manual",
+      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
+      "description":"<p><var>CPUSetsMem=</var> not supported</p>."
     },
     "CPUShares": {
       "reason": "moved",
@@ -199,6 +219,16 @@
       "replacedWithKey": "IOWriteBandwidthMax",
       "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
     },
+    "CPUSetCpus": {
+      "reason": "manual",
+      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
+      "description":"<p><var>CPUSetsCpu=</var> not supported</p>."
+    },
+    "CPUSetMems": {
+      "reason": "manual",
+      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
+      "description":"<p><var>CPUSetsMem=</var> not supported</p>."
+    },
     "CPUShares": {
       "reason": "moved",
       "replacedWithKey": "CPUWeight",
@@ -255,6 +285,16 @@
       "reason": "moved",
       "replacedWithKey": "IOWriteBandwidthMax",
       "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+    },
+    "CPUSetCpus": {
+      "reason": "manual",
+      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
+      "description":"<p><var>CPUSetsCpu=</var> not supported</p>."
+    },
+    "CPUSetMems": {
+      "reason": "manual",
+      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
+      "description":"<p><var>CPUSetsMem=</var> not supported</p>."
     },
     "CPUShares": {
       "reason": "moved",
@@ -327,6 +367,16 @@
       "reason": "moved",
       "replacedWithKey": "IOWriteBandwidthMax",
       "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+    },
+    "CPUSetCpus": {
+      "reason": "manual",
+      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
+      "description":"<p><var>CPUSetsCpu=</var> not supported</p>."
+    },
+    "CPUSetMems": {
+      "reason": "manual",
+      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
+      "description":"<p><var>CPUSetsMem=</var> not supported</p>."
     },
     "CPUShares": {
       "reason": "moved",

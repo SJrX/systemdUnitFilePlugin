@@ -23,22 +23,15 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
     boolean result_;
     builder_ = adapt_builder_(root_, builder_, this, null);
     Marker marker_ = enter_section_(builder_, 0, _COLLAPSE_, null);
-    if (root_ == PROPERTY) {
-      result_ = property(builder_, 0);
-    }
-    else if (root_ == SECTION_GROUPS) {
-      result_ = section_groups(builder_, 0);
-    }
-    else if (root_ == VALUE) {
-      result_ = value(builder_, 0);
-    }
-    else {
-      result_ = parse_root_(root_, builder_, 0);
-    }
+    result_ = parse_root_(root_, builder_);
     exit_section_(builder_, 0, marker_, root_, result_, true, TRUE_CONDITION);
   }
 
-  protected boolean parse_root_(IElementType root_, PsiBuilder builder_, int level_) {
+  protected boolean parse_root_(IElementType root_, PsiBuilder builder_) {
+    return parse_root_(root_, builder_, 0);
+  }
+
+  static boolean parse_root_(IElementType root_, PsiBuilder builder_, int level_) {
     return unitFile(builder_, level_ + 1);
   }
 
