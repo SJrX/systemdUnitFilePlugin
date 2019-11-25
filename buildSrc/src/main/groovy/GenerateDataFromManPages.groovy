@@ -54,52 +54,53 @@ class GenerateDataFromManPages extends DefaultTask {
    * Map that stores for each file name, the name of an option attribute
    */
   def fileAndSectionTitleToSectionName = [
-    'systemd.unit.xml' :
-      [ 'sections':
-        [ '[Unit] Section Options' : ['Unit'],
-          '[Install] Section Options' : ['Install']
-        ]
+    'systemd.unit.xml'            :
+      ['sections':
+         ['[Unit] Section Options'   : ['Unit'],
+          '[Install] Section Options': ['Install'],
+           'Conditions and Asserts' : ['Unit']
+         ]
       ],
-    'systemd.service.xml' :
-     [ 'sections':
-        ['Options': ['Service']]
-     ],
-    'systemd.timer.xml' :
-      [ 'sections':
-          ['Options': ['Timer']]
+    'systemd.service.xml'         :
+      ['sections':
+         ['Options': ['Service']]
       ],
-    'systemd.automount.xml' :
-      [ 'sections':
-          ['Options': ['Automount']]
+    'systemd.timer.xml'           :
+      ['sections':
+         ['Options': ['Timer']]
       ],
-    'systemd.mount.xml' :
-      [ 'sections':
-          ['Options': ['Mount']]
+    'systemd.automount.xml'       :
+      ['sections':
+         ['Options': ['Automount']]
       ],
-    'systemd.path.xml' :
-      [ 'sections':
-          ['Options': ['Path']]
+    'systemd.mount.xml'           :
+      ['sections':
+         ['Options': ['Mount']]
       ],
-    'systemd.socket.xml' :
-      [ 'sections':
-          ['Options': ['Socket']]
+    'systemd.path.xml'            :
+      ['sections':
+         ['Options': ['Path']]
       ],
-    'systemd.swap.xml' :
-      [ 'sections':
-          ['Options': ['Swap']]
+    'systemd.socket.xml'          :
+      ['sections':
+         ['Options': ['Socket']]
+      ],
+    'systemd.swap.xml'            :
+      ['sections':
+         ['Options': ['Swap']]
       ],
     'systemd.resource-control.xml':
       ['sections':
          [
-           'Options': ['Slice', 'Service', 'Socket', 'Mount', 'Swap'],
+           'Options'           : ['Slice', 'Service', 'Socket', 'Mount', 'Swap'],
            'Deprecated Options': ['Slice', 'Service', 'Socket', 'Mount', 'Swap'],
          ]
       ],
-    'systemd.kill.xml':
-      [ 'sections':
-          ['Options': ['Service', "Socket", "Mount", "Swap"]]
+    'systemd.kill.xml'            :
+      ['sections':
+         ['Options': ['Service', "Socket", "Mount", "Swap"]]
       ],
-    'systemd.exec.xml':
+    'systemd.exec.xml'            :
       ['sections':
          [
            'Paths'                            : ['Service', 'Socket', 'Mount', 'Swap'],
@@ -124,8 +125,7 @@ class GenerateDataFromManPages extends DefaultTask {
 
   final DocumentBuilderFactory dbf
 
-  public GenerateDataFromManPages()
-  {
+  public GenerateDataFromManPages() {
     xpath = XPathFactory.newInstance().newXPath()
 
     dbf = DocumentBuilderFactory.newInstance()
@@ -146,7 +146,6 @@ class GenerateDataFromManPages extends DefaultTask {
     fileAndSectionTitleToSectionName.keySet().each { file ->
       logger.debug("Starting $file")
       processFile(file)
-
     }
 
     logger.debug("Complete")
@@ -160,7 +159,6 @@ class GenerateDataFromManPages extends DefaultTask {
 
 
     logger.debug("Output: $json")
-
   }
 
   /**
@@ -169,12 +167,11 @@ class GenerateDataFromManPages extends DefaultTask {
    *
    * @param filename
    */
-  void processFile(String filename)
-  {
+  void processFile(String filename) {
     File file = new File(this.systemdSourceCodeRoot.getAbsolutePath() + "/man/$filename")
 
     generateKeywordAndValueJsonMapForFile(file)
-    
+
     generateDocumentationHtmlFromManPages(file)
   }
 
@@ -196,9 +193,19 @@ class GenerateDataFromManPages extends DefaultTask {
       systemd.exec.xml don't include it, and unfortunately we can't unconditionally use variablelist because another section uses it.
       So we exclude the one other section, although this is super brittle. Yay!
      */
-    NodeList result = (NodeList) xpath.evaluate(
-      "/refentry/refsect1/variablelist[not(contains(@class,'environment-variables'))]/varlistentry",
-      records, XPathConstants.NODESET)
+
+    NodeList result;
+    if (file.getAbsolutePath().endsWith("systemd.exec.xml")) {
+      result = (NodeList)xpath.evaluate(
+        "/refentry/refsect1/variablelist[not(contains(@class,'environment-variables'))]/varlistentry",
+        records, XPathConstants.NODESET);
+    }
+    else {
+      result = (NodeList)xpath.evaluate(
+        "//variablelist[(contains(@class,'unit-directives'))]/varlistentry",
+        records, XPathConstants.NODESET);
+    }
+
 
     for (int i = 0; i < result.getLength(); i++) {
       Node varListEntry = result.item(i)
@@ -221,7 +228,7 @@ class GenerateDataFromManPages extends DefaultTask {
           String originalKeyName = getOptionNameAndValue(originalSection, filename)[0]
 
           for (String section : sections) {
-            logger.debug("Found options $section in $option")
+            logger.debug("Found options $section in $option in ${file.getAbsolutePath()}")
             sectionToKeyWordMapFromDoc.putIfAbsent(section, new TreeMap<>())
             sectionToKeyWordMapFromDoc[section][keyName] =
               ["values": keyValue, "declaredUnderKeyword": originalKeyName, "declaredInFile": filename]
@@ -257,8 +264,7 @@ class GenerateDataFromManPages extends DefaultTask {
    * @param File sourceFile - the source file to extract
    * @return
    */
-  private generateDocumentationHtmlFromManPages(File sourceFile)
-  {
+  private generateDocumentationHtmlFromManPages(File sourceFile) {
     DocumentBuilder builder = dbf.newDocumentBuilder()
     Document document = builder.parse(sourceFile)
     Transformer transformer = getXsltTransformer()
@@ -266,7 +272,6 @@ class GenerateDataFromManPages extends DefaultTask {
     String xsltOutput = transformDocument(document, transformer)
 
     segmentParametersIntoFiles(sourceFile.getName(), xsltOutput)
-
   }
 
   /**
@@ -338,9 +343,9 @@ class GenerateDataFromManPages extends DefaultTask {
 
     for (int i = 0; i < result.getLength(); i++) {
       Node parameterNode = result.item(i)
-      String variableName = ((Node) xpath.evaluate("name", parameterNode, XPathConstants.NODE)).getTextContent()
+      String variableName = ((Node)xpath.evaluate("name", parameterNode, XPathConstants.NODE)).getTextContent()
 
-      String sectionTitle = ((Node) xpath.evaluate("section", parameterNode, XPathConstants.NODE)).getTextContent()
+      String sectionTitle = ((Node)xpath.evaluate("section", parameterNode, XPathConstants.NODE)).getTextContent()
 
       NodeList paragraphList = (NodeList)xpath.evaluate("description/paragraph", parameterNode, XPathConstants.NODESET)
 
@@ -357,16 +362,15 @@ class GenerateDataFromManPages extends DefaultTask {
 
       List<String> foo = fileAndSectionTitleToSectionName[sourceFileName]['sections'][sectionTitle]
 
-      for(String sectionName : foo)
-      {
-        File outputFile = new File(this.generatedJsonFileLocation.getAbsolutePath() + "/documents/completion/" + sectionName + "/" + name + ".html")
+      for (String sectionName : foo) {
+        File outputFile = new File(
+          this.generatedJsonFileLocation.getAbsolutePath() + "/documents/completion/" + sectionName + "/" + name + ".html")
         outputFile.getParentFile().mkdirs()
 
         Writer write = new BufferedWriter(new FileWriter(outputFile))
 
         Node paragraphContent
-        for(int j = 0; j < paragraphList.getLength(); j++)
-        {
+        for (int j = 0; j < paragraphList.getLength(); j++) {
           paragraphContent = paragraphList.item(j)
 
           write.write("<p>")
@@ -377,7 +381,6 @@ class GenerateDataFromManPages extends DefaultTask {
         write.flush()
         write.close()
       }
-
     }
   }
 

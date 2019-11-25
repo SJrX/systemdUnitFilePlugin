@@ -25,7 +25,7 @@ public interface UnitFileElementTypeHolder {
   class Factory {
     public static PsiElement createElement(ASTNode node) {
       IElementType type = node.getElementType();
-       if (type == PROPERTY) {
+      if (type == PROPERTY) {
         return new UnitFilePropertyImpl(node);
       }
       else if (type == SECTION_GROUPS) {
