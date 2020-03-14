@@ -32,6 +32,10 @@ public class InvalidSectionHeaderNameAnnotator implements Annotator {
         holder.createErrorAnnotation(element.getFirstChild(),
                                      ANNOTATION_ERROR_MSG);
       }
+      String text = sectionElement.getFirstChild().getText();
+      if (text.charAt(0) != '[' || text.charAt(text.length() - 1) != ']') {
+        holder.createErrorAnnotation(element.getFirstChild(), ANNOTATION_ERROR_MSG);
+      }
     }
   }
 }
