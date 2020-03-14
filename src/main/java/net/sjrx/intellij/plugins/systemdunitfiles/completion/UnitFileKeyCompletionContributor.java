@@ -48,10 +48,12 @@ public class UnitFileKeyCompletionContributor extends CompletionContributor {
           SemanticDataRepository sdr = SemanticDataRepository.getInstance();
           for (String keyword : sdr.getDocumentedKeywordsInSection(sectionName)) {
             if (definedKeys.contains(keyword)) continue;
+            boolean deprecated = sdr.isDeprecated(sectionName, keyword);
             LookupElementBuilder builder = LookupElementBuilder
                     .create(keyword)
                     .withInsertHandler(new KeyInsertHandler())
                     .withPresentableText(keyword)
+                    .withStrikeoutness(deprecated)
                     .withIcon(UnitFileIcon.FILE);
 
             resultSet.addElement(builder);
