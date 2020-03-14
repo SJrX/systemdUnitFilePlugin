@@ -12,9 +12,9 @@
   elementTypeClass="net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileElementType"
   tokenTypeClass="net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileTokenType"
 
-  extends("section_groups") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType"
-  extends("property") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType"
-  extends("value") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileValueType"
+  implements("section_groups") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType"
+  implements("property") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType"
+  implements("value") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileValueType"
 }
 
 unitFile ::= (comment_|crlf_)* section_groups*

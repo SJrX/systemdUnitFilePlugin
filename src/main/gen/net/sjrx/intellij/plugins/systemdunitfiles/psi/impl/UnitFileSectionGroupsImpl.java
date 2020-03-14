@@ -8,12 +8,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder.*;
-import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.*;
 
-public class UnitFileSectionGroupsImpl extends UnitFileSectionType implements UnitFileSectionGroups {
+public class UnitFileSectionGroupsImpl extends ASTWrapperPsiElement implements UnitFileSectionGroups {
 
-  public UnitFileSectionGroupsImpl(ASTNode node) {
+  public UnitFileSectionGroupsImpl(@NotNull ASTNode node) {
     super(node);
   }
 

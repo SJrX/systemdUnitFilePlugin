@@ -8,12 +8,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder.*;
-import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType;
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.*;
 
-public class UnitFilePropertyImpl extends UnitFilePropertyType implements UnitFileProperty {
+public class UnitFilePropertyImpl extends ASTWrapperPsiElement implements UnitFileProperty {
 
-  public UnitFilePropertyImpl(ASTNode node) {
+  public UnitFilePropertyImpl(@NotNull ASTNode node) {
     super(node);
   }
 

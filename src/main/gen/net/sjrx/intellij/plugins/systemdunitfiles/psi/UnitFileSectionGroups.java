@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface UnitFileSectionGroups extends PsiElement {
+public interface UnitFileSectionGroups extends UnitFileSectionType {
 
   @NotNull
   List<UnitFileProperty> getPropertyList();
