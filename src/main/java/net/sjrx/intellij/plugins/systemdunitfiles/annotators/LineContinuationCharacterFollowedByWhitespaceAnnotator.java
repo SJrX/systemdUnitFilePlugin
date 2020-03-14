@@ -23,12 +23,11 @@ public class LineContinuationCharacterFollowedByWhitespaceAnnotator implements A
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (element instanceof UnitFileValueType) {
-      
-      // Use the getValueNode().getText() because getValue() trims whitespace and internally handles line continuation
-      String value = ((UnitFileValueType) element).getValueNode().getText();
-  
-      ASTNode valueNode = ((UnitFileValueType) element).getValueNode();
-      
+
+      // Use the getNode().getText() because getValue() trims whitespace and internally handles line continuation
+      ASTNode valueNode = element.getNode();
+      String value = valueNode.getText();
+
       Matcher m = LINE_CONTINUATION_CHARACTER_TO_END_REGEX.matcher(value);
       
       if (m.find()) {
