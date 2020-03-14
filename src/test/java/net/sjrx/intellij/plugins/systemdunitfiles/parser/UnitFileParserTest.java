@@ -680,12 +680,12 @@ public class UnitFileParserTest extends ParsingTestCase {
     assertSameLines(expectedPsiTree, parseTree);
   }
 
-  public void testIncompleteSectionHeaderHasError() {
+  public void testIncompleteSectionHeaderHasNoParsingError() {
     String sourceCode = "[Uni\n";
 
     String expectedPsiTree = "unit configuration file (systemd)(0,5)\n"
-                             + "  PsiErrorElement:<comment>, <new line> or <section header> expected, got '[Uni'(0,5)\n"
-                             + "    PsiElement(BAD_CHARACTER)('[Uni\\n')(0,5)";
+                             + "  UnitFileSectionGroupsImpl(SECTION_GROUPS)(0,5)\n"
+                             + "    PsiElement(UnitFileTokenType{SECTION})('[Uni\\n')(0,5)";
     /*
      * Exercise SUT
      */

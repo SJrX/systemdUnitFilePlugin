@@ -30,6 +30,12 @@ public class UnitFileLexerTest extends LexerTestCase {
     checkCorrectRestart(sourceCode);
   }
 
+  public void testUnfinishedSectionName() {
+    String sourceCode = "[Name\n";
+    doTest(sourceCode, "UnitFileTokenType{SECTION} ('[Name\\n')");
+    checkCorrectRestart(sourceCode);
+  }
+
   public void testInlineComments() {
     // Fixture Setup
     String sourceCode = "[One]\n"

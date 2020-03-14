@@ -84,12 +84,12 @@ public class UnitFileLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\2\0\2\1\1\2\1\3\3\4\1\5\1\4\1\6"+
-    "\2\1\1\7\2\1\1\5\1\0\4\4\2\5\1\0"+
-    "\1\7\1\10\1\0\2\10";
+    "\2\0\2\1\1\2\1\3\1\2\2\4\1\5\1\4"+
+    "\1\6\2\1\1\7\2\1\1\5\1\0\3\10\2\5"+
+    "\1\0\1\7\3\10";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[31];
+    int [] result = new int[29];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -116,11 +116,11 @@ public class UnitFileLexer implements FlexLexer {
   private static final String ZZ_ROWMAP_PACKED_0 =
     "\0\0\0\13\0\26\0\41\0\54\0\67\0\102\0\115"+
     "\0\130\0\143\0\156\0\171\0\204\0\115\0\217\0\67"+
-    "\0\232\0\245\0\130\0\260\0\273\0\306\0\321\0\115"+
-    "\0\334\0\156\0\115\0\347\0\273\0\362\0\115";
+    "\0\232\0\245\0\130\0\260\0\273\0\306\0\115\0\321"+
+    "\0\156\0\115\0\334\0\347\0\115";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[31];
+    int [] result = new int[29];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -149,24 +149,23 @@ public class UnitFileLexer implements FlexLexer {
     "\3\15\1\20\1\10\1\21\1\6\3\15\1\17\1\21"+
     "\1\22\1\5\1\0\1\5\2\0\2\5\1\0\1\23"+
     "\1\0\1\5\1\0\1\6\1\0\2\6\4\0\1\6"+
-    "\1\0\1\24\1\25\1\24\2\26\1\24\1\5\1\26"+
-    "\1\27\1\26\1\24\24\0\1\5\1\0\1\12\1\30"+
-    "\1\5\1\22\1\0\2\12\1\22\1\31\1\22\1\12"+
-    "\3\0\1\32\3\0\1\14\1\0\1\32\4\0\1\14"+
+    "\1\0\1\24\1\25\1\24\2\25\1\24\1\5\1\25"+
+    "\1\26\1\25\1\24\24\0\1\5\1\0\1\12\1\27"+
+    "\1\5\1\22\1\0\2\12\1\22\1\30\1\22\1\12"+
+    "\3\0\1\31\3\0\1\14\1\0\1\31\4\0\1\14"+
     "\5\0\1\14\1\0\1\15\1\16\1\0\1\15\1\0"+
-    "\3\15\1\17\3\15\1\33\1\0\1\15\1\0\3\15"+
+    "\3\15\1\17\3\15\1\32\1\0\1\15\1\0\3\15"+
     "\1\17\3\15\1\20\1\0\1\21\1\6\3\15\1\17"+
-    "\1\21\1\15\1\22\1\30\1\0\1\22\1\0\6\22"+
-    "\1\24\1\25\1\24\2\26\1\24\1\34\1\26\1\27"+
-    "\1\26\1\24\6\35\1\36\4\35\1\26\1\25\4\26"+
-    "\1\36\5\26\1\25\4\26\1\36\2\26\1\24\1\26"+
-    "\1\22\1\30\1\0\1\22\1\0\4\22\1\12\1\22"+
-    "\1\5\1\37\1\5\1\36\1\0\2\5\1\0\1\23"+
-    "\1\36\1\5\1\0\1\37\1\0\1\36\5\0\1\36"+
-    "\1\0";
+    "\1\21\1\15\1\22\1\27\1\0\1\22\1\0\6\22"+
+    "\1\24\1\25\1\24\2\25\1\24\1\33\1\25\1\26"+
+    "\1\25\1\24\6\25\1\34\12\25\1\34\2\25\1\24"+
+    "\1\25\1\22\1\27\1\0\1\22\1\0\4\22\1\12"+
+    "\1\22\1\5\1\35\1\5\1\34\1\0\2\5\1\0"+
+    "\1\23\1\34\1\5\1\0\1\35\1\0\1\34\5\0"+
+    "\1\34\1\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[253];
+    int [] result = new int[242];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -204,11 +203,11 @@ public class UnitFileLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\2\0\5\1\1\11\5\1\1\11\4\1\1\0\4\1"+
-    "\1\11\1\1\1\0\1\11\1\1\1\0\1\1\1\11";
+    "\2\0\5\1\1\11\5\1\1\11\4\1\1\0\3\1"+
+    "\1\11\1\1\1\0\1\11\2\1\1\11";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[31];
+    int [] result = new int[29];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;

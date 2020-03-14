@@ -49,14 +49,7 @@ WHITE_SPACE=[\ \n\t\f]
 // The section header should actually be more restricted than this, however we will allow anything as a character
 // and use an annotator to flag the error.
 
-SECTION_HEADER=\[[^\]]+\]{SAME_LINE_WHITESPACE}{CRLF}?
-
-/* Keep track of incomplete section headers because fixing bad character sequences don't
-  cause enough relexing
-
-  https://intellij-support.jetbrains.com/hc/en-us/community/posts/206123189-Syntax-Highlighting-gets-stuck
- */
-INCOMPLETE_SECTION_HEADER = \[[^\]\n]*{CRLF}?
+SECTION_HEADER=\[[^\]]+\]?{SAME_LINE_WHITESPACE}{CRLF}?
 
 // We don't allow whitespace or the separator in the key characters
 KEY_CHARACTER=[^=\ \n\t\f\\] | "\\ "
@@ -87,8 +80,6 @@ SEPARATOR=[=]
 <YYINITIAL, VALUE_CONTINUATION> {COMMENT}                                { return UnitFileElementTypeHolder.COMMENT; }
 
 <YYINITIAL> {SECTION_HEADER}                                             { return UnitFileElementTypeHolder.SECTION; }
-
-<YYINITIAL> {INCOMPLETE_SECTION_HEADER}                                  { return TokenType.BAD_CHARACTER; }
 
 <YYINITIAL, VALUE_CONTINUATION> {CRLF}({CRLF}|{WHITE_SPACE})+                                { return UnitFileElementTypeHolder.CRLF; }
 
