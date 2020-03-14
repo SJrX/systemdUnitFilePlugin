@@ -1,6 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.lexer;
 
 import com.intellij.lexer.Lexer;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.testFramework.LexerTestCase;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileTokenType;
 import org.jetbrains.annotations.NotNull;
@@ -13,9 +14,9 @@ public class UnitFileLexerTest extends LexerTestCase {
   public void testWithoutSection() {
     String sourceCode = "Key = Value \n";
     doTest(sourceCode,
-            "UnitFileTokenType{KEY} ('Key')\n"
-          + "UnitFileTokenType{SEPARATOR} (' = ')\n"
-          + "UnitFileTokenType{COMPLETED_VALUE} ('Value \\n')"
+            "KEY ('Key')\n"
+          + "SEPARATOR (' = ')\n"
+          + "COMPLETED_VALUE ('Value \\n')"
     );
     checkCorrectRestart(sourceCode);
   }
@@ -23,16 +24,16 @@ public class UnitFileLexerTest extends LexerTestCase {
   public void testEmptyValue() {
     String sourceCode = "EmptyValue =\n";
     doTest(sourceCode,
-            "UnitFileTokenType{KEY} ('EmptyValue')\n"
-          + "UnitFileTokenType{SEPARATOR} (' =')\n"
-          + "UnitFileTokenType{COMPLETED_VALUE} ('\\n')"
+            "KEY ('EmptyValue')\n"
+          + "SEPARATOR (' =')\n"
+          + "COMPLETED_VALUE ('\\n')"
     );
     checkCorrectRestart(sourceCode);
   }
 
   public void testUnfinishedSectionName() {
     String sourceCode = "[Name\n";
-    doTest(sourceCode, "UnitFileTokenType{SECTION} ('[Name\\n')");
+    doTest(sourceCode, "SECTION ('[Name\\n')");
     checkCorrectRestart(sourceCode);
   }
 
@@ -101,11 +102,9 @@ public class UnitFileLexerTest extends LexerTestCase {
     List<String> tokens = new ArrayList<>();
     
     while (lexer.getCurrentPosition().getOffset() != lexer.getBufferEnd()) {
-  
-      String tokenString = lexer.getTokenType().toString();
-      tokenString = tokenString.replaceAll(UnitFileTokenType.class.getSimpleName(), "").replaceAll("[{}]", "");
-      
-      tokens.add(tokenString);
+      IElementType tokenType = lexer.getTokenType();
+      assertNotNull(tokenType);
+      tokens.add(tokenType.toString());
       lexer.advance();
     }
     

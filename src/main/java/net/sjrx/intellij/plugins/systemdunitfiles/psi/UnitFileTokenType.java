@@ -8,9 +8,4 @@ public class UnitFileTokenType extends IElementType {
   public UnitFileTokenType(@NotNull String debugName) {
     super(debugName, UnitFileLanguage.INSTANCE);
   }
-
-  @Override
-  public String toString() {
-    return "UnitFileTokenType{" + super.toString() + "}";
-  }
 }
