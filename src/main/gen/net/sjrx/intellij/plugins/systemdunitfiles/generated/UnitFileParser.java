@@ -48,70 +48,9 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // CRLF
-  static boolean crlf_(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "crlf_")) return false;
-    if (!nextTokenIs(builder_, "<new line>", CRLF)) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, null, "<new line>");
-    result_ = consumeToken(builder_, CRLF);
-    exit_section_(builder_, level_, marker_, result_, false, null);
-    return result_;
-  }
-
-  /* ********************************************************** */
   // KEY
   static boolean key_(PsiBuilder builder_, int level_) {
     return consumeToken(builder_, KEY);
-  }
-
-  /* ********************************************************** */
-  // (property crlf_?)|(comment_ crlf_?)|crlf_
-  static boolean line_items_(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "line_items_")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = line_items__0(builder_, level_ + 1);
-    if (!result_) result_ = line_items__1(builder_, level_ + 1);
-    if (!result_) result_ = crlf_(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // property crlf_?
-  private static boolean line_items__0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "line_items__0")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = property(builder_, level_ + 1);
-    result_ = result_ && line_items__0_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // crlf_?
-  private static boolean line_items__0_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "line_items__0_1")) return false;
-    crlf_(builder_, level_ + 1);
-    return true;
-  }
-
-  // comment_ crlf_?
-  private static boolean line_items__1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "line_items__1")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = comment_(builder_, level_ + 1);
-    result_ = result_ && line_items__1_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // crlf_?
-  private static boolean line_items__1_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "line_items__1_1")) return false;
-    crlf_(builder_, level_ + 1);
-    return true;
   }
 
   /* ********************************************************** */
@@ -143,27 +82,39 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // section_ line_items_*
+  // section_ section_items*
   public static boolean section_groups(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "section_groups")) return false;
     if (!nextTokenIs(builder_, "<section header>", SECTION)) return false;
-    boolean result_;
+    boolean result_, pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, SECTION_GROUPS, "<section header>");
     result_ = section_(builder_, level_ + 1);
+    pinned_ = result_; // pin = 1
     result_ = result_ && section_groups_1(builder_, level_ + 1);
-    exit_section_(builder_, level_, marker_, result_, false, null);
-    return result_;
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
   }
 
-  // line_items_*
+  // section_items*
   private static boolean section_groups_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "section_groups_1")) return false;
     while (true) {
       int pos_ = current_position_(builder_);
-      if (!line_items_(builder_, level_ + 1)) break;
+      if (!section_items(builder_, level_ + 1)) break;
       if (!empty_element_parsed_guard_(builder_, "section_groups_1", pos_)) break;
     }
     return true;
+  }
+
+  /* ********************************************************** */
+  // property | comment_
+  static boolean section_items(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "section_items")) return false;
+    if (!nextTokenIs(builder_, "", COMMENT, KEY)) return false;
+    boolean result_;
+    result_ = property(builder_, level_ + 1);
+    if (!result_) result_ = comment_(builder_, level_ + 1);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -179,7 +130,7 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (comment_|crlf_)* section_groups*
+  // section_items* section_groups*
   static boolean unitFile(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "unitFile")) return false;
     boolean result_;
@@ -190,24 +141,15 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
     return result_;
   }
 
-  // (comment_|crlf_)*
+  // section_items*
   private static boolean unitFile_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "unitFile_0")) return false;
     while (true) {
       int pos_ = current_position_(builder_);
-      if (!unitFile_0_0(builder_, level_ + 1)) break;
+      if (!section_items(builder_, level_ + 1)) break;
       if (!empty_element_parsed_guard_(builder_, "unitFile_0", pos_)) break;
     }
     return true;
-  }
-
-  // comment_|crlf_
-  private static boolean unitFile_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "unitFile_0_0")) return false;
-    boolean result_;
-    result_ = comment_(builder_, level_ + 1);
-    if (!result_) result_ = crlf_(builder_, level_ + 1);
-    return result_;
   }
 
   // section_groups*

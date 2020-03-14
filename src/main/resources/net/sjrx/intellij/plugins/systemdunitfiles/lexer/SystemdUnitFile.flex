@@ -35,21 +35,17 @@ import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeH
 %eof}
 %public
 
-// New Line Character (See JFlex manual)
-CRLF=\n
-
 NONCRLF=[^\r\n\u2028\u2029\u000B\u000C\u0085]
 
 // White space
-SAME_LINE_WHITESPACE=[\ \t]*
-
-WHITE_SPACE=[\ \n\t\f]
-
+EOL="\r\n"|"\r"|"\n"
+LINE_WS=[\ \t\f]
+WHITE_SPACE=({LINE_WS}|{EOL})+
 
 // The section header should actually be more restricted than this, however we will allow anything as a character
 // and use an annotator to flag the error.
 
-SECTION_HEADER=\[[^\]]+\]?{SAME_LINE_WHITESPACE}{CRLF}?
+SECTION_HEADER=\[[^\]\r\n\u2028\u2029\u000B\u000C\u0085]+\]?
 
 // We don't allow whitespace or the separator in the key characters
 KEY_CHARACTER=[^=\ \n\t\f\\] | "\\ "
@@ -59,11 +55,11 @@ VALUE_CHARACTERS={NONCRLF}*
 
 LINE_CONTINUATION="\\"
 
-CONTINUING_VALUE={VALUE_CHARACTERS}*{LINE_CONTINUATION}{CRLF}?
-COMPLETED_VALUE={VALUE_CHARACTERS}*{CRLF}?
+CONTINUING_VALUE={VALUE_CHARACTERS}{LINE_CONTINUATION}
+COMPLETED_VALUE={VALUE_CHARACTERS}
 
 // Comments can start with either ; or a #
-COMMENT=[#;]{NONCRLF}*{CRLF}?
+COMMENT=[#;]{NONCRLF}*
 
 SEPARATOR=[=]
 
@@ -76,22 +72,24 @@ SEPARATOR=[=]
 /*
  * Lexical rules http://jflex.de/manual.html#LexRules
  */
+<YYINITIAL> {WHITE_SPACE}                        { return TokenType.WHITE_SPACE; }
+<YYINITIAL> {COMMENT}                            { return UnitFileElementTypeHolder.COMMENT; }
+<YYINITIAL> {SECTION_HEADER}                     { return UnitFileElementTypeHolder.SECTION; }
+<YYINITIAL> {KEY_CHARACTER}+                     { yybegin(WAITING_FOR_SEPARATOR); return UnitFileElementTypeHolder.KEY; }
 
-<YYINITIAL, VALUE_CONTINUATION> {COMMENT}                                { return UnitFileElementTypeHolder.COMMENT; }
+<WAITING_FOR_SEPARATOR> {LINE_WS}                { return TokenType.WHITE_SPACE; }
+<WAITING_FOR_SEPARATOR> {SEPARATOR}              { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR; }
+// fallbacks to not beak whole file on text editing
+<WAITING_FOR_SEPARATOR> {SECTION_HEADER}         { yybegin(YYINITIAL); return UnitFileElementTypeHolder.SECTION; }
+<WAITING_FOR_SEPARATOR> {COMMENT}                { yybegin(YYINITIAL); return UnitFileElementTypeHolder.COMMENT; }
+<WAITING_FOR_SEPARATOR> {WHITE_SPACE}            { yybegin(YYINITIAL); return TokenType.WHITE_SPACE; }
 
-<YYINITIAL> {SECTION_HEADER}                                             { return UnitFileElementTypeHolder.SECTION; }
+// Empty value
+<WAITING_FOR_VALUE> {EOL}                                            { yybegin(YYINITIAL); return TokenType.WHITE_SPACE; }
+// Empty lines and lines starting with "#" or ";" are ignored
+<VALUE_CONTINUATION> {COMMENT}                                       { return UnitFileElementTypeHolder.COMMENT; }
+<VALUE_CONTINUATION> {EOL}+                                          { return TokenType.WHITE_SPACE; }
+<WAITING_FOR_VALUE, VALUE_CONTINUATION> {LINE_WS}*{CONTINUING_VALUE} { yybegin(VALUE_CONTINUATION); return UnitFileElementTypeHolder.CONTINUING_VALUE; }
+<WAITING_FOR_VALUE, VALUE_CONTINUATION> {LINE_WS}*{COMPLETED_VALUE}  { yybegin(YYINITIAL); return UnitFileElementTypeHolder.COMPLETED_VALUE; }
 
-<YYINITIAL, VALUE_CONTINUATION> {CRLF}({CRLF}|{WHITE_SPACE})+                                { return UnitFileElementTypeHolder.CRLF; }
-
-<YYINITIAL> {KEY_CHARACTER}+                                                        { yybegin(WAITING_FOR_SEPARATOR); return UnitFileElementTypeHolder.KEY; }
-
-<WAITING_FOR_SEPARATOR> {SAME_LINE_WHITESPACE}*{SEPARATOR}{SAME_LINE_WHITESPACE}*    { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR; }
-
-<WAITING_FOR_VALUE, VALUE_CONTINUATION> {CONTINUING_VALUE}                           { yybegin(VALUE_CONTINUATION); return UnitFileElementTypeHolder.CONTINUING_VALUE; }
-
-// Pull a value character or really any character and mark it as its value, this is really a hack :(
-<WAITING_FOR_VALUE, VALUE_CONTINUATION> {COMPLETED_VALUE}                           { yybegin(YYINITIAL); return UnitFileElementTypeHolder.COMPLETED_VALUE; }
-
-<YYINITIAL, VALUE_CONTINUATION>({CRLF}|{WHITE_SPACE})+                                       { return UnitFileElementTypeHolder.CRLF; }
-
-[^]                                                                                  { return TokenType.BAD_CHARACTER; }
+[^]                                              { return TokenType.BAD_CHARACTER; }
