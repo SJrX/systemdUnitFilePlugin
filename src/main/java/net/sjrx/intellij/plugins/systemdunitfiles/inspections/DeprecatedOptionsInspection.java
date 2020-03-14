@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 
 public class DeprecatedOptionsInspection extends LocalInspectionTool {
   
-  private static final SemanticDataRepository sdr = SemanticDataRepository.getInstance();
   private static final Pattern DEPRECATED_COMMENT_REGEX = Pattern.compile("setting.+deprecated. Use (.+) instead.", Pattern.DOTALL);
   /**
    * Stores a mapping of section -> key -> string for deprecated text message, if the value is empty it is not deprecated.

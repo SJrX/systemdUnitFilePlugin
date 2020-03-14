@@ -24,7 +24,6 @@ import static com.intellij.lang.documentation.DocumentationMarkup.DEFINITION_STA
 
 public class UnitFileDocumentationProvider extends AbstractDocumentationProvider {
 
-  private static final SemanticDataRepository sdr = SemanticDataRepository.getInstance();
 
   @Nullable
   @Override
@@ -40,6 +39,7 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
       String sectionName = ((UnitFileSectionGroupsImpl)element.getParent().getParent()).getSectionName();
       String keyName = element.getNode().getText();
 
+      SemanticDataRepository sdr = SemanticDataRepository.getInstance();
       String keyComment = sdr.getDocumentationContentForKeyInSection(sectionName, keyName);
 
       if (keyComment != null) {
@@ -49,6 +49,7 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
 
       String sectionName = ((UnitFileSectionGroupsImpl)element.getParent()).getSectionName();
 
+      SemanticDataRepository sdr = SemanticDataRepository.getInstance();
       String sectionComment = sdr.getDocumentationContentForSection(sectionName);
 
       if (sectionComment != null) {
@@ -65,12 +66,12 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
 
   @Override
   public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
-
     if (element.getNode().getElementType().equals(UnitFileElementTypeHolder.KEY)) {
 
       String sectionName = ((UnitFileSectionGroupsImpl)element.getParent().getParent()).getSectionName();
       String keyName = element.getNode().getText();
 
+      SemanticDataRepository sdr = SemanticDataRepository.getInstance();
       String keyNameToPointTo = sdr.getKeywordLocationInDocumentation(sectionName, keyName);
 
       String filename = sdr.getKeywordFileLocationInDocumentation(sectionName, keyName);
@@ -86,6 +87,7 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
 
       String sectionName = ((UnitFileSectionGroupsImpl)element.getParent()).getSectionName();
 
+      SemanticDataRepository sdr = SemanticDataRepository.getInstance();
       String sectionUrl = sdr.getUrlForSectionName(sectionName);
 
       if (sectionUrl != null) {

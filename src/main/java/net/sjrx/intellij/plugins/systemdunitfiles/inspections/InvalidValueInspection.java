@@ -17,8 +17,6 @@ import java.util.Collection;
 
 public class InvalidValueInspection extends LocalInspectionTool {
   
-  private SemanticDataRepository sdr = SemanticDataRepository.getInstance();
-  
   @Override
   public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
     

@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 public class UnitFileKeyCompletionContributor extends CompletionContributor {
 
 
-  private SemanticDataRepository sdr = SemanticDataRepository.getInstance();
 
   /**
    * Default constructor.
@@ -46,6 +45,7 @@ public class UnitFileKeyCompletionContributor extends CompletionContributor {
           String sectionName = section.getSectionName();
           Set<String> definedKeys = section.getPropertyList().stream().map(UnitFilePropertyType::getKey).collect(Collectors.toSet());
 
+          SemanticDataRepository sdr = SemanticDataRepository.getInstance();
           for (String keyword : sdr.getDocumentedKeywordsInSection(sectionName)) {
             if (definedKeys.contains(keyword)) continue;
             LookupElementBuilder builder = LookupElementBuilder

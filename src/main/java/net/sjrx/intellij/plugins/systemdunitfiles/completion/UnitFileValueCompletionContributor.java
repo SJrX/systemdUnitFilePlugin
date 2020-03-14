@@ -19,8 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class UnitFileValueCompletionContributor extends CompletionContributor {
   
-  private SemanticDataRepository sdr = SemanticDataRepository.getInstance();
-  
+
   /**
    * Default constructor.
    */
@@ -56,7 +55,8 @@ public class UnitFileValueCompletionContributor extends CompletionContributor {
             String sectionName = ufsg.getSectionName();
             
             String keyName = ufp.getKey();
-      
+
+            SemanticDataRepository sdr = SemanticDataRepository.getInstance();
             for (String value : sdr.getOptionValidator(sectionName, keyName).getAutoCompleteOptions()) {
               LookupElementBuilder builder =
                 LookupElementBuilder.create(value)

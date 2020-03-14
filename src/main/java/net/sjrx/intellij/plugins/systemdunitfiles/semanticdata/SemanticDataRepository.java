@@ -4,49 +4,46 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.diagnostic.Logger;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.BooleanOptionValue;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.DocumentationOptionValue;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.KillModeOptionValue;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ModeStringOptionValue;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.NullOptionValue;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.OptionValueInformation;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.RestartOptionValue;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ServiceTypeOptionValue;
+import com.intellij.openapi.util.AtomicNotNullLazyValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.*;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SemanticDataRepository {
-  
-  
+
+
   private static final Logger LOG = Logger.getInstance(SemanticDataRepository.class);
   private static final String SEMANTIC_DATA_ROOT = "net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/";
-  
+
   private static final String GPERF_REGEX = "^(?<Section>[A-Z][a-z]+).(?<Key>\\w+),\\s*(?<Validator>\\w+),\\s*(?<MysteryColumn>\\w+)\\s*,.+$";
   private static final Pattern LINE_MATCHER = Pattern.compile(GPERF_REGEX);
   private static final OptionValueInformation NULL_VALIDATOR = new NullOptionValue();
-  
-  
-  private static SemanticDataRepository instance = null;
+
+
+  private static final AtomicNotNullLazyValue<SemanticDataRepository> instance = new AtomicNotNullLazyValue<SemanticDataRepository>() {
+    @NotNull
+    @Override
+    protected SemanticDataRepository compute() {
+      return new SemanticDataRepository();
+    }
+  };
   private static final String SCOPE_KEYWORD = "Scope";
   private static final String LEGACY_PARAMETERS_KEY = "DISABLED_LEGACY";
   private static final String EXPERIMENTAL_PARAMETERS_KEY = "DISABLED_EXPERIMENTAL";
-  
+
   private final Map<String, OptionValueInformation> validatorMap;
   private final Map</* Section */ String, Map</* Key */ String, /* Validator */ String>> sectionToKeyAndValidatorMap
-    = new TreeMap<>();
+          = new TreeMap<>();
   private final Map<String, Map<String, Map<String, String>>> sectionNameToKeyValuesFromDoc;
   private final Map<String, Map<String, Map<String, String>>> undocumentedOptionInfo;
   
@@ -343,7 +340,7 @@ public class SemanticDataRepository {
     }
     
     try {
-      return IOUtils.toString(htmlDocStream, "UTF-8");
+      return IOUtils.toString(htmlDocStream, StandardCharsets.UTF_8);
     } catch (IOException e) {
       LOG.warn("Could not convert html document stream to String", e);
     }
@@ -383,12 +380,8 @@ public class SemanticDataRepository {
    *
    * @return singleton instance
    */
-  public static synchronized SemanticDataRepository getInstance() {
-    if (instance == null) {
-      instance = new SemanticDataRepository();
-    }
-    
-    return instance;
+  public static SemanticDataRepository getInstance() {
+    return instance.getValue();
   }
   
   /**
