@@ -50,19 +50,20 @@ public class SemanticDataRepository {
   
   
   private SemanticDataRepository() {
-    
-    this.sectionNameToKeyValuesFromDoc = loadSemanticDataFromJsonFile(SEMANTIC_DATA_ROOT + "sectionToKeywordMapFromDoc.json");
-  
-    this.undocumentedOptionInfo = loadSemanticDataFromJsonFile(SEMANTIC_DATA_ROOT + "undocumentedSectionToKeywordMap.json");
+    Map<String, String> cache = new HashMap<>();
+
+    this.sectionNameToKeyValuesFromDoc = loadSemanticDataFromJsonFile(SEMANTIC_DATA_ROOT + "sectionToKeywordMapFromDoc.json", cache);
+
+    this.undocumentedOptionInfo = loadSemanticDataFromJsonFile(SEMANTIC_DATA_ROOT + "undocumentedSectionToKeywordMap.json", cache);
 
     try (BufferedReader fr = new BufferedReader(new InputStreamReader(
       this.getClass().getClassLoader().getResourceAsStream(SEMANTIC_DATA_ROOT + "load-fragment-gperf.gperf")
     ))) {
       String line;
-    
-    
+
+
       while ((line = fr.readLine()) != null) {
-      
+
         Matcher m = LINE_MATCHER.matcher(line);
       
         if (m.find()) {
@@ -77,7 +78,7 @@ public class SemanticDataRepository {
               break;
     
             default:
-              sectionToKeyAndValidatorMap.computeIfAbsent(section, k -> new TreeMap<>()).put(key, validator);
+              sectionToKeyAndValidatorMap.computeIfAbsent(section, k -> new TreeMap<>()).put(intern(cache, key), intern(cache, validator));
           }
           
         }
@@ -95,32 +96,46 @@ public class SemanticDataRepository {
       for (OptionValueInformation ovi : ovis) {
         validatorMap.put(ovi.getValidatorName(), ovi);
       }
-  
+
       /*
        * Scopes are not supported since they aren't standard unit files.
        */
       sectionNameToKeyValuesFromDoc.remove(SCOPE_KEYWORD);
       sectionToKeyAndValidatorMap.remove(SCOPE_KEYWORD);
-      
+
     } catch (IOException e) {
       throw new IllegalStateException("Unable to initialize data for systemd inspections plugin", e);
     }
   }
-  
-  private Map<String, Map<String, Map<String, String>>> loadSemanticDataFromJsonFile(String filename) {
-    Map<String, Map<String, Map<String, String>>> output;
+
+  private static String intern(Map<String, String> cache, String value) {
+    return cache.getOrDefault(value, value);
+  }
+
+  private Map<String, Map<String, Map<String, String>>> loadSemanticDataFromJsonFile(String filename, Map<String, String> cache) {
     URL sectionToKeywordMapFromDocJsonFile =
-      this.getClass().getClassLoader().getResource(filename);
-    
+            this.getClass().getClassLoader().getResource(filename);
+
     final ObjectMapper mapper = new ObjectMapper();
-    
+
+    final Map<String, Map<String, Map<String, String>>> read;
     try {
-      output =
-        mapper.readValue(sectionToKeywordMapFromDocJsonFile, new TypeReference<Map<String, Map<String, Map<String, String>>>>() {
-        });
+      read = mapper.readValue(sectionToKeywordMapFromDocJsonFile, new TypeReference<Map<String, Map<String, Map<String, String>>>>() {
+      });
     } catch (IOException e) {
       throw new IllegalStateException("Unable to initialize data for systemd inspections plugin", e);
     }
+    // intern strings in maps
+    final Map<String, Map<String, Map<String, String>>> output = new HashMap<>();
+    read.forEach((section, m1) -> {
+      HashMap<String, Map<String, String>> converted = new HashMap<>();
+      m1.forEach((keyword, m2) -> {
+        HashMap<String, String> converted2 = new HashMap<>();
+        m2.forEach((attribute, value) -> converted2.put(intern(cache, attribute), intern(cache, value)));
+        converted.put(intern(cache, keyword), converted2);
+      });
+      output.put(intern(cache, section), converted);
+    });
     return output;
   }
   
