@@ -64,7 +64,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
 
     assertNotNull(highlightElement);
-    assertEquals("Most Def\n", highlightElement.getText());
+    assertEquals("Most Def", highlightElement.getText());
     
   }
   
@@ -133,7 +133,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
 
     assertNotNull(highlightElement);
-    assertEquals("ftp://www.google.com/rules.txt\n", highlightElement.getText());
+    assertEquals("ftp://www.google.com/rules.txt", highlightElement.getText());
   }
   
   public void testInvalidDocumentationValuesOnSingleLineTriggersInspection() {
@@ -212,7 +212,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
     assertNotNull(highlightElement);
-    assertEquals("sigkill\n", highlightElement.getText());
+    assertEquals("sigkill", highlightElement.getText());
   }
   
   public void testAllRestartOptionValuesDoNotThrowError() {
@@ -272,7 +272,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
     assertNotNull(highlightElement);
-    assertEquals("yes\n", highlightElement.getText());
+    assertEquals("yes", highlightElement.getText());
   }
   
   public void testValidModeStringOptionsDoNotTriggerInspection() {
@@ -383,7 +383,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
     assertNotNull(highlightElement);
-    assertEquals("remote\n", highlightElement.getText());
+    assertEquals("remote", highlightElement.getText());
   }
   
   public void testIllegalServiceTypeValueTriggersInspectionWithoutNewLine() {
@@ -418,6 +418,6 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
     assertNotNull(highlightElement);
-    assertEquals("remote\n", highlightElement.getText());
+    assertEquals("remote", highlightElement.getText());
   }
 }
