@@ -3,7 +3,6 @@ package net.sjrx.intellij.plugins.systemdunitfiles.lexer;
 import com.intellij.lexer.Lexer;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.testFramework.LexerTestCase;
-import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileTokenType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

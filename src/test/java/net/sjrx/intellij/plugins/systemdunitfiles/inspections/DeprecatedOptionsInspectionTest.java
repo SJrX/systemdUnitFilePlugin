@@ -75,7 +75,8 @@ public class DeprecatedOptionsInspectionTest extends AbstractUnitFileTest {
     assertStringContains("Use MemoryMax= instead", info.getDescription());
     assertStringContains("deprecated", info.getDescription());
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
-    
+
+    assertNotNull(highlightElement);
     assertEquals("MemoryLimit", highlightElement.getText());
   }
 

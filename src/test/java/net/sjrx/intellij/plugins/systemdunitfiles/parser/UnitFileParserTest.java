@@ -195,9 +195,7 @@ public class UnitFileParserTest extends ParsingTestCase {
     /*
      * Verification
      */
-    fail();
-    //assertSameLines(expectedPsiTree, parseTree);
-   
+    assertSameLines(expectedPsiTree, parseTree);
   }
 
   public void testLineContinuationSimple() {
@@ -749,12 +747,12 @@ public class UnitFileParserTest extends ParsingTestCase {
     
     UnitFileSectionGroups sectionGroup = (UnitFileSectionGroups) myFile.getFirstChild();
     UnitFileProperty property = sectionGroup.getPropertyList().get(1);
-    UnitFileValueType ufvt = (UnitFileValueType) property.getValue();
+    UnitFileValueType ufvt = property.getValue();
     
     /*
      * Verification
      */
-    
+    assertNotNull(ufvt);
     assertSameLines(expectedValue, ufvt.getValue());
   }
 

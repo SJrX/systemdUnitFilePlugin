@@ -27,6 +27,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     List<String> urls = sut.getUrlFor(badKey, badKey);
 
     // Verification
+    assertNotNull(urls);
     assertEmpty(urls);
   }
 
@@ -44,6 +45,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     List<String> urls = sut.getUrlFor(badKeySeparator, badKeySeparator);
 
     // Verification
+    assertNotNull(urls);
     assertEmpty(urls);
   }
 
@@ -108,6 +110,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     List<String> urls = sut.getUrlFor(unknownSectionHeader, unknownSectionHeader);
 
     // Verification
+    assertNotNull(urls);
     assertEmpty(urls);
   }
 

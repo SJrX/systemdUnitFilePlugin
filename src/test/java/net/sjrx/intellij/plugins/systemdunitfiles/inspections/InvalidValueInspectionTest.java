@@ -62,7 +62,8 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     assertEquals(HighlightInfoType.WARNING, info.type);
   
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
-  
+
+    assertNotNull(highlightElement);
     assertEquals("Most Def\n", highlightElement.getText());
     
   }
@@ -130,7 +131,8 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     assertEquals(HighlightInfoType.WARNING, info.type);
   
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
-  
+
+    assertNotNull(highlightElement);
     assertEquals("ftp://www.google.com/rules.txt\n", highlightElement.getText());
   }
   
@@ -157,7 +159,8 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     assertEquals(HighlightInfoType.WARNING, info.type);
   
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
-  
+
+    assertNotNull(highlightElement);
     assertStringContains("ftp://www.google.com/rules.txt", highlightElement.getText());
   }
   
@@ -208,6 +211,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     assertEquals(HighlightInfoType.WARNING, info.type);
     
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
+    assertNotNull(highlightElement);
     assertEquals("sigkill\n", highlightElement.getText());
   }
   
@@ -267,6 +271,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     assertEquals(HighlightInfoType.WARNING, info.type);
     
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
+    assertNotNull(highlightElement);
     assertEquals("yes\n", highlightElement.getText());
   }
   
@@ -318,6 +323,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
       assertStringContains("Value is expected to be a 3 or 4 digit octal number not:", info.getDescription());
       assertEquals(HighlightInfoType.WARNING, info.type);
       PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
+      assertNotNull(highlightElement);
       assertStringContains(highlightElement.getText().trim(), info.getDescription());
     }
   }
@@ -376,6 +382,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     assertEquals(HighlightInfoType.WARNING, info.type);
     
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
+    assertNotNull(highlightElement);
     assertEquals("remote\n", highlightElement.getText());
   }
   
@@ -410,6 +417,7 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     assertEquals(HighlightInfoType.WARNING, info.type);
     
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
+    assertNotNull(highlightElement);
     assertEquals("remote\n", highlightElement.getText());
   }
 }

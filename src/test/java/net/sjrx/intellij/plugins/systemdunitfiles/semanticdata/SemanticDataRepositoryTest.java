@@ -2,13 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata;
 
 
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.BooleanOptionValue;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.DocumentationOptionValue;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.KillModeOptionValue;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ModeStringOptionValue;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.NullOptionValue;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.RestartOptionValue;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ServiceTypeOptionValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.*;
 
 public class SemanticDataRepositoryTest extends AbstractUnitFileTest {
   
