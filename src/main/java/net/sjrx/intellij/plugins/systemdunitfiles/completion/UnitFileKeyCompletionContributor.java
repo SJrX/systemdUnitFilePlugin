@@ -1,19 +1,20 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.completion;
 
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionProvider;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileIcon;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileLanguage;
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder;
-import net.sjrx.intellij.plugins.systemdunitfiles.psi.impl.UnitFileSectionGroupsImpl;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Completion Contributor for keywords in a section.
@@ -32,27 +33,23 @@ public class UnitFileKeyCompletionContributor extends CompletionContributor {
 
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters,
-                                     ProcessingContext context,
-                                     @NotNull CompletionResultSet resultSet) {
-          if (parameters.getPosition().getParent() == null) {
-            return;
-          }
-  
-          if ((parameters.getPosition().getParent().getParent() == null)
-              || (!(parameters.getPosition().getParent().getParent() instanceof UnitFileSectionGroupsImpl))) {
-            return;
-          }
-          
-          
-          String sectionName = ((UnitFileSectionGroupsImpl) parameters.getPosition().getParent().getParent()).getSectionName();
+                                      @NotNull ProcessingContext context,
+                                      @NotNull CompletionResultSet resultSet) {
+          UnitFileSectionGroups section = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), UnitFileSectionGroups.class);
+          if (section == null ) section = PsiTreeUtil.getParentOfType(parameters.getPosition(), UnitFileSectionGroups.class);
+          if (section == null) return;
+
+          String sectionName = section.getSectionName();
+          Set<String> definedKeys = section.getPropertyList().stream().map(UnitFilePropertyType::getKey).collect(Collectors.toSet());
 
           for (String keyword : sdr.getDocumentedKeywordsInSection(sectionName)) {
-            LookupElementBuilder builder =
-              LookupElementBuilder.create(keyword + "=").withPresentableText(keyword)
-                .withIcon(UnitFileIcon.FILE).appendTailText("(Option)", true);
+            if (definedKeys.contains(keyword)) continue;
+            LookupElementBuilder builder = LookupElementBuilder
+                    .create(keyword + "=") // TODO: Replace '=' with InsertionHandler
+                    .withPresentableText(keyword)
+                    .withIcon(UnitFileIcon.FILE).appendTailText("(Option)", true);
 
             resultSet.addElement(builder);
-
           }
         }
       }

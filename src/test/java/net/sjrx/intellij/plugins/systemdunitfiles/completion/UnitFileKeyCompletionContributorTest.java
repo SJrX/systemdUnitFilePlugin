@@ -82,7 +82,7 @@ public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
     assertSize(4, completions);
   }
   
-  public void testTheFollowingDoesNotThrowANullPointerException() {
+  public void testCompletionAfterKeyWithEmptyValue() {
     // Fixture Setup
     String file = "[Swap]\n"
                   + "M\n"
@@ -93,11 +93,51 @@ public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
                   + "\n";
     
     myFixture.configureByText("file.service", file);
-    
+
     // Exercise SUT
     List<String> completions = getBasicCompletionResultStrings();
-    
+
     // Verification
-    assertEmpty(completions);
+    assertContainsElements(completions, "DirectoryMode=", "PathModified=", "DirectoryNotEmpty=");
+    assertDoesntContain(completions,"MakeDirectory=");
+  }
+
+  public void testCompletionBeforeKeyWithEmptyValue() {
+    // Fixture Setup
+    String file = "[Swap]\n"
+                  + "M\n"
+                  + "\n"
+                  + "[Path]\n"
+                  + "M" + COMPLETION_POSITION + "\n"
+                  + "MakeDirectory=\n"
+                  + "\n";
+
+    myFixture.configureByText("file.service", file);
+
+    // Exercise SUT
+    List<String> completions = getBasicCompletionResultStrings();
+
+    // Verification
+    assertContainsElements(completions, "DirectoryMode=", "PathModified=", "DirectoryNotEmpty=");
+    assertDoesntContain(completions,"MakeDirectory=");
+  }
+
+  public void testCompletionAfterComment() {
+    // Fixture Setup
+    String file = "[Swap]\n"
+                  + "M\n"
+                  + "\n"
+                  + "[Path]\n"
+                  + ";comment\n"
+                  + "" + COMPLETION_POSITION + "\n"
+                  + "\n";
+
+    myFixture.configureByText("file.service", file);
+
+    // Exercise SUT
+    List<String> completions = getBasicCompletionResultStrings();
+
+    // Verification
+    assertContainsElements(completions, "DirectoryMode=", "DirectoryNotEmpty=", "MakeDirectory=", "PathModified=");
   }
 }
