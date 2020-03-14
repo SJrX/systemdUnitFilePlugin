@@ -1,10 +1,15 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata;
 
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ObjectUtils;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.*;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
@@ -43,12 +48,23 @@ public class SemanticDataRepository {
 
   private final Map<String, OptionValueInformation> validatorMap;
   private final Map</* Section */ String, Map</* Key */ String, /* Validator */ String>> sectionToKeyAndValidatorMap
-          = new TreeMap<>();
-  private final Map<String, Map<String, Map<String, String>>> sectionNameToKeyValuesFromDoc;
-  private final Map<String, Map<String, Map<String, String>>> undocumentedOptionInfo;
-  
-  
-  
+          = new HashMap<>();
+  private final Map<String, Map<String, KeywordData>> sectionNameToKeyValuesFromDoc;
+  private final Map<String, Map<String, KeywordData>> undocumentedOptionInfo;
+
+  public final static class KeywordData {
+    public String declaredUnderKeyword;
+    public String declaredInFile;
+    public String reason;
+    public String documentationLink;
+    public String replacedWithKey;
+    public String replacedWithSection;
+    public String description;
+
+    public String values;
+    public String unsupported;
+  }
+
   private SemanticDataRepository() {
     Map<String, String> cache = new HashMap<>();
 
@@ -56,55 +72,59 @@ public class SemanticDataRepository {
 
     this.undocumentedOptionInfo = loadSemanticDataFromJsonFile(SEMANTIC_DATA_ROOT + "undocumentedSectionToKeywordMap.json", cache);
 
-    try (BufferedReader fr = new BufferedReader(new InputStreamReader(
-      this.getClass().getClassLoader().getResourceAsStream(SEMANTIC_DATA_ROOT + "load-fragment-gperf.gperf")
-    ))) {
-      String line;
+    validatorMap = new HashMap<>();
+
+    InputStream resource = this.getClass().getClassLoader().getResourceAsStream(SEMANTIC_DATA_ROOT + "load-fragment-gperf.gperf");
+    if (resource != null) {
+      try (BufferedReader fr = new BufferedReader(new InputStreamReader(resource))) {
+        String line;
 
 
-      while ((line = fr.readLine()) != null) {
+        while ((line = fr.readLine()) != null) {
 
-        Matcher m = LINE_MATCHER.matcher(line);
-      
-        if (m.find()) {
-          String section = m.group("Section");
-          String key = m.group("Key");
-          String validator = m.group("Validator");
-          String mysteryValue = m.group("MysteryColumn");
-  
-          switch (mysteryValue) {
-            case LEGACY_PARAMETERS_KEY:
-            case EXPERIMENTAL_PARAMETERS_KEY:
-              break;
-    
-            default:
-              sectionToKeyAndValidatorMap.computeIfAbsent(section, k -> new TreeMap<>()).put(intern(cache, key), intern(cache, validator));
+          Matcher m = LINE_MATCHER.matcher(line);
+
+          if (m.find()) {
+            String section = m.group("Section");
+            String key = m.group("Key");
+            String validator = m.group("Validator");
+            String mysteryValue = m.group("MysteryColumn");
+
+            switch (mysteryValue) {
+              case LEGACY_PARAMETERS_KEY:
+              case EXPERIMENTAL_PARAMETERS_KEY:
+                break;
+
+              default:
+                sectionToKeyAndValidatorMap.computeIfAbsent(intern(cache, section), k -> new HashMap<>()).put(intern(cache, key), intern(cache, validator));
+            }
+
           }
-          
         }
-      }
-    
-      OptionValueInformation[] ovis = {new BooleanOptionValue(),
-        new DocumentationOptionValue(),
-        new KillModeOptionValue(),
-        new ModeStringOptionValue(),
-        new RestartOptionValue(),
-        new ServiceTypeOptionValue(),
-        NULL_VALIDATOR };
-      validatorMap = new HashMap<>();
-      
-      for (OptionValueInformation ovi : ovis) {
-        validatorMap.put(ovi.getValidatorName(), ovi);
-      }
 
-      /*
-       * Scopes are not supported since they aren't standard unit files.
-       */
-      sectionNameToKeyValuesFromDoc.remove(SCOPE_KEYWORD);
-      sectionToKeyAndValidatorMap.remove(SCOPE_KEYWORD);
+        OptionValueInformation[] ovis = {new BooleanOptionValue(),
+                new DocumentationOptionValue(),
+                new KillModeOptionValue(),
+                new ModeStringOptionValue(),
+                new RestartOptionValue(),
+                new ServiceTypeOptionValue(),
+                NULL_VALIDATOR };
 
-    } catch (IOException e) {
-      throw new IllegalStateException("Unable to initialize data for systemd inspections plugin", e);
+        for (OptionValueInformation ovi : ovis) {
+          validatorMap.put(ovi.getValidatorName(), ovi);
+        }
+
+        /*
+         * Scopes are not supported since they aren't standard unit files.
+         */
+        sectionNameToKeyValuesFromDoc.remove(SCOPE_KEYWORD);
+        sectionToKeyAndValidatorMap.remove(SCOPE_KEYWORD);
+
+      } catch (IOException e) {
+        LOG.error("Unable to initialize data for systemd inspections plugin", e);
+      }
+    } else {
+      LOG.error("Unable to initialize data for systemd inspections plugin, resource not found");
     }
   }
 
@@ -112,28 +132,30 @@ public class SemanticDataRepository {
     return cache.getOrDefault(value, value);
   }
 
-  private Map<String, Map<String, Map<String, String>>> loadSemanticDataFromJsonFile(String filename, Map<String, String> cache) {
+  private Map<String, Map<String, KeywordData>> loadSemanticDataFromJsonFile(String filename, Map<String, String> cache) {
     URL sectionToKeywordMapFromDocJsonFile =
             this.getClass().getClassLoader().getResource(filename);
 
-    final ObjectMapper mapper = new ObjectMapper();
+    final JsonFactory factory = new JsonFactory();
+    factory.disable(JsonFactory.Feature.INTERN_FIELD_NAMES);
+    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      factory.disable(JsonParser.Feature.IGNORE_UNDEFINED);
+    }
+    final ObjectMapper mapper = new ObjectMapper(factory);
 
-    final Map<String, Map<String, Map<String, String>>> read;
+    Map<String, Map<String, KeywordData>> read;
     try {
-      read = mapper.readValue(sectionToKeywordMapFromDocJsonFile, new TypeReference<Map<String, Map<String, Map<String, String>>>>() {
+      read = mapper.readValue(sectionToKeywordMapFromDocJsonFile, new TypeReference<Map<String, Map<String, KeywordData>>>() {
       });
     } catch (IOException e) {
-      throw new IllegalStateException("Unable to initialize data for systemd inspections plugin", e);
+      LOG.error("Unable to initialize data for systemd inspections plugin", e);
+      read = new HashMap<>();
     }
     // intern strings in maps
-    final Map<String, Map<String, Map<String, String>>> output = new HashMap<>();
+    final Map<String, Map<String, KeywordData>> output = new HashMap<>();
     read.forEach((section, m1) -> {
-      HashMap<String, Map<String, String>> converted = new HashMap<>();
-      m1.forEach((keyword, m2) -> {
-        HashMap<String, String> converted2 = new HashMap<>();
-        m2.forEach((attribute, value) -> converted2.put(intern(cache, attribute), intern(cache, value)));
-        converted.put(intern(cache, keyword), converted2);
-      });
+      HashMap<String, KeywordData> converted = new HashMap<>();
+      m1.forEach((keyword, m2) -> converted.put(intern(cache, keyword), m2));
       output.put(intern(cache, section), converted);
     });
     return output;
@@ -173,8 +195,9 @@ public class SemanticDataRepository {
    * @return String or null
    */
   public String getKeywordLocationInDocumentation(String section, String keyName) {
-    return this.getKeyValuePairsForSectionFromDocumentation(section).computeIfAbsent(keyName, k -> new HashMap<>())
-             .computeIfAbsent("declaredUnderKeyword", v -> null);
+    KeywordData data = this.getKeyValuePairsForSectionFromDocumentation(section).get(keyName);
+    if (data == null) return null;
+    return ObjectUtils.notNull(data.declaredUnderKeyword, keyName);
   }
   
   /**
@@ -188,32 +211,32 @@ public class SemanticDataRepository {
    * @return String or null
    */
   public String getKeywordFileLocationInDocumentation(String section, String keyName) {
-    return this.getKeyValuePairsForSectionFromDocumentation(section).computeIfAbsent(keyName, k -> new HashMap<>())
-             .computeIfAbsent("declaredInFile", v -> null);
+    KeywordData data = this.getKeyValuePairsForSectionFromDocumentation(section).get(keyName);
+    return data != null ? data.declaredInFile : null;
   }
-  
-  private Map<String, Map<String, String>> getKeyValuePairsForSectionFromDocumentation(String section) {
-    Map<String, Map<String, String>> sectionData = sectionNameToKeyValuesFromDoc.get(section);
-    
+
+  Map<String, KeywordData> getKeyValuePairsForSectionFromDocumentation(String section) {
+    Map<String, KeywordData> sectionData = sectionNameToKeyValuesFromDoc.get(section);
+
     if (sectionData == null) {
       return Collections.emptyMap();
     } else {
-      
+
       return sectionData;
     }
   }
-  
-  private Map<String, Map<String, String>> getKeyValuePairsForSectionFromUndocumentedInformation(String section) {
-    Map<String, Map<String, String>> sectionData = undocumentedOptionInfo.get(section);
-    
+
+  private Map<String, KeywordData> getKeyValuePairsForSectionFromUndocumentedInformation(String section) {
+    Map<String, KeywordData> sectionData = undocumentedOptionInfo.get(section);
+
     if (sectionData == null) {
       return Collections.emptyMap();
     } else {
-      
+
       return sectionData;
     }
   }
-  
+
   /**
    * Returns a URL to the section name man page.
    *
@@ -329,25 +352,25 @@ public class SemanticDataRepository {
     InputStream htmlDocStream = this.getClass().getClassLoader().getResourceAsStream(SEMANTIC_DATA_ROOT + "/documents/completion/"
                                                                                      + sectionName + "/" + keyName + ".html");
     if (htmlDocStream == null) {
-      
-      Map<String, String> options = this.getKeyValuePairsForSectionFromUndocumentedInformation(sectionName).get(keyName);
-  
+
+      KeywordData options = this.getKeyValuePairsForSectionFromUndocumentedInformation(sectionName).get(keyName);
+
       if (options == null) {
         return null;
       }
-  
-      switch (options.get("reason")) {
+
+      switch (options.reason) {
         case "unsupported":
           return "<p><var>" + keyName + "</var> in section <b>" + sectionName + "</b> is not officially supported.<p>"
-                 + "<a href='" + options.get("documentationLink") + "'>More information is available here</a>";
+                  + "<a href='" + options.documentationLink + "'>More information is available here</a>";
         case "moved":
           return "<p>The key <var>" + keyName + "</var> in section <b>" + sectionName + "</b> has been moved to "
-                 + "<var>" + options.getOrDefault("replacedWithKey", keyName) + "</var> in section <b>"
-                 + options.getOrDefault("replacedWithSection", sectionName) + "</b>"
-                 + "<p>NOTE: The semantics of the new value may not match the existing value.<p>"
-                 + "<a href='" + options.get("documentationLink") + "'>More information is available here</a>";
+                  + "<var>" + StringUtil.notNullize(options.replacedWithKey, keyName) + "</var> in section <b>"
+                  + StringUtil.notNullize(options.replacedWithSection, sectionName) + "</b>"
+                  + "<p>NOTE: The semantics of the new value may not match the existing value.<p>"
+                  + "<a href='" + options.documentationLink + "'>More information is available here</a>";
         case "manual":
-          return options.get("description");
+          return options.description;
         default:
           LOG.warn("Found unsupported " + sectionName + " => " + keyName);
           return null;
@@ -370,7 +393,7 @@ public class SemanticDataRepository {
    * @return true if we know the option is deprecated
    */
   public boolean isDeprecated(String sectionName, String keyName) {
-    Map<String, String> options = this.getKeyValuePairsForSectionFromUndocumentedInformation(sectionName).get(keyName);
+    KeywordData options = this.getKeyValuePairsForSectionFromUndocumentedInformation(sectionName).get(keyName);
   
     return options != null;
   }

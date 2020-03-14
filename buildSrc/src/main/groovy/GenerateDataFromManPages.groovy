@@ -230,8 +230,10 @@ class GenerateDataFromManPages extends DefaultTask {
           for (String section : sections) {
             logger.debug("Found options $section in $option in ${file.getAbsolutePath()}")
             sectionToKeyWordMapFromDoc.putIfAbsent(section, new TreeMap<>())
-            sectionToKeyWordMapFromDoc[section][keyName] =
-              ["values": keyValue, "declaredUnderKeyword": originalKeyName, "declaredInFile": filename]
+            def val = ["declaredInFile": filename]
+            if (!keyValue.isEmpty()) val["values"] = keyValue
+            if (keyName != originalKeyName) val["declaredUnderKeyword"] = originalKeyName
+            sectionToKeyWordMapFromDoc[section][keyName] = val
           }
         }
         catch (IllegalStateException e) {
