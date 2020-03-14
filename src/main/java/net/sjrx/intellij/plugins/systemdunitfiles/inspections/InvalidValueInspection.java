@@ -1,60 +1,61 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.inspections;
 
-import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileLanguage;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFile;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType;
-import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileVisitor;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.OptionValueInformation;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 public class InvalidValueInspection extends LocalInspectionTool {
-  
+
+  @NotNull
   @Override
-  public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
-    
-    ArrayList<ProblemDescriptor> problems = new ArrayList<>();
-    
-    SemanticDataRepository sdr = SemanticDataRepository.getInstance();
-    
-    Collection<UnitFileSectionType> sections = PsiTreeUtil.collectElementsOfType(file, UnitFileSectionType.class);
-    
-    for (UnitFileSectionType section : sections) {
-      
-      
-      Collection<UnitFilePropertyType> keyAndValuePropertiesInSection =
-        PsiTreeUtil.collectElementsOfType(section, UnitFilePropertyType.class);
-      
-      for (final UnitFilePropertyType keyAndValueProperty : keyAndValuePropertiesInSection) {
-  
-        String key = keyAndValueProperty.getKey();
-        String value = keyAndValueProperty.getValueText();
-  
-        if (value == null) {
-          continue;
-        }
-        
-        OptionValueInformation ovi = sdr.getOptionValidator(section.getSectionName(), key);
-        
-        String errorMessage = ovi.getErrorMessage(value);
-        
-        if (errorMessage != null) {
-          problems.add(manager.createProblemDescriptor(keyAndValueProperty.getValueNode().getPsi(), errorMessage, true,
-            ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly));
-        }
-        
+  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
+    PsiFile file = holder.getFile();
+    if (!(file instanceof UnitFile) || !file.getLanguage().isKindOf(UnitFileLanguage.INSTANCE)) {
+      return PsiElementVisitor.EMPTY_VISITOR;
+    }
+    return new MyVisitor(holder);
+  }
+
+  private static class MyVisitor extends UnitFileVisitor {
+    @NotNull
+    private final ProblemsHolder holder;
+
+    public MyVisitor(@NotNull ProblemsHolder holder) {
+      this.holder = holder;
+    }
+
+    @Override
+    public void visitPropertyType(@NotNull UnitFilePropertyType property) {
+      UnitFileSectionGroups section = PsiTreeUtil.getParentOfType(property, UnitFileSectionGroups.class);
+      if (section == null) {
+        return;
+      }
+
+      String value = property.getValueText();
+      if (value == null) {
+        return;
+      }
+
+      String key = property.getKey();
+
+      OptionValueInformation ovi = SemanticDataRepository.getInstance().getOptionValidator(section.getSectionName(), key);
+
+      String errorMessage = ovi.getErrorMessage(value);
+
+      if (errorMessage != null) {
+        holder.registerProblem(property.getValueNode().getPsi(), errorMessage, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
       }
     }
-    
-    return problems.toArray(new ProblemDescriptor[0]);
   }
-  
-  
 }

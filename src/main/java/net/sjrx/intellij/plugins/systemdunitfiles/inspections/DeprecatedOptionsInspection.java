@@ -1,53 +1,54 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.inspections;
 
-import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileLanguage;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFile;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType;
-import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileVisitor;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
-
 public class DeprecatedOptionsInspection extends LocalInspectionTool {
-  
-  private static final Pattern DEPRECATED_COMMENT_REGEX = Pattern.compile("setting.+deprecated. Use (.+) instead.", Pattern.DOTALL);
-  /**
-   * Stores a mapping of section -> key -> string for deprecated text message, if the value is empty it is not deprecated.
-   */
-  private Map<String, Map<String, String>> deprecatedKeyAndValueToText = new HashMap<>();
-  
+  @NotNull
   @Override
-  public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
-    ArrayList<ProblemDescriptor> problems = new ArrayList<>();
-    
-    SemanticDataRepository sdr = SemanticDataRepository.getInstance();
-    
-    Collection<UnitFileSectionType> sections = PsiTreeUtil.collectElementsOfType(file, UnitFileSectionType.class);
-    
-    for (UnitFileSectionType section : sections) {
-      
-      
-      Collection<UnitFilePropertyType> keyAndValuePropertiesInSection =
-        PsiTreeUtil.collectElementsOfType(section, UnitFilePropertyType.class);
-      
-      for (final UnitFilePropertyType keyAndValueProperty : keyAndValuePropertiesInSection) {
-        if (sdr.isDeprecated(section.getSectionName(), keyAndValueProperty.getKey())) {
-          String text = sdr.getDocumentationContentForKeyInSection(section.getSectionName(), keyAndValueProperty.getKey());
-          problems.add(manager.createProblemDescriptor(keyAndValueProperty.getKeyNode().getPsi(), text.replaceAll("</?var>",""), true,
-            ProblemHighlightType.LIKE_DEPRECATED, isOnTheFly));
-        }
+  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
+    PsiFile file = holder.getFile();
+    if (!(file instanceof UnitFile) || !file.getLanguage().isKindOf(UnitFileLanguage.INSTANCE)) {
+      return PsiElementVisitor.EMPTY_VISITOR;
+    }
+    return new MyVisitor(holder);
+  }
+
+  private static class MyVisitor extends UnitFileVisitor {
+    @NotNull
+    private final ProblemsHolder holder;
+
+    public MyVisitor(@NotNull ProblemsHolder holder) {
+      this.holder = holder;
+    }
+
+    @Override
+    public void visitPropertyType(@NotNull UnitFilePropertyType property) {
+      UnitFileSectionGroups section = PsiTreeUtil.getParentOfType(property, UnitFileSectionGroups.class);
+      if (section == null) {
+        return;
+      }
+
+      SemanticDataRepository sdr = SemanticDataRepository.getInstance();
+
+      String sectionName = section.getSectionName();
+      String key = property.getKey();
+
+      if (sdr.isDeprecated(sectionName, key)) {
+        String text = sdr.getDocumentationContentForKeyInSection(sectionName, key);
+        holder.registerProblem(property.getKeyNode().getPsi(), text.replaceAll("</?var>", ""), ProblemHighlightType.LIKE_DEPRECATED);
       }
     }
-    
-    return problems.toArray(new ProblemDescriptor[0]);
   }
 }
