@@ -9,8 +9,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UnitFileLexerTest extends LexerTestCase {
-  
-  
+
+  public void testWithoutSection() {
+    String sourceCode = "Key = Value \n";
+    doTest(sourceCode,
+            "UnitFileTokenType{KEY} ('Key')\n"
+          + "UnitFileTokenType{SEPARATOR} (' = ')\n"
+          + "UnitFileTokenType{COMPLETED_VALUE} ('Value \\n')"
+    );
+    checkCorrectRestart(sourceCode);
+  }
+
+  public void testEmptyValue() {
+    String sourceCode = "EmptyValue =\n";
+    doTest(sourceCode,
+            "UnitFileTokenType{KEY} ('EmptyValue')\n"
+          + "UnitFileTokenType{SEPARATOR} (' =')\n"
+          + "UnitFileTokenType{COMPLETED_VALUE} ('\\n')"
+    );
+    checkCorrectRestart(sourceCode);
+  }
+
   public void testInlineComments() {
     // Fixture Setup
     String sourceCode = "[One]\n"
@@ -24,7 +43,7 @@ public class UnitFileLexerTest extends LexerTestCase {
     // Verification
     assertEquals("SECTION, KEY, SEPARATOR, CONTINUING_VALUE, COMMENT, COMPLETED_VALUE", tokenStream);
   }
-  
+
   public void testExampleCodeLexesProperly() {
     // Fixture Setup
     String sourceCode = "[Section A]\n"

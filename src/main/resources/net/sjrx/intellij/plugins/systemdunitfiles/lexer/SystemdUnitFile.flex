@@ -74,8 +74,6 @@ COMMENT=[#;]{NONCRLF}*{CRLF}?
 
 SEPARATOR=[=]
 
-%state IN_SECTION
-
 %state WAITING_FOR_SEPARATOR
 %state WAITING_FOR_VALUE
 %state VALUE_CONTINUATION
@@ -86,23 +84,23 @@ SEPARATOR=[=]
  * Lexical rules http://jflex.de/manual.html#LexRules
  */
 
-<YYINITIAL, IN_SECTION, VALUE_CONTINUATION> {COMMENT}                                { return UnitFileElementTypeHolder.COMMENT; }
+<YYINITIAL, VALUE_CONTINUATION> {COMMENT}                                { return UnitFileElementTypeHolder.COMMENT; }
 
-<YYINITIAL, IN_SECTION> {SECTION_HEADER}                                             { yybegin(IN_SECTION); return UnitFileElementTypeHolder.SECTION; }
+<YYINITIAL> {SECTION_HEADER}                                             { return UnitFileElementTypeHolder.SECTION; }
 
-<YYINITIAL, IN_SECTION> {INCOMPLETE_SECTION_HEADER}                                  { return TokenType.BAD_CHARACTER; }
+<YYINITIAL> {INCOMPLETE_SECTION_HEADER}                                  { return TokenType.BAD_CHARACTER; }
 
-<YYINITIAL, IN_SECTION, VALUE_CONTINUATION> {CRLF}({CRLF}|{WHITE_SPACE})+                                { return UnitFileElementTypeHolder.CRLF; }
+<YYINITIAL, VALUE_CONTINUATION> {CRLF}({CRLF}|{WHITE_SPACE})+                                { return UnitFileElementTypeHolder.CRLF; }
 
-<IN_SECTION> {KEY_CHARACTER}+                                                        { yybegin(WAITING_FOR_SEPARATOR); return UnitFileElementTypeHolder.KEY; }
+<YYINITIAL> {KEY_CHARACTER}+                                                        { yybegin(WAITING_FOR_SEPARATOR); return UnitFileElementTypeHolder.KEY; }
 
 <WAITING_FOR_SEPARATOR> {SAME_LINE_WHITESPACE}*{SEPARATOR}{SAME_LINE_WHITESPACE}*    { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR; }
 
 <WAITING_FOR_VALUE, VALUE_CONTINUATION> {CONTINUING_VALUE}                           { yybegin(VALUE_CONTINUATION); return UnitFileElementTypeHolder.CONTINUING_VALUE; }
 
 // Pull a value character or really any character and mark it as its value, this is really a hack :(
-<WAITING_FOR_VALUE, VALUE_CONTINUATION> {COMPLETED_VALUE}                           { yybegin(IN_SECTION); return UnitFileElementTypeHolder.COMPLETED_VALUE; }
+<WAITING_FOR_VALUE, VALUE_CONTINUATION> {COMPLETED_VALUE}                           { yybegin(YYINITIAL); return UnitFileElementTypeHolder.COMPLETED_VALUE; }
 
-<YYINITIAL, IN_SECTION, VALUE_CONTINUATION>({CRLF}|{WHITE_SPACE})+                                       { return UnitFileElementTypeHolder.CRLF; }
+<YYINITIAL, VALUE_CONTINUATION>({CRLF}|{WHITE_SPACE})+                                       { return UnitFileElementTypeHolder.CRLF; }
 
 [^]                                                                                  { return TokenType.BAD_CHARACTER; }
