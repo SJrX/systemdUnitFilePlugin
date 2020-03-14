@@ -1,20 +1,17 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.completion;
 
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionProvider;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
-import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileIcon;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileLanguage;
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileProperty;
-import net.sjrx.intellij.plugins.systemdunitfiles.psi.impl.UnitFilePropertyImpl;
-import net.sjrx.intellij.plugins.systemdunitfiles.psi.impl.UnitFileSectionGroupsImpl;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.OptionValueInformation;
 import org.jetbrains.annotations.NotNull;
 
 public class UnitFileValueCompletionContributor extends CompletionContributor {
@@ -42,36 +39,27 @@ public class UnitFileValueCompletionContributor extends CompletionContributor {
         protected void addCompletions(@NotNull CompletionParameters parameters,
                                       @NotNull ProcessingContext context,
                                       @NotNull CompletionResultSet resultSet) {
-          
-          if ((parameters.getPosition().getParent() == null) || (parameters.getPosition().getParent().getParent() == null)) {
+          PsiElement position = parameters.getPosition();
+          UnitFileProperty property = PsiTreeUtil.getParentOfType(position, UnitFileProperty.class);
+          UnitFileSectionGroups section = PsiTreeUtil.getParentOfType(property, UnitFileSectionGroups.class);
+
+          if ((property == null) || (section == null)) {
             return;
           }
-  
-  
-          if (parameters.getPosition().getParent().getParent() instanceof UnitFileProperty) {
-            UnitFilePropertyImpl ufp = (UnitFilePropertyImpl) parameters.getPosition().getParent().getParent();
-            UnitFileSectionGroupsImpl ufsg = (UnitFileSectionGroupsImpl) ufp.getParent();
-            
-            String sectionName = ufsg.getSectionName();
-            
-            String keyName = ufp.getKey();
 
-            SemanticDataRepository sdr = SemanticDataRepository.getInstance();
-            for (String value : sdr.getOptionValidator(sectionName, keyName).getAutoCompleteOptions()) {
-              LookupElementBuilder builder =
-                LookupElementBuilder.create(value)
-                  .withIcon(UnitFileIcon.FILE).appendTailText("(" + keyName + " value)", true);
-        
-              resultSet.addElement(builder);
-            }
+          String sectionName = section.getSectionName();
+          String keyName = property.getKey();
+
+          SemanticDataRepository sdr = SemanticDataRepository.getInstance();
+          OptionValueInformation validator = sdr.getOptionValidator(sectionName, keyName);
+          for (String value : validator.getAutoCompleteOptions()) {
+            LookupElementBuilder builder =
+                    LookupElementBuilder.create(value);
+
+            resultSet.addElement(builder);
           }
         }
       }
     );
-  }
-  
-  @Override
-  public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
-    super.fillCompletionVariants(parameters, result);
   }
 }

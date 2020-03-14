@@ -52,18 +52,13 @@ public class UnitFileKeyCompletionContributor extends CompletionContributor {
                     .create(keyword)
                     .withInsertHandler(new KeyInsertHandler())
                     .withPresentableText(keyword)
-                    .withIcon(UnitFileIcon.FILE).appendTailText("(Option)", true);
+                    .withIcon(UnitFileIcon.FILE);
 
             resultSet.addElement(builder);
           }
         }
       }
     );
-  }
-
-  @Override
-  public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
-    super.fillCompletionVariants(parameters, result);
   }
 
   private static class KeyInsertHandler implements InsertHandler<LookupElement> {
