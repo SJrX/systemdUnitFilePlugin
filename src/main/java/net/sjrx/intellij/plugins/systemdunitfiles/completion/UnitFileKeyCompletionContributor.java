@@ -1,8 +1,12 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.completion;
 
 import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.editor.EditorModificationUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PlatformPatterns;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileIcon;
@@ -45,7 +49,8 @@ public class UnitFileKeyCompletionContributor extends CompletionContributor {
           for (String keyword : sdr.getDocumentedKeywordsInSection(sectionName)) {
             if (definedKeys.contains(keyword)) continue;
             LookupElementBuilder builder = LookupElementBuilder
-                    .create(keyword + "=") // TODO: Replace '=' with InsertionHandler
+                    .create(keyword)
+                    .withInsertHandler(new KeyInsertHandler())
                     .withPresentableText(keyword)
                     .withIcon(UnitFileIcon.FILE).appendTailText("(Option)", true);
 
@@ -55,9 +60,28 @@ public class UnitFileKeyCompletionContributor extends CompletionContributor {
       }
     );
   }
-  
+
   @Override
   public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet result) {
     super.fillCompletionVariants(parameters, result);
+  }
+
+  private static class KeyInsertHandler implements InsertHandler<LookupElement> {
+    @Override
+    public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
+      PsiElement element = context.getFile().findElementAt(context.getStartOffset());
+      if (element == null) return;
+      if (element.getNode().getElementType() == UnitFileElementTypeHolder.KEY) {
+        PsiElement next = PsiTreeUtil.nextVisibleLeaf(element);
+        if (next != null && next.getNode().getElementType() == UnitFileElementTypeHolder.SEPARATOR) {
+          return;
+        }
+      }
+
+      if (StringUtil.containsChar(" =", context.getCompletionChar())) {
+        context.setAddCompletionChar(false);
+      }
+      EditorModificationUtil.insertStringAtCaret(context.getEditor(), "=");
+    }
   }
 }

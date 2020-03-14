@@ -21,7 +21,7 @@ public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
     List<String> completions = getBasicCompletionResultStrings();
   
     // Verification
-    assertContainsElements(completions, "Alias=", "Also=");
+    assertContainsElements(completions, "Alias", "Also");
   }
   
   public void testCompletionInInstallSectionReturnsExpectedValuesWhenAtEndOfFile() {
@@ -35,7 +35,7 @@ public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
     List<String> completions = getBasicCompletionResultStrings();
   
     // Verification
-    assertContainsElements(completions, "Alias=", "Also=");
+    assertContainsElements(completions, "Alias", "Also");
     assertSize(2, completions);
   }
   
@@ -78,7 +78,7 @@ public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
     List<String> completions = getBasicCompletionResultStrings();
   
     // Verification
-    assertContainsElements(completions, "PathExists=", "PathExistsGlob=", "PathChanged=", "PathModified=");
+    assertContainsElements(completions, "PathExists", "PathExistsGlob", "PathChanged", "PathModified");
     assertSize(4, completions);
   }
   
@@ -88,18 +88,18 @@ public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
                   + "M\n"
                   + "\n"
                   + "[Path]\n"
-                  + "MakeDirectory=\n"
-                  + "M" + COMPLETION_POSITION + "\n"
-                  + "\n";
-    
+            + "MakeDirectory=\n"
+            + "M" + COMPLETION_POSITION + "\n"
+            + "\n";
+
     myFixture.configureByText("file.service", file);
 
     // Exercise SUT
     List<String> completions = getBasicCompletionResultStrings();
 
     // Verification
-    assertContainsElements(completions, "DirectoryMode=", "PathModified=", "DirectoryNotEmpty=");
-    assertDoesntContain(completions,"MakeDirectory=");
+    assertContainsElements(completions, "DirectoryMode", "PathModified", "DirectoryNotEmpty");
+    assertDoesntContain(completions, "MakeDirectory");
   }
 
   public void testCompletionBeforeKeyWithEmptyValue() {
@@ -108,9 +108,9 @@ public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
                   + "M\n"
                   + "\n"
                   + "[Path]\n"
-                  + "M" + COMPLETION_POSITION + "\n"
-                  + "MakeDirectory=\n"
-                  + "\n";
+            + "M" + COMPLETION_POSITION + "\n"
+            + "MakeDirectory=\n"
+            + "\n";
 
     myFixture.configureByText("file.service", file);
 
@@ -118,8 +118,8 @@ public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
     List<String> completions = getBasicCompletionResultStrings();
 
     // Verification
-    assertContainsElements(completions, "DirectoryMode=", "PathModified=", "DirectoryNotEmpty=");
-    assertDoesntContain(completions,"MakeDirectory=");
+    assertContainsElements(completions, "DirectoryMode", "PathModified", "DirectoryNotEmpty");
+    assertDoesntContain(completions, "MakeDirectory");
   }
 
   public void testCompletionAfterComment() {
@@ -138,6 +138,6 @@ public class UnitFileKeyCompletionContributorTest extends AbstractUnitFileTest {
     List<String> completions = getBasicCompletionResultStrings();
 
     // Verification
-    assertContainsElements(completions, "DirectoryMode=", "DirectoryNotEmpty=", "MakeDirectory=", "PathModified=");
+    assertContainsElements(completions, "DirectoryMode", "DirectoryNotEmpty", "MakeDirectory", "PathModified");
   }
 }
