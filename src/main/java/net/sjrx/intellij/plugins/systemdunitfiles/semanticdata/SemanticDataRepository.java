@@ -352,31 +352,9 @@ public class SemanticDataRepository {
     InputStream htmlDocStream = this.getClass().getClassLoader().getResourceAsStream(SEMANTIC_DATA_ROOT + "/documents/completion/"
                                                                                      + sectionName + "/" + keyName + ".html");
     if (htmlDocStream == null) {
-
-      KeywordData options = this.getKeyValuePairsForSectionFromUndocumentedInformation(sectionName).get(keyName);
-
-      if (options == null) {
-        return null;
-      }
-
-      switch (options.reason) {
-        case "unsupported":
-          return "<p><var>" + keyName + "</var> in section <b>" + sectionName + "</b> is not officially supported.<p>"
-                  + "<a href='" + options.documentationLink + "'>More information is available here</a>";
-        case "moved":
-          return "<p>The key <var>" + keyName + "</var> in section <b>" + sectionName + "</b> has been moved to "
-                  + "<var>" + StringUtil.notNullize(options.replacedWithKey, keyName) + "</var> in section <b>"
-                  + StringUtil.notNullize(options.replacedWithSection, sectionName) + "</b>"
-                  + "<p>NOTE: The semantics of the new value may not match the existing value.<p>"
-                  + "<a href='" + options.documentationLink + "'>More information is available here</a>";
-        case "manual":
-          return options.description;
-        default:
-          LOG.warn("Found unsupported " + sectionName + " => " + keyName);
-          return null;
-      }
+      return getDeprecationReason(sectionName, keyName, true);
     }
-    
+
     try {
       return IOUtils.toString(htmlDocStream, StandardCharsets.UTF_8);
     } catch (IOException e) {
@@ -384,7 +362,33 @@ public class SemanticDataRepository {
     }
     return null;
   }
-  
+
+  public String getDeprecationReason(String sectionName, String keyName, boolean html) {
+    KeywordData options = this.getKeyValuePairsForSectionFromUndocumentedInformation(sectionName).get(keyName);
+
+    if (options == null) return null;
+
+    switch (options.reason) {
+      case "unsupported":
+        if (!html) return String.format("'%s' in section '%s' is not officially supported", keyName, sectionName);
+        return "<p><var>" + keyName + "</var> in section <b>" + sectionName + "</b> is not officially supported.<p>"
+                + "<a href='" + options.documentationLink + "'>More information is available here</a>";
+      case "moved":
+        if (!html) return String.format("'%s' in section '%s' has been moved to '%s' in section '%s'", keyName, sectionName, StringUtil.notNullize(options.replacedWithKey, keyName), StringUtil.notNullize(options.replacedWithSection, sectionName));
+        return "<p>The key <var>" + keyName + "</var> in section <b>" + sectionName + "</b> has been moved to "
+                + "<var>" + StringUtil.notNullize(options.replacedWithKey, keyName) + "</var> in section <b>"
+                + StringUtil.notNullize(options.replacedWithSection, sectionName) + "</b>"
+                + "<p>NOTE: The semantics of the new value may not match the existing value.<p>"
+                + "<a href='" + options.documentationLink + "'>More information is available here</a>";
+      case "manual":
+        if (!html) return StringUtil.stripHtml(options.description, false);
+        return options.description;
+      default:
+        LOG.warn("Found deprecated key '" + sectionName + "." + keyName + "' with unclear reason: " + options.reason);
+        return null;
+    }
+  }
+
   /**
    * Checks whether the option is deprecated or unsupported.
    *

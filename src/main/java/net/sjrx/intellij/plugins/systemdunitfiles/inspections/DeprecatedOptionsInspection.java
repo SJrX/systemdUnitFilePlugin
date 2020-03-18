@@ -46,8 +46,8 @@ public class DeprecatedOptionsInspection extends LocalInspectionTool {
       String key = property.getKey();
 
       if (sdr.isDeprecated(sectionName, key)) {
-        String text = sdr.getDocumentationContentForKeyInSection(sectionName, key);
-        holder.registerProblem(property.getKeyNode().getPsi(), text.replaceAll("</?var>", ""), ProblemHighlightType.LIKE_DEPRECATED);
+        String text = sdr.getDeprecationReason(sectionName, key, false);
+        holder.registerProblem(property.getKeyNode().getPsi(), text, ProblemHighlightType.LIKE_DEPRECATED);
       }
     }
   }
