@@ -72,7 +72,7 @@ public class DeprecatedOptionsInspectionTest extends AbstractUnitFileTest {
     assertSize(1, highlights);
     HighlightInfo info = highlights.get(0);
     
-    assertEquals("'MemoryLimit' in section 'Service' has been moved to 'MemoryMax' in section 'Service'", info.getDescription());
+    assertEquals("'MemoryLimit' in section 'Service' has been renamed to 'MemoryMax'", info.getDescription());
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
 
     assertNotNull(highlightElement);

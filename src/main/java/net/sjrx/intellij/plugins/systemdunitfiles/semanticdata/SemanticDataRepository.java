@@ -374,12 +374,32 @@ public class SemanticDataRepository {
         return "<p><var>" + keyName + "</var> in section <b>" + sectionName + "</b> is not officially supported.<p>"
                 + "<a href='" + options.documentationLink + "'>More information is available here</a>";
       case "moved":
-        if (!html) return String.format("'%s' in section '%s' has been moved to '%s' in section '%s'", keyName, sectionName, StringUtil.notNullize(options.replacedWithKey, keyName), StringUtil.notNullize(options.replacedWithSection, sectionName));
-        return "<p>The key <var>" + keyName + "</var> in section <b>" + sectionName + "</b> has been moved to "
-                + "<var>" + StringUtil.notNullize(options.replacedWithKey, keyName) + "</var> in section <b>"
-                + StringUtil.notNullize(options.replacedWithSection, sectionName) + "</b>"
-                + "<p>NOTE: The semantics of the new value may not match the existing value.<p>"
+        String newKeyName = StringUtil.notNullize(options.replacedWithKey, keyName);
+        String newSectionName = StringUtil.notNullize(options.replacedWithSection, sectionName);
+        String semanticsNote = !html ? "" : "<p>NOTE: The semantics of the new value may not match the existing value.<p>"
                 + "<a href='" + options.documentationLink + "'>More information is available here</a>";
+
+        if (newSectionName.equals(sectionName)) {
+          LOG.assertTrue(!newKeyName.equals(keyName), String.format("Meaningless move/rename of %s.%s", sectionName, keyName));
+          if (!html) {
+            return String.format("'%s' in section '%s' has been renamed to '%s'", keyName, sectionName, newKeyName);
+          }
+          return "<p>The key <var>" + keyName + "</var> in section <b>" + sectionName + "</b> has been renamed to "
+                  + "<var>" + newKeyName + "</var>" + semanticsNote;
+        }
+        if (newKeyName.equals(keyName)) {
+          if (!html) {
+            return String.format("'%s' has been moved to section '%s'", keyName, newSectionName);
+          }
+          return "<p>The key <var>" + keyName + "</var> in section <b>" + sectionName + "</b> has been moved to "
+                  + "section <b>" + newSectionName + "</b>" + semanticsNote;
+        }
+        if (!html) {
+          return String.format("'%s' in section '%s' has been moved to '%s' in section '%s'", keyName, sectionName, newKeyName, newSectionName);
+        }
+        return "<p>The key <var>" + keyName + "</var> in section <b>" + sectionName + "</b> has been moved to "
+                + "<var>" + newKeyName + "</var> in section <b>" + newSectionName + "</b>"
+                + semanticsNote;
       case "manual":
         if (!html) return StringUtil.stripHtml(options.description, false);
         return options.description;
