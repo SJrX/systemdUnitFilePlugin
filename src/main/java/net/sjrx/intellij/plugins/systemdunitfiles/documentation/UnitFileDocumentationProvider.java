@@ -5,10 +5,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType;
-import net.sjrx.intellij.plugins.systemdunitfiles.psi.impl.UnitFileSectionGroupsImpl;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,9 +35,12 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
 
   @Override
   public String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
-    if (element.getNode().getElementType().equals(UnitFileElementTypeHolder.KEY)) {
-
-      String sectionName = ((UnitFileSectionGroupsImpl)element.getParent().getParent()).getSectionName();
+    if (element == null) return null;
+    IElementType elementType = element.getNode().getElementType();
+    if (elementType.equals(UnitFileElementTypeHolder.KEY)) {
+      UnitFileSectionType section = PsiTreeUtil.getParentOfType(element, UnitFileSectionType.class);
+      if (section == null) return null;
+      String sectionName = section.getSectionName();
       String keyName = element.getNode().getText();
 
       SemanticDataRepository sdr = SemanticDataRepository.getInstance();
@@ -45,9 +49,10 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
       if (keyComment != null) {
         return DEFINITION_START + keyName + DEFINITION_END + CONTENT_START + keyComment + CONTENT_END;
       }
-    } else if (element.getNode().getElementType().equals(UnitFileElementTypeHolder.SECTION)) {
-
-      String sectionName = ((UnitFileSectionGroupsImpl)element.getParent()).getSectionName();
+    } else if (elementType.equals(UnitFileElementTypeHolder.SECTION)) {
+      UnitFileSectionType section = PsiTreeUtil.getParentOfType(element, UnitFileSectionType.class);
+      if (section == null) return null;
+      String sectionName = section.getSectionName();
 
       SemanticDataRepository sdr = SemanticDataRepository.getInstance();
       String sectionComment = sdr.getDocumentationContentForSection(sectionName);
@@ -55,8 +60,8 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
       if (sectionComment != null) {
         return DEFINITION_START + sectionName + DEFINITION_END + CONTENT_START + sectionComment + CONTENT_END;
       }
-    } else if (element.getNode().getElementType().equals(UnitFileElementTypeHolder.SEPARATOR)) {
-      return generateDoc(((LeafPsiElement)element.getNode()).getPrevSibling().getNode().getPsi(), originalElement);
+    } else if (elementType.equals(UnitFileElementTypeHolder.SEPARATOR)) {
+      return generateDoc(PsiTreeUtil.skipWhitespacesBackward(element), originalElement);
     } else {
       return null;
     }
@@ -66,12 +71,20 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
 
   @Override
   public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
-    if (element.getNode().getElementType().equals(UnitFileElementTypeHolder.KEY)) {
+    if (element == null) return null;
 
-      String sectionName = ((UnitFileSectionGroupsImpl)element.getParent().getParent()).getSectionName();
-      String keyName = element.getNode().getText();
+    IElementType elementType = element.getNode().getElementType();
+    if (elementType.equals(UnitFileElementTypeHolder.KEY)) {
+      UnitFileSectionType section = PsiTreeUtil.getParentOfType(element, UnitFileSectionType.class);
+      if (section == null) return null;
+      String sectionName = section.getSectionName();
+      String keyName = element.getText();
 
       SemanticDataRepository sdr = SemanticDataRepository.getInstance();
+      String url = sdr.getKeywordDocumentationUrl(sectionName, keyName);
+      if (url != null) {
+        return Collections.singletonList(url);
+      }
       String keyNameToPointTo = sdr.getKeywordLocationInDocumentation(sectionName, keyName);
 
       String filename = sdr.getKeywordFileLocationInDocumentation(sectionName, keyName);
@@ -81,11 +94,12 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
           "https://www.freedesktop.org/software/systemd/man/" + filename.replaceFirst(".xml$", ".html") + "#"
           + keyNameToPointTo + "=");
       }
-    } else if (element.getNode().getElementType().equals(UnitFileElementTypeHolder.SEPARATOR)) {
-      return getUrlFor(((LeafPsiElement)element.getNode()).getPrevSibling(), originalElement);
-    } else if (element.getNode().getElementType().equals(UnitFileElementTypeHolder.SECTION)) {
-
-      String sectionName = ((UnitFileSectionGroupsImpl)element.getParent()).getSectionName();
+    } else if (elementType.equals(UnitFileElementTypeHolder.SEPARATOR)) {
+      return getUrlFor(PsiTreeUtil.skipWhitespacesBackward(element), originalElement);
+    } else if (elementType.equals(UnitFileElementTypeHolder.SECTION)) {
+      UnitFileSectionType section = PsiTreeUtil.getParentOfType(element, UnitFileSectionType.class);
+      if (section == null) return null;
+      String sectionName = section.getSectionName();
 
       SemanticDataRepository sdr = SemanticDataRepository.getInstance();
       String sectionUrl = sdr.getUrlForSectionName(sectionName);
@@ -95,8 +109,7 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
       }
     }
 
-    return Collections.emptyList();
-
+    return null;
   }
   
   @Override

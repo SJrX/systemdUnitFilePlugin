@@ -178,12 +178,24 @@ public class SemanticDataRepository {
    */
   public Set<String> getDocumentedKeywordsInSection(String section) {
     Set<String> keys = new HashSet<>(this.getKeyValuePairsForSectionFromDocumentation(section).keySet());
-    
+
     keys.addAll(this.getKeyValuePairsForSectionFromUndocumentedInformation(section).keySet());
-    
+
     return Collections.unmodifiableSet(keys);
   }
-  
+
+  public String getKeywordDocumentationUrl(String section, String keyName) {
+    KeywordData data = this.getKeyValuePairsForSectionFromDocumentation(section).get(keyName);
+    if (data != null && data.documentationLink != null) {
+      return data.documentationLink;
+    }
+    data = this.getKeyValuePairsForSectionFromUndocumentedInformation(section).get(keyName);
+    if (data != null && data.documentationLink != null) {
+      return data.documentationLink;
+    }
+    return null;
+  }
+
   /**
    * Returns the location (by keyword) for a specific keyword.
    * <p></p>
@@ -226,7 +238,7 @@ public class SemanticDataRepository {
     }
   }
 
-  private Map<String, KeywordData> getKeyValuePairsForSectionFromUndocumentedInformation(String section) {
+  public Map<String, KeywordData> getKeyValuePairsForSectionFromUndocumentedInformation(String section) {
     Map<String, KeywordData> sectionData = undocumentedOptionInfo.get(section);
 
     if (sectionData == null) {
