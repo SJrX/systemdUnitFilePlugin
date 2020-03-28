@@ -1,24 +1,25 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-public class UnitFileSectionType extends ASTWrapperPsiElement {
-
-  public UnitFileSectionType(@NotNull ASTNode node) {
-    super(node);
-  }
+public interface UnitFileSectionType extends PsiElement {
 
   /**
    * Returns the section name of a section in a file.
    *
    * @return the section name
    */
-  public String getSectionName() {
-    String sectionNameWithBrackets = getNode().getFirstChildNode().getText().trim();
-
-    return sectionNameWithBrackets.substring(1, sectionNameWithBrackets.length() - 1);
+  @NotNull
+  default String getSectionName() {
+    String text = getNode().getFirstChildNode().getText().trim();
+    if (text.isEmpty()) return text;
+    if (text.charAt(text.length() - 1) == ']') {
+      return text.substring(1, text.length() - 1);
+    } else {
+      // unterminated section name
+      return text.substring(1);
+    }
   }
 
 }

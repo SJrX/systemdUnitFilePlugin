@@ -17,7 +17,6 @@ public interface UnitFileElementTypeHolder {
   IElementType COMMENT = new UnitFileTokenType("COMMENT");
   IElementType COMPLETED_VALUE = new UnitFileTokenType("COMPLETED_VALUE");
   IElementType CONTINUING_VALUE = new UnitFileTokenType("CONTINUING_VALUE");
-  IElementType CRLF = new UnitFileTokenType("CRLF");
   IElementType KEY = new UnitFileTokenType("KEY");
   IElementType SECTION = new UnitFileTokenType("SECTION");
   IElementType SEPARATOR = new UnitFileTokenType("SEPARATOR");

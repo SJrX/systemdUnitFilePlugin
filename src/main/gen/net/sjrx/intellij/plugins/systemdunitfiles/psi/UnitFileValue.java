@@ -5,6 +5,6 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface UnitFileValue extends PsiElement {
+public interface UnitFileValue extends UnitFileValueType {
 
 }

@@ -3,47 +3,40 @@ package net.sjrx.intellij.plugins.systemdunitfiles.annotators;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileValueType;
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.impl.UnitFileValueImpl;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class LineContinuationCharacterFollowedByWhitespaceAnnotator implements Annotator {
   
   static final String WARNING_MESSAGE = "Excess whitespace detected after line continuation character '\\', the next line will NOT be a"
                                         + " continuation of this one";
   
-  private static final Pattern LINE_CONTINUATION_CHARACTER_TO_END_REGEX = Pattern.compile("\\\\\\s+$", Pattern.MULTILINE);
-  
-  
-  
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (element instanceof UnitFileValueType) {
-      
-      // Use the getValueNode().getText() because getValue() trims whitespace and internally handles line continuation
-      String value = ((UnitFileValueType) element).getValueNode().getText();
-  
-      ASTNode valueNode = ((UnitFileValueType) element).getValueNode();
-      
-      Matcher m = LINE_CONTINUATION_CHARACTER_TO_END_REGEX.matcher(value);
-      
-      if (m.find()) {
-        int startCharacter = m.start();
-        int endIndex = m.end();
-  
+      ASTNode node = element.getNode();
+      ASTNode[] children = node.getChildren(UnitFileValueImpl.valueTypes);
+      child:
+      for (ASTNode child : children) {
+        String value = child.getText();
+        int length = value.length();
+
+        int backslash = value.lastIndexOf('\\');
+        if (backslash == -1 || backslash == length - 1) continue;
+
+        for (int i = backslash + 1; i < length; i++) {
+          if (!Character.isWhitespace(value.charAt(i))) continue child;
+        }
+
         // Problem starts after the \
         // Problem ends before the newline
-        int problemStartIndex = valueNode.getTextRange().getStartOffset() + startCharacter + 1;
-        int problemEndIndex = valueNode.getTextRange().getStartOffset() + endIndex - 1;
-        
-        
-        holder.createWarningAnnotation(new TextRange(problemStartIndex, problemEndIndex), WARNING_MESSAGE);
+        TextRange range = TextRange.create(child.getStartOffset() + backslash + 1, child.getStartOffset() + length);
+        holder.createAnnotation(HighlightSeverity.WARNING, range, WARNING_MESSAGE);
       }
-    
     }
   
   }

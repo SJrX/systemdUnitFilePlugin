@@ -30,7 +30,8 @@ public class InvalidSectionHeaderNameAnnotatorTest extends AbstractUnitFileTest 
 
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
 
-    assertEquals("[Serv\tice]\n", highlightElement.getText());
+    assertNotNull(highlightElement);
+    assertEquals("[Serv\tice]", highlightElement.getText());
   }
 
 
@@ -53,7 +54,8 @@ public class InvalidSectionHeaderNameAnnotatorTest extends AbstractUnitFileTest 
 
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
 
-    assertEquals("[Serv[ice]\n", highlightElement.getText());
+    assertNotNull(highlightElement);
+    assertEquals("[Serv[ice]", highlightElement.getText());
   }
 
   public void testThatValidSectionNamesAreNotAnnotated() {
@@ -70,5 +72,28 @@ public class InvalidSectionHeaderNameAnnotatorTest extends AbstractUnitFileTest 
 
     // Verification
     assertSize(0, highlights);
+  }
+
+  public void testUnterminatedSectionName() {
+    // Fixture Setup
+    String file = "[Service\n"
+            + "Foo=Bar";
+
+    setupFileInEditor("file.service", file);
+
+    // Exercise SUT
+    List<HighlightInfo> highlights = myFixture.doHighlighting();
+
+    // Verification
+    assertSize(1, highlights);
+
+    HighlightInfo info = highlights.get(0);
+    assertEquals(InvalidSectionHeaderNameAnnotator.ANNOTATION_ERROR_MSG, info.getDescription());
+    assertEquals(HighlightInfoType.ERROR, info.type);
+
+    PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
+
+    assertNotNull(highlightElement);
+    assertEquals("[Service", highlightElement.getText());
   }
 }

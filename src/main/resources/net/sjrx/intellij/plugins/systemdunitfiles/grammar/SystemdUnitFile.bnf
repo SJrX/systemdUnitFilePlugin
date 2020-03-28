@@ -12,16 +12,16 @@
   elementTypeClass="net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileElementType"
   tokenTypeClass="net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileTokenType"
 
-  extends("section_groups") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType"
-  extends("property") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType"
-  extends("value") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileValueType"
+  implements("section_groups") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType"
+  implements("property") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType"
+  implements("value") = "net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileValueType"
 }
 
-unitFile ::= (comment_|crlf_)* section_groups*
+unitFile ::= section_items* section_groups*
 
-section_groups ::= section_ line_items_* {name="section header"}
+section_groups ::= section_ section_items* { name="section header" pin=1 }
 
-private line_items_ ::= ((property crlf_?)|(comment_ crlf_?)|crlf_)
+private section_items ::= property | comment_
 
 property ::= key_ separator_ value? { pin=1 }
 
@@ -29,7 +29,6 @@ value ::= (CONTINUING_VALUE| comment_ )* COMPLETED_VALUE
 
 // Single rules for tokens so that I can alias them for better error handling shown above.
 private comment_ ::= COMMENT {name="comment" }
-private crlf_ ::= CRLF {name="new line"}
 private section_ ::= SECTION
 
 private key_ ::= KEY

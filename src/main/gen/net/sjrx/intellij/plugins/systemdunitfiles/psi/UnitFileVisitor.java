@@ -8,14 +8,26 @@ import com.intellij.psi.PsiElement;
 public class UnitFileVisitor extends PsiElementVisitor {
 
   public void visitProperty(@NotNull UnitFileProperty o) {
-    visitPsiElement(o);
+    visitPropertyType(o);
   }
 
   public void visitSectionGroups(@NotNull UnitFileSectionGroups o) {
-    visitPsiElement(o);
+    visitSectionType(o);
   }
 
   public void visitValue(@NotNull UnitFileValue o) {
+    visitValueType(o);
+  }
+
+  public void visitPropertyType(@NotNull UnitFilePropertyType o) {
+    visitPsiElement(o);
+  }
+
+  public void visitSectionType(@NotNull UnitFileSectionType o) {
+    visitPsiElement(o);
+  }
+
+  public void visitValueType(@NotNull UnitFileValueType o) {
     visitPsiElement(o);
   }
 

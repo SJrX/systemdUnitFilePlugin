@@ -42,10 +42,9 @@ public class UnitFileLexer implements FlexLexer {
 
   /** lexical states */
   public static final int YYINITIAL = 0;
-  public static final int IN_SECTION = 2;
-  public static final int WAITING_FOR_SEPARATOR = 4;
-  public static final int WAITING_FOR_VALUE = 6;
-  public static final int VALUE_CONTINUATION = 8;
+  public static final int WAITING_FOR_SEPARATOR = 2;
+  public static final int WAITING_FOR_VALUE = 4;
+  public static final int VALUE_CONTINUATION = 6;
 
   /**
    * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -54,7 +53,7 @@ public class UnitFileLexer implements FlexLexer {
    * l is of the form l = 2*k, k a non negative integer
    */
   private static final int ZZ_LEXSTATE[] = { 
-     0,  0,  1,  1,  2,  2,  3,  3,  4, 4
+     0,  0,  1,  1,  2,  2,  3, 3
   };
 
   /** 
@@ -76,8 +75,8 @@ public class UnitFileLexer implements FlexLexer {
 
   /* The ZZ_CMAP_A table has 320 entries */
   static final char ZZ_CMAP_A[] = zzUnpackCMap(
-    "\11\0\1\3\1\1\1\2\1\4\1\2\22\0\1\11\2\0\1\12\27\0\1\12\1\0\1\7\35\0\1\5\1"+
-    "\10\1\6\47\0\1\2\242\0\2\2\26\0");
+    "\11\0\1\4\1\3\1\1\1\5\1\2\22\0\1\12\2\0\1\13\27\0\1\13\1\0\1\10\35\0\1\6\1"+
+    "\11\1\7\47\0\1\1\242\0\2\1\26\0");
 
   /** 
    * Translates DFA states to action switch labels.
@@ -85,12 +84,12 @@ public class UnitFileLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\3\0\2\1\1\2\1\3\1\2\1\4\1\5\2\2"+
-    "\1\4\1\2\1\6\2\1\1\7\2\1\2\2\1\4"+
-    "\1\0\2\2\1\4\1\0\1\7\1\10\1\0\2\10";
+    "\2\0\2\1\1\2\2\3\1\2\2\4\1\5\1\6"+
+    "\1\3\1\4\1\7\1\10\1\1\2\6\1\1\1\11"+
+    "\1\3\1\5\1\0\3\12\1\5\1\13\2\12\1\13";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[33];
+    int [] result = new int[32];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -115,14 +114,13 @@ public class UnitFileLexer implements FlexLexer {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\13\0\26\0\41\0\54\0\67\0\102\0\115"+
-    "\0\130\0\143\0\156\0\171\0\204\0\217\0\232\0\245"+
-    "\0\67\0\260\0\102\0\273\0\306\0\321\0\67\0\171"+
-    "\0\334\0\347\0\362\0\217\0\67\0\375\0\321\0\u0108"+
-    "\0\67";
+    "\0\0\0\14\0\30\0\44\0\60\0\74\0\110\0\124"+
+    "\0\140\0\154\0\170\0\204\0\204\0\220\0\140\0\234"+
+    "\0\250\0\264\0\140\0\300\0\250\0\314\0\330\0\154"+
+    "\0\344\0\360\0\374\0\u0108\0\u0114\0\60\0\140\0\140";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[33];
+    int [] result = new int[32];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -145,31 +143,29 @@ public class UnitFileLexer implements FlexLexer {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\6\1\7\1\6\2\7\1\10\3\6\1\7\1\11"+
-    "\1\12\1\7\1\12\2\7\1\13\1\12\1\6\1\14"+
-    "\1\7\1\15\3\6\1\16\3\6\1\17\1\6\1\16"+
-    "\1\6\1\20\1\21\1\6\1\20\1\6\3\20\1\22"+
-    "\3\20\1\23\1\6\1\24\1\7\3\20\1\22\1\24"+
-    "\1\11\14\0\1\7\1\0\2\7\4\0\1\7\1\0"+
-    "\1\25\1\26\4\25\1\0\4\25\1\11\1\27\1\0"+
-    "\1\11\1\0\6\11\1\12\1\0\1\12\2\0\2\12"+
-    "\1\0\1\30\1\0\1\12\1\31\1\26\1\31\2\25"+
-    "\1\31\1\12\1\25\1\32\1\25\1\31\11\0\1\12"+
-    "\1\0\1\15\1\27\1\12\1\11\1\0\2\15\1\11"+
-    "\1\33\1\11\1\15\3\0\1\34\3\0\1\17\1\0"+
-    "\1\34\4\0\1\17\5\0\1\17\1\0\1\20\1\21"+
-    "\1\0\1\20\1\0\3\20\1\22\3\20\1\35\1\0"+
-    "\1\20\1\0\3\20\1\22\3\20\1\23\1\0\1\24"+
-    "\1\7\3\20\1\22\1\24\1\20\1\25\1\26\4\25"+
-    "\1\36\4\25\6\37\1\36\4\37\1\31\1\26\1\31"+
-    "\2\25\1\31\1\40\1\25\1\32\1\25\1\31\1\25"+
-    "\1\26\4\25\1\36\2\25\1\31\1\25\1\11\1\27"+
-    "\1\0\1\11\1\0\4\11\1\15\1\11\1\0\1\41"+
-    "\1\0\1\36\5\0\1\36\1\0\1\12\1\41\1\12"+
-    "\1\36\1\0\2\12\1\0\1\30\1\36\1\12";
+    "\2\5\1\6\3\7\1\10\1\5\1\11\1\12\1\7"+
+    "\1\13\2\11\2\14\2\15\1\16\1\11\1\17\1\11"+
+    "\1\15\1\20\1\21\1\11\1\22\1\23\2\24\3\21"+
+    "\1\25\1\24\2\21\1\11\2\26\2\24\3\21\1\25"+
+    "\1\24\1\27\3\5\3\0\2\5\1\0\1\30\1\0"+
+    "\3\5\1\6\3\7\2\5\1\0\1\30\1\7\1\5"+
+    "\2\0\4\7\4\0\1\7\1\0\1\31\2\5\1\0"+
+    "\1\32\1\0\1\31\1\5\1\32\1\33\1\32\1\31"+
+    "\26\0\1\5\1\0\1\13\2\5\1\0\1\27\1\0"+
+    "\2\13\1\27\1\34\1\27\1\13\2\0\4\14\4\0"+
+    "\1\14\1\0\1\35\3\0\1\35\1\0\1\35\1\0"+
+    "\4\35\1\20\3\0\1\20\1\0\6\20\1\21\3\0"+
+    "\1\21\1\0\3\21\1\25\2\21\3\0\1\23\10\0"+
+    "\1\21\3\0\2\24\3\21\1\25\1\24\1\21\2\0"+
+    "\2\26\10\0\1\27\3\0\1\27\1\0\6\27\1\31"+
+    "\2\5\1\0\1\32\1\0\1\31\1\36\1\32\1\33"+
+    "\1\32\1\31\1\32\3\0\1\32\1\0\1\32\1\37"+
+    "\5\32\3\0\1\32\1\0\1\32\1\37\2\32\1\31"+
+    "\1\32\1\27\3\0\1\27\1\0\4\27\1\13\1\27"+
+    "\1\35\3\0\1\35\1\0\1\35\1\40\4\35";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[275];
+    int [] result = new int[288];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -207,11 +203,11 @@ public class UnitFileLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\3\0\2\1\1\11\12\1\1\11\5\1\1\11\1\0"+
-    "\3\1\1\0\1\11\1\1\1\0\1\1\1\11";
+    "\2\0\6\1\1\11\5\1\1\11\3\1\1\11\4\1"+
+    "\1\0\6\1\2\11";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[33];
+    int [] result = new int[32];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -525,45 +521,60 @@ public class UnitFileLexer implements FlexLexer {
       else {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
-            { yybegin(IN_SECTION); return UnitFileElementTypeHolder.COMPLETED_VALUE;
-            } 
-            // fall through
-          case 9: break;
-          case 2: 
-            { return TokenType.BAD_CHARACTER;
-            } 
-            // fall through
-          case 10: break;
-          case 3: 
-            { return UnitFileElementTypeHolder.CRLF;
-            } 
-            // fall through
-          case 11: break;
-          case 4: 
-            { return UnitFileElementTypeHolder.COMMENT;
+            { yybegin(YYINITIAL); return UnitFileElementTypeHolder.COMPLETED_VALUE;
             } 
             // fall through
           case 12: break;
-          case 5: 
+          case 2: 
             { yybegin(WAITING_FOR_SEPARATOR); return UnitFileElementTypeHolder.KEY;
             } 
             // fall through
           case 13: break;
-          case 6: 
-            { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR;
+          case 3: 
+            { return TokenType.WHITE_SPACE;
             } 
             // fall through
           case 14: break;
-          case 7: 
-            { yybegin(VALUE_CONTINUATION); return UnitFileElementTypeHolder.CONTINUING_VALUE;
+          case 4: 
+            { return TokenType.BAD_CHARACTER;
             } 
             // fall through
           case 15: break;
-          case 8: 
-            { yybegin(IN_SECTION); return UnitFileElementTypeHolder.SECTION;
+          case 5: 
+            { return UnitFileElementTypeHolder.COMMENT;
             } 
             // fall through
           case 16: break;
+          case 6: 
+            { yybegin(YYINITIAL); return TokenType.WHITE_SPACE;
+            } 
+            // fall through
+          case 17: break;
+          case 7: 
+            { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR;
+            } 
+            // fall through
+          case 18: break;
+          case 8: 
+            { yybegin(YYINITIAL); return UnitFileElementTypeHolder.COMMENT;
+            } 
+            // fall through
+          case 19: break;
+          case 9: 
+            { yybegin(VALUE_CONTINUATION); return UnitFileElementTypeHolder.CONTINUING_VALUE;
+            } 
+            // fall through
+          case 20: break;
+          case 10: 
+            { return UnitFileElementTypeHolder.SECTION;
+            } 
+            // fall through
+          case 21: break;
+          case 11: 
+            { yybegin(YYINITIAL); return UnitFileElementTypeHolder.SECTION;
+            } 
+            // fall through
+          case 22: break;
           default:
             zzScanError(ZZ_NO_MATCH);
           }
