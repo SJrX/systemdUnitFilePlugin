@@ -27,8 +27,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     List<String> urls = sut.getUrlFor(badKey, badKey);
 
     // Verification
-    assertNotNull(urls);
-    assertEmpty(urls);
+    assertNull(urls);
   }
 
   public void testGetUrlForUnknownKeySeparatorReturnsAnEmptyListOfUrls() {
@@ -45,8 +44,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     List<String> urls = sut.getUrlFor(badKeySeparator, badKeySeparator);
 
     // Verification
-    assertNotNull(urls);
-    assertEmpty(urls);
+    assertNull(urls);
   }
 
   public void testGetUrlForKnownKeyReturnsAValidUrl() {
@@ -110,8 +108,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     List<String> urls = sut.getUrlFor(unknownSectionHeader, unknownSectionHeader);
 
     // Verification
-    assertNotNull(urls);
-    assertEmpty(urls);
+    assertNull(urls);
   }
 
   public void testGetUrlForKnownSectionReturnsAValidUrl() {

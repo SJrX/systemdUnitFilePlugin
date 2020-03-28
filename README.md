@@ -46,6 +46,20 @@ At some point, this plugin should be available at the [JetBrains Plugin Reposito
 
 Changelog
 --------- 
+### [v0.2.6] (https://github.com/SJrX/systemdUnitFilePlugin/commit/06716d1e84ec60cb28c39cf1896abe9c6640133e)
+* Improved Error Handling, Memory Management, Misc fixes ([Vlad Rassokhin](https://github.com/VladRassokhin)).
+
+### [v0.2.5] (https://github.com/SJrX/systemdUnitFilePlugin/commit/06716d1e84ec60cb28c39cf1896abe9c6640133e)
+* Adds support for IntelliJ 2020.1
+
+### [v0.2.4](https://github.com/SJrX/systemdUnitFilePlugin/commit/574cfbbc84470f543dd22c7d041838ea56fed30d)
+* Add support for IntelliJ 2019.3
+* Change logo of resources
+* Add support for systemd v244
+
+### [v0.2.3](https://github.com/SJrX/systemdUnitFilePlugin/releases/tag/v0.2.3)
+* Adds support for systemd v243 
+
 ### [v0.2.2](https://github.com/SJrX/systemdUnitFilePlugin/releases/tag/v0.2.2)
 * Add support for IntelliJ 2019.2
 
@@ -70,13 +84,21 @@ Changelog
 
 * Initial release
 
+Contributors
+-------------
+* [Vlad Rassokhin](https://github.com/VladRassokhin)
 
 Acknowledgements
 ----------------
 * The documentation is extracted from the systemd source code.
-* A number of users of the [IntelliJ Plugin Developers Gitter Room](https://gitter.im/IntelliJ-Plugin-Developers/Lobby) provided a lot of useful advice.
+* A number of users of the [IntelliJ Plugin Developers Slack](https://intellij-support.jetbrains.com/hc/en-us/community/posts/360006494439--ANN-JetBrains-Slack-for-plugin-developers) provided a lot of useful advice.
 * As with every project I work on the help and patient tutelage of members of [##java on Freenode](http://https://javachannel.org/).
- 
+
+License
+-----------------
+* Everything but the logo is GPLv2.
+* Logo is CC-BY-SA, as it is a derivative work from the [brand repository](https://github.com/systemd/brand.systemd.io).
+
 ## Development Notes
 
 ### System Requirements

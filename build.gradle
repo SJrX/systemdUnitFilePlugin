@@ -19,7 +19,7 @@ plugins {
 
 }
 group 'net.sjrx.intellij.plugins'
-version '0.2.4'
+version '0.2.6'
 
 sourceCompatibility = 1.8
 
