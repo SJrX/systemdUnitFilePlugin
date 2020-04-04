@@ -1,17 +1,21 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.documentation;
 
 import com.intellij.lang.documentation.DocumentationProviderEx;
+import com.intellij.openapi.editor.Caret;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.util.PsiTreeUtil;
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest;
 
 import java.util.Collections;
 import java.util.List;
 
 public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
-
-
+  
   private final DocumentationProviderEx sut = new UnitFileDocumentationProvider();
+  
+  public static final String CARET = "<caret>";
 
   public void testGetUrlForUnknownKeyReturnsAnEmptyListOfUrls() {
     // Fixture Setup
@@ -178,6 +182,27 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     assertNotNull(doc);
     assertTrue((doc.length() > 0));
   }
+  
+  public void testGenerateDocForValueAfterKeyReturnsSomeValidText() {
+    // Fixture Setup
+    String file = "[Unit]\n"
+                  + "Documentation=http://www.google.com" + CARET + "\n"
+                  + "Foo=BAR"
+      
+      
+    
+    PsiFile psiFile = setupFileInEditor("file.service", file);
+    
+    // Exercise SUT
+    PsiWhiteSpace documentationKey = (PsiWhiteSpace) getAllKeysInFile(psiFile).get(0).getNextSibling();
+    
+    String doc = sut.generateDoc(documentationKey, documentationKey);
+    
+    // Verification
+    assertNotNull(doc);
+    assertTrue((doc.length() > 0));
+  }
+  
 
   public void testGenerateDocForKnownKeySeparatorReturnsSomeValidText() {
     // Fixture Setup
