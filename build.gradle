@@ -42,6 +42,15 @@ intellij {
 
 patchPluginXml {
     changeNotes """
+  <h3>v0.2.6</h3>
+  <ul>
+    <li>Improved Error Handling, Memory Management, Misc fixes <a href="https://github.com/SJrX/systemdUnitFilePlugin/pull/88">#88></a></li>
+    <li>New plugin logo <a href="https://github.com/SJrX/systemdUnitFilePlugin/pull/92">#92</a></li>
+  </ul>
+  <h3>v0.2.5</h3>
+  <ul>
+    <li>Add support IntelliJ 2020.1 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/86">#86</a>
+  </ul>
   <h3>v0.2.5</h3>
   <ul>
     <li>Add support IntelliJ 2020.1 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/86">#86</a>

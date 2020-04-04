@@ -46,10 +46,10 @@ At some point, this plugin should be available at the [JetBrains Plugin Reposito
 
 Changelog
 --------- 
-### [v0.2.6] (https://github.com/SJrX/systemdUnitFilePlugin/commit/06716d1e84ec60cb28c39cf1896abe9c6640133e)
+### [v0.2.6](https://github.com/SJrX/systemdUnitFilePlugin/commit/06716d1e84ec60cb28c39cf1896abe9c6640133e)
 * Improved Error Handling, Memory Management, Misc fixes ([Vlad Rassokhin](https://github.com/VladRassokhin)).
 
-### [v0.2.5] (https://github.com/SJrX/systemdUnitFilePlugin/commit/06716d1e84ec60cb28c39cf1896abe9c6640133e)
+### [v0.2.5](https://github.com/SJrX/systemdUnitFilePlugin/commit/06716d1e84ec60cb28c39cf1896abe9c6640133e)
 * Adds support for IntelliJ 2020.1
 
 ### [v0.2.4](https://github.com/SJrX/systemdUnitFilePlugin/commit/574cfbbc84470f543dd22c7d041838ea56fed30d)
