@@ -13,13 +13,13 @@ buildscript {
 
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.4.13'
-    id "org.jetbrains.grammarkit" version "2019.3"
+    id 'org.jetbrains.intellij' version '0.4.21'
+    id "org.jetbrains.grammarkit" version "2020.2.1"
     id 'checkstyle'
 
 }
 group 'net.sjrx.intellij.plugins'
-version '0.2.6'
+version '0.3.0'
 
 sourceCompatibility = 1.8
 
@@ -34,14 +34,18 @@ dependencies {
 }
 
 intellij {
-    //version '2019.2'
-    version 'LATEST-EAP-SNAPSHOT'
+    version '2020.1'
+    //version 'LATEST-EAP-SNAPSHOT'
 
   plugins = ['java']
 }
 
 patchPluginXml {
     changeNotes """
+  <h3>v0.3.0</h3>
+    <ul>
+      <li>Add support for IntelliJ 2020.2 (and drops support for anything before IntelliJ 2020.1) <a href="https://github.com/SJrX/systemdUnitFilePlugin/pull/92">#92</a></li>
+    </ul>
   <h3>v0.2.6</h3>
   <ul>
     <li>Improved Error Handling, Memory Management, Misc fixes <a href="https://github.com/SJrX/systemdUnitFilePlugin/pull/88">#88></a></li>
@@ -94,8 +98,8 @@ patchPluginXml {
     <li>Initial Release.</li>
   </ul>
 """
-  sinceBuild '183.1'
-  untilBuild '202.0'
+  sinceBuild '201.0'
+  untilBuild '203.0'
 }
 
 // Add generated sources root
