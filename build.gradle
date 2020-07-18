@@ -34,9 +34,9 @@ dependencies {
 }
 
 intellij {
+
     version '2020.1'
     //version 'LATEST-EAP-SNAPSHOT'
-
   plugins = ['java']
 }
 
@@ -45,6 +45,7 @@ patchPluginXml {
   <h3>v0.3.0</h3>
     <ul>
       <li>Add support for IntelliJ 2020.2 (and drops support for anything before IntelliJ 2020.1) <a href="https://github.com/SJrX/systemdUnitFilePlugin/pull/92">#92</a></li>
+      <li>Add support for systemd v245 (and maybe a little bit of v246) <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/95">#95</a></li>
     </ul>
   <h3>v0.2.6</h3>
   <ul>
@@ -142,8 +143,8 @@ task cloneSystemdRepo(type: GitCloneTask) {
   description "clone the systemd repository"
 
   dir = file("git-dependencies/systemd")
-  uri = 'https://github.com/SJrX/systemd.git'
-  treeish = '4e901081189bf9f81e4259e70c27d1d903d03d42' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
+  uri = 'https://github.com/systemd/systemd.git'
+  treeish = 'origin/master' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
 
   reset = true
   forceFetch = true

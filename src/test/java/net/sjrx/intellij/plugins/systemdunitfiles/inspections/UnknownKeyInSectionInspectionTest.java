@@ -743,6 +743,23 @@ public class UnknownKeyInSectionInspectionTest extends AbstractUnitFileTest {
     
   }
   
+  public void testSomeNewKeysFromSystemdV246HasNoWarnings() {
+    // Fixture Setup
+    String file = "[Service]\n"
+                  + "CoredumpFilter=bar\n"
+                  + "RootHashSignature=true";
+    
+    enableInspection(UnknownKeyInSectionInspection.class);
+    setupFileInEditor("systemd-v246-smoke-test.service", file);
+    
+    // Exercise SUT
+    List<HighlightInfo> highlights = myFixture.doHighlighting();
+    
+    // Verification
+    assertEmpty(highlights);
+    
+  }
+  
   public void testThatMovedKeysFromServiceToUnitInSystemd229ThrowNoWarnings() {
     // Fixture Setup
     String file = "[Service]\n"
