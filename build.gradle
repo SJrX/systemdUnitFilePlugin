@@ -12,11 +12,10 @@ buildscript {
 }
 
 plugins {
-    id 'java'
-    id 'org.jetbrains.intellij' version '0.4.21'
-    id "org.jetbrains.grammarkit" version "2020.2.1"
-    id 'checkstyle'
-
+  id 'java'
+  id 'org.jetbrains.intellij' version '0.4.21'
+  id "org.jetbrains.grammarkit" version "2020.2.1"
+  id 'checkstyle'
 }
 group 'net.sjrx.intellij.plugins'
 version '0.3.0'
@@ -24,7 +23,7 @@ version '0.3.0'
 sourceCompatibility = 1.8
 
 repositories {
-    mavenCentral()
+  mavenCentral()
 }
 
 dependencies {
@@ -34,17 +33,17 @@ dependencies {
 }
 
 intellij {
-    version '2020.1'
-    //version 'LATEST-EAP-SNAPSHOT'
-
+  version '2020.1'
+  //version 'LATEST-EAP-SNAPSHOT'
   plugins = ['java']
 }
 
 patchPluginXml {
-    changeNotes """
+  changeNotes """
   <h3>v0.3.0</h3>
     <ul>
       <li>Add support for IntelliJ 2020.2 (and drops support for anything before IntelliJ 2020.1) <a href="https://github.com/SJrX/systemdUnitFilePlugin/pull/92">#92</a></li>
+      <li>Add support for systemd v245 (and maybe a little bit of v246) <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/95">#95</a></li>
     </ul>
   <h3>v0.2.6</h3>
   <ul>
@@ -123,7 +122,6 @@ checkstyle {
   // Exclude the generated sources
   checkstyleMain.source = "src/main/java"
   toolVersion "8.11"
-
 }
 
 test {
@@ -142,8 +140,8 @@ task cloneSystemdRepo(type: GitCloneTask) {
   description "clone the systemd repository"
 
   dir = file("git-dependencies/systemd")
-  uri = 'https://github.com/SJrX/systemd.git'
-  treeish = '4e901081189bf9f81e4259e70c27d1d903d03d42' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
+  uri = 'https://github.com/systemd/systemd.git'
+  treeish = 'origin/master' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
 
   reset = true
   forceFetch = true
@@ -151,11 +149,11 @@ task cloneSystemdRepo(type: GitCloneTask) {
 
 task generateDataFromManPages(type: GenerateDataFromManPages) {
   description "Regenerate semantic data (used for documentation and inspections) by parsing the documentation from systemd git repository"
-  group  "generation"
+  group "generation"
 
   systemdSourceCodeRoot = file("git-dependencies/systemd")
-  generatedJsonFileLocation = file(sourceSets.main.output.resourcesDir.getAbsolutePath() + "/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata")
-
+  generatedJsonFileLocation =
+    file(sourceSets.main.output.resourcesDir.getAbsolutePath() + "/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata")
 }
 /*
  * Lexing / Parsing and Grammar Tasks
@@ -167,7 +165,7 @@ import org.jetbrains.grammarkit.tasks.*
 
 task generateLexer(type: GenerateLexer) {
   description "Generate the lexer necessary for parsing unit files using JFlex"
-  group  "generation"
+  group "generation"
 
   source = "src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/lexer/SystemdUnitFile.flex"
   targetDir = "src/main/gen/net/sjrx/intellij/plugins/systemdunitfiles/generated/"
@@ -177,7 +175,7 @@ task generateLexer(type: GenerateLexer) {
 
 task generateParser(type: GenerateParser) {
   description "Generate the grammar necessary for parsing unit files using GrammarKit"
-  group  "generation"
+  group "generation"
   source = "src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/grammar/SystemdUnitFile.bnf"
   targetRoot = "src/main/gen/"
 
@@ -196,19 +194,18 @@ task generateOptionValidator(type: Exec) {
   description "Generate the file we use to map options to validators"
   group "generation"
 
-  commandLine('m4','-P','git-dependencies/systemd/src/core/load-fragment-gperf.gperf.m4')
+  commandLine('m4', '-P', 'git-dependencies/systemd/src/core/load-fragment-gperf.gperf.m4')
 
   doFirst {
 
-    def outputFile = new File(sourceSets.main.output.resourcesDir.getAbsolutePath() + "/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/load-fragment-gperf.gperf")
+    def outputFile = new File(sourceSets.main.output.resourcesDir.getAbsolutePath() +
+                              "/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/load-fragment-gperf.gperf")
     outputFile.parentFile.mkdirs()
     standardOutput = new FileOutputStream(outputFile)
   }
-
-
 }
 
-if(OperatingSystem.current().isLinux()) {
+if (OperatingSystem.current().isLinux()) {
   /**
    * This setting controls how IntelliJ looks on linux, if you explore idea64.vmoptions you will see
    * these options included in the file.
