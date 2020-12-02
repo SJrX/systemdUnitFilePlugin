@@ -13,14 +13,14 @@ buildscript {
 
 plugins {
   id 'java'
-  id 'org.jetbrains.intellij' version '0.4.21'
+  id 'org.jetbrains.intellij' version '0.6.5'
   id "org.jetbrains.grammarkit" version "2020.2.1"
   id 'checkstyle'
 }
 group 'net.sjrx.intellij.plugins'
-version '0.3.0'
+version '0.3.1'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.11
 
 repositories {
   mavenCentral()
@@ -33,13 +33,17 @@ dependencies {
 }
 
 intellij {
-  version '2020.1'
+  version '2020.3'
   //version 'LATEST-EAP-SNAPSHOT'
   plugins = ['java']
 }
 
 patchPluginXml {
   changeNotes """
+  <h3>v0.3.1</h3>
+    <ul>
+      <li>Add support for IntelliJ 2020.3 and systemd v247 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issue-103">#103</a> (drops support for 2020.2 <a href="https://blog.jetbrains.com/platform/2020/09/intellij-project-migrates-to-java-11/">due to Java 11 Upgrade</a>) </li>
+    </ul>
   <h3>v0.3.0</h3>
     <ul>
       <li>Add support for IntelliJ 2020.2 (and drops support for anything before IntelliJ 2020.1) <a href="https://github.com/SJrX/systemdUnitFilePlugin/pull/92">#92</a></li>
@@ -97,8 +101,8 @@ patchPluginXml {
     <li>Initial Release.</li>
   </ul>
 """
-  sinceBuild '201.0'
-  untilBuild '203.0'
+  sinceBuild '203.0'
+  untilBuild '211.0'
 }
 
 // Add generated sources root
@@ -140,8 +144,12 @@ task cloneSystemdRepo(type: GitCloneTask) {
   description "clone the systemd repository"
 
   dir = file("git-dependencies/systemd")
-  uri = 'https://github.com/systemd/systemd.git'
-  treeish = 'origin/master' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
+
+  // Use fork version until PR to systemd is merged (https://github.com/systemd/systemd/pull/17825)
+  uri = 'https://github.com/SJrX/systemd.git'
+  treeish = 'f7f88c83a2a73d95b6472862597c484ebba5f67a'
+  //uri = 'https://github.com/systemd/systemd.git'
+  //treeish = 'origin/master' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
 
   reset = true
   forceFetch = true
