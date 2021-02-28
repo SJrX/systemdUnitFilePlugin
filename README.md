@@ -41,11 +41,11 @@ __NOTE__: `.scope` units are not configured via unit configuration files and so 
 
 ## Installation
 
-At some point, this plugin should be available at the [JetBrains Plugin Repository](https://plugins.jetbrains.com/),
- in the next release we will update this.
+This plugin is avaliable to install at the [JetBrains Plugin Repository](https://plugins.jetbrains.com/plugin/11070-unit-file-support-systemd-).
 
 Changelog
---------- 
+---------
+
 ### [v0.2.6](https://github.com/SJrX/systemdUnitFilePlugin/commit/06716d1e84ec60cb28c39cf1896abe9c6640133e)
 * Improved Error Handling, Memory Management, Misc fixes ([Vlad Rassokhin](https://github.com/VladRassokhin)).
 
@@ -103,7 +103,7 @@ License
 
 ### System Requirements
 
-On top of Java 8, you will need the [m4 macro processor](https://www.gnu.org/software/m4/m4.html) installed on your system and available on the path. 
+On top of Java 11, you will need the [m4 macro processor](https://www.gnu.org/software/m4/m4.html) installed on your system and available on the path. 
 
 ### Manual Installation
 
