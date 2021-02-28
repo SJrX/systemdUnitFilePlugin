@@ -21,6 +21,7 @@ public class UnitFileSectionGroupsImpl extends ASTWrapperPsiElement implements U
     visitor.visitSectionGroups(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof UnitFileVisitor) accept((UnitFileVisitor)visitor);
     else super.accept(visitor);

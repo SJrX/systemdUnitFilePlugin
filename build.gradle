@@ -13,12 +13,12 @@ buildscript {
 
 plugins {
   id 'java'
-  id 'org.jetbrains.intellij' version '0.6.5'
-  id "org.jetbrains.grammarkit" version "2020.2.1"
+  id "org.jetbrains.intellij" version "0.7.2"
+  id "org.jetbrains.grammarkit" version "2020.3.2"
   id 'checkstyle'
 }
 group 'net.sjrx.intellij.plugins'
-version '0.3.1'
+version '0.3.2'
 
 sourceCompatibility = 1.11
 
@@ -33,13 +33,17 @@ dependencies {
 }
 
 intellij {
-  version '2020.3'
-  //version 'LATEST-EAP-SNAPSHOT'
+  //version '2020.3'
+  version 'LATEST-EAP-SNAPSHOT'
   plugins = ['java']
 }
 
 patchPluginXml {
   changeNotes """
+  <h3>v0.3.2</h3>
+    <ul>
+      <li>Add support for IntelliJ 2021.1 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/107">#107</a></li>"
+    </ul>
   <h3>v0.3.1</h3>
     <ul>
       <li>Add support for IntelliJ 2020.3 and systemd v247 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issue-103">#103</a> (drops support for 2020.2 <a href="https://blog.jetbrains.com/platform/2020/09/intellij-project-migrates-to-java-11/">due to Java 11 Upgrade</a>) </li>
@@ -101,8 +105,8 @@ patchPluginXml {
     <li>Initial Release.</li>
   </ul>
 """
-  sinceBuild '203.0'
-  untilBuild '211.0'
+  sinceBuild '211.0'
+  untilBuild '212.0'
 }
 
 // Add generated sources root
