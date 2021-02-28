@@ -21,6 +21,7 @@ public class UnitFilePropertyImpl extends ASTWrapperPsiElement implements UnitFi
     visitor.visitProperty(this);
   }
 
+  @Override
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof UnitFileVisitor) accept((UnitFileVisitor)visitor);
     else super.accept(visitor);
