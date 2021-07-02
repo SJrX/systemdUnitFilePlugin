@@ -105,6 +105,7 @@ class GenerateDataFromManPages extends DefaultTask {
          [
            'Paths'                            : ['Service', 'Socket', 'Mount', 'Swap'],
            'Credentials'                      : ['Service', 'Socket', 'Mount', 'Swap'],
+           'User/Group Identity'              : ['Service', 'Socket', 'Mount', 'Swap'],
            'Capabilities'                     : ['Service', 'Socket', 'Mount', 'Swap'],
            'Security'                         : ['Service', 'Socket', 'Mount', 'Swap'],
            'Mandatory Access Control'         : ['Service', 'Socket', 'Mount', 'Swap'],
@@ -114,7 +115,7 @@ class GenerateDataFromManPages extends DefaultTask {
            'System Call Filtering'            : ['Service', 'Socket', 'Mount', 'Swap'],
            'Environment'                      : ['Service', 'Socket', 'Mount', 'Swap'],
            'Logging and Standard Input/Output': ['Service', 'Socket', 'Mount', 'Swap'],
-           'System V Compatibility'           : ['Service', 'Socket', 'Mount', 'Swap']
+           'System V Compatibility'           : ['Service', 'Socket', 'Mount', 'Swap'],
          ]
       ]
   ]

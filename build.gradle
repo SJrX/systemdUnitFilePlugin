@@ -18,7 +18,7 @@ plugins {
   id 'checkstyle'
 }
 group 'net.sjrx.intellij.plugins'
-version '0.3.2'
+version '0.3.3'
 
 sourceCompatibility = 1.11
 
@@ -40,6 +40,10 @@ intellij {
 
 patchPluginXml {
   changeNotes """
+  <h3>v0.3.3</h3>
+    <ul>
+      <li>Add support for IntelliJ 2021.2 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/111">#111</a></li>
+    </ul>
   <h3>v0.3.2</h3>
     <ul>
       <li>Add support for IntelliJ 2021.1 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/107">#107</a></li>"
@@ -106,7 +110,7 @@ patchPluginXml {
   </ul>
 """
   sinceBuild '211.0'
-  untilBuild '212.0'
+  untilBuild '213.0'
 }
 
 // Add generated sources root
@@ -149,9 +153,9 @@ task cloneSystemdRepo(type: GitCloneTask) {
 
   dir = file("git-dependencies/systemd")
 
-  // Use fork version until PR to systemd is merged (https://github.com/systemd/systemd/pull/17825)
-  uri = 'https://github.com/SJrX/systemd.git'
-  treeish = 'f7f88c83a2a73d95b6472862597c484ebba5f67a'
+  uri = 'https://github.com/systemd/systemd.git'
+  treeish = 'c900d89faa0ca99c30fe32ed18c5dfa7aa3c3bd5' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/main')
+
   //uri = 'https://github.com/systemd/systemd.git'
   //treeish = 'origin/master' // a commit hash, or tag name, or branch name (with remote prefix, like 'origin/master')
 
