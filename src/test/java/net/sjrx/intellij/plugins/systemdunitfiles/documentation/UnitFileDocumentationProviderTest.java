@@ -1,10 +1,30 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.documentation;
 
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.Language;
 import com.intellij.lang.documentation.DocumentationProviderEx;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.NlsSafe;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiInvalidElementAccessException;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveState;
+import com.intellij.psi.impl.FakePsiElement;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.SearchScope;
+import com.intellij.util.IncorrectOperationException;
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.swing.Icon;
 import java.util.Collections;
 import java.util.List;
 
@@ -457,4 +477,45 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
                                                                   + "<a href='https://github.com/systemd/systemd/blob/v241/NEWS#L561'>"
                                                                   + "More information is available here</a></div>", doc);
   }
+  
+  public void testGenerateDocFromPsiElementWithNoNodeDoesNotCrash() {
+  
+    // Fixture Setup
+  
+    /*
+     * The important part of this is that FakePsiElement getNode() returns null.
+     */
+    PsiElement element = new FakePsiElement() {
+      @Override
+      public PsiElement getParent() {
+        return null;
+      }
+    };
+    
+    // Execute SUT
+    sut.generateDoc(element, element);
+    
+    // Verification (Implicit we want to avoid an NPE, so if we don't crash we didn't throw an NPE)
+  }
+  
+  public void testGetUrlFromPsiElementWithNoNodeDoesNotCrash() {
+   
+    // Fixture Setup
+  
+    /*
+     * The important part of this is that FakePsiElement getNode() returns null.
+     */
+    PsiElement element = new FakePsiElement() {
+      @Override
+      public PsiElement getParent() {
+        return null;
+      }
+    };
+    
+    // Execute SUT
+    sut.getUrlFor(element, element);
+    
+    // Verification (Implicit we want to avoid an NPE, so if we don't crash we didn't throw an NPE).
+  }
+  
 }
