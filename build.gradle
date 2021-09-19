@@ -2,7 +2,6 @@ import org.gradle.internal.os.OperatingSystem
 
 buildscript {
   repositories {
-    jcenter()
     mavenCentral()
   }
 
@@ -13,8 +12,8 @@ buildscript {
 
 plugins {
   id 'java'
-  id "org.jetbrains.intellij" version "0.7.2"
-  id "org.jetbrains.grammarkit" version "2020.3.2"
+  id "org.jetbrains.intellij" version "1.1.6"
+  id "org.jetbrains.grammarkit" version "2021.1.1"
   id 'checkstyle'
 }
 group 'net.sjrx.intellij.plugins'
@@ -33,13 +32,12 @@ dependencies {
 }
 
 intellij {
-  //version '2020.3'
-  version 'LATEST-EAP-SNAPSHOT'
-  plugins = ['java']
+  version = '2021.1'
 }
 
+
 patchPluginXml {
-  changeNotes """
+  changeNotes = """
   <h3>v0.3.3</h3>
     <ul>
       <li>Add support for IntelliJ 2021.2 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/111">#111</a></li>
@@ -109,8 +107,8 @@ patchPluginXml {
     <li>Initial Release.</li>
   </ul>
 """
-  sinceBuild '211.0'
-  untilBuild '213.0'
+  sinceBuild = '211.0'
+  untilBuild = '213.0'
 }
 
 // Add generated sources root
