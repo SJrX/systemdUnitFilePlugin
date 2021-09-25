@@ -1,0 +1,109 @@
+pipeline {
+  agent {
+    label 'worker'
+  }
+  options {
+    preserveStashes(buildCount: 30)
+    buildDiscarder(logRotator(numToKeepStr: "30", artifactNumToKeepStr: "30"))
+    timestamps()
+    disableConcurrentBuilds()
+  }
+
+  stages {
+    stage("PHASE: Build") {
+      stages {
+        stage("Clean") {
+          steps {
+            script {
+              sh(
+                label: "Clean repository",
+                script: """
+                        ./gradlew clean
+                        """
+              )
+            }
+          }
+        }
+        stage("Run Linters and Test") {
+          steps {
+
+            sh """
+              ./gradlew --continue check
+              """
+          }
+          post {
+            always {
+              jacoco(
+                execPattern: 'build/jacoco/**.exec',
+                classPattern: 'build/classes/kotlin/main,build/classes/java/main',
+                sourcePattern: 'src/main/kotlin,src/main/java',
+                sourceInclusionPattern: '**/*.kt, **/*.java',
+                runAlways: true
+              )
+              junit skipPublishingChecks: true, testResults: 'build/test-results/test/*.xml,meta-data/model/build/test-results/test/*.xml'
+              recordIssues enabledForFailure: true, tools: [detekt(pattern: 'build/reports/detekt/*.xml,meta-data/model/build/reports/detekt/*.xml'), ktLint(pattern: 'build/reports/ktlint/**/*.xml,meta-data/model/build/reports/ktlint/**/*.xml')]
+            }
+          }
+        }
+        stage("Verify Plugin") {
+          steps {
+            sh "./gradlew verifyPlugin"
+          }
+        }
+        stage("Build") {
+          steps {
+            sh(
+              script: '''
+                      PROPERTIES="$(./gradlew properties --console=plain -q)"
+                      VERSION="$(echo "$PROPERTIES" | grep "^version:" | cut -f2- -d ' ')"
+                      NAME="$(echo "$PROPERTIES" | grep "^pluginName_:" | cut -f2- -d ' ')"
+                      CHANGELOG="$(./gradlew getChangelog --unreleased --no-header --console=plain -q)"
+                      CHANGELOG="${CHANGELOG//'%'/'%25'}"
+                      CHANGELOG="${CHANGELOG//$'\\n'/'%0A'}"
+                      CHANGELOG="${CHANGELOG//$'\\r'/'%0D'}"
+                      ARTIFACT="${NAME}-${VERSION}.zip"
+                      echo "::set-output name=version::$VERSION"
+                      echo "::set-output name=name::$NAME"
+                      echo "::set-output name=changelog::$CHANGELOG"
+                      echo "::set-output name=artifact::$ARTIFACT"
+                      ./gradlew buildPlugin 
+                      # Keep commit
+                      git rev-parse HEAD > ./build/distributions/GIT_COMMIT
+  						      '''.stripMargin()
+            )
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'build/distributions/**.zip', fingerprint: true
+              archiveArtifacts artifacts: 'build/distributions/GIT_COMMIT', fingerprint: true
+            }
+          }
+        }
+        stage("Run Plugin Verifier") {
+          steps {
+            sh '''
+             PROPERTIES="$(./gradlew properties --console=plain -q)"
+             IDE_VERSIONS="$(echo "$PROPERTIES" | grep "^pluginVerifierIdeVersions:" | base64)"
+             echo "::set-output name=ideVersions::$IDE_VERSIONS"
+             ./gradlew runPluginVerifier
+          '''.stripMargin()
+          }
+        }
+      }
+      post {
+        success {
+          script {
+            script {
+              if (env.BRANCH_NAME ==~ /20[0-9]{2}\.[0-9]{1}/) {
+                build quietPeriod: 86400, wait: false, propagate: false, job: "ansible-support-plugin-release/${env.BRANCH_NAME}"
+              } else {
+                echo "Branch ${env.BRANCH_NAME} does not match regex and so am not triggering a release."
+              }
+            }
+          }
+        }
+      }
+    }
+
+  }
+}
