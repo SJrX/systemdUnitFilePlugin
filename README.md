@@ -51,7 +51,7 @@ Acknowledgements
 ----------------
 * The documentation is extracted from the systemd source code.
 * A number of users of the [IntelliJ Plugin Developers Slack](https://intellij-support.jetbrains.com/hc/en-us/community/posts/360006494439--ANN-JetBrains-Slack-for-plugin-developers) provided a lot of useful advice.
-* As with every project I work on the help and patient tutelage of members of [##java on Freenode](http://https://javachannel.org/).
+* As with every project I work on the help and patient tutelage of members of [##java on Freenode](https://javachannel.org/).
 
 License
 -----------------
