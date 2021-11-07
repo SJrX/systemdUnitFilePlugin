@@ -2,17 +2,24 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata;
 
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonFactoryBuilder;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.*;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.BooleanOptionValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.DocumentationOptionValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.KillModeOptionValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ModeStringOptionValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.NullOptionValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.OptionValueInformation;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.RestartOptionValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ServiceTypeOptionValue;
 import org.apache.commons.io.IOUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,7 +27,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,13 +47,8 @@ public class SemanticDataRepository {
   private static final OptionValueInformation NULL_VALIDATOR = new NullOptionValue();
 
 
-  private static final AtomicNotNullLazyValue<SemanticDataRepository> instance = new AtomicNotNullLazyValue<SemanticDataRepository>() {
-    @NotNull
-    @Override
-    protected SemanticDataRepository compute() {
-      return new SemanticDataRepository();
-    }
-  };
+  private static final NotNullLazyValue<SemanticDataRepository> instance = NotNullLazyValue.atomicLazy(SemanticDataRepository::new);
+  
   private static final String SCOPE_KEYWORD = "Scope";
   private static final String LEGACY_PARAMETERS_KEY = "DISABLED_LEGACY";
   private static final String EXPERIMENTAL_PARAMETERS_KEY = "DISABLED_EXPERIMENTAL";
@@ -52,7 +59,7 @@ public class SemanticDataRepository {
   private final Map<String, Map<String, KeywordData>> sectionNameToKeyValuesFromDoc;
   private final Map<String, Map<String, KeywordData>> undocumentedOptionInfo;
 
-  public final static class KeywordData {
+  public static final class KeywordData {
     public String declaredUnderKeyword;
     public String declaredInFile;
     public String reason;
@@ -103,12 +110,12 @@ public class SemanticDataRepository {
         }
 
         OptionValueInformation[] ovis = {new BooleanOptionValue(),
-                new DocumentationOptionValue(),
-                new KillModeOptionValue(),
-                new ModeStringOptionValue(),
-                new RestartOptionValue(),
-                new ServiceTypeOptionValue(),
-                NULL_VALIDATOR };
+          new DocumentationOptionValue(),
+          new KillModeOptionValue(),
+          new ModeStringOptionValue(),
+          new RestartOptionValue(),
+          new ServiceTypeOptionValue(),
+          NULL_VALIDATOR };
 
         for (OptionValueInformation ovi : ovis) {
           validatorMap.put(ovi.getValidatorName(), ovi);
@@ -136,8 +143,8 @@ public class SemanticDataRepository {
     URL sectionToKeywordMapFromDocJsonFile =
             this.getClass().getClassLoader().getResource(filename);
 
-    final JsonFactory factory = new JsonFactory();
-    factory.disable(JsonFactory.Feature.INTERN_FIELD_NAMES);
+    final JsonFactory factory = new JsonFactoryBuilder().disable(JsonFactory.Feature.INTERN_FIELD_NAMES).build();
+    
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
       factory.disable(JsonParser.Feature.IGNORE_UNDEFINED);
     }
@@ -229,31 +236,21 @@ public class SemanticDataRepository {
 
   Map<String, KeywordData> getKeyValuePairsForSectionFromDocumentation(String section) {
     Map<String, KeywordData> sectionData = sectionNameToKeyValuesFromDoc.get(section);
-
-    if (sectionData == null) {
-      return Collections.emptyMap();
-    } else {
-
-      return sectionData;
-    }
+  
+    return Objects.requireNonNullElse(sectionData, Collections.emptyMap());
   }
 
   public Map<String, KeywordData> getKeyValuePairsForSectionFromUndocumentedInformation(String section) {
     Map<String, KeywordData> sectionData = undocumentedOptionInfo.get(section);
-
-    if (sectionData == null) {
-      return Collections.emptyMap();
-    } else {
-
-      return sectionData;
-    }
+  
+    return Objects.requireNonNullElse(sectionData, Collections.emptyMap());
   }
 
   /**
    * Returns a URL to the section name man page.
    *
    * @param sectionName - the name of the section name
-   * @return - best URL for the section name or null if the section is unknown
+   * @return best URL for the section name or null if the section is unknown
    */
   public String getUrlForSectionName(String sectionName) {
     switch (sectionName) {

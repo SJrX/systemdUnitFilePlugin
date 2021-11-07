@@ -42,6 +42,9 @@ patchPluginXml {
   <h3>v0.3.4</h3>
     <ul>
       <li>Add support for IntelliJ 2021.3 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/119">#119</a></li>
+      <li>Remove support for IntelliJ 2021.1, due to plugin compatibility fixes</li>
+      <li>Fix file type issue description <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/106"/>#106</a></li>
+      <li>Fix deprecation warnings <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/123"/>#123</a></li>
     </ul>
   <h3>v0.3.3</h3>
     <ul>
