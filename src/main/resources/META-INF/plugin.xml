@@ -42,7 +42,18 @@
     <lang.parserDefinition language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.parser.UnitFileParserDefinition"/>
     <lang.syntaxHighlighterFactory language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.coloring.UnitSyntaxHighlighterFactory"/>
     <colorSettingsPage implementation="net.sjrx.intellij.plugins.systemdunitfiles.coloring.settings.UnitFileColorSettings"/>
-    <fileTypeFactory implementation="net.sjrx.intellij.plugins.systemdunitfiles.UnitFileTypeFactory"/>
+
+    <fileType name="Automount unit configuration for systemd" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.AutomountFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="automount"/>
+    <fileType name="Device unit configuration for systemd" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.DeviceFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="device"/>
+    <fileType name="Mount unit configuration for systemd" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.MountFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="mount"/>
+    <fileType name="Path unit configuration for systemd" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.PathFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="path"/>
+    <fileType name="Service unit configuration for systemd" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.ServiceFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="service"/>
+    <fileType name="Slice unit configuration for systemd" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.SliceFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="slice"/>
+    <fileType name="Socket unit configuration for systemd" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.SocketFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="socket"/>
+    <fileType name="Swap unit configuration for systemd" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.SwapFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="swap"/>
+    <fileType name="Target unit configuration for systemd" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.TargetFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="target"/>
+    <fileType name="Timer unit configuration for systemd" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.TimerFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="timer"/>
+
     <lang.commenter language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.commenter.UnitFileCommenter"/>
     <lang.documentationProvider language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.documentation.UnitFileDocumentationProvider"/>
     <annotator language="Unit File (systemd)"

@@ -121,7 +121,7 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
   @Override
   public PsiElement getCustomDocumentationElement(@NotNull final Editor editor,
                                                   @NotNull final PsiFile file,
-                                                  @Nullable PsiElement contextElement) {
+                                                  @Nullable PsiElement contextElement, int offset) {
   
     if (contextElement == null) {
       // If no context element just return null

@@ -6,5 +6,5 @@ import javax.swing.Icon;
 
 public class UnitFileIcon {
   
-  public static final Icon FILE = IconLoader.getIcon("/net/sjrx/intellij/plugins/systemdunitfiles/systemd.svg");
+  public static final Icon FILE = IconLoader.getIcon("/net/sjrx/intellij/plugins/systemdunitfiles/systemd.svg", UnitFileIcon.class);
 }

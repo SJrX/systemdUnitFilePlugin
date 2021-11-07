@@ -241,7 +241,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     // Exercise SUT
     PsiElement documentationValue = getAllCompletedValuesInFile(psiFile).get(0);
     
-    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
+    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue, 0);
     
     String doc = sut.generateDoc(documentationValue, documentationValue);
     
@@ -260,7 +260,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     // Exercise SUT
     PsiElement documentationValue = getAllCompletedValuesInFile(psiFile).get(0);
     
-    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
+    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue, 0);
     
     String doc = sut.generateDoc(documentationValue, documentationValue);
     
@@ -279,7 +279,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     // Exercise SUT
     PsiElement documentationValue = getAllCompletedValuesInFile(psiFile).get(0);
     
-    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
+    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue, 0);
     
     String doc = sut.generateDoc(documentationValue, documentationValue);
     
@@ -298,7 +298,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     // Exercise SUT
     PsiElement documentationValue = getAllContinuingValuesInFile(psiFile).get(0);
   
-    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
+    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue, 0);
     
     String doc = sut.generateDoc(documentationValue, documentationValue);
     
@@ -318,7 +318,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     // Exercise SUT
     PsiElement documentationValue = getAllContinuingValuesInFile(psiFile).get(0);
   
-    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
+    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue, 0);
     
     String doc = sut.generateDoc(documentationValue, documentationValue);
     
@@ -338,7 +338,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     // Exercise SUT
     PsiElement documentationValue = getAllContinuingValuesInFile(psiFile).get(0);
   
-    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
+    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue, 0);
     
     String doc = sut.generateDoc(documentationValue, documentationValue);
     
@@ -359,7 +359,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     // Exercise SUT
     PsiElement documentationValue = getAllContinuingValuesInFile(psiFile).get(0);
     
-    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
+    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue, 0);
     
     String doc = sut.generateDoc(documentationValue, documentationValue);
     
@@ -381,7 +381,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     // Exercise SUT
     PsiElement documentationValue = getAllContinuingValuesInFile(psiFile).get(0);
     
-    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
+    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue, 0);
     
     String doc = sut.generateDoc(documentationValue, documentationValue);
     
@@ -403,7 +403,7 @@ public class UnitFileDocumentationProviderTest extends AbstractUnitFileTest {
     // Exercise SUT
     PsiElement documentationValue = getAllContinuingValuesInFile(psiFile).get(0);
     
-    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue);
+    documentationValue = sut.getCustomDocumentationElement(myFixture.getEditor(), psiFile, documentationValue, 0);
     
     String doc = sut.generateDoc(documentationValue, documentationValue);
     

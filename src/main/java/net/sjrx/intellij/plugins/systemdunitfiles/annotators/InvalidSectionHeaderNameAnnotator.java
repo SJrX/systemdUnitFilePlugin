@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.annotators;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.psi.PsiElement;
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType;
 import org.jetbrains.annotations.NotNull;
@@ -29,12 +30,11 @@ public class InvalidSectionHeaderNameAnnotator implements Annotator {
       if (!p.matcher(sectionElement.getSectionName()).find()) {
 
         // First child is the section group element
-        holder.createErrorAnnotation(element.getFirstChild(),
-                                     ANNOTATION_ERROR_MSG);
+        holder.newAnnotation(HighlightSeverity.ERROR, ANNOTATION_ERROR_MSG).range(element.getFirstChild()).create();
       }
       String text = sectionElement.getFirstChild().getText();
       if (text.charAt(0) != '[' || text.charAt(text.length() - 1) != ']') {
-        holder.createErrorAnnotation(element.getFirstChild(), ANNOTATION_ERROR_MSG);
+        holder.newAnnotation(HighlightSeverity.ERROR, ANNOTATION_ERROR_MSG).range(element.getFirstChild()).create();
       }
     }
   }

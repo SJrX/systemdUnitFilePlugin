@@ -1,6 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.annotators;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.annotation.AnnotationBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.annotation.HighlightSeverity;
@@ -35,7 +36,8 @@ public class LineContinuationCharacterFollowedByWhitespaceAnnotator implements A
         // Problem starts after the \
         // Problem ends before the newline
         TextRange range = TextRange.create(child.getStartOffset() + backslash + 1, child.getStartOffset() + length);
-        holder.createAnnotation(HighlightSeverity.WARNING, range, WARNING_MESSAGE);
+  
+        holder.newAnnotation(HighlightSeverity.WARNING, WARNING_MESSAGE).range(range).create();
       }
     }
   
