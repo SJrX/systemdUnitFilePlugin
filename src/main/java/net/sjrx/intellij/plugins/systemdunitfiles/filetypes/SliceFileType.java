@@ -1,14 +1,14 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.filetypes;
 
-import com.intellij.openapi.fileTypes.LanguageFileType;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileIcon;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileLanguage;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 
-public class SliceFileType extends LanguageFileType {
+public class SliceFileType extends AbstractUnitFileType {
   public static final SliceFileType INSTANCE = new SliceFileType();
 
   private SliceFileType() {
@@ -24,14 +24,7 @@ public class SliceFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return "A unit configuration file whose name ends in \".slice\" encodes information about a slice unit. A slice unit "
-           + "is a concept for hierarchically managing resources of a group of processes. This management is performed by creating a "
-           + "node in the Linux Control Group (cgroup) tree. Units that manage processes (primarily scope and service units) may be "
-           + "assigned to a specific slice. For each slice, certain resource limits may be set that apply to all processes of all "
-           + "units contained in that slice. Slices are organized hierarchically in a tree. The name of the slice encodes the location "
-           + "in the tree. The name consists of a dash-separated series of names, which describes the path to the slice from the root "
-           + "slice. The root slice is named -.slice. Example: foo-bar.slice is a slice that is located within foo.slice, which in "
-           + "turn is located in the root slice -.slice.";
+    return getDisplayName();
   }
 
   @NotNull
@@ -44,5 +37,11 @@ public class SliceFileType extends LanguageFileType {
   @Override
   public Icon getIcon() {
     return UnitFileIcon.FILE;
+  }
+  
+  @Nls
+  @Override
+  public @NotNull String getDisplayName() {
+    return "Slice unit configuration (systemd)";
   }
 }

@@ -1,14 +1,14 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.filetypes;
 
-import com.intellij.openapi.fileTypes.LanguageFileType;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileIcon;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileLanguage;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 
-public class TimerFileType extends LanguageFileType {
+public class TimerFileType extends AbstractUnitFileType {
   public static final TimerFileType INSTANCE = new TimerFileType();
 
   private TimerFileType() {
@@ -24,8 +24,7 @@ public class TimerFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return "A unit configuration file whose name ends in \".timer\" encodes information about a timer controlled and supervised by "
-           + "systemd, for timer-based activation.";
+    return getDisplayName();
   }
 
   @NotNull
@@ -38,5 +37,11 @@ public class TimerFileType extends LanguageFileType {
   @Override
   public Icon getIcon() {
     return UnitFileIcon.FILE;
+  }
+  
+  @Nls
+  @Override
+  public @NotNull String getDisplayName() {
+    return "Timer unit configuration (systemd)";
   }
 }
