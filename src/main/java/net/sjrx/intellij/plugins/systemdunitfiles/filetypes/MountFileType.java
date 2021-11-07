@@ -1,14 +1,14 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.filetypes;
 
-import com.intellij.openapi.fileTypes.LanguageFileType;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileIcon;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileLanguage;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 
-public class MountFileType extends LanguageFileType {
+public class MountFileType extends AbstractUnitFileType {
   public static final MountFileType INSTANCE = new MountFileType();
 
   private MountFileType() {
@@ -24,8 +24,7 @@ public class MountFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return "A unit configuration file whose name ends in \".mount\" encodes information about a file system mount "
-           + "point controlled and supervised by systemd.";
+    return getDisplayName();
   }
 
   @NotNull
@@ -38,5 +37,11 @@ public class MountFileType extends LanguageFileType {
   @Override
   public Icon getIcon() {
     return UnitFileIcon.FILE;
+  }
+  
+  @Nls
+  @Override
+  public @NotNull String getDisplayName() {
+    return "Mount unit configuration (systemd)";
   }
 }

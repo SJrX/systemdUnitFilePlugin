@@ -1,14 +1,14 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.filetypes;
 
-import com.intellij.openapi.fileTypes.LanguageFileType;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileIcon;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileLanguage;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 
-public class DeviceFileType extends LanguageFileType {
+public class DeviceFileType extends AbstractUnitFileType {
   public static final DeviceFileType INSTANCE = new DeviceFileType();
 
   private DeviceFileType() {
@@ -24,8 +24,7 @@ public class DeviceFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return "A unit configuration file whose name ends in \".device\" encodes information about a device unit as exposed in the "
-           + "sysfs/udev(7) device tree.";
+    return getDisplayName();
   }
 
   @NotNull
@@ -38,5 +37,11 @@ public class DeviceFileType extends LanguageFileType {
   @Override
   public Icon getIcon() {
     return UnitFileIcon.FILE;
+  }
+  
+  @Nls
+  @Override
+  public @NotNull String getDisplayName() {
+    return "Device unit configuration (systemd)";
   }
 }

@@ -32,8 +32,8 @@ dependencies {
 }
 
 intellij {
-  version 'LATEST-EAP-SNAPSHOT'
-  //version = '2021.2'
+  //version 'LATEST-EAP-SNAPSHOT'
+  version = '2021.2'
 }
 
 
@@ -106,13 +106,13 @@ patchPluginXml {
   <h3>v0.1.1</h3>
   <ul>
     <li>Added support for IntelliJ 2018.3.</li>
-  </ul>      
+  </ul>
   <h3>v0.1.0</h3>
   <ul>
     <li>Initial Release.</li>
   </ul>
 """
-  sinceBuild = '211.0'
+  sinceBuild = '212.0'
   untilBuild = '221.0'
 }
 

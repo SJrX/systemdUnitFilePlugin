@@ -1,14 +1,14 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.filetypes;
 
-import com.intellij.openapi.fileTypes.LanguageFileType;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileIcon;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileLanguage;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 
-public class SocketFileType extends LanguageFileType {
+public class SocketFileType extends AbstractUnitFileType {
   public static final SocketFileType INSTANCE = new SocketFileType();
 
   private SocketFileType() {
@@ -24,8 +24,7 @@ public class SocketFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return "A unit configuration file whose name ends in \".socket\" encodes information about an IPC or network socket or a file "
-           + "system FIFO controlled and supervised by systemd, for socket-based activation.";
+    return getDisplayName();
   }
 
   @NotNull
@@ -38,5 +37,11 @@ public class SocketFileType extends LanguageFileType {
   @Override
   public Icon getIcon() {
     return UnitFileIcon.FILE;
+  }
+  
+  @Nls
+  @Override
+  public @NotNull String getDisplayName() {
+    return "Socket unit configuration (systemd)";
   }
 }

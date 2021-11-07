@@ -1,14 +1,14 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.filetypes;
 
-import com.intellij.openapi.fileTypes.LanguageFileType;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileIcon;
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileLanguage;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
 
-public class AutomountFileType extends LanguageFileType {
+public class AutomountFileType extends AbstractUnitFileType {
   public static final AutomountFileType INSTANCE = new AutomountFileType();
 
   private AutomountFileType() {
@@ -24,8 +24,7 @@ public class AutomountFileType extends LanguageFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return "A unit configuration file whose name ends in \".automount\" encodes information about a file system automount point "
-           + "controlled and supervised by systemd.";
+    return getDisplayName();
   }
 
   @NotNull
@@ -38,5 +37,11 @@ public class AutomountFileType extends LanguageFileType {
   @Override
   public Icon getIcon() {
     return UnitFileIcon.FILE;
+  }
+  
+  @Nls
+  @Override
+  public @NotNull String getDisplayName() {
+    return "Automount unit configuration (systemd)";
   }
 }
