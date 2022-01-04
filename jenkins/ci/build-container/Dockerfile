@@ -8,6 +8,6 @@ WORKDIR /tmp
 
 WORKDIR /tmp/systemdUnitFilePlugin/
 
-RUN ["dd", "if=/dev/zero", "of=/tmp/zero.dat", "bs=1", "count=0", "seek=16384M"]
+#RUN ["dd", "if=/dev/zero", "of=/tmp/zero.dat", "bs=1", "count=0", "seek=16384M"]
 
-#RUN ["/tmp/systemdUnitFilePlugin/gradlew","--no-daemon", "dependencies"]
+RUN /tmp/systemdUnitFilePlugin/gradlew --no-daemon dependencies && rm -rf /tmp/systemdUnitFilePlugin/
