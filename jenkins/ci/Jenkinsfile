@@ -16,7 +16,7 @@ spec:
     - name: CONTAINER_ENV_VAR
       value: jnlp
   - name: gradle
-    image: systemd-unit-file-plugin-build-node:latest
+    image: sjrx/systemd-unit-file-plugin-build-node:latest
     command:
     - sleep
     args:
