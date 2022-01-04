@@ -12,6 +12,9 @@
  */
 
 pipeline {
+  options {
+    timestamps()
+  }
   agent {
     kubernetes {
       //cloud 'kubernetes'

@@ -16,7 +16,7 @@ spec:
     - name: CONTAINER_ENV_VAR
       value: jnlp
   - name: gradle
-    image: openjdk:11-bullseye
+    image: systemd-unit-file-plugin-build-node:latest
     command:
     - sleep
     args:
@@ -35,15 +35,12 @@ spec:
         container('gradle') {
           withCredentials([file(credentialsId: 'init-gradle', variable: 'INIT_GRADLE_PATH')]) {
             withEnv(['GRADLE_OPTS=-Dorg.gradle.daemon=false -Dorg.gradle.caching=true']) {
-              sh 'apt-get update'
-              sh 'apt-get -y install m4'
               sh 'mkdir -p ~/.gradle/'
               sh 'echo MAVEN_CONTAINER_ENV_VAR = ${CONTAINER_ENV_VAR}'
               sh 'mv $INIT_GRADLE_PATH ~/.gradle/init.gradle'
               sh 'ls ~/.gradle/'
               sh 'cat ~/.gradle/init.gradle'
               sh 'ls'
-              sh 'sleep 99d'
               sh './gradlew --scan test'
             }
           }
