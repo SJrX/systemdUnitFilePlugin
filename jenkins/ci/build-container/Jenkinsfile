@@ -21,7 +21,7 @@ pipeline {
         spec:
           containers:
           - name: kaniko
-            image: gcr.io/kaniko-project/executor:v1.6.0-debug
+            image: gcr.io/kaniko-project/executor:v1.7.0-debug
             imagePullPolicy: Always
             command:
             - sleep
@@ -30,6 +30,11 @@ pipeline {
             volumeMounts:
               - name: jenkins-docker-cfg
                 mountPath: /kaniko/.docker
+            resources:
+              requests:
+                memory: "4096Mi"
+              limits:
+                memory: "4096Mi"
           volumes:
           - name: jenkins-docker-cfg
             projected:
@@ -46,7 +51,7 @@ pipeline {
     stage('Build with Kaniko') {
       steps {
         //git 'https://github.com/jenkinsci/docker-inbound-agent.git'
-        sh '/kaniko/executor --force -f `pwd`/jenkins/ci/build-container/Dockerfile -c `pwd`/jenkins/ci/build-container --cache=true --destination=$DOCKER_REGISTRY_PREFIX/systemd-unit-file-plugin-build-node:latest'
+        sh '/kaniko/executor --force -f `pwd`/jenkins/ci/build-container/Dockerfile --compressed-caching=false -c `pwd`/jenkins/ci/build-container --cache=true --destination=$DOCKER_REGISTRY_PREFIX/systemd-unit-file-plugin-build-node:latest'
       }
     }
   }
