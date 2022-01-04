@@ -41,7 +41,7 @@ spec:
               sh 'ls ~/.gradle/'
               sh 'cat ~/.gradle/init.gradle'
               sh 'ls'
-              sh './gradlew --scan test'
+              sh './gradlew --no-daemon --scan test'
             }
           }
         }
