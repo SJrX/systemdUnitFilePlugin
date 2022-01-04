@@ -46,7 +46,7 @@ pipeline {
     stage('Build with Kaniko') {
       steps {
         //git 'https://github.com/jenkinsci/docker-inbound-agent.git'
-        sh '/kaniko/executor --force -f `pwd`/jenkins/ci/build-container/Dockerfile -c `pwd`/jenkins/ci/build-container --cache=true --destination=$DOCKER_REGISTRY_PREFIX/systemdUnitFilePluginBuild:latest'
+        sh '/kaniko/executor --force -f `pwd`/jenkins/ci/build-container/Dockerfile -c `pwd`/jenkins/ci/build-container --cache=true --destination=$DOCKER_REGISTRY_PREFIX/systemd-unit-file-plugin-build-node:latest'
       }
     }
   }
