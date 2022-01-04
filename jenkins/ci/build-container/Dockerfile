@@ -9,3 +9,6 @@ RUN git clone https://github.com/SJrX/systemdUnitFilePlugin.git
 WORKDIR /tmp/systemdUnitFilePlugin/
 
 RUN ["/tmp/systemdUnitFilePlugin/gradlew","--no-daemon", "dependencies"]
+
+
+RUN ["/tmp/systemdUnitFilePlugin/gradlew","--no-daemon", "prepareTestingSandbox"]
