@@ -43,6 +43,7 @@ spec:
               sh 'ls ~/.gradle/'
               sh 'cat ~/.gradle/init.gradle'
               sh 'ls'
+              sh 'sleep 99d'
               sh './gradlew --scan test'
             }
           }
