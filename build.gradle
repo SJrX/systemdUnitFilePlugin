@@ -217,13 +217,22 @@ task generateOptionValidator(type: Exec) {
   group "generation"
 
   commandLine('m4', '-P', 'git-dependencies/systemd/src/core/load-fragment-gperf.gperf.m4')
+  def outputFile = new File(sourceSets.main.output.resourcesDir.getAbsolutePath() +
+                            "/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/load-fragment-gperf.gperf")
 
   doFirst {
 
-    def outputFile = new File(sourceSets.main.output.resourcesDir.getAbsolutePath() +
-                              "/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/load-fragment-gperf.gperf")
     outputFile.parentFile.mkdirs()
+
+    if (!outputFile.parentFile.exists()) {
+      throw new IllegalStateException("Could not create outputFile: " + outputFile);
+    }
+
     standardOutput = new FileOutputStream(outputFile)
+  }
+  doLast {
+    print("Completed")
+    print("Output file exists: " + outputFile.exists())
   }
 }
 
