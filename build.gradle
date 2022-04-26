@@ -120,7 +120,7 @@ patchPluginXml {
   </ul>
 """
   sinceBuild = '212.0'
-  untilBuild = '221.5080.210'
+  untilBuild = '222.0'
 }
 
 // Add generated sources root
