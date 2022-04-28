@@ -7,3 +7,5 @@ out/
 git-dependencies/
 buildSrc/.gradle
 buildSrc/build
+init.gradle
+init.gradle.kts
