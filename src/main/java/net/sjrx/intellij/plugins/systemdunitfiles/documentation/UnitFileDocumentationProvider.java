@@ -35,7 +35,8 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
 
   @Override
   public String generateDoc(PsiElement element, @Nullable PsiElement originalElement) {
-    if (element == null) return null;
+    if ((element == null) || (element.getNode() == null)) return null;
+    
     IElementType elementType = element.getNode().getElementType();
     if (elementType.equals(UnitFileElementTypeHolder.KEY)) {
       UnitFileSectionType section = PsiTreeUtil.getParentOfType(element, UnitFileSectionType.class);
@@ -71,7 +72,7 @@ public class UnitFileDocumentationProvider extends AbstractDocumentationProvider
 
   @Override
   public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
-    if (element == null) return null;
+    if ((element == null) || (element.getNode() == null)) return null;
 
     IElementType elementType = element.getNode().getElementType();
     if (elementType.equals(UnitFileElementTypeHolder.KEY)) {

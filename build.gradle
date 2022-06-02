@@ -48,6 +48,7 @@ patchPluginXml {
   <h3>v0.3.7</h3>
     <ul>
       <li>Update build to be based off of systemd v251 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/131">#131</a></li>
+      <li>Fix NPE in some cases when getting doc link <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/114">#114</a></li>
     </ul>
   <h3>v0.3.6</h3>
     <ul>
