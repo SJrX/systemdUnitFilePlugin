@@ -1,4 +1,6 @@
 import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.grammarkit.tasks.GenerateLexer
+import org.jetbrains.grammarkit.tasks.GenerateParser
 
 buildscript {
   repositories {
@@ -185,9 +187,6 @@ task generateDataFromManPages(type: GenerateDataFromManPages) {
 apply plugin: 'org.jetbrains.grammarkit'
 // import is optional to make task creation easier
 
-import org.jetbrains.grammarkit.tasks.GenerateLexer
-import org.jetbrains.grammarkit.tasks.GenerateParser
-
 task generateLexer(type: GenerateLexer) {
   description "Generate the lexer necessary for parsing unit files using JFlex"
   group "generation"
@@ -231,11 +230,20 @@ if (OperatingSystem.current().isLinux()) {
 }
 
 generateLexer.mustRunAfter(compileJava)
-classes.dependsOn += generateParser
+//classes.dependsOn += generateParser
 classes.dependsOn += generateOptionValidator
 
-generateDataFromManPages.dependsOn += composeUp
-generateOptionValidator.dependsOn += composeUp
+if (!(project.file("./systemd-build/build/load-fragment-gperf.gperf").exists())) {
+  println("Could not find metadata file")
+  generateOptionValidator.dependsOn += composeUp
+}
+
+if (!(project.file("./systemd-build/build/man").exists())) {
+  println("Colud not find man pages")
+  generateDataFromManPages.dependsOn += composeUp
+}
+
+
 
 
 jar.dependsOn += generateDataFromManPages

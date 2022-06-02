@@ -10,7 +10,7 @@ public interface OptionValueInformation {
   public Set<String> getAutoCompleteOptions();
   
   /**
-   * Validates whether or not the value passed is valid.
+   * Validates whether the value passed is valid.
    *
    * @param value - the value
    * @return <code>null</code> if the value is fine, some string describing the error if there is a problem.
