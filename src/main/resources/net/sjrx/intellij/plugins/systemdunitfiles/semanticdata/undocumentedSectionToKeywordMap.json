@@ -463,6 +463,11 @@
       "unsupported": true,
       "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3608"
     },
+    "OnSuccessJobMode": {
+      "reason": "unsupported",
+      "unsupported": true,
+      "documentationLink": "https://github.com/systemd/systemd/blob/14c811ff4a3025a3ba8b969f7228c05d31eb3796/man/org.freedesktop.systemd1.xml#L1872"
+    },
     "StartLimitInterval": {
       "reason": "moved",
       "replacedWithKey": "StartLimitIntervalSec",
