@@ -1,0 +1,8 @@
+<html>
+<body>
+<p>Validates that directives that invoke executables don't use unsupported shell syntax like redirects.</p>
+<!-- tooltip end -->
+<p>The syntax for directives like <code>ExecStart=</code>,<code>ExecStop=</code>,<code>...</code> is &quot;inspired by shell syntax&quot;, but only
+  a limited set of commands are supported. In particular &quot;<code>&lt;</code>, <code>&lt;&lt;</code>, <code>&gt;</code>, and <code>&gt;&gt;</code>, pipes using <code>|</code>, running programs in the background using <code>&amp;</code>, and <i>other elements of shell syntax are not supported</i>.&quot;
+</body>
+</html>

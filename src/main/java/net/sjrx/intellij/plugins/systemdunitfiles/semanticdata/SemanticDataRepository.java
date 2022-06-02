@@ -13,6 +13,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.BooleanOptionValue;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.DocumentationOptionValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ExecOptionValue;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.KillModeOptionValue;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ModeStringOptionValue;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.NullOptionValue;
@@ -115,6 +116,7 @@ public class SemanticDataRepository {
           new ModeStringOptionValue(),
           new RestartOptionValue(),
           new ServiceTypeOptionValue(),
+          new ExecOptionValue(),
           NULL_VALIDATOR };
 
         for (OptionValueInformation ovi : ovis) {
@@ -190,7 +192,14 @@ public class SemanticDataRepository {
 
     return Collections.unmodifiableSet(keys);
   }
-
+  
+  /**
+   * Returns the documentation url for a section and keyname.
+   *
+   * @param section - section name
+   * @param keyName - key name
+   * @return String or null
+   */
   public String getKeywordDocumentationUrl(String section, String keyName) {
     KeywordData data = this.getKeyValuePairsForSectionFromDocumentation(section).get(keyName);
     if (data != null && data.documentationLink != null) {
