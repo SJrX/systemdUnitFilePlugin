@@ -4,6 +4,6 @@ out/
 /build
 /jflex
 *.iml
-git-dependencies/
 buildSrc/.gradle
 buildSrc/build
+systemd-build/build
