@@ -46,16 +46,9 @@ public class InvalidValueInspection extends LocalInspectionTool {
       if (value == null) {
         return;
       }
-
       String key = property.getKey();
-
       OptionValueInformation ovi = SemanticDataRepository.getInstance().getOptionValidator(section.getSectionName(), key);
-
-      String errorMessage = ovi.getErrorMessage(value);
-
-      if (errorMessage != null) {
-        holder.registerProblem(property.getValueNode().getPsi(), errorMessage, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-      }
+      ovi.generateProblemDescriptors(property, holder);
     }
   }
 }

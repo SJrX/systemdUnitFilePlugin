@@ -5,15 +5,17 @@ Unit File Support for systemd
 
 This plugin adds support for [systemd unit files](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#) to IntelliJ. 
 
-## Features🤞
- * Syntax highlighting for unit files
+## Features
+ * Syntax highlighting for unit files.
  * Auto-completion for:
    * Option names in a section
    * Boolean options
    * Octal options
-   * Some other common options (**KillMode=**, **Type=**, **Restart=**)
+   * Some other common options (e.g., **KillMode=**, **Type=**, **Restart=**)
+   * Unit names in dependencies (e.g., **WantedBy=**, **Requires**)
  * Inspections
-   * Invalid values for boolean options
+   * Invalid value for argument.
+   * Shell syntax detected in **Exec___=** call.
    * Unknown option in section (ignoring those starting with **X-**)
  * Annotations
    * When the section name is invalid.
@@ -51,7 +53,7 @@ Acknowledgements
 ----------------
 * The documentation is extracted from the systemd source code.
 * A number of users of the [IntelliJ Plugin Developers Slack](https://intellij-support.jetbrains.com/hc/en-us/community/posts/360006494439--ANN-JetBrains-Slack-for-plugin-developers) provided a lot of useful advice.
-* As with every project I work on the help and patient tutelage of members of [##java on Freenode](https://javachannel.org/).
+* As with every project I work on the help and patient tutelage of members of [##java on Libera.Chat](https://javachannel.org/).
 
 License
 -----------------

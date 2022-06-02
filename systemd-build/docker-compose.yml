@@ -1,7 +1,12 @@
 version : "3.9"
 services:
-  builder:
+  systemd-builder:
     build:
-      dockerfile: Dockerfile
+      dockerfile: Systemd-Builder.Dockerfile
     volumes:
       - ./build:/mount/
+  ubuntu-units-builder:
+      build:
+        dockerfile: Ubuntu-Units.Dockerfile
+      volumes:
+        - ./build:/mount/

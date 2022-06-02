@@ -1,6 +1,8 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues;
 
 import com.google.common.collect.ImmutableSet;
+import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -18,7 +20,7 @@ public class BooleanOptionValue implements OptionValueInformation {
   private static final Set<String> autoCompleteValues = ImmutableSet.of("on", "off", "yes", "no", "true", "false");
 
   @Override
-  public Set<String> getAutoCompleteOptions() {
+  public Set<String> getAutoCompleteOptions(@NotNull Project project) {
     return autoCompleteValues;
   }
   

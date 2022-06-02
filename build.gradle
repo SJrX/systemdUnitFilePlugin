@@ -51,6 +51,8 @@ patchPluginXml {
     <ul>
       <li>Update build to be based off of systemd v251 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/131">#131</a></li>
       <li>Fix NPE in some cases when getting doc link <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/114">#114</a></li>
+      <li>Validation warning when shell meta-characters are in an Exec directive <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/60">#60</a></li>
+      <li>Add support for auto-completion / validation of Unit options <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/102">#102</a></li>
     </ul>
   <h3>v0.3.6</h3>
     <ul>
@@ -243,8 +245,17 @@ if (!(project.file("./systemd-build/build/man").exists())) {
   generateDataFromManPages.dependsOn += composeUp
 }
 
+task generateUnitAutoCompleteData(type: Copy) {
+  from "./systemd-build/build/ubuntu-units.txt"
+  into "${sourceSets.main.output.resourcesDir.getAbsolutePath()}/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/"
+}
 
 
+if (!(project.file("./systemd-build/build/ubuntu-units.txt").exists())) {
+  println("Could not find ubuntu units")
+  generateUnitAutoCompleteData.dependsOn += composeUp
+}
 
 jar.dependsOn += generateDataFromManPages
 jar.dependsOn += generateOptionValidator
+jar.dependsOn += generateUnitAutoCompleteData
