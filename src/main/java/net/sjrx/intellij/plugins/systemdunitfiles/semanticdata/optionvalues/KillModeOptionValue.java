@@ -1,6 +1,8 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues;
 
 import com.google.common.collect.ImmutableSet;
+import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -16,7 +18,7 @@ public class KillModeOptionValue implements OptionValueInformation {
   private static final Set<String> validOptions = ImmutableSet.of("control-group", "process", "mixed", "none");
   
   @Override
-  public Set<String> getAutoCompleteOptions() {
+  public Set<String> getAutoCompleteOptions(@NotNull Project project) {
     return validOptions;
   }
   

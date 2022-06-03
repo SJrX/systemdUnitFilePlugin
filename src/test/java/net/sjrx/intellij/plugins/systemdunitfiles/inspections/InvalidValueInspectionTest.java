@@ -394,8 +394,6 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     // Exercise SUT
     setupFileInEditor("file.service", file);
     enableInspection(InvalidValueInspection.class);
-    
-    // Verification
     List<HighlightInfo> highlights = myFixture.doHighlighting();
     
     
@@ -419,5 +417,80 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     PsiElement highlightElement = myFixture.getFile().findElementAt(info.getStartOffset());
     assertNotNull(highlightElement);
     assertEquals("remote", highlightElement.getText());
+  }
+  
+  public void testInvalidNameInAfterTriggersWarning() {
+    // Fixture Setup
+    String file = "[Unit]\n"
+                  + "After=mysql\n";
+    
+    // Execute SUT
+    setupFileInEditor("file.service", file);
+    enableInspection(InvalidValueInspection.class);
+    List<HighlightInfo> highlights = myFixture.doHighlighting();
+    
+    // Verification
+    assertSize(1, highlights);
+    HighlightInfo info = highlights.get(0);
+    
+    assertStringContains("Invalid unit name detected,", info.getDescription());
+  }
+  
+  public void testInvalidUnitTypeInWantsTriggersWarning() {
+    // Fixture Setup
+    String file = "[Unit]\n"
+                  + "Wants=mysql.foo\n";
+    
+    // Execute SUT
+    setupFileInEditor("file.service", file);
+    enableInspection(InvalidValueInspection.class);
+    List<HighlightInfo> highlights = myFixture.doHighlighting();
+    
+    // Verification
+    assertSize(1, highlights);
+    HighlightInfo info = highlights.get(0);
+    
+    assertStringContains("Unit type foo", info.getDescription());
+    assertEquals("foo", info.getText());
+  }
+  
+  public void testMultipleWarningsAreGeneratedFromInvalidTypesAndNamesWarning() {
+    // Fixture Setup
+    String file = "[Unit]\n"
+                  + "Wants=mysql postgres.service mongo.db  neo4j.graph  cassandra    \n"
+                  + "Wants=\n"
+                  + "Wants=    redis.cache  networking.target \n";
+                  
+    
+    // Execute SUT
+    setupFileInEditor("file.service", file);
+    enableInspection(InvalidValueInspection.class);
+    List<HighlightInfo> highlights = myFixture.doHighlighting();
+    
+    // Verification
+    assertSize(5, highlights);
+  
+    HighlightInfo mysqlErrorMissingType = highlights.get(0);
+    assertStringContains("Invalid unit name detected", mysqlErrorMissingType.getDescription());
+    assertEquals("mysql", mysqlErrorMissingType.getText());
+    
+    
+    HighlightInfo mongoInvalidType = highlights.get(1);
+    assertStringContains("Unit type db", mongoInvalidType.getDescription());
+    assertEquals("db", mongoInvalidType.getText());
+    
+    HighlightInfo neo4jInvalidType = highlights.get(2);
+    assertStringContains("Unit type graph", neo4jInvalidType.getDescription());
+    assertEquals("graph", neo4jInvalidType.getText());
+  
+    HighlightInfo cassandraMissingType = highlights.get(3);
+    assertStringContains("Invalid unit name detected", cassandraMissingType.getDescription());
+    assertEquals("cassandra", cassandraMissingType.getText());
+    
+    
+    HighlightInfo redisInvalidType = highlights.get(4);
+    assertStringContains("Unit type cache", redisInvalidType.getDescription());
+    assertEquals("cache", redisInvalidType.getText());
+    
   }
 }

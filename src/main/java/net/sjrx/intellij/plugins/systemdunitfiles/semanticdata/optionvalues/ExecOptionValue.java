@@ -1,5 +1,8 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues;
 
+import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.Set;
 
@@ -12,7 +15,7 @@ import java.util.Set;
 public class ExecOptionValue implements OptionValueInformation {
   
   @Override
-  public Set<String> getAutoCompleteOptions() {
+  public Set<String> getAutoCompleteOptions(@NotNull Project project) {
     return Collections.emptySet();
   }
   

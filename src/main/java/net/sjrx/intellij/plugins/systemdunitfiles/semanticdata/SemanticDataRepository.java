@@ -20,6 +20,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Null
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.OptionValueInformation;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.RestartOptionValue;
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ServiceTypeOptionValue;
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.UnitDependencyOptionValue;
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
@@ -41,7 +42,7 @@ public class SemanticDataRepository {
 
 
   private static final Logger LOG = Logger.getInstance(SemanticDataRepository.class);
-  private static final String SEMANTIC_DATA_ROOT = "net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/";
+  public static final String SEMANTIC_DATA_ROOT = "net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/";
 
   private static final String GPERF_REGEX = "^(?<Section>[A-Z][a-z]+).(?<Key>\\w+),\\s*(?<Validator>\\w+),\\s*(?<MysteryColumn>\\w+)\\s*,.+$";
   private static final Pattern LINE_MATCHER = Pattern.compile(GPERF_REGEX);
@@ -117,6 +118,7 @@ public class SemanticDataRepository {
           new RestartOptionValue(),
           new ServiceTypeOptionValue(),
           new ExecOptionValue(),
+          new UnitDependencyOptionValue(),
           NULL_VALIDATOR };
 
         for (OptionValueInformation ovi : ovis) {
@@ -248,8 +250,8 @@ public class SemanticDataRepository {
   
     return Objects.requireNonNullElse(sectionData, Collections.emptyMap());
   }
-
-  public Map<String, KeywordData> getKeyValuePairsForSectionFromUndocumentedInformation(String section) {
+  
+  Map<String, KeywordData> getKeyValuePairsForSectionFromUndocumentedInformation(String section) {
     Map<String, KeywordData> sectionData = undocumentedOptionInfo.get(section);
   
     return Objects.requireNonNullElse(sectionData, Collections.emptyMap());
@@ -380,7 +382,14 @@ public class SemanticDataRepository {
     }
     return null;
   }
-
+  
+  /**
+   * Returns the reason for a deprecation for a specific section / keyword.
+   * @param sectionName section name
+   * @param keyName key name
+   * @param html whether the result should be in html
+   * @return deprecation reason
+   */
   public String getDeprecationReason(String sectionName, String keyName, boolean html) {
     KeywordData options = this.getKeyValuePairsForSectionFromUndocumentedInformation(sectionName).get(keyName);
 
@@ -449,6 +458,13 @@ public class SemanticDataRepository {
    */
   public OptionValueInformation getOptionValidator(String sectionName, String keyName) {
     String validatorName = sectionToKeyAndValidatorMap.getOrDefault(sectionName, Collections.emptyMap()).get(keyName);
+    
+    if (sectionName.trim().equals("Install")) {
+      if (keyName.trim().equals("WantedBy") || keyName.trim().equals("Also") || keyName.trim().equals("RequiredBy")) {
+        // Override the validators for these cases since there is no validation done now, but really they should be units.
+        validatorName = "config_parse_unit_deps";
+      }
+    }
     
     return validatorMap.getOrDefault(validatorName, NULL_VALIDATOR);
   }

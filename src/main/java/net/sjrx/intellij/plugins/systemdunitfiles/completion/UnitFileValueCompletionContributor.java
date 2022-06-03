@@ -1,6 +1,10 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.completion;
 
-import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.completion.CompletionContributor;
+import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionProvider;
+import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
@@ -14,9 +18,12 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepos
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.OptionValueInformation;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.stream.Collectors;
+
 public class UnitFileValueCompletionContributor extends CompletionContributor {
   
-
+  
   /**
    * Default constructor.
    */
@@ -26,6 +33,7 @@ public class UnitFileValueCompletionContributor extends CompletionContributor {
      * which would be compatible with CONTINUING_VALUES. The only case that comes to mind that is close is Documentation= could support
      * auto completing the prefix http:// https://, etc... and that could support a case like:
      *
+     *
      * Documentation=htt<COMPLETE_HERE>    \
      *  man:hello
      *
@@ -34,7 +42,7 @@ public class UnitFileValueCompletionContributor extends CompletionContributor {
     extend(CompletionType.BASIC,
       PlatformPatterns.psiElement(UnitFileElementTypeHolder.COMPLETED_VALUE).withLanguage(UnitFileLanguage.INSTANCE),
       new CompletionProvider<CompletionParameters>() {
-  
+        
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters,
                                       @NotNull ProcessingContext context,
@@ -49,15 +57,16 @@ public class UnitFileValueCompletionContributor extends CompletionContributor {
 
           String sectionName = section.getSectionName();
           String keyName = property.getKey();
-
+          
           SemanticDataRepository sdr = SemanticDataRepository.getInstance();
           OptionValueInformation validator = sdr.getOptionValidator(sectionName, keyName);
-          for (String value : validator.getAutoCompleteOptions()) {
-            LookupElementBuilder builder =
-                    LookupElementBuilder.create(value);
 
-            resultSet.addElement(builder);
-          }
+          resultSet.addAllElements(
+            validator.getAutoCompleteOptions(property.getProject())
+              .stream()
+              .map(LookupElementBuilder::create)
+              .collect(Collectors.toCollection(HashSet::new))
+          );
         }
       }
     );

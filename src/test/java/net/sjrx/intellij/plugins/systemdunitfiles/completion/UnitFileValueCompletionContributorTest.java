@@ -94,4 +94,19 @@ public class UnitFileValueCompletionContributorTest extends AbstractUnitFileTest
     assertContainsElements(completions, "forking", "oneshot", "notify");
   }
   
+  public void testCompletionOfUnitDependencyIncludesUnitsInFilename() {
+    // Fixture Setup
+    String file = "[Unit]\n"
+                  + "After=file.servi" + COMPLETION_POSITION + "\n";
+    
+    
+    myFixture.configureByText("file.service", file);
+    
+    // Execute SUT
+    List<String> completions = getBasicCompletionResultStrings();
+    
+    // Verification
+    assertContainsElements(completions, "file.service");
+  }
+  
 }

@@ -1,6 +1,12 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.completion;
 
-import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.completion.CompletionContributor;
+import com.intellij.codeInsight.completion.CompletionParameters;
+import com.intellij.codeInsight.completion.CompletionProvider;
+import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.completion.InsertHandler;
+import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.editor.EditorModificationUtil;
@@ -24,45 +30,44 @@ import java.util.stream.Collectors;
  * Completion Contributor for keywords in a section.
  */
 public class UnitFileKeyCompletionContributor extends CompletionContributor {
-
-
-
+  
+  
   /**
    * Default constructor.
    */
   public UnitFileKeyCompletionContributor() {
     extend(CompletionType.BASIC, PlatformPatterns.psiElement(UnitFileElementTypeHolder.KEY).withLanguage(UnitFileLanguage.INSTANCE),
-      new CompletionProvider<CompletionParameters>() {
-
+      new CompletionProvider<>() {
+        
         @Override
         protected void addCompletions(@NotNull CompletionParameters parameters,
                                       @NotNull ProcessingContext context,
                                       @NotNull CompletionResultSet resultSet) {
           UnitFileSectionGroups section = PsiTreeUtil.getParentOfType(parameters.getOriginalPosition(), UnitFileSectionGroups.class);
-          if (section == null ) section = PsiTreeUtil.getParentOfType(parameters.getPosition(), UnitFileSectionGroups.class);
+          if (section == null) section = PsiTreeUtil.getParentOfType(parameters.getPosition(), UnitFileSectionGroups.class);
           if (section == null) return;
-
+          
           String sectionName = section.getSectionName();
           Set<String> definedKeys = section.getPropertyList().stream().map(UnitFilePropertyType::getKey).collect(Collectors.toSet());
-
+          
           SemanticDataRepository sdr = SemanticDataRepository.getInstance();
           for (String keyword : sdr.getDocumentedKeywordsInSection(sectionName)) {
             if (definedKeys.contains(keyword)) continue;
             boolean deprecated = sdr.isDeprecated(sectionName, keyword);
             LookupElementBuilder builder = LookupElementBuilder
-                    .create(keyword)
-                    .withInsertHandler(new KeyInsertHandler())
-                    .withPresentableText(keyword)
-                    .withStrikeoutness(deprecated)
-                    .withIcon(UnitFileIcon.FILE);
-
+                                             .create(keyword)
+                                             .withInsertHandler(new KeyInsertHandler())
+                                             .withPresentableText(keyword)
+                                             .withStrikeoutness(deprecated)
+                                             .withIcon(UnitFileIcon.FILE);
+            
             resultSet.addElement(builder);
           }
         }
       }
     );
   }
-
+  
   private static class KeyInsertHandler implements InsertHandler<LookupElement> {
     @Override
     public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
@@ -74,7 +79,7 @@ public class UnitFileKeyCompletionContributor extends CompletionContributor {
           return;
         }
       }
-
+      
       if (StringUtil.containsChar(" =", context.getCompletionChar())) {
         context.setAddCompletionChar(false);
       }
