@@ -491,6 +491,58 @@ public class InvalidValueInspectionTest extends AbstractUnitFileTest {
     HighlightInfo redisInvalidType = highlights.get(4);
     assertStringContains("Unit type cache", redisInvalidType.getDescription());
     assertEquals("cache", redisInvalidType.getText());
+  }
+  
+  public void testWeakWarningWhenUsingNonAbsolutePathForExecOptions() {
+    // Fixture Setup
+    String file = "[Service]\n"
+                  + "ExecStartPre=docker-compose\n";
+  
+  
+    // Execute SUT
+    setupFileInEditor("file.service", file);
+    enableInspection(InvalidValueInspection.class);
+    List<HighlightInfo> highlights = myFixture.doHighlighting();
+  
+    // Verification
+    assertSize(1, highlights);
+    HighlightInfo info = highlights.get(0);
     
+    assertStringContains("an absolute path", info.getDescription());
+    assertEquals("docker-compose", info.getText());
+  }
+  
+  public void testWeakWarningWhenUsingNonAbsolutePathForExecOptionsAndWhitespaceInFront() {
+    // Fixture Setup
+    String file = "[Service]\n"
+                  + "ExecStopPost=             docker-compose\n";
+    
+    
+    // Execute SUT
+    setupFileInEditor("file.service", file);
+    enableInspection(InvalidValueInspection.class);
+    List<HighlightInfo> highlights = myFixture.doHighlighting();
+    
+    // Verification
+    assertSize(1, highlights);
+    HighlightInfo info = highlights.get(0);
+    
+    assertStringContains("an absolute path", info.getDescription());
+    assertEquals("docker-compose", info.getText());
+  }
+  
+  public void testNoWarningWithAbsolutePathWithWhitespace() {
+    // Fixture Setup
+    String file = "[Service]\n"
+                  + "ExecStopPost=             /sbin/docker-compose\n";
+    
+    
+    // Execute SUT
+    setupFileInEditor("file.service", file);
+    enableInspection(InvalidValueInspection.class);
+    List<HighlightInfo> highlights = myFixture.doHighlighting();
+    
+    // Verification
+    assertSize(0, highlights);
   }
 }
