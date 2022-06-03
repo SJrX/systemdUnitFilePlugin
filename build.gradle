@@ -53,6 +53,8 @@ patchPluginXml {
       <li>Fix NPE in some cases when getting doc link <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/114">#114</a></li>
       <li>Validation warning when shell meta-characters are in an Exec directive <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/60">#60</a></li>
       <li>Add support for auto-completion / validation of Unit options <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/102">#102</a></li>
+      <li>Add weak warning when an absolute path isn't used on an Exec directive<a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/133">#133</a></li>
+      <li>Fix missing documentation for Condition= and Assert directives <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/96">#96</a></li>
     </ul>
   <h3>v0.3.6</h3>
     <ul>
