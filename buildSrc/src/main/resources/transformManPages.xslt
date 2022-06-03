@@ -69,8 +69,32 @@
         </parameter>
       </xsl:for-each>
     </xsl:for-each>
+    <!-- For each varlist in source that is not environment variables (see comment in GenerateDataFromManPages.groovy) -->
+    <xsl:for-each select="/refentry/refsect1/refsect2/variablelist[not(contains(@class,'environment-variables'))]/varlistentry">
+      <!-- for each term/varname underneath -->
+      <xsl:for-each select="term/varname">
+        <parameter>
+          <name><xsl:value-of select="."/></name>
+
+          <!-- We need to keep track of the section so we can know it is-->
+
+          <section><xsl:value-of select="../../../../title[text()]"/></section>
+
+          <description>
+            <!-- For each paragraph apply templates -->
+            <xsl:for-each select="../../listitem/para">
+              <paragraph>
+                <xsl:apply-templates/>
+              </paragraph>
+            </xsl:for-each>
+          </description>
+        </parameter>
+      </xsl:for-each>
+    </xsl:for-each>
     </parameterlist>
   </xsl:template>
+
+
 
   <!-- Not sure if this matters anymore :( -->
   <xsl:template match="listitem/para">
