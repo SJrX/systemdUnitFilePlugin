@@ -25,7 +25,7 @@ dockerCompose {
 }
 
 group 'net.sjrx.intellij.plugins'
-version '0.3.7'
+version '0.3.8'
 
 sourceCompatibility = 1.11
 
@@ -47,6 +47,10 @@ intellij {
 
 patchPluginXml {
   changeNotes = """
+  <h3>v0.3.8</h3>
+    <ul>
+      <li>Fix weak warning for absolute paths when using allowed prefix <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/141">#141</a></li>
+    </ul>
   <h3>v0.3.7</h3>
     <ul>
       <li>Update build to be based off of systemd v251 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/131">#131</a></li>
