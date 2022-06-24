@@ -20,8 +20,12 @@ import java.util.regex.Pattern;
  * kind of hacky I know.
  */
 public class ExecOptionValue implements OptionValueInformation {
+
+  // Used to check whether or not there is a problem.
+  private static final Pattern ABSOLUTE_PATH_REGEX = Pattern.compile("^\\s*(?:[+@:!-]|!!)*\\s*[\\/]");
   
-  private static final Pattern RELATIVE_PATH_REGEX = Pattern.compile("^\\s*([^\\/\\s]\\S*)\\s*");
+  // Used to determine what to highlight (we want to avoid highlighting valid prefixes).
+  private static final Pattern RELATIVE_PATH_REGEX = Pattern.compile("^\\s*(?:[+@:!-]+)?([^\\/\\s]\\S*)\\s*");
   
   
   @Override
@@ -37,6 +41,12 @@ public class ExecOptionValue implements OptionValueInformation {
   public void generateProblemDescriptors(@NotNull UnitFilePropertyType property, @NotNull ProblemsHolder holder) {
   
     String values = property.getValueNode().getText();
+    
+    Matcher absMatcher = ABSOLUTE_PATH_REGEX.matcher(values);
+    
+    if (absMatcher.find()) {
+      return;
+    }
     
     Matcher m = RELATIVE_PATH_REGEX.matcher(values);
     
