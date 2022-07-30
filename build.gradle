@@ -25,7 +25,7 @@ dockerCompose {
 }
 
 group 'net.sjrx.intellij.plugins'
-version '0.3.8'
+version '0.3.9'
 
 sourceCompatibility = 1.11
 
@@ -34,9 +34,9 @@ repositories {
 }
 
 dependencies {
-  compile 'commons-io:commons-io:2.6'
-  compile 'com.google.guava:guava:26.0-jre'
-  testCompile group: 'junit', name: 'junit', version: '4.12'
+  compile 'commons-io:commons-io:2.7'
+  compile 'com.google.guava:guava:31.1-jre'
+  testCompile group: 'junit', name: 'junit', version: '4.13.1'
 }
 
 intellij {
@@ -47,6 +47,10 @@ intellij {
 
 patchPluginXml {
   changeNotes = """
+  <h3>v0.3.9</h3>
+    <ul>
+      <li>Add support for IntelliJ 2022.2 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/143">#143</a></li>
+    </ul>
   <h3>v0.3.8</h3>
     <ul>
       <li>Fix weak warning for absolute paths when using allowed prefix <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/141">#141</a></li>
@@ -145,7 +149,7 @@ patchPluginXml {
   </ul>
 """
   sinceBuild = '212.0'
-  untilBuild = '222.0'
+  untilBuild = '223.0'
 }
 
 // Add generated sources root
@@ -265,3 +269,4 @@ if (!(project.file("./systemd-build/build/ubuntu-units.txt").exists())) {
 jar.dependsOn += generateDataFromManPages
 jar.dependsOn += generateOptionValidator
 jar.dependsOn += generateUnitAutoCompleteData
+
