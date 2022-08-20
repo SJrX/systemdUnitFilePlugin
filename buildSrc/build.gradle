@@ -1,8 +1,14 @@
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(11)
+  }
+}
+
 repositories {
   mavenCentral()
 }
 
 dependencies {
-  compile 'commons-io:commons-io:2.6'
-  testCompile 'junit:junit:4.12'
+  implementation('commons-io:commons-io:2.6')
+  testImplementation('junit:junit:4.12')
 }

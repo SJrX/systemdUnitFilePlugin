@@ -3,6 +3,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.Internal
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -53,6 +54,7 @@ class GenerateDataFromManPages extends DefaultTask {
   /**
    * Map that stores for each file name, the name of an option attribute
    */
+  @Internal
   def fileAndSectionTitleToSectionName = [
     'systemd.unit.xml'            :
       ['sections':
@@ -120,10 +122,13 @@ class GenerateDataFromManPages extends DefaultTask {
       ]
   ]
 
+  @Internal
   Map<String /* Section */, Map<String /*Keyword*/, Map<String /*Attribute*/, String /*Value*/>>> sectionToKeyWordMapFromDoc = [:]
 
+  @Internal
   final XPath xpath
 
+  @Internal
   final DocumentBuilderFactory dbf
 
   public GenerateDataFromManPages() {
