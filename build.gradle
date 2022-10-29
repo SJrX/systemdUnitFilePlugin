@@ -4,7 +4,7 @@ import org.jetbrains.grammarkit.tasks.GenerateParser
 
 plugins {
   id 'java'
-  id "org.jetbrains.intellij" version "1.7.0"
+  id "org.jetbrains.intellij" version "1.8.0"
   id "org.jetbrains.grammarkit" version "2021.1.3"
   id 'checkstyle'
   id "com.avast.gradle.docker-compose" version "0.16.4"
