@@ -1,11 +1,11 @@
 import org.gradle.internal.os.OperatingSystem
-import org.jetbrains.grammarkit.tasks.GenerateLexer
-import org.jetbrains.grammarkit.tasks.GenerateParser
+import org.jetbrains.grammarkit.tasks.GenerateLexerTask
+import org.jetbrains.grammarkit.tasks.GenerateParserTask
 
 plugins {
   id 'java'
   id "org.jetbrains.intellij" version "1.9.0"
-  id "org.jetbrains.grammarkit" version "2021.1.3"
+  id "org.jetbrains.grammarkit" version "2021.2.2"
   id 'checkstyle'
   id "com.avast.gradle.docker-compose" version "0.16.4"
 }
@@ -193,7 +193,7 @@ task generateDataFromManPages(type: GenerateDataFromManPages) {
 apply plugin: 'org.jetbrains.grammarkit'
 // import is optional to make task creation easier
 
-task generateLexer(type: GenerateLexer) {
+task generateLexerTask(type: GenerateLexerTask) {
   description "Generate the lexer necessary for parsing unit files using JFlex"
   group "generation"
 
@@ -203,7 +203,7 @@ task generateLexer(type: GenerateLexer) {
   purgeOldFiles = true
 }
 
-task generateParser(type: GenerateParser) {
+task generateParserTask(type: GenerateParserTask) {
   description "Generate the grammar necessary for parsing unit files using GrammarKit"
   group "generation"
   source = "src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/grammar/SystemdUnitFile.bnf"
@@ -217,7 +217,7 @@ task generateParser(type: GenerateParser) {
 
   purgeOldFiles = true
 
-  dependsOn generateLexer
+  dependsOn generateLexerTask
 }
 
 task generateOptionValidator(type: Copy) {
@@ -235,8 +235,8 @@ if (OperatingSystem.current().isLinux()) {
   runIde.environment("_JAVA_OPTIONS", "-Dawt.useSystemAAFontSettings=lcd -Dsun.java2d.renderer=sun.java2d.marlin.MarlinRenderingEngine")
 }
 
-generateLexer.mustRunAfter(compileJava)
-//classes.dependsOn += generateParser
+generateLexerTask.mustRunAfter(compileJava)
+//classes.dependsOn += generateParserTask
 classes.dependsOn += generateOptionValidator
 
 if (!(project.file("./systemd-build/build/load-fragment-gperf.gperf").exists())) {
