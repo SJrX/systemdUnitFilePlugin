@@ -43,7 +43,7 @@ patchPluginXml {
   changeNotes = """
   <h3>v0.3.10</h3>
     <ul>
-      <li>Add support for IntelliJ 2022.3 and Update Systemd Meta Data for v252 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/150">#150</a></li>
+      <li>Add support for IntelliJ 2022.3 and Update systemd data for v252 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/150">#150</a></li>
     </ul>
   <h3>v0.3.9</h3>
     <ul>
