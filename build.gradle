@@ -15,7 +15,7 @@ dockerCompose {
 }
 
 group 'net.sjrx.intellij.plugins'
-version '0.3.9'
+version '0.3.10'
 
 java {
   toolchain {
