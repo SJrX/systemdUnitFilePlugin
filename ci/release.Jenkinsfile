@@ -12,7 +12,7 @@ pipeline {
   agent {
     kubernetes {
       //cloud 'kubernetes'
-      defaultContainer 'ci-utils'
+      defaultContainer 'build'
 
       // language=yaml
       yaml """
@@ -25,8 +25,8 @@ pipeline {
             # Custom set env var
             - "${env.JENKINS_HOSTNAME}"
           containers:
-          - name: ci-utils
-            image: "${env.DOCKER_REGISTRY_PREFIX}/ci-utils:latest"
+          - name: build
+            image: "${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-build-environment:467822542980fb55dd01fd916fe729b3f4e0decd"
             imagePullPolicy: Always
             command:
             - sleep
@@ -34,9 +34,7 @@ pipeline {
             - 99d
             resources:
               requests:
-                memory: "128Mi"
-              limits:
-                memory: "128Mi"
+                memory: "4096Mi"
             volumeMounts:
               - name: github-ssh-host-key
                 mountPath:  /github-ssh-host-key
@@ -61,11 +59,11 @@ pipeline {
     }
   }
   stages {
-    stage('Update Major Version') {
+    stage('Build') {
       steps {
         script {
-          currentBuild.description = "Update Major Version to $env.BRANCH_NAME"
-          container('ci-utils') {
+          currentBuild.description = "Building release"
+          container('build') {
             withCredentials([sshUserPrivateKey(credentialsId: 'ci-ssh-key', keyFileVariable: 'KEYFILE')]) {
 
               sh(script:
@@ -82,23 +80,10 @@ pipeline {
                   git -C systemdUnitFilePlugin checkout \$BRANCH_NAME
                   git -C systemdUnitFilePlugin reset --hard origin/\$BRANCH_NAME
                   
+                  cd systemdUnitFilePlugin
                   
-
-                  echo "#Warning this file is AUTO-generated and overridden" > systemdUnitFilePlugin/gradle.properties
-
-                  echo \$BRANCH_NAME | sed -E "s/([0-9][0-9])([0-9]).x/intellijVersion=20\\1.\\2/" >> systemdUnitFilePlugin/gradle.properties
-                  echo \$BRANCH_NAME | sed -E "s/([0-9][0-9])([0-9]).x/sinceVersion=\\1\\2.0/" >> systemdUnitFilePlugin/gradle.properties
-                  echo \$BRANCH_NAME | sed -E "s/([0-9][0-9])([0-9]).x/untilVersion=270.0/" >> systemdUnitFilePlugin/gradle.properties
-                  echo \$BRANCH_NAME | sed -E "s/([0-9][0-9])([0-9]).x/pluginMajorVersion=\\1\\2/" >> systemdUnitFilePlugin/gradle.properties
-
-                  git -C systemdUnitFilePlugin add gradle.properties
-                  cat systemdUnitFilePlugin/gradle.properties
-                  git -C systemdUnitFilePlugin diff
-                  git -C systemdUnitFilePlugin status
-
-                  git -C systemdUnitFilePlugin commit -m "Update gradle.properties for version \\$BRANCH_NAME (Run ${env.BUILD_NUMBER})" || true
-                  git -C systemdUnitFilePlugin push origin -f || true
-            """)
+                  ./gradlew buildPlugin
+                  """)
             }
           }
         }

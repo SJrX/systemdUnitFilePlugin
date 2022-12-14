@@ -2,6 +2,17 @@ import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.grammarkit.tasks.GenerateLexerTask
 import org.jetbrains.grammarkit.tasks.GenerateParserTask
 
+
+def getVersionNumber() {
+  def major = pluginMajorVersion
+
+  def minor = (new Date()).format('yyMMdd', TimeZone.getTimeZone("America/Vancouver"))
+
+  def build = Integer.valueOf(System.env.getOrDefault('BUILD_NUMBER', "3"))
+
+  return "$major.$minor.$build"
+}
+
 plugins {
   id 'java'
   id "org.jetbrains.intellij" version "1.9.0"
@@ -15,7 +26,7 @@ dockerCompose {
 }
 
 group 'net.sjrx.intellij.plugins'
-version '0.3.10'
+version getVersionNumber()
 
 java {
   toolchain {
@@ -35,7 +46,7 @@ dependencies {
 
 intellij {
   //version 'LATEST-EAP-SNAPSHOT'
-  version = '2022.2'
+  version = intellijVersion
 }
 
 
@@ -146,8 +157,8 @@ patchPluginXml {
     <li>Initial Release.</li>
   </ul>
 """
-  sinceBuild = '222.0'
-  untilBuild = '231.0'
+  sinceBuild = sinceVersion
+  untilBuild = untilVersion
 }
 
 // Add generated sources root
