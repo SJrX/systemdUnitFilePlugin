@@ -69,7 +69,8 @@ pipeline {
             withCredentials([sshUserPrivateKey(credentialsId: 'ci-ssh-key', keyFileVariable: 'KEYFILE')]) {
 
               sh(script:
-                   """
+                   """#!/usr/bin/env bash
+
                   mkdir -p /root/.ssh/
 
                   cp /github-ssh-host-key/* /root/.ssh/
@@ -93,11 +94,16 @@ pipeline {
 
                   git -C systemdUnitFilePlugin add gradle.properties
                   cat systemdUnitFilePlugin/gradle.properties
-                  git -C systemdUnitFilePlugin diff
-                  git -C systemdUnitFilePlugin status
 
-                  git -C systemdUnitFilePlugin commit -m "Update gradle.properties for version \\$BRANCH_NAME (Run ${env.BUILD_NUMBER})" || true
-                  git -C systemdUnitFilePlugin push origin -f || true
+                  if [[ `git -C systemdUnitFilePlugin status --porcelain` ]]; then
+                    # Changes
+                    git -C systemdUnitFilePlugin diff
+                    git -C systemdUnitFilePlugin commit -m "Update gradle.properties for version \$BRANCH_NAME (Run ${env.BUILD_NUMBER})"
+                    git -C systemdUnitFilePlugin push origin -f
+                  else
+                    # No changes
+                    echo "No changes"
+                  fi
             """)
             }
           }

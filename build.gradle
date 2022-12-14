@@ -15,7 +15,7 @@ def getVersionNumber() {
 
 plugins {
   id 'java'
-  id "org.jetbrains.intellij" version "1.9.0"
+  id "org.jetbrains.intellij" version "1.10.1"
   id "org.jetbrains.grammarkit" version "2021.2.2"
   id 'checkstyle'
   id "com.avast.gradle.docker-compose" version "0.16.4"
@@ -278,4 +278,5 @@ if (!(project.file("./systemd-build/build/ubuntu-units.txt").exists())) {
 jar.dependsOn += generateDataFromManPages
 jar.dependsOn += generateOptionValidator
 jar.dependsOn += generateUnitAutoCompleteData
+
 

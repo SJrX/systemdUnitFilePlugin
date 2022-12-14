@@ -66,7 +66,7 @@ public class UnitFileLexerTest extends LexerTestCase {
             + "# a comment\n"
             + "\n"
             + "[Section B]\n"
-            + "Setting=\"something\" \"some thing\" \"…\"\n"
+            + "Setting=\"something\" \"some thing\" \".\"\n"
             + "KeyTwo=value 2 \\\n"
             + "       value 2 continued\n"
             + "\n"
@@ -93,7 +93,7 @@ public class UnitFileLexerTest extends LexerTestCase {
                     "WHITE_SPACE ('\\n')\n" +
                     "KEY ('Setting')\n" +
                     "SEPARATOR ('=')\n" +
-                    "COMPLETED_VALUE ('\"something\" \"some thing\" \"…\"')\n" +
+                    "COMPLETED_VALUE ('\"something\" \"some thing\" \".\"')\n" +
                     "WHITE_SPACE ('\\n')\n" +
                     "KEY ('KeyTwo')\n" +
                     "SEPARATOR ('=')\n" +
