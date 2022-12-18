@@ -84,12 +84,12 @@ public class UnitFileLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\2\0\2\1\1\2\2\3\1\2\2\4\1\5\1\6"+
-    "\1\3\1\4\1\7\1\10\1\1\2\6\1\1\1\11"+
-    "\1\3\1\5\1\0\3\12\1\5\1\13\2\12\1\13";
+    "\2\0\2\1\1\2\2\3\1\4\2\5\1\6\1\7"+
+    "\1\3\1\10\1\11\1\12\1\1\2\7\1\1\1\13"+
+    "\1\3\1\6\1\0\3\4\1\6\1\10\1\4";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[32];
+    int [] result = new int[30];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -117,10 +117,10 @@ public class UnitFileLexer implements FlexLexer {
     "\0\0\0\14\0\30\0\44\0\60\0\74\0\110\0\124"+
     "\0\140\0\154\0\170\0\204\0\204\0\220\0\140\0\234"+
     "\0\250\0\264\0\140\0\300\0\250\0\314\0\330\0\154"+
-    "\0\344\0\360\0\374\0\u0108\0\u0114\0\60\0\140\0\140";
+    "\0\344\0\60\0\360\0\374\0\140\0\140";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[32];
+    int [] result = new int[30];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -149,23 +149,21 @@ public class UnitFileLexer implements FlexLexer {
     "\1\25\1\24\2\21\1\11\2\26\2\24\3\21\1\25"+
     "\1\24\1\27\3\5\3\0\2\5\1\0\1\30\1\0"+
     "\3\5\1\6\3\7\2\5\1\0\1\30\1\7\1\5"+
-    "\2\0\4\7\4\0\1\7\1\0\1\31\2\5\1\0"+
-    "\1\32\1\0\1\31\1\5\1\32\1\33\1\32\1\31"+
+    "\2\0\4\7\4\0\1\7\1\0\1\10\2\5\1\0"+
+    "\1\31\1\0\1\10\1\32\1\31\1\33\1\31\1\10"+
     "\26\0\1\5\1\0\1\13\2\5\1\0\1\27\1\0"+
     "\2\13\1\27\1\34\1\27\1\13\2\0\4\14\4\0"+
-    "\1\14\1\0\1\35\3\0\1\35\1\0\1\35\1\0"+
-    "\4\35\1\20\3\0\1\20\1\0\6\20\1\21\3\0"+
+    "\1\14\1\0\1\16\3\0\1\16\1\0\1\16\1\35"+
+    "\4\16\1\20\3\0\1\20\1\0\6\20\1\21\3\0"+
     "\1\21\1\0\3\21\1\25\2\21\3\0\1\23\10\0"+
     "\1\21\3\0\2\24\3\21\1\25\1\24\1\21\2\0"+
     "\2\26\10\0\1\27\3\0\1\27\1\0\6\27\1\31"+
-    "\2\5\1\0\1\32\1\0\1\31\1\36\1\32\1\33"+
-    "\1\32\1\31\1\32\3\0\1\32\1\0\1\32\1\37"+
-    "\5\32\3\0\1\32\1\0\1\32\1\37\2\32\1\31"+
-    "\1\32\1\27\3\0\1\27\1\0\4\27\1\13\1\27"+
-    "\1\35\3\0\1\35\1\0\1\35\1\40\4\35";
+    "\3\0\1\31\1\0\1\31\1\36\5\31\3\0\1\31"+
+    "\1\0\1\31\1\36\2\31\1\10\1\31\1\27\3\0"+
+    "\1\27\1\0\4\27\1\13\1\27";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[288];
+    int [] result = new int[264];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -204,10 +202,10 @@ public class UnitFileLexer implements FlexLexer {
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
     "\2\0\6\1\1\11\5\1\1\11\3\1\1\11\4\1"+
-    "\1\0\6\1\2\11";
+    "\1\0\4\1\2\11";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[32];
+    int [] result = new int[30];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -536,42 +534,42 @@ public class UnitFileLexer implements FlexLexer {
             // fall through
           case 14: break;
           case 4: 
-            { return TokenType.BAD_CHARACTER;
+            { return UnitFileElementTypeHolder.SECTION;
             } 
             // fall through
           case 15: break;
           case 5: 
-            { return UnitFileElementTypeHolder.COMMENT;
+            { return TokenType.BAD_CHARACTER;
             } 
             // fall through
           case 16: break;
           case 6: 
-            { yybegin(YYINITIAL); return TokenType.WHITE_SPACE;
+            { return UnitFileElementTypeHolder.COMMENT;
             } 
             // fall through
           case 17: break;
           case 7: 
-            { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR;
+            { yybegin(YYINITIAL); return TokenType.WHITE_SPACE;
             } 
             // fall through
           case 18: break;
           case 8: 
-            { yybegin(YYINITIAL); return UnitFileElementTypeHolder.COMMENT;
+            { yybegin(YYINITIAL); return UnitFileElementTypeHolder.SECTION;
             } 
             // fall through
           case 19: break;
           case 9: 
-            { yybegin(VALUE_CONTINUATION); return UnitFileElementTypeHolder.CONTINUING_VALUE;
+            { yybegin(WAITING_FOR_VALUE); return UnitFileElementTypeHolder.SEPARATOR;
             } 
             // fall through
           case 20: break;
           case 10: 
-            { return UnitFileElementTypeHolder.SECTION;
+            { yybegin(YYINITIAL); return UnitFileElementTypeHolder.COMMENT;
             } 
             // fall through
           case 21: break;
           case 11: 
-            { yybegin(YYINITIAL); return UnitFileElementTypeHolder.SECTION;
+            { yybegin(VALUE_CONTINUATION); return UnitFileElementTypeHolder.CONTINUING_VALUE;
             } 
             // fall through
           case 22: break;

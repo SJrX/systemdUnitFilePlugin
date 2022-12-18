@@ -15,10 +15,11 @@ def getVersionNumber() {
 
 plugins {
   id 'java'
-  id "org.jetbrains.intellij" version "1.10.1"
+  id "org.jetbrains.intellij" version "1.11.0"
   id "org.jetbrains.grammarkit" version "2021.2.2"
   id 'checkstyle'
   id "com.avast.gradle.docker-compose" version "0.16.4"
+  id 'org.jetbrains.kotlin.jvm' version "1.7.21"
 }
 
 dockerCompose {
@@ -31,6 +32,12 @@ version getVersionNumber()
 java {
   toolchain {
     languageVersion = JavaLanguageVersion.of(17)
+  }
+}
+
+kotlin {
+  jvmToolchain {
+    languageVersion.set(JavaLanguageVersion.of(17))
   }
 }
 
@@ -247,9 +254,11 @@ if (OperatingSystem.current().isLinux()) {
    *
    * When the runIde task is being executed however it doesn't go through those files, and so the fonts end up looking like garbage.
    */
-  runIde.environment("_JAVA_OPTIONS", "-Dawt.useSystemAAFontSettings=lcd -Dsun.java2d.renderer=sun.java2d.marlin.MarlinRenderingEngine")
+  //runIde.environment("_JAVA_OPTIONS", "-Dawt.useSystemAAFontSettings=lcd -Dsun.java2d.renderer=sun.java2d.marlin.MarlinRenderingEngine")
 }
 
+
+runIde.jvmArgs += "-XX:+UnlockDiagnosticVMOptions"
 generateLexerTask.mustRunAfter(compileJava)
 //classes.dependsOn += generateParserTask
 classes.dependsOn += generateOptionValidator
@@ -260,7 +269,7 @@ if (!(project.file("./systemd-build/build/load-fragment-gperf.gperf").exists()))
 }
 
 if (!(project.file("./systemd-build/build/man").exists())) {
-  println("Colud not find man pages")
+  println("Could not find man pages")
   generateDataFromManPages.dependsOn += composeUp
 }
 
@@ -278,5 +287,11 @@ if (!(project.file("./systemd-build/build/ubuntu-units.txt").exists())) {
 jar.dependsOn += generateDataFromManPages
 jar.dependsOn += generateOptionValidator
 jar.dependsOn += generateUnitAutoCompleteData
+
+compileTestKotlin.dependsOn += generateUnitAutoCompleteData
+compileTestKotlin.dependsOn += generateDataFromManPages
+
+compileTestJava.dependsOn += generateUnitAutoCompleteData
+compileTestJava.dependsOn += generateDataFromManPages
 
 
