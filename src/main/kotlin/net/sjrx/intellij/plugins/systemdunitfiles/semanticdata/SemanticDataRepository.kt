@@ -98,11 +98,8 @@ class SemanticDataRepository private constructor() {
       factory.disable(JsonParser.Feature.IGNORE_UNDEFINED)
     }
 
-
-    //val mapper = jacksonObjectMapper()
-
     val mapper = ObjectMapper(factory)
-    mapper.registerModule(KotlinModule())
+    mapper.registerModule(KotlinModule.Builder().build())
 
     try {
       val read : Map<String, Map<String, KeywordData>> = mapper.readValue(sectionToKeywordMapFromDocJsonFile)

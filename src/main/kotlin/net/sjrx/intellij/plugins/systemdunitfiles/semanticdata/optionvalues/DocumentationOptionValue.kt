@@ -21,26 +21,26 @@ class DocumentationOptionValue : OptionValueInformation {
     return emptySet()
   }
 
-  override fun getErrorMessage(values: String): String? {
+  override fun getErrorMessage(value: String): String? {
 
     // This loose validation is what systemd does
-    for (value in values.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
-      if (value.startsWith("http://")) {
+    for (valueTerm in value.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+      if (valueTerm.startsWith("http://")) {
         continue
       }
-      if (value.startsWith("https://")) {
+      if (valueTerm.startsWith("https://")) {
         continue
       }
-      if (value.startsWith("file:/")) {
+      if (valueTerm.startsWith("file:/")) {
         continue
       }
-      if (value.startsWith("info:")) {
+      if (valueTerm.startsWith("info:")) {
         continue
       }
-      if (value.startsWith("man:")) {
+      if (valueTerm.startsWith("man:")) {
         continue
       }
-      return "Documentation $value does not match expected syntax, each value should be a space separated list beginning with (http://, https://, file:/, info:, man:)"
+      return "Documentation $valueTerm does not match expected syntax, each value should be a space separated list beginning with (http://, https://, file:/, info:, man:)"
     }
     return null
   }

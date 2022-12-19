@@ -19,7 +19,7 @@ class UnitFileDocumentationProvider : AbstractDocumentationProvider() {
   }
 
   override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
-    if (element == null || element.node == null) return null
+    if (element.node == null) return null
     val elementType = element.node.elementType
     if (elementType == UnitFileElementTypeHolder.KEY) {
       val section = PsiTreeUtil.getParentOfType(element, UnitFileSectionType::class.java) ?: return null
@@ -47,7 +47,7 @@ class UnitFileDocumentationProvider : AbstractDocumentationProvider() {
   }
 
   override fun getUrlFor(element: PsiElement, originalElement: PsiElement): List<String>? {
-    if (element == null || element.node == null) return null
+    if (element.node == null) return null
     val elementType = element.node.elementType
     if (elementType == UnitFileElementTypeHolder.KEY) {
       val section = PsiTreeUtil.getParentOfType(element, UnitFileSectionType::class.java) ?: return null
