@@ -5,7 +5,7 @@ import java.util.*
 
 class SemanticDataDocumentationCompletionTest : AbstractUnitFileTest() {
   fun testAllOptions() {
-    val sdr = SemanticDataRepository.getInstance()
+    val sdr = SemanticDataRepository.instance
     val doc: MutableSet<String> = TreeSet()
     for (sectionName in sdr.sectionNamesFromDocumentation) {
       for (keyName in sdr.getDocumentedKeywordsInSection(sectionName)) {

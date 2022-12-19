@@ -110,4 +110,20 @@ class UnitFileValueCompletionContributorTest : AbstractUnitFileTest() {
     // Verification
     assertContainsElements(completions, "file.service")
   }
+
+  fun testCompletionOfUnitDependencyIncludesUnitsInUbuntu() {
+    // Fixture Setup
+    val file = """
+           [Unit]
+           After=NetworkM$COMPLETION_POSITION
+           
+           """.trimIndent()
+    myFixture.configureByText("file.service", file)
+
+    // Execute SUT
+    val completions = basicCompletionResultStrings
+
+    // Verification
+    assertContainsElements(completions, "NetworkManager.service")
+  }
 }

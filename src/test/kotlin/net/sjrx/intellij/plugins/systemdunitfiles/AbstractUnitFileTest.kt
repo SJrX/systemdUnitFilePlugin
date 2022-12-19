@@ -50,9 +50,8 @@ abstract class AbstractUnitFileTest : BasePlatformTestCase() {
   }
 
   protected val basicCompletionResultStrings: List<String>
-    protected get() = Arrays.stream(myFixture.complete(CompletionType.BASIC)).map { obj: LookupElement -> obj.lookupString }.collect(
-      Collectors.toList()
-    )
+    get() = myFixture.complete(CompletionType.BASIC).map { it.lookupString }
+
 
   companion object {
 

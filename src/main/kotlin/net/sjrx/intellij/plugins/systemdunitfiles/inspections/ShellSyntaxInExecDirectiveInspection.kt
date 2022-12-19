@@ -38,7 +38,7 @@ class ShellSyntaxInExecDirectiveInspection : LocalInspectionTool() {
       val section = PsiTreeUtil.getParentOfType(property, UnitFileSectionGroups::class.java) ?: return
       val value = property.valueText ?: return
       val key = property.key
-      if (SemanticDataRepository.getInstance().getOptionValidator(section.sectionName, key) !is ExecOptionValue) return
+      if (SemanticDataRepository.instance.getOptionValidator(section.sectionName, key) !is ExecOptionValue) return
       val completedString = StringBuilder()
       val im = holder.manager
       while (completedString.length < value.length) {

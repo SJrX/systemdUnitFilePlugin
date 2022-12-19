@@ -24,7 +24,7 @@ class InvalidValueInspection : LocalInspectionTool() {
       val section = PsiTreeUtil.getParentOfType(property, UnitFileSectionGroups::class.java) ?: return
       property.valueText ?: return
       val key = property.key
-      val ovi = SemanticDataRepository.getInstance().getOptionValidator(section.sectionName, key)
+      val ovi = SemanticDataRepository.instance.getOptionValidator(section.sectionName, key)
       ovi.generateProblemDescriptors(property, holder)
     }
   }

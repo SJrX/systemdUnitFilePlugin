@@ -44,7 +44,7 @@ class UnknownKeyInSectionInspection : LocalInspectionTool() {
       if (sectionName.startsWith(IGNORED_SECTION_OR_KEY_PREFIX)) {
         return
       }
-      val sdr = SemanticDataRepository.getInstance()
+      val sdr = SemanticDataRepository.instance
       if (!sdr.getAllowedKeywordsInSectionFromValidators(sectionName).contains(key)) {
         // TODO Figure out what highlight to use
         holder.registerProblem(property.keyNode.psi, INSPECTION_TOOL_TIP_TEXT, ProblemHighlightType.GENERIC_ERROR_OR_WARNING)

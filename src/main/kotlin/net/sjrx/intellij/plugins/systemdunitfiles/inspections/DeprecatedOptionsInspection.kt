@@ -23,12 +23,12 @@ class DeprecatedOptionsInspection : LocalInspectionTool() {
   private class MyVisitor(private val holder: ProblemsHolder) : UnitFileVisitor() {
     override fun visitPropertyType(property: UnitFilePropertyType) {
       val section = PsiTreeUtil.getParentOfType(property, UnitFileSectionGroups::class.java) ?: return
-      val sdr = SemanticDataRepository.getInstance()
+      val sdr = SemanticDataRepository.instance
       val sectionName = section.sectionName
       val key = property.key
       if (sdr.isDeprecated(sectionName, key)) {
         val text = sdr.getDeprecationReason(sectionName, key, false)
-        holder.registerProblem(property.keyNode.psi, text, ProblemHighlightType.LIKE_DEPRECATED)
+        holder.registerProblem(property.keyNode.psi, text!!, ProblemHighlightType.LIKE_DEPRECATED)
       }
     }
   }

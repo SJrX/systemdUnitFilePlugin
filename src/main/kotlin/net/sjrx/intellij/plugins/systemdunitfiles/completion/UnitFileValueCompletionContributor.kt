@@ -43,7 +43,7 @@ class UnitFileValueCompletionContributor : CompletionContributor() {
                }
                val sectionName = section.sectionName
                val keyName = property.key
-               val sdr = SemanticDataRepository.getInstance()
+               val sdr = SemanticDataRepository.instance
                val validator = sdr.getOptionValidator(sectionName, keyName)
                resultSet.addAllElements(
                  validator.getAutoCompleteOptions(property.project)
