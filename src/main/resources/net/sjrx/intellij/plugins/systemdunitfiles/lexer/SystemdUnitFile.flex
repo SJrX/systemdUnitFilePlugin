@@ -45,7 +45,7 @@ WHITE_SPACE=({LINE_WS}|{EOL})+
 // The section header should actually be more restricted than this, however we will allow anything as a character
 // and use an annotator to flag the error.
 
-SECTION_HEADER=\[[^\]\r\n\u2028\u2029\u000B\u000C\u0085]+\]?
+SECTION_HEADER=\[[^\]\r\n\u2028\u2029\u000B\u000C\u0085]*\]?
 
 // We don't allow whitespace or the separator in the key characters
 KEY_CHARACTER=[^=\ \n\t\f\\] | "\\ "
