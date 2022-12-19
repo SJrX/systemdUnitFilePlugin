@@ -22,7 +22,7 @@ class InvalidValueInspection : LocalInspectionTool() {
   private class MyVisitor(private val holder: ProblemsHolder) : UnitFileVisitor() {
     override fun visitPropertyType(property: UnitFilePropertyType) {
       val section = PsiTreeUtil.getParentOfType(property, UnitFileSectionGroups::class.java) ?: return
-      val value = property.valueText ?: return
+      property.valueText ?: return
       val key = property.key
       val ovi = SemanticDataRepository.getInstance().getOptionValidator(section.sectionName, key)
       ovi.generateProblemDescriptors(property, holder)
