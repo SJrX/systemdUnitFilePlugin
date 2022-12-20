@@ -34,7 +34,7 @@ class UnitFileKeyCompletionContributor : CompletionContributor() {
                if (section == null) return
                val sectionName = section.sectionName
                val definedKeys = section.propertyList.stream().map { obj: UnitFileProperty -> obj.key }.collect(Collectors.toSet())
-               val sdr = SemanticDataRepository.getInstance()
+               val sdr = SemanticDataRepository.instance
                for (keyword in sdr.getDocumentedKeywordsInSection(sectionName)) {
                  if (definedKeys.contains(keyword)) continue
                  val deprecated = sdr.isDeprecated(sectionName, keyword)
