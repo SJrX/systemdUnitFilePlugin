@@ -19,7 +19,7 @@ This plugin adds support for [systemd unit files](https://www.freedesktop.org/so
    * Unknown option in section (ignoring those starting with **X-**)
  * Annotations
    * When the section name is invalid or used in the wrong file type
-   * Whitespace after a line continuation \ character.
+   * Whitespace after[InvalidValueInspection.kt](src%2Fmain%2Fkotlin%2Fnet%2Fsjrx%2Fintellij%2Fplugins%2Fsystemdunitfiles%2Finspections%2FInvalidValueInspection.kt) a line continuation \ character.
    * When a key has been deprecated.
  * Built-in documentation for options or section name (available when hitting <kbd>CTRL+Q</kbd> or <kbd>F1</kbd> on Mac)   
 

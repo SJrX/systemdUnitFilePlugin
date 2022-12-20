@@ -27,8 +27,6 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
     // Exercise SUT
     setupFileInEditor("file.service", file)
     enableInspection(InvalidValueInspection::class.java)
-
-    // Verification
     val highlights = myFixture.doHighlighting()
 
 
