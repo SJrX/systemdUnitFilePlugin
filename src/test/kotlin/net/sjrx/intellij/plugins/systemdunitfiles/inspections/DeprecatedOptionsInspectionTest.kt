@@ -40,24 +40,6 @@ class DeprecatedOptionsInspectionTest : AbstractUnitFileTest() {
     assertSize(0, highlights)
   }
 
-  fun testUnknownSectionDoesNotThrowError() {
-    val file = """
-           [Servie]
-           MemoryLimit=52
-           """.trimIndent()
-
-    // Exercise SUT
-    setupFileInEditor("file.service", file)
-    enableInspection(DeprecatedOptionsInspection::class.java)
-
-    // Verification
-    val highlights = myFixture.doHighlighting()
-
-
-    // Verification
-    assertSize(0, highlights)
-  }
-
   fun testSingleExampleThrowsWarning() {
     val file = """
            [Service]
