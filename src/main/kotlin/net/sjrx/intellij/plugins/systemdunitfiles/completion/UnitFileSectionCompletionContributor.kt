@@ -9,6 +9,7 @@ import com.intellij.util.ProcessingContext
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileIcon
 import net.sjrx.intellij.plugins.systemdunitfiles.UnitFileLanguage
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
 
 class UnitFileSectionCompletionContributor() : CompletionContributor() {
   init {
@@ -21,17 +22,8 @@ class UnitFileSectionCompletionContributor() : CompletionContributor() {
                                       resultSet: CompletionResultSet) {
           val extension = parameters.position.containingFile.name.substringAfterLast(".", "")
 
-          val completeSections = when(extension) {
-            "automount" ->  listOf("Unit", "Install", "Automount")
-            "device", "target" -> listOf("Unit", "Install")
-            "mount" ->  listOf("Unit", "Install", "Mount")
-            "path" -> listOf("Unit", "Install", "Path")
-            "service" -> listOf("Unit", "Install", "Service")
-            "socket" -> listOf("Unit", "Install", "Socket")
-            "swap" ->  listOf("Unit", "Install", "Swap")
-            "timer" -> listOf("Unit", "Install", "Timer")
-            else -> listOf()
-          }
+          val completeSections = SemanticDataRepository.instance.getAllowedSectionsInFile(parameters.position.containingFile.name)
+
           resultSet.addAllElements(
             completeSections.map {
               LookupElementBuilder.create(it).withIcon(UnitFileIcon.FILE).withInsertHandler(KeyInsertHandler())

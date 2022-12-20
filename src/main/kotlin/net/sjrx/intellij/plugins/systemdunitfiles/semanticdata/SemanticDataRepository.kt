@@ -396,6 +396,27 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
     return Collections.unmodifiableSet(sectionToKeyAndValidatorMap.getOrDefault(sectionName, emptyMap()).keys)
   }
 
+  fun getAllowedSectionsInFile(fileName: String): Set<String> {
+
+    val completeSections = when(getUnitType(fileName)) {
+      "Automount" ->  setOf("Unit", "Install", "Automount")
+      "Device", "Target" -> setOf("Unit", "Install")
+      "Mount" ->  setOf("Unit", "Install", "Mount")
+      "Path" -> setOf("Unit", "Install", "Path")
+      "Service" -> setOf("Unit", "Install", "Service")
+      "Slice" -> setOf("Unit", "Install", "Slice")
+      "Socket" -> setOf("Unit", "Install", "Socket")
+      "Swap" ->  setOf("Unit", "Install", "Swap")
+      "Timer" -> setOf("Unit", "Install", "Timer")
+      else -> setOf()
+    }
+
+    return completeSections
+  }
+
+  fun getUnitType(fileName: String): String {
+    return fileName.substringAfterLast(".", "").replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+  }
   companion object {
     private val LOG = Logger.getInstance(SemanticDataRepository::class.java)
     const val SEMANTIC_DATA_ROOT = "net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/"
