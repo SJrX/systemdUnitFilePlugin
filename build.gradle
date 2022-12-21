@@ -39,6 +39,7 @@ kotlin {
   jvmToolchain {
     languageVersion.set(JavaLanguageVersion.of(17))
   }
+
 }
 
 repositories {
@@ -56,6 +57,11 @@ intellij {
   version = intellijVersion
 }
 
+compileKotlin {
+  kotlinOptions {
+    jvmTarget = "17"
+  }
+}
 
 patchPluginXml {
   changeNotes = """

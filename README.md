@@ -17,6 +17,7 @@ This plugin adds support for [systemd unit files](https://www.freedesktop.org/so
    * Invalid value for argument.
    * Shell syntax detected in **Exec___=** call.
    * Unknown option in section (ignoring those starting with **X-**)
+   * Missing required key
  * Annotations
    * When the section name is invalid or used in the wrong file type
    * Whitespace after a line continuation \ character.
@@ -25,7 +26,7 @@ This plugin adds support for [systemd unit files](https://www.freedesktop.org/so
 
       
 ## Usage
-To create a file simply right click on a folder and <kbd>New</kbd> > <kbd>File</kbd>, and enter a file name ending any of:
+To create a file simply right-click on a folder and <kbd>New</kbd> > <kbd>File</kbd>, and enter a file name ending any of:
  * `.automount`
  * `.device`
  * `.mount`
@@ -63,8 +64,8 @@ License
 ## Development Notes
 
 ### System Requirements
-
-On top of Java 11, you will need the [m4 macro processor](https://www.gnu.org/software/m4/m4.html) installed on your system and available on the path. 
+ 
+Java 17
 
 ### Manual Installation
 

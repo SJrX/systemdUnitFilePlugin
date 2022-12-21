@@ -29,4 +29,39 @@ class SemanticDataRepositoryTest : AbstractUnitFileTest() {
       }
     }
   }
+
+  fun testAllRequiredOptionsExists () {
+
+    // Fixture Setup
+
+    val sdr = SemanticDataRepository.instance
+
+    val files = listOf(
+      "file.automount",
+      "file.device",
+      "file.mount",
+      "file.path",
+      "file.service",
+      "file.slice",
+      "file.socket",
+      "file.swap",
+      "file.target",
+      "file.timer",
+    )
+
+
+    // Execute SUT & Verification
+
+
+    for (file in files) {
+      val keys = sdr.getRequiredKeys(file)
+
+      for (key in keys) {
+        val sectionAndKey = key.split('.')
+        val validKeys = sdr.getAllowedKeywordsInSectionFromValidators(sectionAndKey[0])
+
+        assertContainsElements(validKeys, sectionAndKey[1])
+      }
+    }
+  }
 }

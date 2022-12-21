@@ -417,6 +417,32 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
   fun getUnitType(fileName: String): String {
     return fileName.substringAfterLast(".", "").replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
   }
+
+  fun getRequiredKeys(containingFile: String): Set<String> {
+    val unitType = getUnitType(containingFile)
+
+    return when(unitType) {
+      "Service" ->
+       setOf("Unit.SuccessAction", "Service.ExecStart", "Service.ExecStop")
+      "Path" ->
+        setOf("Path.PathExists", "Path.PathExistsGlob", "Path.PathChanged", "Path.PathModified", "Path.DirectoryNotEmpty")
+      "Timer" ->
+        setOf("Timer.OnActiveSec", "Timer.OnBootSec", "Timer.OnStartupSec", "Timer.OnUnitActiveSec", "Timer.OnUnitInactiveSec", "Timer.OnCalendar", "Timer.OnClockChange", "Timer.OnTimezoneChange")
+      "Swap" ->
+        setOf("Swap.What")
+      "Mount" ->
+        // Both of these are required, but we only error out on one :(
+        // systemd-analyze only complains about what though, so ... we can ignore it until a bug comes.
+        setOf("Mount.What", "Mount.Where")
+      "Socket" ->
+        setOf("Socket.ListenStream", "Socket.ListenDatagram", "Socket.ListenSequentialPacket", "Socket.ListenFIFO", "Socket.ListenSpecial", "Socket.ListenNetlink", "Socket.ListenMessageQueue", "Socket.ListenUSBFunction")
+      "Automount" ->
+        setOf("Automount.Where")
+      else -> setOf()
+    }
+
+  }
+
   companion object {
     private val LOG = Logger.getInstance(SemanticDataRepository::class.java)
     const val SEMANTIC_DATA_ROOT = "net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/"
