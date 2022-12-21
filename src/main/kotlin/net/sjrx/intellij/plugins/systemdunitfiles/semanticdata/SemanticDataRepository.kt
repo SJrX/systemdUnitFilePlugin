@@ -437,7 +437,7 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
       "Socket" ->
         setOf("Socket.ListenStream", "Socket.ListenDatagram", "Socket.ListenSequentialPacket", "Socket.ListenFIFO", "Socket.ListenSpecial", "Socket.ListenNetlink", "Socket.ListenMessageQueue", "Socket.ListenUSBFunction")
       "Automount" ->
-        setOf("Where")
+        setOf("Automount.Where")
       else -> setOf()
     }
 
