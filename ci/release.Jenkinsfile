@@ -233,7 +233,7 @@ pipeline {
                   steps {
                     container('kaniko') {
                       sh """
-                      /kaniko/executor --force -f `pwd`/ci/Build-Environment.Dockerfile -c `pwd`/systemd-build/ --cache=true --compressed-caching=false --destination=${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-build-environment:$buildEnvironmentHash
+                      /kaniko/executor --force -f `pwd`/ci/Build-Environment.Dockerfile -c `pwd`/systemd-build/ --cache=false --compressed-caching=false --destination=${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-build-environment:$buildEnvironmentHash
                     """
                     }
                   }
@@ -302,7 +302,7 @@ pipeline {
             unstash 'systemd-build-build'
             unstash 'ubuntu-units'
             sh("""
-            ./gradlew --build-cache clean build buildPlugin
+            ./gradlew --build-cache clean build buildPlugin --scan
  """)
             archiveArtifacts artifacts: 'build/distributions/*.zip'
             archiveArtifacts artifacts: 'build/reports/**'
@@ -313,12 +313,12 @@ pipeline {
   }
   post {
     failure {
-      mail body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL of build: ${env.BUILD_URL}", charset: 'UTF-8', mimeType: 'text/html',
+      mail body: "<br>Project: ${env.JOB_NAME} <br>Build: <a href=\"${env.BUILD_URL}\">#${env.BUILD_NUMBER}</a> Failed", charset: 'UTF-8', mimeType: 'text/html',
            subject: "ERROR CI: Project name -> ${env.JOB_NAME}", to: "${env.FAILED_BUILD_NOTIFICATION_EMAIL}"
 
     }
     fixed {
-      mail body: "<b>Example</b><br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL of build: ${env.BUILD_URL}", charset: 'UTF-8', mimeType: 'text/html',
+      mail body: "<b>Example</b><br>Project: ${env.JOB_NAME} <br>Build: <a href=\"${env.BUILD_URL}\">${env.BUILD_NUMBER}</a> Failed\"", charset: 'UTF-8', mimeType: 'text/html',
            subject: "OK CI: Project name -> ${env.JOB_NAME}", to: "${env.FAILED_BUILD_NOTIFICATION_EMAIL}"
     }
   }
