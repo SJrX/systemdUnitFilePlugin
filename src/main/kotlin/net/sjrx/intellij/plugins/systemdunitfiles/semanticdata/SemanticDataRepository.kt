@@ -3,16 +3,15 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonFactoryBuilder
 import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.ObjectUtils
+import com.jetbrains.rd.util.first
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.*
 import org.apache.commons.io.IOUtils
 import java.io.BufferedReader
@@ -23,8 +22,8 @@ import java.util.*
 import java.util.regex.Pattern
 
 class SemanticDataRepository private constructor() {
-  private val validatorMap: MutableMap<String?, OptionValueInformation>
-  private val sectionToKeyAndValidatorMap: MutableMap<String, MutableMap<String, String>> = HashMap()
+  private val validatorMap: Map<Validator, OptionValueInformation>
+  private val sectionToKeyAndValidatorMap: MutableMap<String, MutableMap<String, Validator>> = HashMap()
   private val sectionNameToKeyValuesFromDoc: MutableMap<String, Map<String, KeywordData>>
   private val undocumentedOptionInfo: Map<String, Map<String, KeywordData>>
 
@@ -42,6 +41,8 @@ class SemanticDataRepository private constructor() {
 
   init {
     val cache: Map<String, String> = HashMap()
+    val cache2: Map<Validator, Validator> = HashMap()
+
     sectionNameToKeyValuesFromDoc = loadSemanticDataFromJsonFile(SEMANTIC_DATA_ROOT + "sectionToKeywordMapFromDoc.json", cache)
     undocumentedOptionInfo = loadSemanticDataFromJsonFile(SEMANTIC_DATA_ROOT + "undocumentedSectionToKeywordMap.json", cache)
     validatorMap = HashMap()
@@ -59,28 +60,30 @@ class SemanticDataRepository private constructor() {
               val mysteryValue = m.group("MysteryColumn")
               when (mysteryValue) {
                 LEGACY_PARAMETERS_KEY, EXPERIMENTAL_PARAMETERS_KEY -> {}
-                else -> sectionToKeyAndValidatorMap.computeIfAbsent(intern(cache, section)) { k: String? -> HashMap() }[intern(cache, key)] = intern(cache, validator)
+
+
+                else -> {
+                  val validator = Validator(validator, mysteryValue)
+                  sectionToKeyAndValidatorMap.computeIfAbsent(intern(cache, section)) { k: String? -> HashMap() }[intern(cache, key)] = intern(cache2, validator)
+                }
               }
             }
           }
-          val ovis = arrayOf(
-            BooleanOptionValue(),
-            DocumentationOptionValue(),
-            KillModeOptionValue(),
-            ModeStringOptionValue(),
-            RestartOptionValue(),
-            ServiceTypeOptionValue(),
-            ExecOptionValue(),
-            UnitDependencyOptionValue(),
-            NULL_VALIDATOR
-          )
-          for (ovi in ovis) {
-            validatorMap[ovi.validatorName] = ovi
-          }
 
-          /*
-         * Scopes are not supported since they aren't standard unit files.
-         */sectionNameToKeyValuesFromDoc.remove(SCOPE_KEYWORD)
+          validatorMap.putAll(BooleanOptionValue.validators)
+          validatorMap.putAll(DocumentationOptionValue.validators)
+          validatorMap.putAll(KillModeOptionValue.validators)
+          validatorMap.putAll(ModeStringOptionValue.validators)
+          validatorMap.putAll(RestartOptionValue.validators)
+          validatorMap.putAll(ServiceTypeOptionValue.validators)
+          validatorMap.putAll(ExecOptionValue.validators)
+          validatorMap.putAll(UnitDependencyOptionValue.validators)
+          validatorMap.putAll(NullOptionValue.validators)
+          validatorMap.putAll(MemoryLimitOptionValue.validators)
+
+         // Scopes are not supported since they aren't standard unit files.
+
+          sectionNameToKeyValuesFromDoc.remove(SCOPE_KEYWORD)
           sectionToKeyAndValidatorMap.remove(SCOPE_KEYWORD)
         }
       } catch (e: IOException) {
@@ -369,15 +372,11 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
    * @return the validator
    */
   fun getOptionValidator(sectionName: String, keyName: String): OptionValueInformation {
-    var validatorName = sectionToKeyAndValidatorMap.getOrDefault(sectionName, emptyMap())[keyName]
-    if (sectionName.trim { it <= ' ' } == "Install") {
-      if (keyName.trim { it <= ' ' } == "WantedBy" || keyName.trim { it <= ' ' } == "Also" || keyName.trim { it <= ' ' } == "RequiredBy") {
-        // Override the validators for these cases since there is no validation done now, but really they should be units.
-        validatorName = "config_parse_unit_deps"
-      }
-    }
-    return validatorMap.getOrDefault(validatorName, NULL_VALIDATOR)
+    return validatorMap.get(getValidatorForSectionAndKey(sectionName, keyName)) ?: NullOptionValue.INSTANCE
   }
+
+
+  fun getValidatorMap() : Map<Validator, OptionValueInformation> = validatorMap
 
   val sectionNamesFromValidators: Set<String>
     /**
@@ -387,6 +386,30 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
      */
     get() = Collections.unmodifiableSet(sectionToKeyAndValidatorMap.keys)
 
+
+  fun getValidatorForSectionAndKey(sectionName: String, keyName: String) : Validator {
+    var validatorKey = sectionToKeyAndValidatorMap.getOrDefault(sectionName, emptyMap())[keyName]
+    if (sectionName.trim { it <= ' ' } == "Install") {
+      if (keyName.trim { it <= ' ' } == "WantedBy" || keyName.trim { it <= ' ' } == "Also" || keyName.trim { it <= ' ' } == "RequiredBy") {
+        // Override the validators for these cases since there is no validation done now, but really they should be units.
+        validatorKey = Validator("config_parse_unit_deps", "0")
+      }
+    }
+
+    if (validatorKey is Validator) {
+      if (!validatorMap.containsKey(validatorKey)) {
+        val wildcardValidator = validatorKey.copy(validatorArgument = "*")
+
+        if (validatorMap.containsKey(wildcardValidator)) {
+            return wildcardValidator
+          }
+      }
+
+      return validatorKey
+    }
+
+    return NullOptionValue.VALIDATOR_INSTANCE
+  }
   /**
    * Return the section names from the validators.
    *
@@ -448,7 +471,8 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
     const val SEMANTIC_DATA_ROOT = "net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/"
     private const val GPERF_REGEX = "^(?<Section>[A-Z][a-z]+).(?<Key>\\w+),\\s*(?<Validator>\\w+),\\s*(?<MysteryColumn>\\w+)\\s*,.+$"
     private val LINE_MATCHER = Pattern.compile(GPERF_REGEX)
-    private val NULL_VALIDATOR: OptionValueInformation = NullOptionValue()
+    private val NULL_VALIDATOR = Validator("NULL", "0")
+
     @JvmStatic
     val lazyInstance = NotNullLazyValue.atomicLazy { SemanticDataRepository() }
 
@@ -458,8 +482,12 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
     private const val SCOPE_KEYWORD = "Scope"
     private const val LEGACY_PARAMETERS_KEY = "DISABLED_LEGACY"
     private const val EXPERIMENTAL_PARAMETERS_KEY = "DISABLED_EXPERIMENTAL"
-    private fun intern(cache: Map<String, String>, value: String): String {
+    private fun <K> intern(cache: Map<K, K>, value: K): K {
       return cache[value] ?: value
     }
   }
+}
+
+data class Validator(val validatorName: String, val validatorArgument: String) {
+  override fun toString() = "${validatorName}(${validatorArgument})"
 }

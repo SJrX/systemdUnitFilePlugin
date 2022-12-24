@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues
 
 import com.google.common.collect.ImmutableSet
 import com.intellij.openapi.project.Project
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
 
 /**
  * This validator is for the config_kill_mode validator.
@@ -12,23 +13,13 @@ import com.intellij.openapi.project.Project
  *
  * kill.c ~ line 35.
  */
-class KillModeOptionValue : OptionValueInformation {
-  override fun getAutoCompleteOptions(project: Project): Set<String> {
-    return validOptions
-  }
-
-  override fun getErrorMessage(value: String): String? {
-    return if (!validOptions.contains(value)) {
-      "The value supplied " + value + " does not match one of the expected values: " + validOptions
-    } else {
-      null
-    }
-  }
-
-  override val validatorName: String
-    get() = "config_parse_kill_mode"
+class KillModeOptionValue : AbstractEnumOptionValue(validOptions, VALIDATOR_NAME) {
 
   companion object {
     private val validOptions: Set<String> = ImmutableSet.of("control-group", "process", "mixed", "none")
+    const val VALIDATOR_NAME = "config_parse_kill_mode"
+    val validators = mapOf(Validator(VALIDATOR_NAME, "0") to KillModeOptionValue())
   }
 }
+
+

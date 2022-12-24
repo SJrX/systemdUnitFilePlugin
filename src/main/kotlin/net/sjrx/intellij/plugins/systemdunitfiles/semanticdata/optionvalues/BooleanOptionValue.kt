@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues
 
 import com.google.common.collect.ImmutableSet
 import com.intellij.openapi.project.Project
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
 import java.util.*
 
 /**
@@ -30,5 +31,13 @@ class BooleanOptionValue : OptionValueInformation {
   companion object {
     private val validValuesLowerCase: Set<String> = ImmutableSet.of("1", "yes", "y", "true", "t", "on", "0", "no", "n", "false", "f", "off")
     private val autoCompleteValues: Set<String> = ImmutableSet.of("on", "off", "yes", "no", "true", "false")
+    const val VALIDATOR_NAME = "config_parse_bool"
+
+    val validators = mapOf(
+      Validator(VALIDATOR_NAME, "0") to BooleanOptionValue(),
+      Validator(VALIDATOR_NAME, "true") to BooleanOptionValue(),
+    )
+
+
   }
 }
