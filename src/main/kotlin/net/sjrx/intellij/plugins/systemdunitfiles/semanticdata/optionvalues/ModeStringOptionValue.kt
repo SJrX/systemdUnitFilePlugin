@@ -1,6 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues
 
 import com.intellij.openapi.project.Project
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
 
 /**
  * Matches a mode value written in octal.
@@ -23,5 +24,11 @@ class ModeStringOptionValue : OptionValueInformation {
   }
 
   override val validatorName: String
-    get() = "config_parse_mode"
+    get() = VALIDATOR_NAME
+
+  companion object {
+    const val VALIDATOR_NAME = "config_parse_mode"
+
+    val validators = mapOf(Validator(VALIDATOR_NAME, "0") to ModeStringOptionValue())
+  }
 }

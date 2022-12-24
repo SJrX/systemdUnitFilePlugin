@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
 import java.util.regex.Pattern
 
 /**
@@ -47,7 +48,7 @@ class ExecOptionValue : OptionValueInformation {
   }
 
   override val validatorName: String
-    get() = "config_parse_exec"
+    get() = VALIDATOR_NAME
 
   companion object {
     // Used to check whether or not there is a problem.
@@ -55,5 +56,9 @@ class ExecOptionValue : OptionValueInformation {
 
     // Used to determine what to highlight (we want to avoid highlighting valid prefixes).
     private val RELATIVE_PATH_REGEX = Pattern.compile("^\\s*(?:[+@:!-]+)?([^\\/\\s]\\S*)\\s*")
+
+    const val VALIDATOR_NAME = "config_parse_exec"
+
+    val validators = mapOf(Validator(VALIDATOR_NAME, "*") to ExecOptionValue())
   }
 }

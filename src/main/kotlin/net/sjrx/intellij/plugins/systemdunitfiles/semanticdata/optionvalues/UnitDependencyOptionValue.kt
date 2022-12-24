@@ -7,6 +7,7 @@ import com.intellij.openapi.util.text.Strings
 import com.intellij.psi.search.FilenameIndex
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -94,11 +95,16 @@ class UnitDependencyOptionValue : OptionValueInformation {
   }
 
   override val validatorName: String
-    get() = "config_parse_unit_deps"
+    get() = VALIDATOR_NAME
 
   companion object {
     @Volatile
     private var unitNames: Set<String>? = null
     private val validUnitTypes = setOf("service", "socket", "device", "mount", "automount", "swap", "target", "path", "timer", "slice", "scope")
+
+    const val VALIDATOR_NAME = "config_parse_unit_deps"
+    val validators = mapOf(
+      Validator(VALIDATOR_NAME, "*") to UnitDependencyOptionValue(),
+    )
   }
 }

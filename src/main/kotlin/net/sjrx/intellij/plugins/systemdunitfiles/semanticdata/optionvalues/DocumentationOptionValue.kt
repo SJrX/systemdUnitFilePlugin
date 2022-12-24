@@ -1,6 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues
 
 import com.intellij.openapi.project.Project
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
 
 /**
  * This validator is used for the config_parse_documentation validator.
@@ -46,5 +47,10 @@ class DocumentationOptionValue : OptionValueInformation {
   }
 
   override val validatorName: String
-    get() = "config_parse_documentation"
+    get() = VALIDATOR_NAME
+
+  companion object {
+    const val VALIDATOR_NAME = "config_parse_documentation"
+    val validators = mapOf(Validator(VALIDATOR_NAME, "0") to DocumentationOptionValue())
+  }
 }
