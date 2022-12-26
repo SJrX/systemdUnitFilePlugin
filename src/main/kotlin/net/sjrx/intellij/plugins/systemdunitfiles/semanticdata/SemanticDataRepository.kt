@@ -80,6 +80,7 @@ class SemanticDataRepository private constructor() {
           validatorMap.putAll(UnitDependencyOptionValue.validators)
           validatorMap.putAll(NullOptionValue.validators)
           validatorMap.putAll(MemoryLimitOptionValue.validators)
+          validatorMap.putAll(SignalOptionValue.validators)
 
          // Scopes are not supported since they aren't standard unit files.
 
