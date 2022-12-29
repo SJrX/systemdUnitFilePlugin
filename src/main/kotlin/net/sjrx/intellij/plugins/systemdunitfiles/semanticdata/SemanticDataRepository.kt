@@ -11,7 +11,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.ObjectUtils
-import com.jetbrains.rd.util.first
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.*
 import org.apache.commons.io.IOUtils
 import java.io.BufferedReader
@@ -81,6 +80,7 @@ class SemanticDataRepository private constructor() {
           validatorMap.putAll(NullOptionValue.validators)
           validatorMap.putAll(MemoryLimitOptionValue.validators)
           validatorMap.putAll(SignalOptionValue.validators)
+          validatorMap.putAll(NamespacePathOptionValue.validators)
 
          // Scopes are not supported since they aren't standard unit files.
 

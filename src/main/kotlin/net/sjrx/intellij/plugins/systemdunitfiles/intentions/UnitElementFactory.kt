@@ -12,8 +12,8 @@ object UnitElementFactory {
     return PsiFileFactory.getInstance(project).createFileFromText("dummy.service", ServiceFileType.INSTANCE, text) as UnitFile
   }
 
-  fun createProperty(project: Project, name: String): UnitFilePropertyType  {
-    val file = createFile(project, "${name}=")
+  fun createProperty(project: Project, name: String, value: String = ""): UnitFilePropertyType  {
+    val file = createFile(project, "${name}=${value}")
     return file.firstChild as UnitFilePropertyType
   }
 
