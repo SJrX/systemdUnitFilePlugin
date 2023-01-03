@@ -1,0 +1,35 @@
+<p>Defines paths to monitor for certain changes:
+        <var>PathExists=</var> may be used to watch the mere
+        existence of a file or directory. If the file specified
+        exists, the configured unit is activated.
+        <var>PathExistsGlob=</var> works similarly, but checks
+        for the existence of at least one file matching the globbing
+        pattern specified. <var>PathChanged=</var> may be used
+        to watch a file or directory and activate the configured unit
+        whenever it changes. It is not activated on every write to the
+        watched file but it is activated if the file which was open
+        for writing gets closed. <var>PathModified=</var> is
+        similar, but additionally it is activated also on simple
+        writes to the watched file.
+        <var>DirectoryNotEmpty=</var> may be used to watch a
+        directory and activate the configured unit whenever it
+        contains at least one file.</p>
+<p>The arguments of these directives must be absolute file
+        system paths.</p>
+<p>Multiple directives may be combined, of the same and of
+        different types, to watch multiple paths. If the empty string
+        is assigned to any of these options, the list of paths to
+        watch is reset, and any prior assignments of these options
+        will not have any effect.</p>
+<p>If a path already exists (in case of
+        <var>PathExists=</var> and
+        <var>PathExistsGlob=</var>) or a directory already is
+        not empty (in case of <var>DirectoryNotEmpty=</var>)
+        at the time the path unit is activated, then the configured
+        unit is immediately activated as well. Something similar does
+        not apply to <var>PathChanged=</var> and
+        <var>PathModified=</var>.</p>
+<p>If the path itself or any of the containing directories
+        are not accessible, systemd will watch for
+        permission changes and notice that conditions are satisfied
+        when permissions allow that. </p>

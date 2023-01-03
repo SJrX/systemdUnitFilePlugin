@@ -1,0 +1,8 @@
+<p>Specifies which signal to use when stopping a service. This controls the signal that
+        is sent as first step of shutting down a unit (see above), and is usually followed by
+        SIGKILL (see above and below). For a list of valid signals, see
+        <a href="http://man7.org/linux/man-pages/man7/signal.7.html">signal(7)
+    </a>.
+        Defaults to SIGTERM.</p>
+<p>Note that, right after sending the signal specified in this setting, systemd will always send
+        SIGCONT, to ensure that even suspended tasks can be terminated cleanly.</p>

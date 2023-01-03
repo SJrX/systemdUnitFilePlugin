@@ -1,0 +1,8 @@
+<p>Check whether given cgroup controllers (e.g. cpu) are available
+          for use on the system.</p>
+<p>Multiple controllers may be passed with a space separating them; in this case the condition
+          will only pass if all listed controllers are available for use. Controllers unknown to systemd are
+          ignored. Valid controllers are cpu, cpuset,
+          io, memory, and pids. Even if available in
+          the kernel, a particular controller may not be available if it was disabled on the kernel command
+          line with <var>cgroup_disable=controller</var>.</p>

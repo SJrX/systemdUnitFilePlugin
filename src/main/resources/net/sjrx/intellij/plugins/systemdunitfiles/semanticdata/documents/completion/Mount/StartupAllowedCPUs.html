@@ -1,0 +1,10 @@
+<p>Restrict processes to be executed on specific CPUs. Takes a list of CPU indices or ranges separated by either
+          whitespace or commas. CPU ranges are specified by the lower and upper CPU indices separated by a dash.</p>
+<p>Setting <var>AllowedCPUs=</var> or <var>StartupAllowedCPUs=</var> doesn't guarantee that all
+          of the CPUs will be used by the processes as it may be limited by parent units. The effective configuration is
+          reported as <var>EffectiveCPUs=</var>.</p>
+<p>While <var>StartupAllowedCPUs=</var> applies to the startup and shutdown phases of the system,
+          <var>AllowedCPUs=</var> applies to normal runtime of the system, and if the former is not set also to
+          the startup and shutdown phases. Using <var>StartupAllowedCPUs=</var> allows prioritizing specific services at
+          boot-up and shutdown differently than during normal runtime.</p>
+<p>This setting is supported only with the unified control group hierarchy.</p>

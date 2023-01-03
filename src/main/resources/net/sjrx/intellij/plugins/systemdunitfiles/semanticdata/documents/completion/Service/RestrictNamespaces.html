@@ -1,0 +1,36 @@
+<p>Restricts access to Linux namespace functionality for the processes of this unit. For details
+        about Linux namespaces, see <a href="http://man7.org/linux/man-pages/man7/namespaces.7.html">namespaces(7)
+    </a>. Either
+        takes a boolean argument, or a space-separated list of namespace type identifiers. If false (the default), no
+        restrictions on namespace creation and switching are made. If true, access to any kind of namespacing is
+        prohibited. Otherwise, a space-separated list of namespace type identifiers must be specified, consisting of
+        any combination of: cgroup, ipc, net,
+        mnt, pid, user and uts. Any
+        namespace type listed is made accessible to the unit's processes, access to namespace types not listed is
+        prohibited (allow-listing). By prepending the list with a single tilde character (~) the
+        effect may be inverted: only the listed namespace types will be made inaccessible, all unlisted ones are
+        permitted (deny-listing). If the empty string is assigned, the default namespace restrictions are applied,
+        which is equivalent to false. This option may appear more than once, in which case the namespace types are
+        merged by OR, or by AND if the lines are prefixed with
+        ~ (see examples below). Internally, this setting limits access to the
+        <a href="http://man7.org/linux/man-pages/man2/unshare.2.html">unshare(2)
+    </a>,
+        <a href="http://man7.org/linux/man-pages/man2/clone.2.html">clone(2)
+    </a> and
+        <a href="http://man7.org/linux/man-pages/man2/setns.2.html">setns(2)
+    </a> system calls, taking
+        the specified flags parameters into account. Note that — if this option is used — in addition to restricting
+        creation and switching of the specified types of namespaces (or all of them, if true) access to the
+        setns() system call with a zero flags parameter is prohibited. This setting is only
+        supported on x86, x86-64, mips, mips-le, mips64, mips64-le, mips64-n32, mips64-le-n32, ppc64, ppc64-le, s390
+        and s390x, and enforces no restrictions on other architectures. If running in user mode, or in system mode, but
+        without the CAP_SYS_ADMIN capability (e.g. setting <var>User=</var>),
+        <var>NoNewPrivileges=yes</var> is implied.</p>
+<p>Example: if a unit has the following,
+        RestrictNamespaces=cgroup ipc
+RestrictNamespaces=cgroup net
+        then cgroup, ipc, and net are set.
+        If the second line is prefixed with ~, e.g.,
+        RestrictNamespaces=cgroup ipc
+RestrictNamespaces=~cgroup net
+        then, only ipc is set.</p>

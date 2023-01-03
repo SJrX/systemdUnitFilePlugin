@@ -1,0 +1,61 @@
+<p>Allow or deny binding a socket address to a socket by matching it with the bind-rule and
+          applying a corresponding action if there is a match.</p>
+<p>bind-rule describes socket properties such as address-family,
+          transport-protocol and ip-ports.</p>
+<p>bind-rule :=
+          { [address-family:][transport-protocol:][ip-ports] | any }</p>
+<p>address-family := { ipv4 | ipv6 }</p>
+<p>transport-protocol := { tcp | udp }</p>
+<p>ip-ports := { ip-port | ip-port-range }</p>
+<p>An optional address-family expects ipv4 or ipv6 values.
+          If not specified, a rule will be matched for both IPv4 and IPv6 addresses and applied depending on other socket fields, e.g. transport-protocol,
+          ip-port.</p>
+<p>An optional transport-protocol expects tcp or udp transport protocol names.
+          If not specified, a rule will be matched for any transport protocol.</p>
+<p>An optional ip-port value must lie within 1…65535 interval inclusively, i.e.
+          dynamic port 0 is not allowed. A range of sequential ports is described by
+          ip-port-range := ip-port-low-ip-port-high,
+          where ip-port-low is smaller than or equal to ip-port-high
+          and both are within 1…65535 inclusively.</p>
+<p>A special value any can be used to apply a rule to any address family, transport protocol and any port with a positive value.</p>
+<p>To allow multiple rules assign <var>SocketBindAllow=</var> or <var>SocketBindDeny=</var> multiple times.
+          To clear the existing assignments pass an empty <var>SocketBindAllow=</var> or <var>SocketBindDeny=</var>
+          assignment.</p>
+<p>For each of <var>SocketBindAllow=</var> and <var>SocketBindDeny=</var>, maximum allowed number of assignments is
+          128.</p>
+<p>The feature is implemented with cgroup/bind4 and cgroup/bind6 cgroup-bpf hooks.</p>
+<p>Examples:…
+# Allow binding IPv6 socket addresses with a port greater than or equal to 10000.
+[Service]
+SocketBindAllow=ipv6:10000-65535
+SocketBindDeny=any
+…
+# Allow binding IPv4 and IPv6 socket addresses with 1234 and 4321 ports.
+[Service]
+SocketBindAllow=1234
+SocketBindAllow=4321
+SocketBindDeny=any
+…
+# Deny binding IPv6 socket addresses.
+[Service]
+SocketBindDeny=ipv6
+…
+# Deny binding IPv4 and IPv6 socket addresses.
+[Service]
+SocketBindDeny=any
+…
+# Allow binding only over TCP
+[Service]
+SocketBindAllow=tcp
+SocketBindDeny=any
+…
+# Allow binding only over IPv6/TCP
+[Service]
+SocketBindAllow=ipv6:tcp
+SocketBindDeny=any
+…
+# Allow binding ports within 10000-65535 range over IPv4/UDP.
+[Service]
+SocketBindAllow=ipv4:udp:10000-65535
+SocketBindDeny=any
+…</p>

@@ -1,0 +1,31 @@
+<p>These two settings expect a space-separated list of unit names. They may be specified
+        more than once, in which case dependencies for all listed names are created.</p>
+<p>Those two settings configure ordering dependencies between units. If unit
+        foo.service contains the setting <var>Before=bar.service</var> and both
+        units are being started, bar.service's start-up is delayed until
+        foo.service has finished starting up. <var>After=</var> is the inverse
+        of <var>Before=</var>, i.e. while <var>Before=</var> ensures that the configured unit
+        is started before the listed unit begins starting up, <var>After=</var> ensures the opposite,
+        that the listed unit is fully started up before the configured unit is started.</p>
+<p>When two units with an ordering dependency between them are shut down, the inverse of the
+        start-up order is applied. I.e. if a unit is configured with <var>After=</var> on another
+        unit, the former is stopped before the latter if both are shut down. Given two units with any
+        ordering dependency between them, if one unit is shut down and the other is started up, the shutdown
+        is ordered before the start-up. It doesn't matter if the ordering dependency is
+        <var>After=</var> or <var>Before=</var>, in this case. It also doesn't matter which
+        of the two is shut down, as long as one is shut down and the other is started up; the shutdown is
+        ordered before the start-up in all cases. If two units have no ordering dependencies between them,
+        they are shut down or started up simultaneously, and no ordering takes place. It depends on the unit
+        type when precisely a unit has finished starting up. Most importantly, for service units start-up is
+        considered completed for the purpose of <var>Before=</var>/<var>After=</var> when all
+        its configured start-up commands have been invoked and they either failed or reported start-up
+        success. Note that this does includes <var>ExecStartPost=</var> (or
+        <var>ExecStopPost=</var> for the shutdown case).</p>
+<p>Note that those settings are independent of and orthogonal to the requirement dependencies as
+        configured by <var>Requires=</var>, <var>Wants=</var>, <var>Requisite=</var>,
+        or <var>BindsTo=</var>. It is a common pattern to include a unit name in both the
+        <var>After=</var> and <var>Wants=</var> options, in which case the unit listed will
+        be started before the unit that is configured with these options.</p>
+<p>Note that <var>Before=</var> dependencies on device units have no effect and are not
+        supported.  Devices generally become available as a result of an external hotplug event, and systemd
+        creates the corresponding device unit without delay.</p>

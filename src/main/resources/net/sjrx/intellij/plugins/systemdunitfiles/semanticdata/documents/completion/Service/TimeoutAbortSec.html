@@ -1,0 +1,26 @@
+<p>This option configures the time to wait for the service to terminate when it was aborted due to a
+        watchdog timeout (see <var>WatchdogSec=</var>). If the service has a short <var>TimeoutStopSec=</var>
+        this option can be used to give the system more time to write a core dump of the service. Upon expiration the service
+        will be forcibly terminated by SIGKILL (see <var>KillMode=</var> in
+        <a href="http://man7.org/linux/man-pages/man5/systemd.kill.5.html">systemd.kill(5)
+    </a>). The core file will
+        be truncated in this case. Use <var>TimeoutAbortSec=</var> to set a sensible timeout for the core dumping per
+        service that is large enough to write all expected data while also being short enough to handle the service failure
+        in due time.
+        </p>
+<p>Takes a unit-less value in seconds, or a time span value such as "5min 20s". Pass an empty value to skip
+        the dedicated watchdog abort timeout handling and fall back <var>TimeoutStopSec=</var>. Pass
+        infinity to disable the timeout logic. Defaults to <var>DefaultTimeoutAbortSec=</var> from
+        the manager configuration file (see
+        <a href="http://man7.org/linux/man-pages/man5/systemd-system.conf.5.html">systemd-system.conf(5)
+    </a>).
+        </p>
+<p>If a service of <var>Type=notify</var> handles SIGABRT itself (instead of relying
+        on the kernel to write a core dump) it can send EXTEND_TIMEOUT_USEC=… to
+        extended the abort time beyond <var>TimeoutAbortSec=</var>. The first receipt of this message
+        must occur before <var>TimeoutAbortSec=</var> is exceeded, and once the abort time has extended beyond
+        <var>TimeoutAbortSec=</var>, the service manager will allow the service to continue to abort, provided
+        the service repeats EXTEND_TIMEOUT_USEC=… within the interval specified, or terminates itself
+        (see <a href="http://man7.org/linux/man-pages/man3/sd_notify.3.html">sd_notify(3)
+    </a>).
+        </p>

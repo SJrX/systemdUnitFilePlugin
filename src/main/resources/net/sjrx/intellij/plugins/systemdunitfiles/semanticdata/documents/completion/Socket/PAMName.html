@@ -1,0 +1,19 @@
+<p>Sets the PAM service name to set up a session as. If set, the executed process will be
+        registered as a PAM session under the specified service name. This is only useful in conjunction with the
+        <var>User=</var> setting, and is otherwise ignored. If not set, no PAM session will be opened for the
+        executed processes. See <a href="http://man7.org/linux/man-pages/man8/pam.8.html">pam(8)
+    </a> for
+        details.</p>
+<p>Note that for each unit making use of this option a PAM session handler process will be maintained as
+        part of the unit and stays around as long as the unit is active, to ensure that appropriate actions can be
+        taken when the unit and hence the PAM session terminates. This process is named (sd-pam) and
+        is an immediate child process of the unit's main process.</p>
+<p>Note that when this option is used for a unit it is very likely (depending on PAM configuration) that the
+        main unit process will be migrated to its own session scope unit when it is activated. This process will hence
+        be associated with two units: the unit it was originally started from (and for which
+        <var>PAMName=</var> was configured), and the session scope unit. Any child processes of that process
+        will however be associated with the session scope unit only. This has implications when used in combination
+        with <var>NotifyAccess=</var><var>all</var>, as these child processes will not be able to affect
+        changes in the original unit through notification messages. These messages will be considered belonging to the
+        session scope unit and not the original unit. It is hence not recommended to use <var>PAMName=</var> in
+        combination with <var>NotifyAccess=</var><var>all</var>.</p>

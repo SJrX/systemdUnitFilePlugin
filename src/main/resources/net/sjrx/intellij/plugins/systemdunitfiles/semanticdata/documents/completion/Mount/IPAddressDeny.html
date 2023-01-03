@@ -1,0 +1,36 @@
+<p>Turn on network traffic filtering for IP packets sent and received over
+          AF_INET and AF_INET6 sockets. Both directives take a
+          space separated list of IPv4 or IPv6 addresses, each optionally suffixed with an address prefix
+          length in bits after a / character. If the suffix is omitted, the address is
+          considered a host address, i.e. the filter covers the whole address (32 bits for IPv4, 128 bits for
+          IPv6).</p>
+<p>The access lists configured with this option are applied to all sockets created by processes
+          of this unit (or in the case of socket units, associated with it). The lists are implicitly
+          combined with any lists configured for any of the parent slice units this unit might be a member
+          of. By default both access lists are empty. Both ingress and egress traffic is filtered by these
+          settings. In case of ingress traffic the source IP address is checked against these access lists,
+          in case of egress traffic the destination IP address is checked. The following rules are applied in
+          turn:</p>
+<p>In order to implement an allow-listing IP firewall, it is recommended to use a
+          <var>IPAddressDeny=</var>any setting on an upper-level slice unit
+          (such as the root slice -.slice or the slice containing all system services
+          system.slice – see
+          <a href="http://man7.org/linux/man-pages/man7/systemd.special.7.html">systemd.special(7)
+    </a>
+          for details on these slice units), plus individual per-service <var>IPAddressAllow=</var>
+          lines permitting network access to relevant services, and only them.</p>
+<p>Note that for socket-activated services, the IP access list configured on the socket unit
+          applies to all sockets associated with it directly, but not to any sockets created by the
+          ultimately activated services for it. Conversely, the IP access list configured for the service is
+          not applied to any sockets passed into the service via socket activation. Thus, it is usually a
+          good idea to replicate the IP access lists on both the socket and the service unit. Nevertheless,
+          it may make sense to maintain one list more open and the other one more restricted, depending on
+          the usecase.</p>
+<p>If these settings are used multiple times in the same unit the specified lists are combined. If an
+          empty string is assigned to these settings the specific access list is reset and all previous settings undone.</p>
+<p>In place of explicit IPv4 or IPv6 address and prefix length specifications a small set of symbolic
+          names may be used. The following names are defined:</p>
+<p>Note that these settings might not be supported on some systems (for example if eBPF control group
+          support is not enabled in the underlying kernel or container manager). These settings will have no effect in
+          that case. If compatibility with such systems is desired it is hence recommended to not exclusively rely on
+          them for IP security.</p>

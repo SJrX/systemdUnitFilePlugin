@@ -1,0 +1,14 @@
+<p>Takes a boolean argument. If true, access to the kernel log ring buffer will be denied. It is
+        recommended to turn this on for most services that do not need to read from or write to the kernel log ring
+        buffer. Enabling this option removes CAP_SYSLOG from the capability bounding set for this
+        unit, and installs a system call filter to block the
+        <a href="http://man7.org/linux/man-pages/man2/syslog.2.html">syslog(2)
+    </a>
+        system call (not to be confused with the libc API
+        <a href="http://man7.org/linux/man-pages/man3/syslog.3.html">syslog(3)
+    </a>
+        for userspace logging). The kernel exposes its log buffer to userspace via /dev/kmsg and
+        /proc/kmsg. If enabled, these are made inaccessible to all the processes in the unit.
+        If this setting is on, but the unit doesn't have the CAP_SYS_ADMIN
+        capability (e.g. services for which <var>User=</var> is set),
+        <var>NoNewPrivileges=yes</var> is implied.</p>

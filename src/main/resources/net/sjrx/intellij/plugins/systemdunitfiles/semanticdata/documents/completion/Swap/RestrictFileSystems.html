@@ -1,0 +1,32 @@
+<p>Restricts the set of filesystems processes of this unit can open files on. Takes a space-separated
+        list of filesystem names. Any filesystem listed is made accessible to the unit's processes, access to filesystem
+        types not listed is prohibited (allow-listing). If the first character of the list is ~, the
+        effect is inverted: access to the filesystems listed is prohibited (deny-listing). If the empty string is assigned,
+        access to filesystems is not restricted.</p>
+<p>If you specify both types of this option (i.e. allow-listing and deny-listing), the first encountered will take
+        precedence and will dictate the default action (allow access to the filesystem or deny it). Then the next occurrences
+        of this option will add or delete the listed filesystems from the set of the restricted filesystems, depending on its
+        type and the default action.</p>
+<p>Example: if a unit has the following,
+        RestrictFileSystems=ext4 tmpfs
+RestrictFileSystems=ext2 ext4
+        then access to ext4, tmpfs, and ext2 is allowed
+        and access to other filesystems is denied.</p>
+<p>Example: if a unit has the following,
+        RestrictFileSystems=ext4 tmpfs
+RestrictFileSystems=~ext4
+        then only access tmpfs is allowed.</p>
+<p>Example: if a unit has the following,
+        RestrictFileSystems=~ext4 tmpfs
+RestrictFileSystems=ext4
+        then only access to tmpfs is denied.</p>
+<p>As the number of possible filesystems is large, predefined sets of filesystems are provided. A set
+        starts with @ character, followed by name of the set.</p>
+<p>Use
+        <a href="http://man7.org/linux/man-pages/man1/systemd-analyze.1.html">systemd-analyze(1)
+    </a>'s
+        filesystems command to retrieve a list of filesystems defined on the local
+        system.</p>
+<p>Note that this setting might not be supported on some systems (for example if the LSM eBPF hook is
+        not enabled in the underlying kernel or if not using the unified control group hierarchy). In that case this setting
+        has no effect.</p>

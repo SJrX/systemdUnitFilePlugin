@@ -1,0 +1,23 @@
+<p>Specifies how
+          <a href="http://man7.org/linux/man-pages/man8/systemd-oomd.service.8.html">systemd-oomd.service(8)
+    </a>
+          will act on this unit's cgroups. Defaults to <var>auto</var>.</p>
+<p>When set to <var>kill</var>, the unit becomes a candidate for monitoring by
+          systemd-oomd. If the cgroup passes the limits set by
+          <a href="http://man7.org/linux/man-pages/man5/oomd.conf.5.html">oomd.conf(5)
+    </a> or
+          the unit configuration, systemd-oomd will select a descendant cgroup and send
+          SIGKILL to all of the processes under it. You can find more details on
+          candidates and kill behavior at
+          <a href="http://man7.org/linux/man-pages/man8/systemd-oomd.service.8.html">systemd-oomd.service(8)
+    </a>
+          and
+          <a href="http://man7.org/linux/man-pages/man5/oomd.conf.5.html">oomd.conf(5)
+    </a>.</p>
+<p>Setting either of these properties to <var>kill</var> will also result in
+          <var>After=</var> and <var>Wants=</var> dependencies on
+          systemd-oomd.service unless <var>DefaultDependencies=no</var>.</p>
+<p>When set to <var>auto</var>, systemd-oomd will not actively use this
+          cgroup's data for monitoring and detection. However, if an ancestor cgroup has one of these
+          properties set to <var>kill</var>, a unit with <var>auto</var> can still be a candidate
+          for systemd-oomd to terminate.</p>

@@ -1,0 +1,54 @@
+<p>Set soft and hard limits on various resources for executed processes. See
+        <a href="http://man7.org/linux/man-pages/man2/setrlimit.2.html">setrlimit(2)
+    </a> for
+        details on the process resource limit concept. Process resource limits may be specified in two formats:
+        either as single value to set a specific soft and hard limit to the same value, or as colon-separated
+        pair <var>soft:hard</var> to set both limits individually
+        (e.g. LimitAS=4G:16G).  Use the string <var>infinity</var> to configure no
+        limit on a specific resource. The multiplicative suffixes K, M, G, T, P and E (to the base 1024) may
+        be used for resource limits measured in bytes (e.g. LimitAS=16G). For the limits
+        referring to time values, the usual time units ms, s, min, h and so on may be used (see
+        <a href="http://man7.org/linux/man-pages/man7/systemd.time.7.html">systemd.time(7)
+    </a> for
+        details). Note that if no time unit is specified for <var>LimitCPU=</var> the default unit of
+        seconds is implied, while for <var>LimitRTTIME=</var> the default unit of microseconds is
+        implied. Also, note that the effective granularity of the limits might influence their
+        enforcement. For example, time limits specified for <var>LimitCPU=</var> will be rounded up
+        implicitly to multiples of 1s. For <var>LimitNICE=</var> the value may be specified in two
+        syntaxes: if prefixed with + or -, the value is understood as
+        regular Linux nice value in the range -20…19. If not prefixed like this the value is understood as
+        raw resource limit parameter in the range 0…40 (with 0 being equivalent to 1).</p>
+<p>Note that most process resource limits configured with these options are per-process, and
+        processes may fork in order to acquire a new set of resources that are accounted independently of the
+        original process, and may thus escape limits set. Also note that <var>LimitRSS=</var> is not
+        implemented on Linux, and setting it has no effect. Often it is advisable to prefer the resource
+        controls listed in
+        <a href="http://man7.org/linux/man-pages/man5/systemd.resource-control.5.html">systemd.resource-control(5)
+    </a>
+        over these per-process limits, as they apply to services as a whole, may be altered dynamically at
+        runtime, and are generally more expressive. For example, <var>MemoryMax=</var> is a more
+        powerful (and working) replacement for <var>LimitRSS=</var>.</p>
+<p>Note that <var>LimitNPROC=</var> will limit the number of processes from one (real) UID and
+        not the number of processes started (forked) by the service. Therefore the limit is cumulative for all
+        processes running under the same UID. Please also note that the <var>LimitNPROC=</var> will not be
+        enforced if the service is running as root (and not dropping privileges). Due to these limitations,
+        <var>TasksMax=</var> (see <a href="http://man7.org/linux/man-pages/man5/systemd.resource-control.5.html">systemd.resource-control(5)
+    </a>) is typically a better choice than <var>LimitNPROC=</var>.
+        </p>
+<p>Resource limits not configured explicitly for a unit default to the value configured in the various
+        <var>DefaultLimitCPU=</var>, <var>DefaultLimitFSIZE=</var>, … options available in
+        <a href="http://man7.org/linux/man-pages/man5/systemd-system.conf.5.html">systemd-system.conf(5)
+    </a>, and –
+        if not configured there – the kernel or per-user defaults, as defined by the OS (the latter only for user
+        services, see below).</p>
+<p>For system units these resource limits may be chosen freely. When these settings are configured
+        in a user service (i.e. a service run by the per-user instance of the service manager) they cannot be
+        used to raise the limits above those set for the user manager itself when it was first invoked, as
+        the user's service manager generally lacks the privileges to do so. In user context these
+        configuration options are hence only useful to lower the limits passed in or to raise the soft limit
+        to the maximum of the hard limit as configured for the user. To raise the user's limits further, the
+        available configuration mechanisms differ between operating systems, but typically require
+        privileges. In most cases it is possible to configure higher per-user resource limits via PAM or by
+        setting limits on the system service encapsulating the user's service manager, i.e. the user's
+        instance of user@.service. After making such changes, make sure to restart the
+        user's service manager.</p>

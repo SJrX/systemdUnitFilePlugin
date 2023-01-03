@@ -1,0 +1,9 @@
+<p>Takes a boolean argument or <var>restart</var>. If set to <var>no</var> (the
+        default), the directories specified in <var>RuntimeDirectory=</var> are always removed when the service
+        stops. If set to <var>restart</var> the directories are preserved when the service is both automatically
+        and manually restarted. Here, the automatic restart means the operation specified in
+        <var>Restart=</var>, and manual restart means the one triggered by systemctl restart
+        foo.service. If set to <var>yes</var>, then the directories are not removed when the service is
+        stopped. Note that since the runtime directory /run/ is a mount point of
+        tmpfs, then for system services the directories specified in
+        <var>RuntimeDirectory=</var> are removed when the system is rebooted.</p>

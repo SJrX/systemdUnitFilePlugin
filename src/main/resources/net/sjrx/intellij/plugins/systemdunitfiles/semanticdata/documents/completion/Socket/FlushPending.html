@@ -1,0 +1,8 @@
+<p>Takes a boolean argument. May only be used when
+        <var>Accept=no</var>. If yes, the socket's buffers are cleared after the
+        triggered service exited. This causes any pending data to be
+        flushed and any pending incoming connections to be rejected. If no, the
+        socket's buffers won't be cleared, permitting the service to handle any
+        pending connections after restart, which is the usually expected behaviour.
+        Defaults to <var>no</var>.
+        </p>

@@ -1,0 +1,8 @@
+<p>Assign the specified CPU time quota to the processes executed. Takes a percentage value, suffixed with
+          "%". The percentage specifies how much CPU time the unit shall get at maximum, relative to the total CPU time
+          available on one CPU. Use values &gt; 100% for allotting CPU time on more than one CPU. This controls the
+          cpu.max attribute on the unified control group hierarchy and
+          cpu.cfs_quota_us on legacy. For details about these control group attributes, see <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html">Control Groups v2</a> and <a href="https://docs.kernel.org/scheduler/sched-bwc.html">CFS Bandwidth Control</a>.
+          Setting <var>CPUQuota=</var> to an empty value unsets the quota.</p>
+<p>Example: <var>CPUQuota=20%</var> ensures that the executed processes will never get more than
+          20% CPU time on one CPU.</p>

@@ -1,0 +1,11 @@
+<p>Takes a boolean argument. If set, any attempts to enable realtime scheduling in a process of
+        the unit are refused. This restricts access to realtime task scheduling policies such as
+        SCHED_FIFO, SCHED_RR or SCHED_DEADLINE. See
+        <a href="http://man7.org/linux/man-pages/man7/sched.7.html">sched(7)
+    </a>
+        for details about these scheduling policies. If running in user mode, or in system mode, but without the
+        CAP_SYS_ADMIN capability (e.g. setting <var>User=</var>),
+        <var>NoNewPrivileges=yes</var> is implied. Realtime scheduling policies may be used to monopolize CPU
+        time for longer periods of time, and may hence be used to lock up or otherwise trigger Denial-of-Service
+        situations on the system. It is hence recommended to restrict access to realtime scheduling to the few programs
+        that actually require them. Defaults to off.</p>

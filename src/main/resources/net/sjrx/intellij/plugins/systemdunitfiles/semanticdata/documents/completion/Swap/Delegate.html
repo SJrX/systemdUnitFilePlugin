@@ -1,0 +1,23 @@
+<p>Turns on delegation of further resource control partitioning to processes of the unit. Units where this
+          is enabled may create and manage their own private subhierarchy of control groups below the control group of
+          the unit itself. For unprivileged services (i.e. those using the <var>User=</var> setting) the unit's
+          control group will be made accessible to the relevant user. When enabled the service manager will refrain
+          from manipulating control groups or moving processes below the unit's control group, so that a clear concept
+          of ownership is established: the control group tree above the unit's control group (i.e. towards the root
+          control group) is owned and managed by the service manager of the host, while the control group tree below
+          the unit's control group is owned and managed by the unit itself. Takes either a boolean argument or a list
+          of control group controller names. If true, delegation is turned on, and all supported controllers are
+          enabled for the unit, making them available to the unit's processes for management. If false, delegation is
+          turned off entirely (and no additional controllers are enabled). If set to a list of controllers, delegation
+          is turned on, and the specified controllers are enabled for the unit. Note that additional controllers than
+          the ones specified might be made available as well, depending on configuration of the containing slice unit
+          or other units contained in it. Note that assigning the empty string will enable delegation, but reset the
+          list of controllers, all assignments prior to this will have no effect.  Defaults to false.</p>
+<p>Note that controller delegation to less privileged code is only safe on the unified control group
+          hierarchy. Accordingly, access to the specified controllers will not be granted to unprivileged services on
+          the legacy hierarchy, even when requested.</p>
+<p>Not all of these controllers are available on all kernels however, and some are
+          specific to the unified hierarchy while others are specific to the legacy hierarchy. Also note that the
+          kernel might support further controllers, which aren't covered here yet as delegation is either not supported
+          at all for them or not defined cleanly.</p>
+<p>For further details on the delegation model consult <a href="https://systemd.io/CGROUP_DELEGATION">Control Group APIs and Delegation</a>.</p>

@@ -111,12 +111,9 @@ pipeline {
         stage('Determine Image Hashes') {
           agent {
             kubernetes {
-              //cloud 'kubernetes'
               defaultContainer 'ci-utils'
 
-              // language=yaml
               yaml buildPodDefinition(null, true, false)
-              //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
             }
           }
           steps {
@@ -242,72 +239,72 @@ pipeline {
             }
           }
         }
-        stage("Assemble Metadata") {
-          parallel {
-            stage('Assemble Ubuntu Units') {
-              agent {
-                kubernetes {
-                  //cloud 'kubernetes'
-                  defaultContainer 'worker-pod'
-
-                  // language=yaml
-                  yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-ubuntu-image:$ubuntuUnitsHash", false, false)
-                  //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
-                }
-              }
-              steps {
-                sh("""
-                   mkdir -p ./systemd-build/build
-                   
-                   cp /ubuntu-units.txt ./systemd-build/build/ubuntu-units.txt
-                   """)
-                stash includes: 'systemd-build/build/**', name: 'ubuntu-units', allowEmpty: true
-                }
-            }
-            stage('Assemble systemd metadata') {
-              agent {
-                kubernetes {
-                  //cloud 'kubernetes'
-                  defaultContainer 'worker-pod'
-
-                  // language=yaml
-                  yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-systemd-builder-image:$systemdBuilderHash", false,false)
-                  //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
-                }
-              }
-              steps {
-
-                  sh("""
-                      mkdir -p ./systemd-build/build
-                      cp /opt/systemd-source/systemd/load-fragment-gperf.gperf ./systemd-build/build
-                      cp -R /opt/systemd-source/systemd/man ./systemd-build/build
-                    """)
-                stash includes: 'systemd-build/build/**', name: 'systemd-build-build', allowEmpty: false
-              }
-            }
-          }
-        }
-        stage("Build") {
+      }
+    }
+    stage("Assemble Metadata") {
+      parallel {
+        stage('Assemble Ubuntu Units') {
           agent {
             kubernetes {
               //cloud 'kubernetes'
               defaultContainer 'worker-pod'
 
               // language=yaml
-              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-build-environment:$buildEnvironmentHash", false,false)
+              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-ubuntu-image:$ubuntuUnitsHash", false, false)
               //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
             }
           }
           steps {
-            unstash 'systemd-build-build'
-            unstash 'ubuntu-units'
             sh("""
-            ./gradlew --build-cache clean build buildPlugin --scan
- """)
-            archiveArtifacts artifacts: 'build/distributions/*.zip'
-            archiveArtifacts artifacts: 'build/reports/**'
+               mkdir -p ./systemd-build/build
+               
+               cp /ubuntu-units.txt ./systemd-build/build/ubuntu-units.txt
+               """)
+            stash includes: 'systemd-build/build/**', name: 'ubuntu-units', allowEmpty: true
+            }
+        }
+        stage('Assemble systemd metadata') {
+          agent {
+            kubernetes {
+              //cloud 'kubernetes'
+              defaultContainer 'worker-pod'
+
+              // language=yaml
+              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-systemd-builder-image:$systemdBuilderHash", false,false)
+              //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
+            }
+          }
+          steps {
+
+              sh("""
+                  mkdir -p ./systemd-build/build
+                  cp /opt/systemd-source/systemd/load-fragment-gperf.gperf ./systemd-build/build
+                  cp -R /opt/systemd-source/systemd/man ./systemd-build/build
+                """)
+            stash includes: 'systemd-build/build/**', name: 'systemd-build-build', allowEmpty: false
           }
         }
+      }
+    }
+    stage("Build") {
+      agent {
+        kubernetes {
+          //cloud 'kubernetes'
+          defaultContainer 'worker-pod'
+
+          // language=yaml
+          yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-build-environment:$buildEnvironmentHash", false,false)
+          //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
+        }
+      }
+      steps {
+        unstash 'systemd-build-build'
+        unstash 'ubuntu-units'
+        sh("""
+        ./gradlew --build-cache clean build buildPlugin --scan
+""")
+        archiveArtifacts artifacts: 'build/distributions/*.zip'
+        archiveArtifacts artifacts: 'build/reports/**'
       }
     }
   }

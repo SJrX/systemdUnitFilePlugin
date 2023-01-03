@@ -1,0 +1,25 @@
+<p>Takes a boolean argument. If true, sets up a new user namespace for the executed processes and
+        configures a minimal user and group mapping, that maps the root user and group as well as
+        the unit's own user and group to themselves and everything else to the nobody user and
+        group. This is useful to securely detach the user and group databases used by the unit from the rest of the
+        system, and thus to create an effective sandbox environment. All files, directories, processes, IPC objects and
+        other resources owned by users/groups not equaling root or the unit's own will stay visible
+        from within the unit but appear owned by the nobody user and group. If this mode is enabled,
+        all unit processes are run without privileges in the host user namespace (regardless if the unit's own
+        user/group is root or not). Specifically this means that the process will have zero process
+        capabilities on the host's user namespace, but full capabilities within the service's user namespace. Settings
+        such as <var>CapabilityBoundingSet=</var> will affect only the latter, and there's no way to acquire
+        additional capabilities in the host's user namespace. Defaults to off.</p>
+<p>When this setting is set up by a per-user instance of the service manager, the mapping of the
+        root user and group to itself is omitted (unless the user manager is root).
+        Additionally, in the per-user instance manager case, the
+        user namespace will be set up before most other namespaces. This means that combining
+        <var>PrivateUsers=</var><var>true</var> with other namespaces will enable use of features not
+        normally supported by the per-user instances of the service manager.</p>
+<p>This setting is particularly useful in conjunction with
+        <var>RootDirectory=</var>/<var>RootImage=</var>, as the need to synchronize the user and group
+        databases in the root directory and on the host is reduced, as the only users and groups who need to be matched
+        are root, nobody and the unit's own user and group.</p>
+<p>Note that the implementation of this setting might be impossible (for example if user namespaces are not
+        available), and the unit should be written in a way that does not solely rely on this setting for
+        security.</p>

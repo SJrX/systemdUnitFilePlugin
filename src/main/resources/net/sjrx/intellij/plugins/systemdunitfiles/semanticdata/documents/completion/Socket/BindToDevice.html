@@ -1,0 +1,10 @@
+<p>Specifies a network interface name to bind this socket to. If set, traffic will only
+        be accepted from the specified network interfaces. This controls the
+        SO_BINDTODEVICE socket option (see <a href="http://man7.org/linux/man-pages/man7/socket.7.html">socket(7)
+    </a> for
+        details). If this option is used, an implicit dependency from this socket unit on the network
+        interface device unit is created
+        (see <a href="http://man7.org/linux/man-pages/man5/systemd.device.5.html">systemd.device(5)
+    </a>).
+        Note that setting this parameter might result in additional dependencies to be added to the unit (see
+        above).</p>

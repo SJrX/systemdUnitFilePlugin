@@ -1,0 +1,20 @@
+<p>Additional commands that are executed after the service is stopped. This includes cases where
+        the commands configured in <var>ExecStop=</var> were used, where the service does not have any
+        <var>ExecStop=</var> defined, or where the service exited unexpectedly. This argument takes multiple
+        command lines, following the same scheme as described for <var>ExecStart=</var>. Use of these settings
+        is optional. Specifier and environment variable substitution is supported. Note that – unlike
+        <var>ExecStop=</var> – commands specified with this setting are invoked when a service failed to start
+        up correctly and is shut down again.</p>
+<p>It is recommended to use this setting for clean-up operations that shall be executed even when the
+        service failed to start up correctly. Commands configured with this setting need to be able to operate even if
+        the service failed starting up half-way and left incompletely initialized data around. As the service's
+        processes have been terminated already when the commands specified with this setting are executed they should
+        not attempt to communicate with them.</p>
+<p>Note that all commands that are configured with this setting are invoked with the result code of the
+        service, as well as the main process' exit code and status, set in the <var>$SERVICE_RESULT</var>,
+        <var>$EXIT_CODE</var> and <var>$EXIT_STATUS</var> environment variables, see
+        <a href="http://man7.org/linux/man-pages/man5/systemd.exec.5.html">systemd.exec(5)
+    </a> for
+        details.</p>
+<p>Note that the execution of <var>ExecStopPost=</var> is taken into account for the purpose of
+        <var>Before=</var>/<var>After=</var> ordering constraints.</p>

@@ -1,0 +1,33 @@
+<p>Add a custom cgroup BPF program.</p>
+<p><var>BPFProgram=</var> allows attaching BPF hooks to the cgroup of a systemd unit.
+          (This generalizes the functionality exposed via <var>IPEgressFilterPath=</var> for egress and
+          <var>IPIngressFilterPath=</var> for ingress.)
+          Cgroup-bpf hooks in the form of BPF programs loaded to the BPF filesystem are attached with cgroup-bpf attach
+          flags determined by the unit. For details about attachment types and flags see <a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/include/uapi/linux/bpf.h"/>.
+          For general BPF documentation please refer to <a href="https://docs.kernel.org/bpf/index.html"/>.</p>
+<p>The specification of BPF program consists of a type followed by a
+          program-path with : as the separator:
+          type:program-path.</p>
+<p>type is the string name of BPF attach type also used in
+          bpftool. type can be one of egress,
+          ingress, sock_create, sock_ops,
+          device, bind4, bind6,
+          connect4, connect6, post_bind4,
+          post_bind6, sendmsg4, sendmsg6,
+          sysctl, recvmsg4, recvmsg6,
+          getsockopt, setsockopt.</p>
+<p>Setting <var>BPFProgram=</var> to an empty value makes previous assignments ineffective.</p>
+<p>Multiple assignments of the same type:program-path
+          value have the same effect as a single assignment: the program with the path program-path
+          will be attached to cgroup hook type just once.</p>
+<p>If BPF egress pinned to program-path path is already being
+          handled by <var>IPEgressFilterPath=</var>, <var>BPFProgram=</var>
+          assignment will be considered valid and <var>BPFProgram=</var> will be attached to a cgroup.
+          Similarly for ingress hook and <var>IPIngressFilterPath=</var> assignment.</p>
+<p>BPF programs passed with <var>BPFProgram=</var> are attached to the cgroup of a unit with BPF
+          attach flag multi, that allows further attachments of the same
+          type within cgroup hierarchy topped by the unit cgroup.</p>
+<p>Examples:
+BPFProgram=egress:/sys/fs/bpf/egress-hook
+BPFProgram=bind6:/sys/fs/bpf/sock-addr-hook
+</p>

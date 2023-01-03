@@ -1,0 +1,8 @@
+<p>Takes a boolean argument. When enabled, the randomized offset specified by
+        <var>RandomizedDelaySec=</var> is reused for all firings of the same timer. For a given timer
+        unit, the offset depends on the machine ID, user identifier and timer name, which means that it is
+        stable between restarts of the manager. This effectively creates a fixed offset for an individual
+        timer, reducing the jitter in firings of this timer, while still avoiding firing at the same time as
+        other similarly configured timers.</p>
+<p>This setting has no effect if <var>RandomizedDelaySec=</var> is set to 0. Defaults to
+        <var>false</var>.</p>

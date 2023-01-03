@@ -1,0 +1,13 @@
+<p>Set the default overall block I/O weight for the executed processes, if the unified control
+          group hierarchy is used on the system. Takes a single weight value (between 1 and 10000) to set the
+          default block I/O weight. This controls the io.weight control group attribute,
+          which defaults to 100. For details about this control group attribute, see <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#io-interface-files">IO
+          Interface Files</a>.  The available I/O bandwidth is split up among all units within one slice
+          relative to their block I/O weight. A higher weight means more I/O bandwidth, a lower weight means
+          less.</p>
+<p>While <var>StartupIOWeight=</var> applies
+          to the startup and shutdown phases of the system,
+          <var>IOWeight=</var> applies to the later runtime of
+          the system, and if the former is not set also to the startup
+          and shutdown phases. This allows prioritizing specific services at boot-up
+          and shutdown differently than during runtime.</p>

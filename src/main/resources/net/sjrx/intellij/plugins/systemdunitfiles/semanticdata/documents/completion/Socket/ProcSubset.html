@@ -1,0 +1,14 @@
+<p>Takes one of all (the default) and pid. If
+        pid, all files and directories not directly associated with process management and
+        introspection are made invisible in the /proc/ file system configured for the
+        unit's processes. This controls the subset= mount option of the
+        procfs instance for the unit. For further details see <a href="https://docs.kernel.org/filesystems/proc.html#mount-options">The /proc
+        Filesystem</a>. Note that Linux exposes various kernel APIs via /proc/,
+        which are made unavailable with this setting. Since these APIs are used frequently this option is
+        useful only in a few, specific cases, and is not suitable for most non-trivial programs.</p>
+<p>Much like <var>ProtectProc=</var> above, this is implemented via file system mount
+        namespacing, and hence the same restrictions apply: it is only available to system services, it
+        disables mount propagation to the host mount table, and it implies
+        <var>MountAPIVFS=</var>. Also, like <var>ProtectProc=</var> this setting is gracefully
+        disabled if the used kernel does not support the subset= mount option of
+        procfs.</p>

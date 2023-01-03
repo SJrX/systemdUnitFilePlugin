@@ -1,0 +1,10 @@
+<p>Takes a four character identifier string for an <a href="http://man7.org/linux/man-pages/man5/utmp.5.html">utmp(5)
+    </a> and wtmp entry
+        for this service. This should only be set for services such as getty implementations (such
+        as <a href="http://man7.org/linux/man-pages/man8/agetty.8.html">agetty(8)
+    </a>) where utmp/wtmp
+        entries must be created and cleared before and after execution, or for services that shall be executed as if
+        they were run by a getty process (see below). If the configured string is longer than four
+        characters, it is truncated and the terminal four characters are used. This setting interprets %I style string
+        replacements. This setting is unset by default, i.e. no utmp/wtmp entries are created or cleaned up for this
+        service.</p>

@@ -1,0 +1,9 @@
+<p>Takes a boolean argument. If true, a timer will stay loaded, and its state remains
+        queryable even after it elapsed and the associated unit (as configured with <var>Unit=</var>,
+        see above) deactivated again. If false, an elapsed timer unit that cannot elapse anymore is unloaded
+        once its associated unit deactivated again. Turning this off is particularly useful for transient
+        timer units. Note that this setting has an effect when repeatedly starting a timer unit: if
+        <var>RemainAfterElapse=</var> is on, starting the timer a second time has no effect. However,
+        if <var>RemainAfterElapse=</var> is off and the timer unit was already unloaded, it can be
+        started again, and thus the service can be triggered multiple times. Defaults to
+        <var>true</var>.</p>

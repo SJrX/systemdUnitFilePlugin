@@ -1,0 +1,11 @@
+<p>Tweaks the "garbage collection" algorithm for this unit. Takes one of <var>inactive</var>
+        or <var>inactive-or-failed</var>. If set to <var>inactive</var> the unit will be unloaded if it is
+        in the inactive state and is not referenced by clients, jobs or other units — however it
+        is not unloaded if it is in the failed state. In <var>failed</var> mode, failed
+        units are not unloaded until the user invoked systemctl reset-failed on them to reset the
+        failed state, or an equivalent command. This behaviour is altered if this option is set to
+        <var>inactive-or-failed</var>: in this case the unit is unloaded even if the unit is in a
+        failed state, and thus an explicitly resetting of the failed state is
+        not necessary. Note that if this mode is used unit results (such as exit codes, exit signals, consumed
+        resources, …) are flushed out immediately after the unit completed, except for what is stored in the logging
+        subsystem. Defaults to <var>inactive</var>.</p>

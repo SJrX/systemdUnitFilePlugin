@@ -1,0 +1,10 @@
+<p>Specify the throttling limit on memory usage of the executed processes in this unit. Memory usage may go
+          above the limit if unavoidable, but the processes are heavily slowed down and memory is taken away
+          aggressively in such cases. This is the main mechanism to control memory usage of a unit.</p>
+<p>Takes a memory size in bytes. If the value is suffixed with K, M, G or T, the specified memory size is
+          parsed as Kilobytes, Megabytes, Gigabytes, or Terabytes (with the base 1024), respectively. Alternatively, a
+          percentage value may be specified, which is taken relative to the installed physical memory on the
+          system. If assigned the
+          special value infinity, no memory throttling is applied. This controls the
+          memory.high control group attribute. For details about this control group attribute, see
+          <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#memory-interface-files">Memory Interface Files</a>.</p>

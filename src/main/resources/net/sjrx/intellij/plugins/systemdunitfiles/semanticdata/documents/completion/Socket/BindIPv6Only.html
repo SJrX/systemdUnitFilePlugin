@@ -1,0 +1,14 @@
+<p>Takes one of <var>default</var>,
+        <var>both</var> or <var>ipv6-only</var>. Controls
+        the IPV6_V6ONLY socket option (see
+        <a href="http://man7.org/linux/man-pages/man7/ipv6.7.html">ipv6(7)
+    </a>
+        for details). If <var>both</var>, IPv6 sockets bound
+        will be accessible via both IPv4 and IPv6. If
+        <var>ipv6-only</var>, they will be accessible via IPv6
+        only. If <var>default</var> (which is the default,
+        surprise!), the system wide default setting is used, as
+        controlled by
+        /proc/sys/net/ipv6/bindv6only, which in
+        turn defaults to the equivalent of
+        <var>both</var>.</p>

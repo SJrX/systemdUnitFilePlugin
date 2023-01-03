@@ -1,0 +1,24 @@
+<p>This option may be used more than once, or a space-separated list of unit names may
+        be given. A symbolic link is created in the .wants/ or
+        .requires/ directory of each of the listed units when this unit is installed by
+        systemctl enable. This has the effect of a dependency of type
+        <var>Wants=</var> or <var>Requires=</var> being added from the listed unit to the
+        current unit. The primary result is that the current unit will be started when the listed unit is
+        started, see the description of <var>Wants=</var> and <var>Requires=</var> in the
+        [Unit] section for details.</p>
+<p>In case of template units listing non template units, the listing unit must have
+        <var>DefaultInstance=</var> set, or systemctl enable must be called with
+        an instance name. The instance (default or specified) will be added to the
+        .wants/ or .requires/ list of the listed unit. For example,
+        WantedBy=getty.target in a service getty@.service will result
+        in systemctl enable getty@tty2.service creating a
+        getty.target.wants/getty@tty2.service link to
+        getty@.service. This also applies to listing specific instances of templated
+        units: this specific instance will gain the dependency. A template unit may also list a template
+        unit, in which case a generic dependency will be added where each instance of the listing unit will
+        have a dependency on an instance of the listed template with the same instance value. For example,
+        WantedBy=container@.target in a service monitor@.service will
+        result in systemctl enable monitor@.service creating a
+        container@.target.wants/monitor@.service link to
+        monitor@.service, which applies to all instances of
+        container@.target.</p>

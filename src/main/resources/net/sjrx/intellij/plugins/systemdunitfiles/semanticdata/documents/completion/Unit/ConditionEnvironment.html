@@ -1,0 +1,12 @@
+<p><var>ConditionEnvironment=</var> may be used to check whether a specific
+          environment variable is set (or if prefixed with the exclamation mark — unset) in the service
+          manager's environment block.
+
+          The argument may be a single word, to check if the variable with this name is defined in the
+          environment block, or an assignment
+          (name=value), to check if
+          the variable with this exact value is defined. Note that the environment block of the service
+          manager itself is checked, i.e. not any variables defined with <var>Environment=</var> or
+          <var>EnvironmentFile=</var>, as described above. This is particularly useful when the
+          service manager runs inside a containerized environment or as per-user service manager, in order to
+          check for variables passed in by the enclosing container manager or PAM.</p>

@@ -1,0 +1,11 @@
+<p>Takes a boolean value that specifies whether
+        systemd should try to guess the main PID of a service if it
+        cannot be determined reliably. This option is ignored unless
+        <var>Type=forking</var> is set and
+        <var>PIDFile=</var> is unset because for the other types
+        or with an explicitly configured PID file, the main PID is
+        always known. The guessing algorithm might come to incorrect
+        conclusions if a daemon consists of more than one process. If
+        the main PID cannot be determined, failure detection and
+        automatic restarting of a service will not work reliably.
+        Defaults to <var>yes</var>.</p>

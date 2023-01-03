@@ -1,0 +1,9 @@
+<p>Takes a colon separated list of absolute paths relative to which the executable
+        used by the <var>Exec*=</var> (e.g. <var>ExecStart=</var>,
+        <var>ExecStop=</var>, etc.) properties can be found. <var>ExecSearchPath=</var>
+        overrides <var>$PATH</var> if <var>$PATH</var> is not supplied by the user through
+        <var>Environment=</var>, <var>EnvironmentFile=</var> or
+        <var>PassEnvironment=</var>. Assigning an empty string removes previous assignments
+        and setting <var>ExecSearchPath=</var> to a value multiple times will append
+        to the previous setting.
+        </p>

@@ -1,0 +1,9 @@
+<p>Takes a <var>SMACK64</var> security label as argument. The process executed by the unit
+        will be started under this label and SMACK will decide whether the process is allowed to run or not, based on
+        it. The process will continue to run under the label specified here unless the executable has its own
+        <var>SMACK64EXEC</var> label, in which case the process will transition to run under that label. When not
+        specified, the label that systemd is running under is used. This directive is ignored if SMACK is
+        disabled.</p>
+<p>The value may be prefixed by -, in which case all errors will be ignored. An empty
+        value may be specified to unset previous assignments. This does not affect commands prefixed with
+        +.</p>

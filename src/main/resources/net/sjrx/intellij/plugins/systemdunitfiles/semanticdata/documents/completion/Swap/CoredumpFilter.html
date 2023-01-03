@@ -1,0 +1,15 @@
+<p>Controls which types of memory mappings will be saved if the process dumps core
+        (using the /proc/pid/coredump_filter file). Takes a
+        whitespace-separated combination of mapping type names or numbers (with the default base 16). Mapping
+        type names are private-anonymous, shared-anonymous,
+        private-file-backed, shared-file-backed,
+        elf-headers, private-huge,
+        shared-huge, private-dax, shared-dax,
+        and the special values all (all types) and default (the
+        kernel default of private-anonymous
+        shared-anonymous elf-headers
+        private-huge). See
+        <a href="http://man7.org/linux/man-pages/man5/core.5.html">core(5)
+    </a>
+        for the meaning of the mapping types. When specified multiple times, all specified masks are
+        ORed. When not set, or if the empty value is assigned, the inherited value is not changed.</p>

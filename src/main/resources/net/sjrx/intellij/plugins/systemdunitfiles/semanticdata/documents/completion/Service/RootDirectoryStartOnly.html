@@ -1,0 +1,13 @@
+<p>Takes a boolean argument. If true, the root
+        directory, as configured with the
+        <var>RootDirectory=</var> option (see
+        <a href="http://man7.org/linux/man-pages/man5/systemd.exec.5.html">systemd.exec(5)
+    </a>
+        for more information), is only applied to the process started
+        with <var>ExecStart=</var>, and not to the various
+        other <var>ExecStartPre=</var>,
+        <var>ExecStartPost=</var>,
+        <var>ExecReload=</var>, <var>ExecStop=</var>,
+        and <var>ExecStopPost=</var> commands. If false, the
+        setting is applied to all configured commands the same way.
+        Defaults to false.</p>

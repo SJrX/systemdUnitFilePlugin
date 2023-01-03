@@ -1,0 +1,13 @@
+<p>Assigns a name to all file descriptors this
+        socket unit encapsulates. This is useful to help activated
+        services identify specific file descriptors, if multiple fds
+        are passed. Services may use the
+        <a href="http://man7.org/linux/man-pages/man3/sd_listen_fds_with_names.3.html">sd_listen_fds_with_names(3)
+    </a>
+        call to acquire the names configured for the received file
+        descriptors. Names may contain any ASCII character, but must
+        exclude control characters and :, and must
+        be at most 255 characters in length. If this setting is not
+        used, the file descriptor name defaults to the name of the
+        socket unit, including its .socket
+        suffix.</p>

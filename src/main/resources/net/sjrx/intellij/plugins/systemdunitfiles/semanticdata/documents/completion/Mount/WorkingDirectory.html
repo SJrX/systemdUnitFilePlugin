@@ -1,0 +1,10 @@
+<p>Takes a directory path relative to the service's root directory specified by
+        <var>RootDirectory=</var>, or the special value ~. Sets the working directory for
+        executed processes. If set to ~, the home directory of the user specified in
+        <var>User=</var> is used. If not set, defaults to the root directory when systemd is running as a
+        system instance and the respective user's home directory if run as user. If the setting is prefixed with the
+        - character, a missing working directory is not considered fatal. If
+        <var>RootDirectory=</var>/<var>RootImage=</var> is not set, then
+        <var>WorkingDirectory=</var> is relative to the root of the system running the service manager. Note
+        that setting this parameter might result in additional dependencies to be added to the unit (see
+        above).</p>

@@ -1,0 +1,13 @@
+<p>Takes a boolean argument. If on, a private mount namespace for the unit's processes is created
+        and the API file systems /proc/, /sys/, /dev/ and
+        /run/ (as an empty tmpfs) are mounted inside of it, unless they are
+        already mounted. Note that this option has no effect unless used in conjunction with
+        <var>RootDirectory=</var>/<var>RootImage=</var> as these four mounts are
+        generally mounted in the host anyway, and unless the root directory is changed, the private mount namespace
+        will be a 1:1 copy of the host's, and include these four mounts. Note that the /dev/ file
+        system of the host is bind mounted if this option is used without <var>PrivateDevices=</var>. To run
+        the service with a private, minimal version of /dev/, combine this option with
+        <var>PrivateDevices=</var>.</p>
+<p>In order to allow propagating mounts at runtime in a safe manner, /run/systemd/propagate
+        on the host will be used to set up new mounts, and /run/host/incoming/ in the private namespace
+        will be used as an intermediate step to store them before being moved to the final mount point.</p>

@@ -1,0 +1,12 @@
+<p>Specifies which signal to send to remaining
+        processes after a timeout if <var>SendSIGKILL=</var>
+        is enabled. The signal configured here should be one that is
+        not typically caught and processed by services (SIGTERM
+        is not suitable). Developers can find it useful to use this to
+        generate a coredump to troubleshoot why a service did not
+        terminate upon receiving the initial SIGTERM
+        signal. This can be achieved by configuring <var>LimitCORE=</var>
+        and setting <var>FinalKillSignal=</var> to either
+        SIGQUIT or SIGABRT.
+        Defaults to SIGKILL.
+        </p>

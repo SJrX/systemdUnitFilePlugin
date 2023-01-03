@@ -1,0 +1,21 @@
+<p>Configures the time to wait for the commands
+        specified in <var>ExecStartPre=</var>,
+        <var>ExecStartPost=</var>,
+        <var>ExecStopPre=</var> and
+        <var>ExecStopPost=</var> to finish. If a command does
+        not exit within the configured time, the socket will be
+        considered failed and be shut down again. All commands still
+        running will be terminated forcibly via
+        SIGTERM, and after another delay of this
+        time with SIGKILL. (See
+        <var>KillMode=</var> in
+        <a href="http://man7.org/linux/man-pages/man5/systemd.kill.5.html">systemd.kill(5)
+    </a>.)
+        Takes a unit-less value in seconds, or a time span value such
+        as "5min 20s". Pass 0 to disable the
+        timeout logic. Defaults to
+        <var>DefaultTimeoutStartSec=</var> from the manager
+        configuration file (see
+        <a href="http://man7.org/linux/man-pages/man5/systemd-system.conf.5.html">systemd-system.conf(5)
+    </a>).
+        </p>

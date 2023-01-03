@@ -1,0 +1,31 @@
+<p>Configure unit start rate limiting. Units which are started more than
+        burst times within an interval time span are
+        not permitted to start any more. Use <var>StartLimitIntervalSec=</var> to configure the
+        checking interval and <var>StartLimitBurst=</var> to configure how many starts per interval
+        are allowed.</p>
+<p>interval is a time span with the default unit of seconds, but other
+        units may be specified, see
+        <a href="http://man7.org/linux/man-pages/man5/systemd.time.5.html">systemd.time(5)
+    </a>.
+        Defaults to <var>DefaultStartLimitIntervalSec=</var> in manager configuration file, and may
+        be set to 0 to disable any kind of rate limiting. burst is a number and
+        defaults to <var>DefaultStartLimitBurst=</var> in manager configuration file.</p>
+<p>These configuration options are particularly useful in conjunction with the service setting
+        <var>Restart=</var> (see
+        <a href="http://man7.org/linux/man-pages/man5/systemd.service.5.html">systemd.service(5)
+    </a>);
+        however, they apply to all kinds of starts (including manual), not just those triggered by the
+        <var>Restart=</var> logic.</p>
+<p>Note that units which are configured for <var>Restart=</var>, and which reach the start
+        limit are not attempted to be restarted anymore; however, they may still be restarted manually or
+        from a timer or socket at a later point, after the interval has passed.
+        From that point on, the restart logic is activated again. systemctl reset-failed
+        will cause the restart rate counter for a service to be flushed, which is useful if the administrator
+        wants to manually start a unit and the start limit interferes with that. Rate-limiting is enforced
+        after any unit condition checks are executed, and hence unit activations with failing conditions do
+        not count towards the rate limit.</p>
+<p>When a unit is unloaded due to the garbage collection logic (see above) its rate limit counters
+        are flushed out too. This means that configuring start rate limiting for a unit that is not
+        referenced continuously has no effect.</p>
+<p>This setting does not apply to slice, target, device, and scope units, since they are unit
+        types whose activation may either never fail, or may succeed only a single time.</p>

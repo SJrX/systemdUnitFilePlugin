@@ -1,0 +1,21 @@
+<p>Configure the action to take when the unit stops and enters a failed state or inactive state.
+        Takes one of <var>none</var>, <var>reboot</var>, <var>reboot-force</var>,
+        <var>reboot-immediate</var>, <var>poweroff</var>, <var>poweroff-force</var>,
+        <var>poweroff-immediate</var>, <var>exit</var>, and <var>exit-force</var>. In system mode,
+        all options are allowed. In user mode, only <var>none</var>, <var>exit</var>, and
+        <var>exit-force</var> are allowed. Both options default to <var>none</var>.</p>
+<p>If <var>none</var> is set, no action will be triggered. <var>reboot</var> causes a reboot
+        following the normal shutdown procedure (i.e. equivalent to systemctl reboot).
+        <var>reboot-force</var> causes a forced reboot which will terminate all processes forcibly but should
+        cause no dirty file systems on reboot (i.e. equivalent to systemctl reboot -f) and
+        <var>reboot-immediate</var> causes immediate execution of the
+        <a href="http://man7.org/linux/man-pages/man2/reboot.2.html">reboot(2)
+    </a> system call, which
+        might result in data loss (i.e. equivalent to systemctl reboot -ff). Similarly,
+        <var>poweroff</var>, <var>poweroff-force</var>, <var>poweroff-immediate</var> have the effect
+        of powering down the system with similar semantics. <var>exit</var> causes the manager to exit following
+        the normal shutdown procedure, and <var>exit-force</var> causes it terminate without shutting down
+        services. When <var>exit</var> or <var>exit-force</var> is used by default the exit status of the
+        main process of the unit (if this applies) is returned from the service manager. However, this may be overridden
+        with <var>FailureActionExitStatus=</var>/<var>SuccessActionExitStatus=</var>, see
+        below.</p>

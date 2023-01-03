@@ -1,0 +1,22 @@
+<p>Configure how many file descriptors may be stored in the service manager for the
+        service using
+        <a href="http://man7.org/linux/man-pages/man3/sd_pid_notify_with_fds.3.html">sd_pid_notify_with_fds(3)
+    </a>'s
+        FDSTORE=1 messages. This is useful for implementing services that can restart
+        after an explicit request or a crash without losing state. Any open sockets and other file
+        descriptors which should not be closed during the restart may be stored this way. Application state
+        can either be serialized to a file in /run/, or better, stored in a
+        <a href="http://man7.org/linux/man-pages/man2/memfd_create.2.html">memfd_create(2)
+    </a>
+        memory file descriptor. Defaults to 0, i.e. no file descriptors may be stored in the service
+        manager. All file descriptors passed to the service manager from a specific service are passed back
+        to the service's main process on the next service restart (see
+        <a href="http://man7.org/linux/man-pages/man3/sd_listen_fds.3.html">sd_listen_fds(3)
+    </a> for
+        details about the precise protocol used and the order in which the file descriptors are passed). Any
+        file descriptors passed to the service manager are automatically closed when
+        POLLHUP or POLLERR is seen on them, or when the service is
+        fully stopped and no job is queued or being executed for it. If this option is used,
+        <var>NotifyAccess=</var> (see above) should be set to open access to the notification socket
+        provided by systemd. If <var>NotifyAccess=</var> is not set, it will be implicitly set to
+        <var>main</var>.</p>

@@ -1,0 +1,10 @@
+<p>Set the per-device average target I/O latency for the executed processes, if the unified control group
+          hierarchy is used on the system. Takes a file path and a timespan separated by a space to specify
+          the device specific latency target. (Example: "/dev/sda 25ms"). The file path may be specified
+          as path to a block device node or as any other file, in which case the backing block device of the file
+          system of the file is determined. This controls the io.latency control group
+          attribute. Use this option multiple times to set latency target for multiple devices. For details about this
+          control group attribute, see <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#io-interface-files">IO Interface Files</a>.</p>
+<p>Implies IOAccounting=yes.</p>
+<p>These settings are supported only if the unified control group hierarchy is used.</p>
+<p>Similar restrictions on block device discovery as for <var>IODeviceWeight=</var> apply, see above.</p>

@@ -1,0 +1,41 @@
+<p>Control access to specific device nodes by the executed processes. Takes two space-separated
+          strings: a device node specifier followed by a combination of r,
+          w, m to control reading,
+          writing, or creation of the specific device nodes by the unit
+          (mknod), respectively. This functionality is implemented using eBPF
+          filtering.</p>
+<p>When access to all physical devices should be disallowed,
+          <var>PrivateDevices=</var> may be used instead. See
+          <a href="http://man7.org/linux/man-pages/man5/systemd.exec.5.html">systemd.exec(5)
+    </a>.
+          </p>
+<p>The device node specifier is either a path to a device node in the file system, starting with
+          /dev/, or a string starting with either char- or
+          block- followed by a device group name, as listed in
+          /proc/devices. The latter is useful to allow-list all current and future
+          devices belonging to a specific device group at once. The device group is matched according to
+          filename globbing rules, you may hence use the * and ?
+          wildcards. (Note that such globbing wildcards are not available for device node path
+          specifications!) In order to match device nodes by numeric major/minor, use device node paths in
+          the /dev/char/ and /dev/block/ directories. However,
+          matching devices by major/minor is generally not recommended as assignments are neither stable nor
+          portable between systems or different kernel versions.</p>
+<p>Examples: /dev/sda5 is a path to a device node, referring to an ATA or
+          SCSI block device. char-pts and char-alsa are specifiers for
+          all pseudo TTYs and all ALSA sound devices, respectively. char-cpu/* is a
+          specifier matching all CPU related device groups.</p>
+<p>Note that allow lists defined this way should only reference device groups which are
+          resolvable at the time the unit is started. Any device groups not resolvable then are not added to
+          the device allow list. In order to work around this limitation, consider extending service units
+          with a pair of After=modprobe@xyz.service and
+          Wants=modprobe@xyz.service lines that load the necessary kernel module
+          implementing the device group if missing.
+          Example: …
+[Unit]
+Wants=modprobe@loop.service
+After=modprobe@loop.service
+
+[Service]
+DeviceAllow=block-loop
+DeviceAllow=/dev/loop-control
+…</p>

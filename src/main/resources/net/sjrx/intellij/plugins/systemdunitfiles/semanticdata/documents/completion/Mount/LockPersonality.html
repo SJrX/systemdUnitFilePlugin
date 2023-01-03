@@ -1,0 +1,7 @@
+<p>Takes a boolean argument. If set, locks down the <a href="http://man7.org/linux/man-pages/man2/personality.2.html">personality(2)
+    </a> system
+        call so that the kernel execution domain may not be changed from the default or the personality selected with
+        <var>Personality=</var> directive. This may be useful to improve security, because odd personality
+        emulations may be poorly tested and source of vulnerabilities. If running in user mode, or in system mode, but
+        without the CAP_SYS_ADMIN capability (e.g. setting <var>User=</var>),
+        <var>NoNewPrivileges=yes</var> is implied.</p>

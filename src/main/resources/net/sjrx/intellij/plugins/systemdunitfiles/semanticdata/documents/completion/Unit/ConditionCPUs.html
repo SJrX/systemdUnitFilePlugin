@@ -1,0 +1,10 @@
+<p>Verify that the specified number of CPUs is available to the current system. Takes
+          a number of CPUs as argument, optionally prefixed with a comparison operator
+          &lt;, &lt;=, = (or ==),
+          != (or &lt;&gt;), &gt;=,
+          &gt;. Compares the number of CPUs in the CPU affinity mask configured of the
+          service manager itself with the specified number, adhering to the specified comparison operator. On
+          physical systems the number of CPUs in the affinity mask of the service manager usually matches the
+          number of physical CPUs, but in special and virtual environments might differ. In particular, in
+          containers the affinity mask usually matches the number of CPUs assigned to the container and not
+          the physically available ones.</p>

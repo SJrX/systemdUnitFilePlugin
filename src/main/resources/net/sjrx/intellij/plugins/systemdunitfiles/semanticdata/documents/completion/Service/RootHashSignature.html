@@ -1,0 +1,13 @@
+<p>Takes a PKCS7 signature of the <var>RootHash=</var> option as a path to a
+        DER-encoded signature file, or as an ASCII base64 string encoding of a DER-encoded signature prefixed
+        by base64:. The dm-verity volume will only be opened if the signature of the root
+        hash is valid and signed by a public key present in the kernel keyring. If this option is not
+        specified, but a file with the .roothash.p7s suffix is found next to the image
+        file, bearing otherwise the same name (except if the image has the .raw suffix,
+        in which case the signature file must not have it in its name), the signature is read from it and
+        automatically used.</p>
+<p>If the disk image contains a separate /usr/ partition it may also be
+        Verity protected, in which case the signature for the root hash may configured via a
+        .usrhash.p7s file adjacent to the disk image. There's currently no option to
+        configure the root hash signature for the /usr/ via the unit file
+        directly.</p>

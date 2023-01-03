@@ -1,0 +1,18 @@
+<p>Takes a boolean argument or the special values read-only or
+        tmpfs. If true, the directories /home/,
+        /root, and /run/user are made inaccessible and empty for
+        processes invoked by this unit. If set to read-only, the three directories are
+        made read-only instead. If set to tmpfs, temporary file systems are mounted on the
+        three directories in read-only mode. The value tmpfs is useful to hide home
+        directories not relevant to the processes invoked by the unit, while still allowing necessary
+        directories to be made visible when listed in <var>BindPaths=</var> or
+        <var>BindReadOnlyPaths=</var>.</p>
+<p>Setting this to yes is mostly equivalent to setting the three directories in
+        <var>InaccessiblePaths=</var>. Similarly, read-only is mostly equivalent to
+        <var>ReadOnlyPaths=</var>, and tmpfs is mostly equivalent to
+        <var>TemporaryFileSystem=</var> with :ro.</p>
+<p>It is recommended to enable this setting for all long-running services (in particular
+        network-facing ones), to ensure they cannot get access to private user data, unless the services
+        actually require access to the user's private data. This setting is implied if
+        <var>DynamicUser=</var> is set. This setting cannot ensure protection in all cases. In
+        general it has the same limitations as <var>ReadOnlyPaths=</var>, see below.</p>

@@ -1,0 +1,11 @@
+<p>Configures dependencies similar to
+        <var>Requires=</var>, but limited to stopping and
+        restarting of units. When systemd stops or restarts the units
+        listed here, the action is propagated to this unit. Note that
+        this is a one-way dependency — changes to this unit do not
+        affect the listed units.</p>
+<p>When <var>PartOf=b.service</var> is used on
+        a.service, this dependency will show as
+        <var>ConsistsOf=a.service</var> in property listing of
+        b.service. <var>ConsistsOf=</var>
+        dependency cannot be specified directly.</p>

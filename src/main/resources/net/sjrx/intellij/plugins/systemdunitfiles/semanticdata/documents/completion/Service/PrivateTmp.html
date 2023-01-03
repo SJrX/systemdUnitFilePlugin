@@ -1,0 +1,22 @@
+<p>Takes a boolean argument. If true, sets up a new file system namespace for the
+        executed processes and mounts private /tmp/ and /var/tmp/
+        directories inside it that are not shared by processes outside of the namespace. This is useful to
+        secure access to temporary files of the process, but makes sharing between processes via
+        /tmp/ or /var/tmp/ impossible. If true, all temporary files
+        created by a service in these directories will be removed after the service is stopped. Defaults to
+        false. It is possible to run two or more units within the same private /tmp/ and
+        /var/tmp/ namespace by using the <var>JoinsNamespaceOf=</var> directive,
+        see <a href="http://man7.org/linux/man-pages/man5/systemd.unit.5.html">systemd.unit(5)
+    </a>
+        for details. This setting is implied if <var>DynamicUser=</var> is set. For this setting, the
+        same restrictions regarding mount propagation and privileges apply as for
+        <var>ReadOnlyPaths=</var> and related calls, see above. Enabling this setting has the side
+        effect of adding <var>Requires=</var> and <var>After=</var> dependencies on all mount
+        units necessary to access /tmp/ and /var/tmp/. Moreover an
+        implicitly <var>After=</var> ordering on
+        <a href="http://man7.org/linux/man-pages/man8/systemd-tmpfiles-setup.service.8.html">systemd-tmpfiles-setup.service(8)
+    </a>
+        is added.</p>
+<p>Note that the implementation of this setting might be impossible (for example if mount namespaces are not
+        available), and the unit should be written in a way that does not solely rely on this setting for
+        security.</p>

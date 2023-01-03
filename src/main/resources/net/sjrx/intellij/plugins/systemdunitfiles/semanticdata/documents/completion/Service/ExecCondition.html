@@ -1,0 +1,13 @@
+<p>Optional commands that are executed before the commands in <var>ExecStartPre=</var>.
+        Syntax is the same as for <var>ExecStart=</var>, except that multiple command lines are allowed and the
+        commands are executed one after the other, serially.</p>
+<p>The behavior is like an <var>ExecStartPre=</var> and condition check hybrid: when an
+        <var>ExecCondition=</var> command exits with exit code 1 through 254 (inclusive), the remaining
+        commands are skipped and the unit is not marked as failed. However, if an
+        <var>ExecCondition=</var> command exits with 255 or abnormally (e.g. timeout, killed by a
+        signal, etc.), the unit will be considered failed (and remaining commands will be skipped). Exit code of 0 or
+        those matching <var>SuccessExitStatus=</var> will continue execution to the next commands.</p>
+<p>The same recommendations about not running long-running processes in <var>ExecStartPre=</var>
+        also applies to <var>ExecCondition=</var>. <var>ExecCondition=</var> will also run the commands
+        in <var>ExecStopPost=</var>, as part of stopping the service, in the case of any non-zero or abnormal
+        exits, like the ones described above.</p>

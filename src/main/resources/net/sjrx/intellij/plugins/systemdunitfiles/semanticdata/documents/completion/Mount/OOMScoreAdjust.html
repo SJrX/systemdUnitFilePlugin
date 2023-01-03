@@ -1,0 +1,10 @@
+<p>Sets the adjustment value for the Linux kernel's Out-Of-Memory (OOM) killer score for
+        executed processes. Takes an integer between -1000 (to disable OOM killing of processes of this unit)
+        and 1000 (to make killing of processes of this unit under memory pressure very likely). See <a href="https://docs.kernel.org/filesystems/proc.html">The /proc Filesystem</a> for
+        details. If not specified defaults to the OOM score adjustment level of the service manager itself,
+        which is normally at 0.</p>
+<p>Use the <var>OOMPolicy=</var> setting of service units to configure how the service
+        manager shall react to the kernel OOM killer or systemd-oomd terminating a process of the service. See
+        <a href="http://man7.org/linux/man-pages/man5/systemd.service.5.html">systemd.service(5)
+    </a>
+        for details.</p>

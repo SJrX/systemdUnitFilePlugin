@@ -1,0 +1,31 @@
+<p>Controls which capabilities to include in the capability bounding set for the
+        executed process. See <a href="http://man7.org/linux/man-pages/man7/capabilities.7.html">capabilities(7)
+    </a>
+        for details. Takes a whitespace-separated list of capability names,
+        e.g. CAP_SYS_ADMIN, CAP_DAC_OVERRIDE,
+        CAP_SYS_PTRACE. Capabilities listed will be included in the bounding set, all
+        others are removed. If the list of capabilities is prefixed with ~, all but the
+        listed capabilities will be included, the effect of the assignment inverted. Note that this option
+        also affects the respective capabilities in the effective, permitted and inheritable capability
+        sets. If this option is not used, the capability bounding set is not modified on process execution,
+        hence no limits on the capabilities of the process are enforced. This option may appear more than
+        once, in which case the bounding sets are merged by OR, or by
+        AND if the lines are prefixed with ~ (see below). If the
+        empty string is assigned to this option, the bounding set is reset to the empty capability set, and
+        all prior settings have no effect. If set to ~ (without any further argument),
+        the bounding set is reset to the full set of available capabilities, also undoing any previous
+        settings. This does not affect commands prefixed with +.</p>
+<p>Use
+        <a href="http://man7.org/linux/man-pages/man1/systemd-analyze.1.html">systemd-analyze(1)
+    </a>'s
+        capability command to retrieve a list of capabilities defined on the local
+        system.</p>
+<p>Example: if a unit has the following,
+        CapabilityBoundingSet=CAP_A CAP_B
+CapabilityBoundingSet=CAP_B CAP_C
+        then CAP_A, CAP_B, and
+        CAP_C are set. If the second line is prefixed with
+        ~, e.g.,
+        CapabilityBoundingSet=CAP_A CAP_B
+CapabilityBoundingSet=~CAP_B CAP_C
+        then, only CAP_A is set.</p>

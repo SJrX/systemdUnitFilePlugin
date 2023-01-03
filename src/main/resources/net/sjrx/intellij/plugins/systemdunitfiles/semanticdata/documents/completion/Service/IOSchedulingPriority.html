@@ -1,0 +1,10 @@
+<p>Sets the I/O scheduling priority for executed processes. Takes an integer between 0
+        (highest priority) and 7 (lowest priority). In case of I/O contention, smaller values mean more I/O
+        bandwidth is made available to the unit's processes, larger values mean less bandwidth. The available
+        priorities depend on the selected I/O scheduling class (see above). If the empty string is assigned
+        to this option, all prior assignments to both <var>IOSchedulingClass=</var> and
+        <var>IOSchedulingPriority=</var> have no effect. For the kernel's default scheduling class
+        (<var>best-effort</var>) this defaults to 4. See
+        <a href="http://man7.org/linux/man-pages/man2/ioprio_set.2.html">ioprio_set(2)
+    </a> for
+        details.</p>

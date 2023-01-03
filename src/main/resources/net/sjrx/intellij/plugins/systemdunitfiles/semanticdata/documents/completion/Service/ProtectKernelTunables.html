@@ -1,0 +1,18 @@
+<p>Takes a boolean argument. If true, kernel variables accessible through
+        /proc/sys/, /sys/, /proc/sysrq-trigger,
+        /proc/latency_stats, /proc/acpi,
+        /proc/timer_stats, /proc/fs and /proc/irq will
+        be made read-only to all processes of the unit. Usually, tunable kernel variables should be initialized only at
+        boot-time, for example with the
+        <a href="http://man7.org/linux/man-pages/man5/sysctl.d.5.html">sysctl.d(5)
+    </a> mechanism. Few
+        services need to write to these at runtime; it is hence recommended to turn this on for most services. For this
+        setting the same restrictions regarding mount propagation and privileges apply as for
+        <var>ReadOnlyPaths=</var> and related calls, see above. Defaults to off. If this
+        setting is on, but the unit doesn't have the CAP_SYS_ADMIN capability
+        (e.g. services for which <var>User=</var> is set),
+        <var>NoNewPrivileges=yes</var> is implied. Note that this option does not prevent
+        indirect changes to kernel tunables effected by IPC calls to other processes. However,
+        <var>InaccessiblePaths=</var> may be used to make relevant IPC file system objects
+        inaccessible. If <var>ProtectKernelTunables=</var> is set,
+        <var>MountAPIVFS=yes</var> is implied.</p>

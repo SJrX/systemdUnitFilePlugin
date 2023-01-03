@@ -1,0 +1,54 @@
+<p>Sets up a new file system namespace for executed processes. These options may be used
+        to limit access a process has to the file system. Each setting takes a space-separated list of paths
+        relative to the host's root directory (i.e. the system running the service manager). Note that if
+        paths contain symlinks, they are resolved relative to the root directory set with
+        <var>RootDirectory=</var>/<var>RootImage=</var>.</p>
+<p>Paths listed in <var>ReadWritePaths=</var> are accessible from within the namespace
+        with the same access modes as from outside of it. Paths listed in <var>ReadOnlyPaths=</var>
+        are accessible for reading only, writing will be refused even if the usual file access controls would
+        permit this. Nest <var>ReadWritePaths=</var> inside of <var>ReadOnlyPaths=</var> in
+        order to provide writable subdirectories within read-only directories. Use
+        <var>ReadWritePaths=</var> in order to allow-list specific paths for write access if
+        <var>ProtectSystem=strict</var> is used.</p>
+<p>Paths listed in <var>InaccessiblePaths=</var> will be made inaccessible for processes inside
+        the namespace along with everything below them in the file system hierarchy. This may be more restrictive than
+        desired, because it is not possible to nest <var>ReadWritePaths=</var>, <var>ReadOnlyPaths=</var>,
+        <var>BindPaths=</var>, or <var>BindReadOnlyPaths=</var> inside it. For a more flexible option,
+        see <var>TemporaryFileSystem=</var>.</p>
+<p>Content in paths listed in <var>NoExecPaths=</var> are not executable even if the usual
+        file access controls would permit this. Nest <var>ExecPaths=</var> inside of
+        <var>NoExecPaths=</var> in order to provide executable content within non-executable
+        directories.</p>
+<p>Non-directory paths may be specified as well. These options may be specified more than once,
+        in which case all paths listed will have limited access from within the namespace. If the empty string is
+        assigned to this option, the specific list is reset, and all prior assignments have no effect.</p>
+<p>Paths in <var>ReadWritePaths=</var>, <var>ReadOnlyPaths=</var>,
+        <var>InaccessiblePaths=</var>, <var>ExecPaths=</var> and
+        <var>NoExecPaths=</var> may be prefixed with -, in which case they will be
+        ignored when they do not exist. If prefixed with + the paths are taken relative to the root
+        directory of the unit, as configured with <var>RootDirectory=</var>/<var>RootImage=</var>,
+        instead of relative to the root directory of the host (see above). When combining - and
+        + on the same path make sure to specify - first, and +
+        second.</p>
+<p>Note that these settings will disconnect propagation of mounts from the unit's processes to the
+        host. This means that this setting may not be used for services which shall be able to install mount points in
+        the main mount namespace. For <var>ReadWritePaths=</var> and <var>ReadOnlyPaths=</var>,
+        propagation in the other direction is not affected, i.e. mounts created on the host generally appear in the
+        unit processes' namespace, and mounts removed on the host also disappear there too. In particular, note that
+        mount propagation from host to unit will result in unmodified mounts to be created in the unit's namespace,
+        i.e. writable mounts appearing on the host will be writable in the unit's namespace too, even when propagated
+        below a path marked with <var>ReadOnlyPaths=</var>! Restricting access with these options hence does
+        not extend to submounts of a directory that are created later on. This means the lock-down offered by that
+        setting is not complete, and does not offer full protection. </p>
+<p>Note that the effect of these settings may be undone by privileged processes. In order to set up an
+        effective sandboxed environment for a unit it is thus recommended to combine these settings with either
+        <var>CapabilityBoundingSet=~CAP_SYS_ADMIN</var> or
+        <var>SystemCallFilter=~@mount</var>.</p>
+<p>Simple allow-list example using these directives:
+        [Service]
+ReadOnlyPaths=/
+ReadWritePaths=/var /run
+InaccessiblePaths=-/lost+found
+NoExecPaths=/
+ExecPaths=/usr/sbin/my_daemon /usr/lib /usr/lib64
+</p>

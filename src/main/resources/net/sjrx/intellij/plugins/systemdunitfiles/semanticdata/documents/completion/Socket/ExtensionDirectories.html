@@ -1,0 +1,20 @@
+<p>This setting is similar to <var>BindReadOnlyPaths=</var> in that it mounts a file
+        system hierarchy from a directory, but instead of providing a destination path, an overlay will be set
+        up. This option expects a whitespace separated list of source directories.</p>
+<p>A read-only OverlayFS will be set up on top of /usr/ and
+        /opt/ hierarchies. The order in which the directories are listed will determine
+        the order in which the overlay is laid down: directories specified first to last will result in overlayfs
+        layers bottom to top.</p>
+<p>Each directory listed in <var>ExtensionDirectories=</var> may be prefixed with -,
+        in which case it will be ignored when its source path does not exist. Any mounts created with this option are
+        specific to the unit, and are not visible in the host's mount table.</p>
+<p>These settings may be used more than once, each usage appends to the unit's list of directories
+        paths. If the empty string is assigned, the entire list of mount paths defined prior to this is
+        reset.</p>
+<p>Each directory must contain a /usr/lib/extension-release.d/extension-release.IMAGE
+        file, with the appropriate metadata which matches <var>RootImage=</var>/<var>RootDirectory=</var>
+        or the host. See:
+        <a href="http://man7.org/linux/man-pages/man5/os-release.5.html">os-release(5)
+    </a>.</p>
+<p>Note that usage from user units requires overlayfs support in unprivileged user namespaces,
+        which was first introduced in kernel v5.11.</p>

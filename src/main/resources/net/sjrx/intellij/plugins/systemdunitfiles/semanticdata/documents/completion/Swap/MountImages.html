@@ -1,0 +1,32 @@
+<p>This setting is similar to <var>RootImage=</var> in that it mounts a file
+        system hierarchy from a block device node or loopback file, but the destination directory can be
+        specified as well as mount options. This option expects a whitespace separated list of mount
+        definitions. Each definition consists of a colon-separated tuple of source path and destination
+        definitions, optionally followed by another colon and a list of mount options.</p>
+<p>Mount options may be defined as a single comma-separated list of options, in which case they
+        will be implicitly applied to the root partition on the image, or a series of colon-separated tuples
+        of partition name and mount options. Valid partition names and mount options are the same as for
+        <var>RootImageOptions=</var> setting described above.</p>
+<p>Each mount definition may be prefixed with -, in which case it will be
+        ignored when its source path does not exist. The source argument is a path to a block device node or
+        regular file. If source or destination contain a :, it needs to be escaped as
+        \:. The device node or file system image file needs to follow the same rules as
+        specified for <var>RootImage=</var>. Any mounts created with this option are specific to the
+        unit, and are not visible in the host's mount table.</p>
+<p>These settings may be used more than once, each usage appends to the unit's list of mount
+        paths. If the empty string is assigned, the entire list of mount paths defined prior to this is
+        reset.</p>
+<p>Note that the destination directory must exist or systemd must be able to create it. Thus, it
+        is not possible to use those options for mount points nested underneath paths specified in
+        <var>InaccessiblePaths=</var>, or under /home/ and other protected
+        directories if <var>ProtectHome=yes</var> is specified.</p>
+<p>When <var>DevicePolicy=</var> is set to closed or
+        strict, or set to auto and <var>DeviceAllow=</var> is
+        set, then this setting adds /dev/loop-control with rw mode,
+        block-loop and block-blkext with rwm mode
+        to <var>DeviceAllow=</var>. See
+        <a href="http://man7.org/linux/man-pages/man5/systemd.resource-control.5.html">systemd.resource-control(5)
+    </a>
+        for the details about <var>DevicePolicy=</var> or <var>DeviceAllow=</var>. Also, see
+        <var>PrivateDevices=</var> below, as it may change the setting of
+        <var>DevicePolicy=</var>.</p>

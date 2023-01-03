@@ -1,0 +1,9 @@
+<p>Similar to the <var>ConditionArchitecture=</var>,
+          <var>ConditionVirtualization=</var>, …, condition settings described above, these settings
+          add assertion checks to the start-up of the unit. However, unlike the conditions settings, any
+          assertion setting that is not met results in failure of the start job (which means this is logged
+          loudly). Note that hitting a configured assertion does not cause the unit to enter the
+          failed state (or in fact result in any state change of the unit), it affects
+          only the job queued for it. Use assertion expressions for units that cannot operate when specific
+          requirements are not met, and when this is something the administrator or user should look
+          into.</p>

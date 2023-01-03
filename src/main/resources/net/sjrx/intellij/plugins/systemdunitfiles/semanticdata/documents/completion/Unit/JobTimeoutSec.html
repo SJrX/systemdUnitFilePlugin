@@ -1,0 +1,17 @@
+<p><var>JobTimeoutSec=</var> specifies a timeout for the whole job that starts
+        running when the job is queued. <var>JobRunningTimeoutSec=</var> specifies a timeout that
+        starts running when the queued job is actually started. If either limit is reached, the job will be
+        cancelled, the unit however will not change state or even enter the failed mode.
+        </p>
+<p>Both settings take a time span with the default unit of seconds, but other units may be
+        specified, see
+        <a href="http://man7.org/linux/man-pages/man5/systemd.time.5.html">systemd.time(5)
+    </a>.
+        The default is infinity (job timeouts disabled), except for device units where
+        <var>JobRunningTimeoutSec=</var> defaults to <var>DefaultTimeoutStartSec=</var>.
+        </p>
+<p>Note: these timeouts are independent from any unit-specific timeouts (for example, the timeout
+        set with <var>TimeoutStartSec=</var> in service units). The job timeout has no effect on the
+        unit itself. Or in other words: unit-specific timeouts are useful to abort unit state changes, and
+        revert them. The job timeout set with this option however is useful to abort only the job waiting for
+        the unit state to change.</p>

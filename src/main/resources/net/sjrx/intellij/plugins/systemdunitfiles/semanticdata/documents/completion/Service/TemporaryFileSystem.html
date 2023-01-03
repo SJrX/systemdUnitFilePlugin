@@ -1,0 +1,16 @@
+<p>Takes a space-separated list of mount points for temporary file systems (tmpfs). If set, a new file
+        system namespace is set up for executed processes, and a temporary file system is mounted on each mount point.
+        This option may be specified more than once, in which case temporary file systems are mounted on all listed mount
+        points. If the empty string is assigned to this option, the list is reset, and all prior assignments have no effect.
+        Each mount point may optionally be suffixed with a colon (:) and mount options such as
+        size=10% or ro. By default, each temporary file system is mounted
+        with nodev,strictatime,mode=0755. These can be disabled by explicitly specifying the corresponding
+        mount options, e.g., dev or nostrictatime.</p>
+<p>This is useful to hide files or directories not relevant to the processes invoked by the unit, while necessary
+        files or directories can be still accessed by combining with <var>BindPaths=</var> or
+        <var>BindReadOnlyPaths=</var>:</p>
+<p>Example: if a unit has the following,
+        TemporaryFileSystem=/var:ro
+BindReadOnlyPaths=/var/lib/systemd
+        then the invoked processes by the unit cannot see any files or directories under /var/ except for
+        /var/lib/systemd or its contents.</p>

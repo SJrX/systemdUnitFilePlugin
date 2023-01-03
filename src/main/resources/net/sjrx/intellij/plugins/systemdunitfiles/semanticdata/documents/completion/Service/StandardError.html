@@ -1,0 +1,10 @@
+<p>Controls where file descriptor 2 (stderr) of the executed processes is connected to. The
+        available options are identical to those of <var>StandardOutput=</var>, with some exceptions: if set to
+        <var>inherit</var> the file descriptor used for standard output is duplicated for standard error, while
+        <var>fd:name</var> will use a default file descriptor name of
+        stderr.</p>
+<p>This setting defaults to the value set with <var>DefaultStandardError=</var> in
+        <a href="http://man7.org/linux/man-pages/man5/systemd-system.conf.5.html">systemd-system.conf(5)
+    </a>, which
+        defaults to <var>inherit</var>. Note that setting this parameter might result in additional dependencies
+        to be added to the unit (see above).</p>

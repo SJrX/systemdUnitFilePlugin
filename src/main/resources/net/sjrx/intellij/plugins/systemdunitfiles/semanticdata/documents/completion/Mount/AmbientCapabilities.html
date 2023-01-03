@@ -1,0 +1,16 @@
+<p>Controls which capabilities to include in the ambient capability set for the executed
+        process. Takes a whitespace-separated list of capability names, e.g. CAP_SYS_ADMIN,
+        CAP_DAC_OVERRIDE, CAP_SYS_PTRACE. This option may appear more than
+        once, in which case the ambient capability sets are merged (see the above examples in
+        <var>CapabilityBoundingSet=</var>). If the list of capabilities is prefixed with ~,
+        all but the listed capabilities will be included, the effect of the assignment inverted. If the empty string is
+        assigned to this option, the ambient capability set is reset to the empty capability set, and all prior
+        settings have no effect. If set to ~ (without any further argument), the ambient capability
+        set is reset to the full set of available capabilities, also undoing any previous settings. Note that adding
+        capabilities to the ambient capability set adds them to the process's inherited capability set. </p>
+<p>
+        Ambient capability sets are useful if you want to execute a process as a non-privileged user but still want to
+        give it some capabilities. Note that in this case option keep-caps is automatically added
+        to <var>SecureBits=</var> to retain the capabilities over the user
+        change. <var>AmbientCapabilities=</var> does not affect commands prefixed with
+        +.</p>

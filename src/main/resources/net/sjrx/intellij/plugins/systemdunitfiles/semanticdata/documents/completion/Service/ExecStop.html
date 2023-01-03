@@ -1,0 +1,33 @@
+<p>Commands to execute to stop the service started via
+        <var>ExecStart=</var>. This argument takes multiple command lines, following the same scheme
+        as described for <var>ExecStart=</var> above. Use of this setting is optional. After the
+        commands configured in this option are run, it is implied that the service is stopped, and any
+        processes remaining for it are terminated according to the <var>KillMode=</var> setting (see
+        <a href="http://man7.org/linux/man-pages/man5/systemd.kill.5.html">systemd.kill(5)
+    </a>).
+        If this option is not specified, the process is terminated by sending the signal specified in
+        <var>KillSignal=</var> or <var>RestartKillSignal=</var> when service stop is
+        requested. Specifier and environment variable substitution is supported (including
+        <var>$MAINPID</var>, see above).</p>
+<p>Note that it is usually not sufficient to specify a command for this setting that only asks the
+        service to terminate (for example, by sending some form of termination signal to it), but does not
+        wait for it to do so. Since the remaining processes of the services are killed according to
+        <var>KillMode=</var> and <var>KillSignal=</var> or
+        <var>RestartKillSignal=</var> as described above immediately after the command exited, this
+        may not result in a clean stop. The specified command should hence be a synchronous operation, not an
+        asynchronous one.</p>
+<p>Note that the commands specified in <var>ExecStop=</var> are only executed when the service
+        started successfully first. They are not invoked if the service was never started at all, or in case its
+        start-up failed, for example because any of the commands specified in <var>ExecStart=</var>,
+        <var>ExecStartPre=</var> or <var>ExecStartPost=</var> failed (and weren't prefixed with
+        -, see above) or timed out. Use <var>ExecStopPost=</var> to invoke commands when a
+        service failed to start up correctly and is shut down again. Also note that the stop operation is always
+        performed if the service started successfully, even if the processes in the service terminated on their
+        own or were killed. The stop commands must be prepared to deal with that case. <var>$MAINPID</var>
+        will be unset if systemd knows that the main process exited by the time the stop commands are called.</p>
+<p>Service restart requests are implemented as stop operations followed by start operations. This
+        means that <var>ExecStop=</var> and <var>ExecStopPost=</var> are executed during a
+        service restart operation.</p>
+<p>It is recommended to use this setting for commands that communicate with the service requesting
+        clean termination. For post-mortem clean-up steps use <var>ExecStopPost=</var> instead.
+        </p>

@@ -1,0 +1,9 @@
+<p>Set the O_NONBLOCK flag for all file descriptors passed via socket-based
+        activation. If true, all file descriptors &gt;= 3 (i.e. all except stdin, stdout, stderr), excluding those passed
+        in via the file descriptor storage logic (see <var>FileDescriptorStoreMax=</var> for details), will
+        have the O_NONBLOCK flag set and hence are in non-blocking mode. This option is only
+        useful in conjunction with a socket unit, as described in
+        <a href="http://man7.org/linux/man-pages/man5/systemd.socket.5.html">systemd.socket(5)
+    </a> and has no
+        effect on file descriptors which were previously saved in the file-descriptor store for example.  Defaults to
+        false.</p>

@@ -1,0 +1,7 @@
+<p>Specifies when the manager should consider the service to be finished. One of <var>main</var> or
+          <var>cgroup</var>:</p>
+<p>It is generally recommended to use <var>ExitType=</var><var>main</var> when a service has
+          a known forking model and a main process can reliably be determined. <var>ExitType=</var>
+          <var>cgroup</var> is meant for applications whose forking model is not known ahead of time and which
+          might not have a specific main process. It is well suited for transient or automatically generated services,
+          such as graphical applications inside of a desktop environment.</p>

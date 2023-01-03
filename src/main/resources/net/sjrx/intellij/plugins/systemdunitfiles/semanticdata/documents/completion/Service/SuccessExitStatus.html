@@ -1,0 +1,23 @@
+<p>Takes a list of exit status definitions that, when returned by the main service
+        process, will be considered successful termination, in addition to the normal successful exit status
+        0 and, except for <var>Type=oneshot</var>, the signals SIGHUP, SIGINT,
+        SIGTERM, and SIGPIPE. Exit status definitions can be
+        numeric termination statuses, termination status names, or termination signal names, separated by
+        spaces. See the Process Exit Codes section in
+        <a href="http://man7.org/linux/man-pages/man5/systemd.exec.5.html">systemd.exec(5)
+    </a> for
+        a list of termination status names (for this setting only the part without the
+        EXIT_ or EX_ prefix should be used). See <a href="http://man7.org/linux/man-pages/man7/signal.7.html">signal(7)
+    </a> for
+        a list of signal names.</p>
+<p>Note that this setting does not change the mapping between numeric exit statuses and their
+        names, i.e. regardless how this setting is used 0 will still be mapped to SUCCESS
+        (and thus typically shown as 0/SUCCESS in tool outputs) and 1 to
+        FAILURE (and thus typically shown as 1/FAILURE), and so on. It
+        only controls what happens as effect of these exit statuses, and how it propagates to the state of
+        the service as a whole.</p>
+<p>This option may appear more than once, in which case the list of successful exit statuses is
+        merged. If the empty string is assigned to this option, the list is reset, all prior assignments of
+        this option will have no effect.</p>
+<p>Note: systemd-analyze exit-status may be used to list exit statuses and
+        translate between numerical status values and names.</p>

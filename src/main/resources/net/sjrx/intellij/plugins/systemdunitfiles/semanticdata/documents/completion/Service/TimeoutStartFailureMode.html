@@ -1,0 +1,16 @@
+<p>These options configure the action that is taken in case a daemon service does not signal
+        start-up within its configured <var>TimeoutStartSec=</var>, respectively if it does not stop within
+        <var>TimeoutStopSec=</var>. Takes one of <var>terminate</var>, <var>abort</var> and
+        <var>kill</var>. Both options default to <var>terminate</var>.</p>
+<p>If <var>terminate</var> is set the service will be gracefully terminated by sending the signal
+        specified in <var>KillSignal=</var> (defaults to SIGTERM, see
+        <a href="http://man7.org/linux/man-pages/man5/systemd.kill.5.html">systemd.kill(5)
+    </a>). If the
+        service does not terminate the <var>FinalKillSignal=</var> is sent after
+        <var>TimeoutStopSec=</var>. If <var>abort</var> is set, <var>WatchdogSignal=</var> is sent
+        instead and <var>TimeoutAbortSec=</var> applies before sending <var>FinalKillSignal=</var>.
+        This setting may be used to analyze services that fail to start-up or shut-down intermittently.
+        By using <var>kill</var> the service is immediately terminated by sending
+        <var>FinalKillSignal=</var> without any further timeout. This setting can be used to expedite the
+        shutdown of failing services.
+        </p>

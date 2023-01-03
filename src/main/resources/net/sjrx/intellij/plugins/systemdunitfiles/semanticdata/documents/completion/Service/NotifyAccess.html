@@ -1,0 +1,26 @@
+<p>Controls access to the service status notification socket, as accessible via the
+        <a href="http://man7.org/linux/man-pages/man3/sd_notify.3.html">sd_notify(3)
+    </a> call. Takes one
+        of <var>none</var> (the default), <var>main</var>, <var>exec</var> or
+        <var>all</var>. If <var>none</var>, no daemon status updates are accepted from the service
+        processes, all status update messages are ignored. If <var>main</var>, only service updates sent from the
+        main process of the service are accepted. If <var>exec</var>, only service updates sent from any of the
+        main or control processes originating from one of the <var>Exec*=</var> commands are accepted. If
+        <var>all</var>, all services updates from all members of the service's control group are accepted. This
+        option should be set to open access to the notification socket when using <var>Type=notify</var> or
+        <var>WatchdogSec=</var> (see above). If those options are used but <var>NotifyAccess=</var> is
+        not configured, it will be implicitly set to <var>main</var>.</p>
+<p>Note that sd_notify() notifications may be attributed to units correctly only if
+        either the sending process is still around at the time PID 1 processes the message, or if the sending process
+        is explicitly runtime-tracked by the service manager. The latter is the case if the service manager originally
+        forked off the process, i.e. on all processes that match <var>main</var> or
+        <var>exec</var>. Conversely, if an auxiliary process of the unit sends an
+        sd_notify() message and immediately exits, the service manager might not be able to
+        properly attribute the message to the unit, and thus will ignore it, even if
+        <var>NotifyAccess=</var><var>all</var> is set for it.</p>
+<p>Hence, to eliminate all race conditions involving lookup of the client's unit and attribution of notifications
+        to units correctly, sd_notify_barrier() may be used. This call acts as a synchronization point
+        and ensures all notifications sent before this call have been picked up by the service manager when it returns
+        successfully. Use of sd_notify_barrier() is needed for clients which are not invoked by the
+        service manager, otherwise this synchronization mechanism is unnecessary for attribution of notifications to the
+        unit.</p>

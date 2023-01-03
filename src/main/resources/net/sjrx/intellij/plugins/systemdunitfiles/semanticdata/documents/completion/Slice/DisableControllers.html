@@ -1,0 +1,10 @@
+<p>Disables controllers from being enabled for a unit's children. If a controller listed is already in use
+          in its subtree, the controller will be removed from the subtree. This can be used to avoid child units being
+          able to implicitly or explicitly enable a controller. Defaults to not disabling any controllers.</p>
+<p>It may not be possible to successfully disable a controller if the unit or any child of the unit in
+          question delegates controllers to its children, as any delegated subtree of the cgroup hierarchy is unmanaged
+          by systemd.</p>
+<p>Multiple controllers may be specified, separated by spaces. You may also pass
+          <var>DisableControllers=</var> multiple times, in which case each new instance adds another controller
+          to disable. Passing <var>DisableControllers=</var> by itself with no controller name present resets
+          the disabled controller list.</p>

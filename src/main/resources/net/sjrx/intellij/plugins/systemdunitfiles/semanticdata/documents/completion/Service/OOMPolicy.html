@@ -1,0 +1,30 @@
+<p>Configure the out-of-memory (OOM) kernel killer policy. Note that the userspace OOM
+        killer
+        <a href="http://man7.org/linux/man-pages/man8/systemd-oomd.service.8.html">systemd-oomd.service(8)
+    </a>
+        is a more flexible solution that aims to prevent out-of-memory situations for the userspace, not just
+        the kernel.</p>
+<p>On Linux, when memory becomes scarce to the point that the kernel has trouble allocating memory
+        for itself, it might decide to kill a running process in order to free up memory and reduce memory
+        pressure. This setting takes one of continue, stop or
+        kill. If set to continue and a process of the service is
+        killed by the kernel's OOM killer this is logged but the service continues running. If set to
+        stop the event is logged but the service is terminated cleanly by the service
+        manager. If set to kill and one of the service's processes is killed by the OOM
+        killer the kernel is instructed to kill all remaining processes of the service too, by setting the
+        memory.oom.group attribute to 1; also see <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html">kernel documentation</a>.
+        </p>
+<p>Defaults to the setting <var>DefaultOOMPolicy=</var> in
+        <a href="http://man7.org/linux/man-pages/man5/systemd-system.conf.5.html">systemd-system.conf(5)
+    </a>
+        is set to, except for services where <var>Delegate=</var> is turned on, where it defaults to
+        continue.</p>
+<p>Use the <var>OOMScoreAdjust=</var> setting to configure whether processes of the unit
+        shall be considered preferred or less preferred candidates for process termination by the Linux OOM
+        killer logic. See
+        <a href="http://man7.org/linux/man-pages/man5/systemd.exec.5.html">systemd.exec(5)
+    </a> for
+        details.</p>
+<p>This setting also applies to systemd-oomd. Similarly to the kernel OOM
+        kills, this setting determines the state of the service after systemd-oomd kills a
+        cgroup associated with the service.</p>

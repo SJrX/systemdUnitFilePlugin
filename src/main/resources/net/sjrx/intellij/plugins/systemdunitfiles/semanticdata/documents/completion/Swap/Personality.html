@@ -1,0 +1,11 @@
+<p>Controls which kernel architecture <a href="http://man7.org/linux/man-pages/man2/uname.2.html">uname(2)
+    </a> shall report,
+        when invoked by unit processes. Takes one of the architecture identifiers x86,
+        x86-64, ppc, ppc-le, ppc64,
+        ppc64-le, s390 or s390x. Which personality
+        architectures are supported depends on the system architecture. Usually the 64bit versions of the various
+        system architectures support their immediate 32bit personality architecture counterpart, but no others. For
+        example, x86-64 systems support the x86-64 and
+        x86 personalities but no others. The personality feature is useful when running 32-bit
+        services on a 64-bit host system. If not specified, the personality is left unmodified and thus reflects the
+        personality of the host system's kernel.</p>

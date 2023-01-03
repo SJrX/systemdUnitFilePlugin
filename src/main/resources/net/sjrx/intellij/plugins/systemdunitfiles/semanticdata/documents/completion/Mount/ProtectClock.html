@@ -1,0 +1,11 @@
+<p>Takes a boolean argument. If set, writes to the hardware clock or system clock will be denied.
+        It is recommended to turn this on for most services that do not need modify the clock. Defaults to off. Enabling
+        this option removes CAP_SYS_TIME and CAP_WAKE_ALARM from the
+        capability bounding set for this unit, installs a system call filter to block calls that can set the
+        clock, and <var>DeviceAllow=char-rtc r</var> is implied. This ensures /dev/rtc0,
+        /dev/rtc1, etc. are made read-only to the service. See
+        <a href="http://man7.org/linux/man-pages/man5/systemd.resource-control.5.html">systemd.resource-control(5)
+    </a>
+        for the details about <var>DeviceAllow=</var>. If this setting is on, but the unit
+        doesn't have the CAP_SYS_ADMIN capability (e.g. services for which
+        <var>User=</var> is set), <var>NoNewPrivileges=yes</var> is implied.</p>

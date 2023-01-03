@@ -1,0 +1,19 @@
+<p>Takes a path to a block device node or regular file as argument. This call is similar
+        to <var>RootDirectory=</var> however mounts a file system hierarchy from a block device node
+        or loopback file instead of a directory. The device node or file system image file needs to contain a
+        file system without a partition table, or a file system within an MBR/MS-DOS or GPT partition table
+        with only a single Linux-compatible partition, or a set of file systems within a GPT partition table
+        that follows the <a href="https://systemd.io/DISCOVERABLE_PARTITIONS">Discoverable Partitions
+        Specification</a>.</p>
+<p>When <var>DevicePolicy=</var> is set to closed or
+        strict, or set to auto and <var>DeviceAllow=</var> is
+        set, then this setting adds /dev/loop-control with rw mode,
+        block-loop and block-blkext with rwm mode
+        to <var>DeviceAllow=</var>. See
+        <a href="http://man7.org/linux/man-pages/man5/systemd.resource-control.5.html">systemd.resource-control(5)
+    </a>
+        for the details about <var>DevicePolicy=</var> or <var>DeviceAllow=</var>. Also, see
+        <var>PrivateDevices=</var> below, as it may change the setting of
+        <var>DevicePolicy=</var>.</p>
+<p>Units making use of <var>RootImage=</var> automatically gain an
+        <var>After=</var> dependency on systemd-udevd.service.</p>

@@ -1,0 +1,19 @@
+<p>Pass environment variables set for the system service manager to executed processes. Takes a
+        space-separated list of variable names. This option may be specified more than once, in which case all listed
+        variables will be passed. If the empty string is assigned to this option, the list of environment variables to
+        pass is reset, all prior assignments have no effect. Variables specified that are not set for the system
+        manager will not be passed and will be silently ignored. Note that this option is only relevant for the system
+        service manager, as system services by default do not automatically inherit any environment variables set for
+        the service manager itself. However, in case of the user service manager all environment variables are passed
+        to the executed processes anyway, hence this option is without effect for the user service manager.</p>
+<p>Variables set for invoked processes due to this setting are subject to being overridden by those
+        configured with <var>Environment=</var> or <var>EnvironmentFile=</var>.</p>
+<p>Example:
+        PassEnvironment=VAR1 VAR2 VAR3
+        passes three variables VAR1,
+        VAR2, VAR3
+        with the values set for those variables in PID1.</p>
+<p>
+        See <a href="http://man7.org/linux/man-pages/man7/environ.7.html">environ(7)
+    </a> for details
+        about environment variables.</p>

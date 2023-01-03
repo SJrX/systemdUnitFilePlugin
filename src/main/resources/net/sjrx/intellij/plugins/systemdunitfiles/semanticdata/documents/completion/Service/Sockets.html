@@ -1,0 +1,19 @@
+<p>Specifies the name of the socket units this
+        service shall inherit socket file descriptors from when the
+        service is started. Normally, it should not be necessary to use
+        this setting, as all socket file descriptors whose unit shares
+        the same name as the service (subject to the different unit
+        name suffix of course) are passed to the spawned
+        process.</p>
+<p>Note that the same socket file descriptors may be passed
+        to multiple processes simultaneously. Also note that a
+        different service may be activated on incoming socket traffic
+        than the one which is ultimately configured to inherit the
+        socket file descriptors. Or, in other words: the
+        <var>Service=</var> setting of
+        .socket units does not have to match the
+        inverse of the <var>Sockets=</var> setting of the
+        .service it refers to.</p>
+<p>This option may appear more than once, in which case the list of socket units is merged. Note
+        that once set, clearing the list of sockets again (for example, by assigning the empty string to this
+        option) is not supported.</p>

@@ -1,0 +1,37 @@
+<p>Check whether the system is executed in a virtualized environment and optionally
+          test whether it is a specific implementation. Takes either boolean value to check if being executed
+          in any virtualized environment, or one of
+          vm and
+          container to test against a generic type of virtualization solution, or one of
+          qemu,
+          kvm,
+          amazon,
+          zvm,
+          vmware,
+          microsoft,
+          oracle,
+          powervm,
+          xen,
+          bochs,
+          uml,
+          bhyve,
+          qnx,
+          apple,
+          openvz,
+          lxc,
+          lxc-libvirt,
+          systemd-nspawn,
+          docker,
+          podman,
+          rkt,
+          wsl,
+          proot,
+          pouch,
+          acrn to test
+          against a specific implementation, or
+          private-users to check whether we are running in a user namespace. See
+          <a href="http://man7.org/linux/man-pages/man1/systemd-detect-virt.1.html">systemd-detect-virt(1)
+    </a>
+          for a full list of known virtualization technologies and their identifiers. If multiple
+          virtualization technologies are nested, only the innermost is considered. The test may be negated
+          by prepending an exclamation mark.</p>

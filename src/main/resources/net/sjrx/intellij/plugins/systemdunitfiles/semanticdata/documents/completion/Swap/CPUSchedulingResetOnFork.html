@@ -1,0 +1,8 @@
+<p>Takes a boolean argument. If true, elevated CPU scheduling priorities and policies
+        will be reset when the executed processes call
+        <a href="http://man7.org/linux/man-pages/man2/fork.2.html">fork(2)
+    </a>,
+        and can hence not leak into child processes. See
+        <a href="http://man7.org/linux/man-pages/man2/sched_setscheduler.2.html">sched_setscheduler(2)
+    </a>
+        for details. Defaults to false.</p>

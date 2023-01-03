@@ -1,0 +1,14 @@
+<p>Takes a directory path relative to the host's root directory (i.e. the root of the system
+        running the service manager). Sets the root directory for executed processes, with the <a href="http://man7.org/linux/man-pages/man2/chroot.2.html">chroot(2)
+    </a> system
+        call. If this is used, it must be ensured that the process binary and all its auxiliary files are available in
+        the chroot() jail. Note that setting this parameter might result in additional
+        dependencies to be added to the unit (see above).</p>
+<p>The <var>MountAPIVFS=</var> and <var>PrivateUsers=</var> settings are particularly useful
+        in conjunction with <var>RootDirectory=</var>. For details, see below.</p>
+<p>If <var>RootDirectory=</var>/<var>RootImage=</var> are used together with
+        <var>NotifyAccess=</var> the notification socket is automatically mounted from the host into
+        the root environment, to ensure the notification interface can work correctly.</p>
+<p>Note that services using <var>RootDirectory=</var>/<var>RootImage=</var> will
+        not be able to log via the syslog or journal protocols to the host logging infrastructure, unless the
+        relevant sockets are mounted from the host, specifically:</p>

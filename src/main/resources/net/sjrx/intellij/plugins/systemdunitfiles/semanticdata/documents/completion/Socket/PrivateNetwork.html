@@ -1,0 +1,22 @@
+<p>Takes a boolean argument. If true, sets up a new network namespace for the executed processes
+        and configures only the loopback network device lo inside it. No other network devices will
+        be available to the executed process. This is useful to turn off network access by the executed process.
+        Defaults to false. It is possible to run two or more units within the same private network namespace by using
+        the <var>JoinsNamespaceOf=</var> directive, see
+        <a href="http://man7.org/linux/man-pages/man5/systemd.unit.5.html">systemd.unit(5)
+    </a> for
+        details. Note that this option will disconnect all socket families from the host, including
+        AF_NETLINK and AF_UNIX. Effectively, for
+        AF_NETLINK this means that device configuration events received from
+        <a href="http://man7.org/linux/man-pages/man8/systemd-udevd.service.8.html">systemd-udevd.service(8)
+    </a> are
+        not delivered to the unit's processes. And for AF_UNIX this has the effect that
+        AF_UNIX sockets in the abstract socket namespace of the host will become unavailable to
+        the unit's processes (however, those located in the file system will continue to be accessible).</p>
+<p>Note that the implementation of this setting might be impossible (for example if network namespaces are
+        not available), and the unit should be written in a way that does not solely rely on this setting for
+        security.</p>
+<p>When this option is used on a socket unit any sockets bound on behalf of this unit will be
+        bound within a private network namespace. This may be combined with
+        <var>JoinsNamespaceOf=</var> to listen on sockets inside of network namespaces of other
+        services.</p>

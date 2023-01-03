@@ -1,0 +1,30 @@
+<p>Specify the accuracy the timer shall elapse
+        with. Defaults to 1min. The timer is scheduled to elapse
+        within a time window starting with the time specified in
+        <var>OnCalendar=</var>,
+        <var>OnActiveSec=</var>,
+        <var>OnBootSec=</var>,
+        <var>OnStartupSec=</var>,
+        <var>OnUnitActiveSec=</var> or
+        <var>OnUnitInactiveSec=</var> and ending the time
+        configured with <var>AccuracySec=</var> later. Within
+        this time window, the expiry time will be placed at a
+        host-specific, randomized, but stable position that is
+        synchronized between all local timer units. This is done in
+        order to optimize power consumption to suppress unnecessary
+        CPU wake-ups. To get best accuracy, set this option to
+        1us. Note that the timer is still subject to the timer slack
+        configured via
+        <a href="http://man7.org/linux/man-pages/man5/systemd-system.conf.5.html">systemd-system.conf(5)
+    </a>'s
+        <var>TimerSlackNSec=</var> setting. See
+        <a href="http://man7.org/linux/man-pages/man2/prctl.2.html">prctl(2)
+    </a>
+        for details. To optimize power consumption, make sure to set
+        this value as high as possible and as low as
+        necessary.</p>
+<p>Note that this setting is primarily a power saving option that allows coalescing CPU
+        wake-ups. It should not be confused with <var>RandomizedDelaySec=</var> (see below) which
+        adds a random value to the time the timer shall elapse next and whose purpose is the opposite: to
+        stretch elapsing of timer events over a longer period to reduce workload spikes. For further details
+        and explanations and how both settings play together, see below.</p>

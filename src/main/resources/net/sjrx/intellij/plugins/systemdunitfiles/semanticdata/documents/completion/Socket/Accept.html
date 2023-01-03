@@ -1,0 +1,26 @@
+<p>Takes a boolean argument. If yes, a service instance is spawned for each incoming
+        connection and only the connection socket is passed to it. If no, all listening sockets themselves
+        are passed to the started service unit, and only one service unit is spawned for all connections
+        (also see above). This value is ignored for datagram sockets and FIFOs where a single service unit
+        unconditionally handles all incoming traffic. Defaults to <var>no</var>. For performance
+        reasons, it is recommended to write new daemons only in a way that is suitable for
+        <var>Accept=no</var>. A daemon listening on an AF_UNIX socket may, but
+        does not need to, call
+        <a href="http://man7.org/linux/man-pages/man2/close.2.html">close(2)
+    </a> on the
+        received socket before exiting. However, it must not unlink the socket from a file system. It should
+        not invoke
+        <a href="http://man7.org/linux/man-pages/man2/shutdown.2.html">shutdown(2)
+    </a> on
+        sockets it got with <var>Accept=no</var>, but it may do so for sockets it got with
+        <var>Accept=yes</var> set. Setting <var>Accept=yes</var> is mostly useful to allow
+        daemons designed for usage with <a href="http://man7.org/linux/man-pages/man8/inetd.8.html">inetd(8)
+    </a> to work
+        unmodified with systemd socket activation.</p>
+<p>For IPv4 and IPv6 connections, the <var>REMOTE_ADDR</var> environment variable will
+        contain the remote IP address, and <var>REMOTE_PORT</var> will contain the remote port. This
+        is the same as the format used by CGI. For SOCK_RAW, the port is the IP
+        protocol.</p>
+<p>It is recommended to set <var>CollectMode=inactive-or-failed</var> for service
+        instances activated via <var>Accept=yes</var>, to ensure that failed connection services are
+        cleaned up and released from memory, and do not accumulate.</p>

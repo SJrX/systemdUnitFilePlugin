@@ -1,0 +1,18 @@
+<p>Takes a list of exit status definitions that, when returned by the main service
+        process, will prevent automatic service restarts, regardless of the restart setting configured with
+        <var>Restart=</var>. Exit status definitions can either be numeric exit codes or termination
+        signal names, and are separated by spaces. Defaults to the empty list, so that, by default, no exit
+        status is excluded from the configured restart logic. For example:
+
+        RestartPreventExitStatus=1 6 SIGABRT
+
+        ensures that exit codes 1 and 6 and the termination signal SIGABRT will not
+        result in automatic service restarting. This option may appear more than once, in which case the list
+        of restart-preventing statuses is merged. If the empty string is assigned to this option, the list is
+        reset and all prior assignments of this option will have no effect.</p>
+<p>Note that this setting has no effect on processes configured via
+        <var>ExecStartPre=</var>, <var>ExecStartPost=</var>, <var>ExecStop=</var>,
+        <var>ExecStopPost=</var> or <var>ExecReload=</var>, but only on the main service
+        process, i.e. either the one invoked by <var>ExecStart=</var> or (depending on
+        <var>Type=</var>, <var>PIDFile=</var>, …) the otherwise configured main
+        process.</p>

@@ -1,0 +1,32 @@
+<p>Defines monotonic timers relative to different
+        starting points:</p>
+<p>Multiple directives may be combined of the same and of different types, in which case the timer
+        unit will trigger whenever any of the specified timer expressions elapse. For example, by combining
+        <var>OnBootSec=</var> and <var>OnUnitActiveSec=</var>, it is possible to define a
+        timer that elapses in regular intervals and activates a specific service each time. Moreover, both
+        monotonic time expressions and <var>OnCalendar=</var> calendar expressions may be combined in
+        the same timer unit.</p>
+<p>The arguments to the directives are time spans
+        configured in seconds. Example: "OnBootSec=50" means 50s after
+        boot-up. The argument may also include time units. Example:
+        "OnBootSec=5h 30min" means 5 hours and 30 minutes after
+        boot-up. For details about the syntax of time spans, see
+        <a href="http://man7.org/linux/man-pages/man7/systemd.time.7.html">systemd.time(7)
+    </a>.</p>
+<p>If a timer configured with <var>OnBootSec=</var>
+        or <var>OnStartupSec=</var> is already in the past
+        when the timer unit is activated, it will immediately elapse
+        and the configured unit is started. This is not the case for
+        timers defined in the other directives.</p>
+<p>These are monotonic timers, independent of wall-clock time and timezones. If the computer is
+        temporarily suspended, the monotonic clock generally pauses, too. Note that if
+        <var>WakeSystem=</var> is used, a different monotonic clock is selected that continues to
+        advance while the system is suspended and thus can be used as the trigger to resume the
+        system.</p>
+<p>If the empty string is assigned to any of these options, the list of timers is reset (both
+        monotonic timers and <var>OnCalendar=</var> timers, see below), and all prior assignments
+        will have no effect.</p>
+<p>Note that timers do not necessarily expire at the
+        precise time configured with these settings, as they are
+        subject to the <var>AccuracySec=</var> setting
+        below.</p>

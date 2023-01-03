@@ -1,0 +1,25 @@
+<p>This option serves two purposes. First, it configures the time to wait for each
+        <var>ExecStop=</var> command. If any of them times out, subsequent <var>ExecStop=</var> commands
+        are skipped and the service will be terminated by SIGTERM. If no <var>ExecStop=</var>
+        commands are specified, the service gets the SIGTERM immediately. This default behavior
+        can be changed by the <var>TimeoutStopFailureMode=</var> option. Second, it configures the time
+        to wait for the service itself to stop. If it doesn't terminate in the specified time, it will be forcibly terminated
+        by SIGKILL (see <var>KillMode=</var> in
+        <a href="http://man7.org/linux/man-pages/man5/systemd.kill.5.html">systemd.kill(5)
+    </a>).
+        Takes a unit-less value in seconds, or a time span value such
+        as "5min 20s". Pass infinity to disable the
+        timeout logic. Defaults to
+        <var>DefaultTimeoutStopSec=</var> from the manager
+        configuration file (see
+        <a href="http://man7.org/linux/man-pages/man5/systemd-system.conf.5.html">systemd-system.conf(5)
+    </a>).
+        </p>
+<p>If a service of <var>Type=notify</var> sends EXTEND_TIMEOUT_USEC=…, this may cause
+        the stop time to be extended beyond <var>TimeoutStopSec=</var>. The first receipt of this message
+        must occur before <var>TimeoutStopSec=</var> is exceeded, and once the stop time has extended beyond
+        <var>TimeoutStopSec=</var>, the service manager will allow the service to continue to stop, provided
+        the service repeats EXTEND_TIMEOUT_USEC=… within the interval specified, or terminates itself
+        (see <a href="http://man7.org/linux/man-pages/man3/sd_notify.3.html">sd_notify(3)
+    </a>).
+        </p>

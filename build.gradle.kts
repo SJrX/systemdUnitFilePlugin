@@ -1,11 +1,7 @@
-import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.grammarkit.tasks.GenerateLexerTask
 import org.jetbrains.grammarkit.tasks.GenerateParserTask
-
-import java.time.ZoneId
-import java.time.Instant
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter.*
+import java.time.format.DateTimeFormatter.ofPattern
 
 fun properties(key: String) = project.findProperty(key).toString()
 
@@ -242,7 +238,7 @@ tasks.register<GenerateDataFromManPages>("generateDataFromManPages") {
 
   systemdSourceCodeRoot = file("./systemd-build/build/")
   generatedJsonFileLocation =
-    file(sourceSets["main"].output.resourcesDir?.getAbsolutePath() + "/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata")
+    file(sourceSets["main"].resources.sourceDirectories.first().getAbsolutePath() + "/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata")
 }
 /*
  * Lexing / Parsing and Grammar Tasks
@@ -283,7 +279,7 @@ tasks.register<GenerateParserTask>("generateParserTask") {
 
 tasks.register<Copy>("generateOptionValidator") {
   from("./systemd-build/build/load-fragment-gperf.gperf")
-  into("${sourceSets["main"].output.resourcesDir?.getAbsolutePath()}/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/")
+  into("${sourceSets["main"].resources.sourceDirectories.first().getAbsolutePath()}/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/")
 }
 
 
@@ -319,7 +315,7 @@ if (!(project.file("./systemd-build/build/man").exists())) {
 
 tasks.register<Copy>("generateUnitAutoCompleteData") {
   from("./systemd-build/build/ubuntu-units.txt")
-  into("${sourceSets["main"].output.resourcesDir?.getAbsolutePath()}/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/")
+  into("${sourceSets["main"].resources.sourceDirectories.first().getAbsolutePath()}/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/")
 }
 
 
@@ -334,19 +330,17 @@ if (!(project.file("./systemd-build/build/ubuntu-units.txt").exists())) {
 
 tasks {
   jar {
-    dependsOn("generateDataFromManPages")
-    dependsOn("generateOptionValidator")
-    dependsOn("generateUnitAutoCompleteData")
   }
 
   compileTestKotlin {
-    dependsOn("generateUnitAutoCompleteData")
-    dependsOn("generateDataFromManPages")
   }
 
   compileTestJava {
-    dependsOn("generateUnitAutoCompleteData")
-    dependsOn("generateDataFromManPages")
+
+  }
+
+  processResources {
+    mustRunAfter("generateOptionValidator", "generateDataFromManPages","generateUnitAutoCompleteData")
   }
 }
 

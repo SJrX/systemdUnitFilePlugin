@@ -1,0 +1,17 @@
+<p>Takes a data integrity (dm-verity) root hash specified in hexadecimal, or the path to a file
+        containing a root hash in ASCII hexadecimal format. This option enables data integrity checks using dm-verity,
+        if the used image contains the appropriate integrity data (see above) or if <var>RootVerity=</var> is used.
+        The specified hash must match the root hash of integrity data, and is usually at least 256 bits (and hence 64
+        formatted hexadecimal characters) long (in case of SHA256 for example). If this option is not specified, but
+        the image file carries the user.verity.roothash extended file attribute (see <a href="http://man7.org/linux/man-pages/man7/xattr.7.html">xattr(7)
+    </a>), then the root
+        hash is read from it, also as formatted hexadecimal characters. If the extended file attribute is not found (or
+        is not supported by the underlying file system), but a file with the .roothash suffix is
+        found next to the image file, bearing otherwise the same name (except if the image has the
+        .raw suffix, in which case the root hash file must not have it in its name), the root hash
+        is read from it and automatically used, also as formatted hexadecimal characters.</p>
+<p>If the disk image contains a separate /usr/ partition it may also be
+        Verity protected, in which case the root hash may configured via an extended attribute
+        user.verity.usrhash or a .usrhash file adjacent to the disk
+        image. There's currently no option to configure the root hash for the /usr/ file
+        system via the unit file directly.</p>

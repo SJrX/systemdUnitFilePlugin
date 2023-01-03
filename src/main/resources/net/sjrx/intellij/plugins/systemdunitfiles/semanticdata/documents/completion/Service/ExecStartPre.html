@@ -1,0 +1,29 @@
+<p>Additional commands that are executed before
+        or after the command in <var>ExecStart=</var>,
+        respectively. Syntax is the same as for
+        <var>ExecStart=</var>, except that multiple command
+        lines are allowed and the commands are executed one after the
+        other, serially.</p>
+<p>If any of those commands (not prefixed with
+        -) fail, the rest are not executed and the
+        unit is considered failed.</p>
+<p><var>ExecStart=</var> commands are only run after
+        all <var>ExecStartPre=</var> commands that were not prefixed
+        with a - exit successfully.</p>
+<p><var>ExecStartPost=</var> commands are only run after the commands specified in
+        <var>ExecStart=</var> have been invoked successfully, as determined by <var>Type=</var>
+        (i.e. the process has been started for <var>Type=simple</var> or <var>Type=idle</var>, the last
+        <var>ExecStart=</var> process exited successfully for <var>Type=oneshot</var>, the initial
+        process exited successfully for <var>Type=forking</var>, READY=1 is sent for
+        <var>Type=notify</var>, or the <var>BusName=</var> has been taken for
+        <var>Type=dbus</var>).</p>
+<p>Note that <var>ExecStartPre=</var> may not be
+        used to start long-running processes. All processes forked
+        off by processes invoked via <var>ExecStartPre=</var> will
+        be killed before the next service process is run.</p>
+<p>Note that if any of the commands specified in <var>ExecStartPre=</var>,
+        <var>ExecStart=</var>, or <var>ExecStartPost=</var> fail (and are not prefixed with
+        -, see above) or time out before the service is fully up, execution continues with commands
+        specified in <var>ExecStopPost=</var>, the commands in <var>ExecStop=</var> are skipped.</p>
+<p>Note that the execution of <var>ExecStartPost=</var> is taken into account for the purpose of
+        <var>Before=</var>/<var>After=</var> ordering constraints.</p>

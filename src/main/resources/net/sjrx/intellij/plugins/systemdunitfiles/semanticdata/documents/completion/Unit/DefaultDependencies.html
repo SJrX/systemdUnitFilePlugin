@@ -1,0 +1,14 @@
+<p>Takes a boolean argument. If
+        <var>yes</var>, (the default), a few default
+        dependencies will implicitly be created for the unit. The
+        actual dependencies created depend on the unit type. For
+        example, for service units, these dependencies ensure that the
+        service is started only after basic system initialization is
+        completed and is properly terminated on system shutdown. See
+        the respective man pages for details. Generally, only services
+        involved with early boot or late shutdown should set this
+        option to <var>no</var>. It is highly recommended to
+        leave this option enabled for the majority of common units. If
+        set to <var>no</var>, this option does not disable
+        all implicit dependencies, just non-essential
+        ones.</p>

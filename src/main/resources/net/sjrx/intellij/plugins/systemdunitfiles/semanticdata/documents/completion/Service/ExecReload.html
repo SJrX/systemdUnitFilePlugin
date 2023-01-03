@@ -1,0 +1,22 @@
+<p>Commands to execute to trigger a configuration
+        reload in the service. This argument takes multiple command
+        lines, following the same scheme as described for
+        <var>ExecStart=</var> above. Use of this setting is
+        optional. Specifier and environment variable substitution is
+        supported here following the same scheme as for
+        <var>ExecStart=</var>.</p>
+<p>One additional, special environment variable is set: if
+        known, <var>$MAINPID</var> is set to the main process
+        of the daemon, and may be used for command lines like the
+        following:</p>
+<p>Note however that reloading a daemon by sending a signal
+        (as with the example line above) is usually not a good choice,
+        because this is an asynchronous operation and hence not
+        suitable to order reloads of multiple services against each
+        other. It is strongly recommended to set
+        <var>ExecReload=</var> to a command that not only
+        triggers a configuration reload of the daemon, but also
+        synchronously waits for it to complete. For example,
+        <a href="http://man7.org/linux/man-pages/man1/dbus-broker.1.html">dbus-broker(1)
+    </a>
+        uses the following:</p>

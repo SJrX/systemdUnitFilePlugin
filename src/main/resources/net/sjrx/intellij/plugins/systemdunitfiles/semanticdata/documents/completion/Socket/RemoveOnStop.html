@@ -1,0 +1,7 @@
+<p>Takes a boolean argument. If enabled, any file nodes created by this socket unit are
+        removed when it is stopped. This applies to AF_UNIX sockets in the file system,
+        POSIX message queues, FIFOs, as well as any symlinks to them configured with
+        <var>Symlinks=</var>. Normally, it should not be necessary to use this option, and is not
+        recommended as services might continue to run after the socket unit has been terminated and it should
+        still be possible to communicate with them via their file system node. Defaults to
+        off.</p>

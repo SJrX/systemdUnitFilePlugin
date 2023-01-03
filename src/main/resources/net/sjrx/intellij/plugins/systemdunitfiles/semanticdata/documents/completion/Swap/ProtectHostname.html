@@ -1,0 +1,11 @@
+<p>Takes a boolean argument. When set, sets up a new UTS namespace for the executed
+        processes. In addition, changing hostname or domainname is prevented. Defaults to off.</p>
+<p>Note that the implementation of this setting might be impossible (for example if UTS namespaces
+        are not available), and the unit should be written in a way that does not solely rely on this setting
+        for security.</p>
+<p>Note that when this option is enabled for a service hostname changes no longer propagate from
+        the system into the service, it is hence not suitable for services that need to take notice of system
+        hostname changes dynamically.</p>
+<p>If this setting is on, but the unit doesn't have the CAP_SYS_ADMIN
+        capability (e.g. services for which <var>User=</var> is set),
+        <var>NoNewPrivileges=yes</var> is implied.</p>

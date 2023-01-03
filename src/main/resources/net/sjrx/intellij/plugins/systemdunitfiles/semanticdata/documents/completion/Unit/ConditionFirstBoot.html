@@ -1,0 +1,16 @@
+<p>Takes a boolean argument. This condition may be used to conditionalize units on
+          whether the system is booting up for the first time. This roughly means that /etc/
+          was unpopulated when the system started booting (for details, see "First Boot Semantics" in
+          <a href="http://man7.org/linux/man-pages/man5/machine-id.5.html">machine-id(5)
+    </a>).
+          First boot is considered finished (this condition will evaluate as false) after the manager
+          has finished the startup phase.</p>
+<p>This condition may be used to populate /etc/ on the first boot after
+          factory reset, or when a new system instance boots up for the first time.</p>
+<p>For robustness, units with <var>ConditionFirstBoot=yes</var> should order themselves
+          before first-boot-complete.target and pull in this passive target with
+          <var>Wants=</var>. This ensures that in a case of an aborted first boot, these units will
+          be re-run during the next system startup.</p>
+<p>If the <var>systemd.condition-first-boot=</var> option is specified on the kernel
+          command line (taking a boolean), it will override the result of this condition check, taking
+          precedence over /etc/machine-id existence checks.</p>

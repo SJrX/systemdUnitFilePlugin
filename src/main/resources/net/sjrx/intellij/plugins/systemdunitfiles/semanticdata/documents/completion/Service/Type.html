@@ -1,0 +1,22 @@
+<p>Configures the process start-up type for this service unit. One of <var>simple</var>,
+          <var>exec</var>, <var>forking</var>, <var>oneshot</var>, <var>dbus</var>,
+          <var>notify</var> or <var>idle</var>:</p>
+<p>It is generally recommended to use <var>Type=</var><var>simple</var> for long-running
+          services whenever possible, as it is the simplest and fastest option. However, as this service type won't
+          propagate service start-up failures and doesn't allow ordering of other units against completion of
+          initialization of the service (which for example is useful if clients need to connect to the service through
+          some form of IPC, and the IPC channel is only established by the service itself — in contrast to doing this
+          ahead of time through socket or bus activation or similar), it might not be sufficient for many cases. If so,
+          <var>notify</var> or <var>dbus</var> (the latter only in case the service provides a D-Bus
+          interface) are the preferred options as they allow service program code to precisely schedule when to
+          consider the service started up successfully and when to proceed with follow-up units. The
+          <var>notify</var> service type requires explicit support in the service codebase (as
+          sd_notify() or an equivalent API needs to be invoked by the service at the appropriate
+          time) — if it's not supported, then <var>forking</var> is an alternative: it supports the traditional
+          UNIX service start-up protocol. Finally, <var>exec</var> might be an option for cases where it is
+          enough to ensure the service binary is invoked, and where the service binary itself executes no or little
+          initialization on its own (and its initialization is unlikely to fail). Note that using any type other than
+          <var>simple</var> possibly delays the boot process, as the service manager needs to wait for service
+          initialization to complete. It is hence recommended not to needlessly use any types other than
+          <var>simple</var>. (Also note it is generally not recommended to use <var>idle</var> or
+          <var>oneshot</var> for long-running services.)</p>

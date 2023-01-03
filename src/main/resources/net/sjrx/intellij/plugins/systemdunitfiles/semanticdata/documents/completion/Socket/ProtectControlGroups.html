@@ -1,0 +1,8 @@
+<p>Takes a boolean argument. If true, the Linux Control Groups (<a href="http://man7.org/linux/man-pages/man7/cgroups.7.html">cgroups(7)
+    </a>) hierarchies
+        accessible through /sys/fs/cgroup/ will be made read-only to all processes of the
+        unit. Except for container managers no services should require write access to the control groups hierarchies;
+        it is hence recommended to turn this on for most services. For this setting the same restrictions regarding
+        mount propagation and privileges apply as for <var>ReadOnlyPaths=</var> and related calls, see
+        above. Defaults to off. If <var>ProtectControlGroups=</var> is set, <var>MountAPIVFS=yes</var>
+        is implied.</p>

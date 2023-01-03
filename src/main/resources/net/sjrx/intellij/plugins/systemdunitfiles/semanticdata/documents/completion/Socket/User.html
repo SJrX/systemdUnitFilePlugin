@@ -1,0 +1,29 @@
+<p>Set the UNIX user or group that the processes are executed as, respectively. Takes a single
+        user or group name, or a numeric ID as argument. For system services (services run by the system service
+        manager, i.e. managed by PID 1) and for user services of the root user (services managed by root's instance of
+        systemd --user), the default is root, but <var>User=</var> may be
+        used to specify a different user. For user services of any other user, switching user identity is not
+        permitted, hence the only valid setting is the same user the user's service manager is running as. If no group
+        is set, the default group of the user is used. This setting does not affect commands whose command line is
+        prefixed with +.</p>
+<p>Note that this enforces only weak restrictions on the user/group name syntax, but will generate
+        warnings in many cases where user/group names do not adhere to the following rules: the specified
+        name should consist only of the characters a-z, A-Z, 0-9, _ and
+        -, except for the first character which must be one of a-z, A-Z and
+        _ (i.e. digits and - are not permitted as first character). The
+        user/group name must have at least one character, and at most 31. These restrictions are made in
+        order to avoid ambiguities and to ensure user/group names and unit files remain portable among Linux
+        systems. For further details on the names accepted and the names warned about see <a href="https://systemd.io/USER_NAMES">User/Group Name Syntax</a>.</p>
+<p>When used in conjunction with <var>DynamicUser=</var> the user/group name specified is
+        dynamically allocated at the time the service is started, and released at the time the service is
+        stopped — unless it is already allocated statically (see below). If <var>DynamicUser=</var>
+        is not used the specified user and group must have been created statically in the user database no
+        later than the moment the service is started, for example using the
+        <a href="http://man7.org/linux/man-pages/man5/sysusers.d.5.html">sysusers.d(5)
+    </a>
+        facility, which is applied at boot or package install time. If the user does not exist by then
+        program invocation will fail.</p>
+<p>If the <var>User=</var> setting is used the supplementary group list is initialized
+        from the specified user's default group list, as defined in the system's user and group
+        database. Additional groups may be configured through the <var>SupplementaryGroups=</var>
+        setting (see below).</p>

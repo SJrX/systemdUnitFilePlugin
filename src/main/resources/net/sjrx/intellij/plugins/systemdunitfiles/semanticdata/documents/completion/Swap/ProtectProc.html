@@ -1,0 +1,23 @@
+<p>Takes one of noaccess, invisible,
+        ptraceable or default (which it defaults to). When set, this
+        controls the hidepid= mount option of the procfs instance for
+        the unit that controls which directories with process metainformation
+        (/proc/PID) are visible and accessible: when set to
+        noaccess the ability to access most of other users' process metadata in
+        /proc/ is taken away for processes of the service. When set to
+        invisible processes owned by other users are hidden from
+        /proc/. If ptraceable all processes that cannot be
+        ptrace()'ed by a process are hidden to it. If default no
+        restrictions on /proc/ access or visibility are made. For further details see
+        <a href="https://docs.kernel.org/filesystems/proc.html#mount-options">The /proc
+        Filesystem</a>. It is generally recommended to run most system services with this option set to
+        invisible. This option is implemented via file system namespacing, and thus cannot
+        be used with services that shall be able to install mount points in the host file system
+        hierarchy. Note that the root user is unaffected by this option, so to be effective it has to be used
+        together with <var>User=</var> or <var>DynamicUser=yes</var>, and also without the
+        CAP_SYS_PTRACE capability, which also allows a process to bypass this feature. It
+        cannot be used for services that need to access metainformation about other users' processes. This
+        option implies <var>MountAPIVFS=</var>.</p>
+<p>If the kernel doesn't support per-mount point <var>hidepid=</var> mount options this
+        setting remains without effect, and the unit's processes will be able to access and see other process
+        as if the option was not used.</p>

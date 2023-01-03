@@ -1,0 +1,26 @@
+<p>Takes a space-separated list of architecture identifiers to include in the system call
+        filter. The known architecture identifiers are the same as for <var>ConditionArchitecture=</var>
+        described in <a href="http://man7.org/linux/man-pages/man5/systemd.unit.5.html">systemd.unit(5)
+    </a>,
+        as well as x32, mips64-n32, mips64-le-n32, and
+        the special identifier native. The special identifier native
+        implicitly maps to the native architecture of the system (or more precisely: to the architecture the system
+        manager is compiled for). If running in user mode, or in system mode, but without the
+        CAP_SYS_ADMIN capability (e.g. setting <var>User=</var>),
+        <var>NoNewPrivileges=yes</var> is implied. By default, this option is set to the empty list, i.e. no
+        filtering is applied.</p>
+<p>If this setting is used, processes of this unit will only be permitted to call native system calls, and
+        system calls of the specified architectures. For the purposes of this option, the x32 architecture is treated
+        as including x86-64 system calls. However, this setting still fulfills its purpose, as explained below, on
+        x32.</p>
+<p>System call filtering is not equally effective on all architectures. For example, on x86
+        filtering of network socket-related calls is not possible, due to ABI limitations — a limitation that x86-64
+        does not have, however. On systems supporting multiple ABIs at the same time — such as x86/x86-64 — it is hence
+        recommended to limit the set of permitted system call architectures so that secondary ABIs may not be used to
+        circumvent the restrictions applied to the native ABI of the system. In particular, setting
+        <var>SystemCallArchitectures=native</var> is a good choice for disabling non-native ABIs.</p>
+<p>System call architectures may also be restricted system-wide via the
+        <var>SystemCallArchitectures=</var> option in the global configuration. See
+        <a href="http://man7.org/linux/man-pages/man5/systemd-system.conf.5.html">systemd-system.conf(5)
+    </a> for
+        details.</p>

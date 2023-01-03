@@ -1,0 +1,25 @@
+<p>Takes a boolean parameter. If set, the processes of this unit will be run in their own private
+        file system (mount) namespace with all mount propagation from the processes towards the host's main file system
+        namespace turned off. This means any file system mount points established or removed by the unit's processes
+        will be private to them and not be visible to the host. However, file system mount points established or
+        removed on the host will be propagated to the unit's processes. See <a href="http://man7.org/linux/man-pages/man7/mount_namespaces.7.html">mount_namespaces(7)
+    </a> for
+        details on file system namespaces. Defaults to off.</p>
+<p>When turned on, this executes three operations for each invoked process: a new
+        CLONE_NEWNS namespace is created, after which all existing mounts are remounted to
+        MS_SLAVE to disable propagation from the unit's processes to the host (but leaving
+        propagation in the opposite direction in effect). Finally, the mounts are remounted again to the propagation
+        mode configured with <var>MountFlags=</var>, see below.</p>
+<p>File system namespaces are set up individually for each process forked off by the service manager. Mounts
+        established in the namespace of the process created by <var>ExecStartPre=</var> will hence be cleaned
+        up automatically as soon as that process exits and will not be available to subsequent processes forked off for
+        <var>ExecStart=</var> (and similar applies to the various other commands configured for
+        units). Similarly, <var>JoinsNamespaceOf=</var> does not permit sharing kernel mount namespaces between
+        units, it only enables sharing of the /tmp/ and /var/tmp/
+        directories.</p>
+<p>Other file system namespace unit settings — <var>PrivateMounts=</var>,
+        <var>PrivateTmp=</var>, <var>PrivateDevices=</var>, <var>ProtectSystem=</var>,
+        <var>ProtectHome=</var>, <var>ReadOnlyPaths=</var>, <var>InaccessiblePaths=</var>,
+        <var>ReadWritePaths=</var>, … — also enable file system namespacing in a fashion equivalent to this
+        option. Hence it is primarily useful to explicitly request this behaviour if none of the other settings are
+        used.</p>

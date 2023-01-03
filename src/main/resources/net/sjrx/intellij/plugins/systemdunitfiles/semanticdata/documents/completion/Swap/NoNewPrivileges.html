@@ -1,0 +1,26 @@
+<p>Takes a boolean argument. If true, ensures that the service process and all its
+        children can never gain new privileges through execve() (e.g. via setuid or
+        setgid bits, or filesystem capabilities). This is the simplest and most effective way to ensure that
+        a process and its children can never elevate privileges again. Defaults to false, but certain
+        settings override this and ignore the value of this setting. This is the case when
+        <var>DynamicUser=</var>,
+        <var>LockPersonality=</var>,
+        <var>MemoryDenyWriteExecute=</var>,
+        <var>PrivateDevices=</var>,
+        <var>ProtectClock=</var>,
+        <var>ProtectHostname=</var>,
+        <var>ProtectKernelLogs=</var>,
+        <var>ProtectKernelModules=</var>,
+        <var>ProtectKernelTunables=</var>,
+        <var>RestrictAddressFamilies=</var>,
+        <var>RestrictNamespaces=</var>,
+        <var>RestrictRealtime=</var>,
+        <var>RestrictSUIDSGID=</var>,
+        <var>SystemCallArchitectures=</var>,
+        <var>SystemCallFilter=</var>, or
+        <var>SystemCallLog=</var> are specified. Note that even if this setting is overridden
+        by them, systemctl show shows the original value of this setting. In case the
+        service will be run in a new mount namespace anyway and SELinux is disabled, all file systems
+        are mounted with MS_NOSUID flag. Also see
+        <a href="https://docs.kernel.org/userspace-api/no_new_privs.html">No New
+        Privileges Flag</a>.</p>

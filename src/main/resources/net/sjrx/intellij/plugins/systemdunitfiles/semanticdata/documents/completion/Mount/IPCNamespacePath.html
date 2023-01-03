@@ -1,0 +1,9 @@
+<p>Takes an absolute file system path refererring to a Linux IPC namespace
+        pseudo-file (i.e. a file like /proc/$PID/ns/ipc or a bind mount or symlink to
+        one). When set the invoked processes are added to the network namespace referenced by that path. The
+        path has to point to a valid namespace file at the moment the processes are forked off. If this
+        option is used <var>PrivateIPC=</var> has no effect. If this option is used together with
+        <var>JoinsNamespaceOf=</var> then it only has an effect if this unit is started before any of
+        the listed units that have <var>PrivateIPC=</var> or
+        <var>IPCNamespacePath=</var> configured, as otherwise the network namespace of those
+        units is reused.</p>

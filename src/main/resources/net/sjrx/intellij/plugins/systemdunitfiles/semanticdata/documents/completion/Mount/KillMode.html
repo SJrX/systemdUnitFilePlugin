@@ -1,0 +1,35 @@
+<p>Specifies how processes of this unit shall be killed. One of
+        <var>control-group</var>, <var>mixed</var>, <var>process</var>,
+        <var>none</var>.</p>
+<p>If set to <var>control-group</var>, all remaining processes in the control group of this
+        unit will be killed on unit stop (for services: after the stop command is executed, as configured
+        with <var>ExecStop=</var>). If set to <var>mixed</var>, the
+        SIGTERM signal (see below) is sent to the main process while the subsequent
+        SIGKILL signal (see below) is sent to all remaining processes of the unit's
+        control group. If set to <var>process</var>, only the main process itself is killed (not
+        recommended!). If set to <var>none</var>, no process is killed (strongly recommended
+        against!). In this case, only the stop command will be executed on unit stop, but no process will be
+        killed otherwise.  Processes remaining alive after stop are left in their control group and the
+        control group continues to exist after stop unless empty.</p>
+<p>Note that it is not recommended to set <var>KillMode=</var> to
+        process or even none, as this allows processes to escape
+        the service manager's lifecycle and resource management, and to remain running even while their
+        service is considered stopped and is assumed to not consume any resources.</p>
+<p>Processes will first be terminated via SIGTERM (unless the signal to send
+        is changed via <var>KillSignal=</var> or <var>RestartKillSignal=</var>). Optionally,
+        this is immediately followed by a SIGHUP (if enabled with
+        <var>SendSIGHUP=</var>). If processes still remain after:
+        
+          the main process of a unit has exited (applies to <var>KillMode=</var>:
+              <var>mixed</var>)
+          the delay configured via the <var>TimeoutStopSec=</var> has passed
+              (applies to <var>KillMode=</var>: <var>control-group</var>, <var>mixed</var>,
+              <var>process</var>)
+        
+
+        the termination request is repeated with the SIGKILL signal or the signal specified via
+        <var>FinalKillSignal=</var> (unless this is disabled via the <var>SendSIGKILL=</var>
+        option). See <a href="http://man7.org/linux/man-pages/man2/kill.2.html">kill(2)
+    </a>
+        for more information.</p>
+<p>Defaults to <var>control-group</var>.</p>

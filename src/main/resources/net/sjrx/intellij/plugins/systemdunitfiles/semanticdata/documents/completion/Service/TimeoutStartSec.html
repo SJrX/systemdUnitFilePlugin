@@ -1,0 +1,18 @@
+<p>Configures the time to wait for start-up. If a daemon service does not signal start-up
+        completion within the configured time, the service will be considered failed and will be shut down again. The
+        precise action depends on the <var>TimeoutStartFailureMode=</var> option. Takes a unit-less value in
+        seconds, or a time span value such as "5min 20s". Pass infinity to disable the timeout logic.
+        Defaults to <var>DefaultTimeoutStartSec=</var> from the manager configuration file, except when
+        <var>Type=oneshot</var> is used, in which case the timeout is disabled by default (see
+        <a href="http://man7.org/linux/man-pages/man5/systemd-system.conf.5.html">systemd-system.conf(5)
+    </a>).
+        </p>
+<p>If a service of <var>Type=notify</var> sends EXTEND_TIMEOUT_USEC=…, this may cause
+        the start time to be extended beyond <var>TimeoutStartSec=</var>. The first receipt of this message
+        must occur before <var>TimeoutStartSec=</var> is exceeded, and once the start time has extended beyond
+        <var>TimeoutStartSec=</var>, the service manager will allow the service to continue to start, provided
+        the service repeats EXTEND_TIMEOUT_USEC=… within the interval specified until the service
+        startup status is finished by READY=1. (see
+        <a href="http://man7.org/linux/man-pages/man3/sd_notify.3.html">sd_notify(3)
+    </a>).
+        </p>

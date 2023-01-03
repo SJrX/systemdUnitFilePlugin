@@ -1,0 +1,9 @@
+<p>Takes the path to a data integrity (dm-verity) file. This option enables data integrity checks
+        using dm-verity, if <var>RootImage=</var> is used and a root-hash is passed and if the used image itself
+        does not contains the integrity data. The integrity data must be matched by the root hash. If this option is not
+        specified, but a file with the .verity suffix is found next to the image file, bearing otherwise
+        the same name (except if the image has the .raw suffix, in which case the verity data file must
+        not have it in its name), the verity data is read from it and automatically used.</p>
+<p>This option is supported only for disk images that contain a single file system, without an
+        enveloping partition table. Images that contain a GPT partition table should instead include both
+        root file system and matching Verity data in the same image, implementing the <a href="https://systemd.io/DISCOVERABLE_PARTITIONS">Discoverable Partitions Specification</a>.</p>

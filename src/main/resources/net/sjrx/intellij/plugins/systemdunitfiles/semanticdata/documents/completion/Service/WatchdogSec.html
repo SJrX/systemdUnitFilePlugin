@@ -1,0 +1,33 @@
+<p>Configures the watchdog timeout for a service.
+        The watchdog is activated when the start-up is completed. The
+        service must call
+        <a href="http://man7.org/linux/man-pages/man3/sd_notify.3.html">sd_notify(3)
+    </a>
+        regularly with WATCHDOG=1 (i.e. the
+        "keep-alive ping"). If the time between two such calls is
+        larger than the configured time, then the service is placed in
+        a failed state and it will be terminated with
+        SIGABRT (or the signal specified by
+        <var>WatchdogSignal=</var>). By setting
+        <var>Restart=</var> to <var>on-failure</var>,
+        <var>on-watchdog</var>, <var>on-abnormal</var> or
+        <var>always</var>, the service will be automatically
+        restarted. The time configured here will be passed to the
+        executed service process in the
+        <var>WATCHDOG_USEC=</var> environment variable. This
+        allows daemons to automatically enable the keep-alive pinging
+        logic if watchdog support is enabled for the service. If this
+        option is used, <var>NotifyAccess=</var> (see below)
+        should be set to open access to the notification socket
+        provided by systemd. If <var>NotifyAccess=</var> is
+        not set, it will be implicitly set to <var>main</var>.
+        Defaults to 0, which disables this feature. The service can
+        check whether the service manager expects watchdog keep-alive
+        notifications. See
+        <a href="http://man7.org/linux/man-pages/man3/sd_watchdog_enabled.3.html">sd_watchdog_enabled(3)
+    </a>
+        for details.
+        <a href="http://man7.org/linux/man-pages/man3/sd_event_set_watchdog.3.html">sd_event_set_watchdog(3)
+    </a>
+        may be used to enable automatic watchdog notification support.
+        </p>

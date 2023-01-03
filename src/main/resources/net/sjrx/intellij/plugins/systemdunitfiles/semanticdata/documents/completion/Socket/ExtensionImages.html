@@ -1,0 +1,39 @@
+<p>This setting is similar to <var>MountImages=</var> in that it mounts a file
+        system hierarchy from a block device node or loopback file, but instead of providing a destination
+        path, an overlay will be set up. This option expects a whitespace separated list of mount
+        definitions. Each definition consists of a source path, optionally followed by a colon and a list of
+        mount options.</p>
+<p>A read-only OverlayFS will be set up on top of /usr/ and
+        /opt/ hierarchies. The order in which the images are listed will determine the
+        order in which the overlay is laid down: images specified first to last will result in overlayfs
+        layers bottom to top.</p>
+<p>Mount options may be defined as a single comma-separated list of options, in which case they
+        will be implicitly applied to the root partition on the image, or a series of colon-separated tuples
+        of partition name and mount options. Valid partition names and mount options are the same as for
+        <var>RootImageOptions=</var> setting described above.</p>
+<p>Each mount definition may be prefixed with -, in which case it will be
+        ignored when its source path does not exist. The source argument is a path to a block device node or
+        regular file. If the source path contains a :, it needs to be escaped as
+        \:. The device node or file system image file needs to follow the same rules as
+        specified for <var>RootImage=</var>. Any mounts created with this option are specific to the
+        unit, and are not visible in the host's mount table.</p>
+<p>These settings may be used more than once, each usage appends to the unit's list of image
+        paths. If the empty string is assigned, the entire list of mount paths defined prior to this is
+        reset.</p>
+<p>Each image must carry a /usr/lib/extension-release.d/extension-release.IMAGE
+        file, with the appropriate metadata which matches <var>RootImage=</var>/<var>RootDirectory=</var>
+        or the host. See:
+        <a href="http://man7.org/linux/man-pages/man5/os-release.5.html">os-release(5)
+    </a>.
+        To disable the safety check that the extension-release file name matches the image file name, the
+        <var>x-systemd.relax-extension-release-check</var> mount option may be appended.</p>
+<p>When <var>DevicePolicy=</var> is set to closed or
+        strict, or set to auto and <var>DeviceAllow=</var> is
+        set, then this setting adds /dev/loop-control with rw mode,
+        block-loop and block-blkext with rwm mode
+        to <var>DeviceAllow=</var>. See
+        <a href="http://man7.org/linux/man-pages/man5/systemd.resource-control.5.html">systemd.resource-control(5)
+    </a>
+        for the details about <var>DevicePolicy=</var> or <var>DeviceAllow=</var>. Also, see
+        <var>PrivateDevices=</var> below, as it may change the setting of
+        <var>DevicePolicy=</var>.</p>

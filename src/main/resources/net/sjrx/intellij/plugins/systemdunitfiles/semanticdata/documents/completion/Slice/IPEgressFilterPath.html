@@ -1,0 +1,26 @@
+<p>Add custom network traffic filters implemented as BPF programs, applying to all IP packets
+          sent and received over AF_INET and AF_INET6 sockets.
+          Takes an absolute path to a pinned BPF program in the BPF virtual filesystem (/sys/fs/bpf/).
+          </p>
+<p>The filters configured with this option are applied to all sockets created by processes
+          of this unit (or in the case of socket units, associated with it). The filters are loaded in addition
+          to filters any of the parent slice units this unit might be a member of as well as any
+          <var>IPAddressAllow=</var> and <var>IPAddressDeny=</var> filters in any of these units.
+          By default there are no filters specified.</p>
+<p>If these settings are used multiple times in the same unit all the specified programs are attached. If an
+          empty string is assigned to these settings the program list is reset and all previous specified programs ignored.</p>
+<p>If the path BPF_FS_PROGRAM_PATH in <var>IPIngressFilterPath=</var> assignment
+          is already being handled by <var>BPFProgram=</var> ingress hook, e.g.
+          <var>BPFProgram=</var>ingress:BPF_FS_PROGRAM_PATH,
+          the assignment will be still considered valid and the program will be attached to a cgroup. Same for
+          <var>IPEgressFilterPath=</var> path and egress hook.</p>
+<p>Note that for socket-activated services, the IP filter programs configured on the socket unit apply to
+          all sockets associated with it directly, but not to any sockets created by the ultimately activated services
+          for it. Conversely, the IP filter programs configured for the service are not applied to any sockets passed into
+          the service via socket activation. Thus, it is usually a good idea, to replicate the IP filter programs on both
+          the socket and the service unit, however it often makes sense to maintain one configuration more open and the other
+          one more restricted, depending on the usecase.</p>
+<p>Note that these settings might not be supported on some systems (for example if eBPF control group
+          support is not enabled in the underlying kernel or container manager). These settings will fail the service in
+          that case. If compatibility with such systems is desired it is hence recommended to attach your filter manually
+          (requires <var>Delegate=</var>yes) instead of using this setting.</p>

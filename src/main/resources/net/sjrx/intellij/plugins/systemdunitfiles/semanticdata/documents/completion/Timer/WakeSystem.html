@@ -1,0 +1,16 @@
+<p>Takes a boolean argument. If true, an elapsing timer will cause the system to resume
+        from suspend, should it be suspended and if the system supports this. Note that this option will only
+        make sure the system resumes on the appropriate times, it will not take care of suspending it again
+        after any work that is to be done is finished. Defaults to
+        <var>false</var>.</p>
+<p>Note that this functionality requires privileges and is thus generally only available in the
+        system service manager.</p>
+<p>Note that behaviour of monotonic clock timers (as configured with
+        <var>OnActiveSec=</var>, <var>OnBootSec=</var>, <var>OnStartupSec=</var>,
+        <var>OnUnitActiveSec=</var>, <var>OnUnitInactiveSec=</var>, see above) is altered
+        depending on this option. If false, a monotonic clock is used that is paused during system suspend
+        (CLOCK_MONOTONIC), if true a different monotonic clock is used that continues
+        advancing during system suspend (CLOCK_BOOTTIME), see
+        <a href="http://man7.org/linux/man-pages/man2/clock_getres.2.html">clock_getres(2)
+    </a> for
+        details.</p>

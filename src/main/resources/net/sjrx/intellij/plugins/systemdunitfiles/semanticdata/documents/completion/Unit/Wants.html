@@ -1,0 +1,16 @@
+<p>Configures (weak) requirement dependencies on other units. This option may be
+        specified more than once or multiple space-separated units may be specified in one option in which
+        case dependencies for all listed names will be created. Dependencies of this type may also be
+        configured outside of the unit configuration file by adding a symlink to a
+        .wants/ directory accompanying the unit file. For details, see above.</p>
+<p>Units listed in this option will be started if the configuring unit is. However, if the listed
+        units fail to start or cannot be added to the transaction, this has no impact on the validity of the
+        transaction as a whole, and this unit will still be started. This is the recommended way to hook
+        the start-up of one unit to the start-up of another unit.</p>
+<p>Note that requirement dependencies do not influence the order in which services are started or
+        stopped. This has to be configured independently with the <var>After=</var> or
+        <var>Before=</var> options. If unit foo.service pulls in unit
+        bar.service as configured with <var>Wants=</var> and no ordering is
+        configured with <var>After=</var> or <var>Before=</var>, then both units will be
+        started simultaneously and without any delay between them if foo.service is
+        activated.</p>

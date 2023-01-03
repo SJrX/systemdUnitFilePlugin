@@ -1,0 +1,11 @@
+<p>Specifies a <a href="https://docs.kernel.org/usb/functionfs.html">USB
+        FunctionFS</a> endpoints location to listen on, for
+        implementation of USB gadget functions. This expects an
+        absolute file system path of a FunctionFS mount point as the argument.
+        Behavior otherwise is very similar to the <var>ListenFIFO=</var>
+        directive above. Use this to open the FunctionFS endpoint
+        ep0. When using this option, the
+        activated service has to have the
+        <var>USBFunctionDescriptors=</var> and
+        <var>USBFunctionStrings=</var> options set.
+        </p>

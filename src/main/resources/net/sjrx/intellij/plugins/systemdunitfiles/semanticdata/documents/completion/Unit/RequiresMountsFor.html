@@ -1,0 +1,8 @@
+<p>Takes a space-separated list of absolute
+        paths. Automatically adds dependencies of type
+        <var>Requires=</var> and <var>After=</var> for
+        all mount units required to access the specified path.</p>
+<p>Mount points marked with <var>noauto</var> are not
+        mounted automatically through local-fs.target,
+        but are still honored for the purposes of this option, i.e. they
+        will be pulled in by this unit.</p>

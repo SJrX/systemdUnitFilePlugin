@@ -1,0 +1,3430 @@
+{
+    "Unit": {
+        "After": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "Before"
+        },
+        "AllowIsolate": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "AssertACPower": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertArchitecture": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "AssertCPUFeature": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertCPUPressure": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertCPUs": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertCapability": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertControlGroupController": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertCredential": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertDirectoryNotEmpty": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertEnvironment": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertFileIsExecutable": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertFileNotEmpty": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertFirstBoot": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertGroup": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertHost": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertIOPressure": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertKernelCommandLine": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertKernelVersion": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertMemory": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertMemoryPressure": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertNeedsUpdate": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertOSRelease": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertPathExists": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertPathExistsGlob": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertPathIsDirectory": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertPathIsEncrypted": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertPathIsMountPoint": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertPathIsReadWrite": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertPathIsSymbolicLink": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertSecurity": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertUser": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "AssertVirtualization": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "AssertArchitecture"
+        },
+        "Before": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "BindsTo": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "CollectMode": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionACPower": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionArchitecture": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionCPUFeature": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionCPUPressure": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "ConditionMemoryPressure"
+        },
+        "ConditionCPUs": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionCapability": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionControlGroupController": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionCredential": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionDirectoryNotEmpty": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionEnvironment": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionFileIsExecutable": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionFileNotEmpty": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionFirmware": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionFirstBoot": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionGroup": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionHost": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionIOPressure": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "ConditionMemoryPressure"
+        },
+        "ConditionKernelCommandLine": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionKernelVersion": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionMemory": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionMemoryPressure": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionNeedsUpdate": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionOSRelease": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionPathExists": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionPathExistsGlob": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionPathIsDirectory": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionPathIsEncrypted": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionPathIsMountPoint": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionPathIsReadWrite": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionPathIsSymbolicLink": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionSecurity": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionUser": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "ConditionVirtualization": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "Conflicts": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "DefaultDependencies": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "Description": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "Documentation": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "FailureAction": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "FailureActionExitStatus": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "IgnoreOnIsolate": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "JobRunningTimeoutSec": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "JobTimeoutSec"
+        },
+        "JobTimeoutAction": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "JobTimeoutRebootArgument": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "JobTimeoutAction"
+        },
+        "JobTimeoutSec": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "JoinsNamespaceOf": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "OnFailure": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "OnFailureJobMode": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "OnSuccess": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "PartOf": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "PropagatesReloadTo": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "PropagatesStopTo": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "RebootArgument": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "RefuseManualStart": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "RefuseManualStop": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "RefuseManualStart"
+        },
+        "ReloadPropagatedFrom": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "PropagatesReloadTo"
+        },
+        "Requires": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "RequiresMountsFor": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "Requisite": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "SourcePath": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "StartLimitAction": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "StartLimitBurst": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "StartLimitIntervalSec"
+        },
+        "StartLimitIntervalSec": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "StopPropagatedFrom": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "PropagatesStopTo"
+        },
+        "StopWhenUnneeded": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "SuccessAction": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "FailureAction"
+        },
+        "SuccessActionExitStatus": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "FailureActionExitStatus"
+        },
+        "Upholds": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "Wants": {
+            "declaredInFile": "systemd.unit.xml"
+        }
+    },
+    "Install": {
+        "Alias": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "Also": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "DefaultInstance": {
+            "declaredInFile": "systemd.unit.xml"
+        },
+        "RequiredBy": {
+            "declaredInFile": "systemd.unit.xml",
+            "declaredUnderKeyword": "WantedBy"
+        },
+        "WantedBy": {
+            "declaredInFile": "systemd.unit.xml"
+        }
+    },
+    "Service": {
+        "AllowedCPUs": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "AllowedMemoryNodes": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "AmbientCapabilities": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "AppArmorProfile": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "BPFProgram": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "BindPaths": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "BindReadOnlyPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "BindPaths"
+        },
+        "BusName": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "CPUAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUAffinity": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUQuota": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUQuotaPeriodSec": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUSchedulingPolicy": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUSchedulingPriority": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUSchedulingResetOnFork": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUWeight": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CacheDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "CacheDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "CapabilityBoundingSet": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ConfigurationDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "ConfigurationDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "CoredumpFilter": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Delegate": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "DeviceAllow": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "DevicePolicy": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "auto|closed|strict"
+        },
+        "DisableControllers": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "DynamicUser": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Environment": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "EnvironmentFile": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ExecCondition": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "ExecPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "ExecReload": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "ExecSearchPath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ExecStart": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "ExecStartPost": {
+            "declaredInFile": "systemd.service.xml",
+            "declaredUnderKeyword": "ExecStartPre"
+        },
+        "ExecStartPre": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "ExecStop": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "ExecStopPost": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "ExitType": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "ExtensionDirectories": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ExtensionImages": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "FileDescriptorStoreMax": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "FinalKillSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "Group": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "User"
+        },
+        "GuessMainPID": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "IOAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IODeviceLatencyTargetSec": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IODeviceWeight": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOReadBandwidthMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOReadIOPSMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOSchedulingClass": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "IOSchedulingPriority": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "IOWeight": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOWriteBandwidthMax": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IOReadBandwidthMax"
+        },
+        "IOWriteIOPSMax": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IOReadIOPSMax"
+        },
+        "IPAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IPAddressAllow": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IPAddressDeny": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IPAddressAllow"
+        },
+        "IPCNamespacePath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "IPEgressFilterPath": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IPIngressFilterPath"
+        },
+        "IPIngressFilterPath": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IgnoreSIGPIPE": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "InaccessiblePaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "KeyringMode": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "KillMode": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "KillSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "LimitAS": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitCORE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitCPU": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LimitDATA": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitFSIZE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitLOCKS": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitMEMLOCK": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitMSGQUEUE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitNICE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitNOFILE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitNPROC": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitRSS": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitRTPRIO": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitRTTIME": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitSIGPENDING": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitSTACK": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LoadCredential": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LoadCredentialEncrypted": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LoadCredential"
+        },
+        "LockPersonality": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogExtraFields": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogLevelMax": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogNamespace": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogRateLimitBurst": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LogRateLimitIntervalSec"
+        },
+        "LogRateLimitIntervalSec": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogsDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "LogsDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "ManagedOOMMemoryPressure": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "auto|kill",
+            "declaredUnderKeyword": "ManagedOOMSwap"
+        },
+        "ManagedOOMMemoryPressureLimit": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "ManagedOOMPreference": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "none|avoid|omit"
+        },
+        "ManagedOOMSwap": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "auto|kill"
+        },
+        "MemoryAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemoryDenyWriteExecute": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "MemoryHigh": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemoryLow": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "MemoryMin"
+        },
+        "MemoryMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemoryMin": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemorySwapMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MountAPIVFS": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "MountFlags": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "MountImages": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NUMAMask": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NUMAPolicy": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NetworkNamespacePath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Nice": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NoExecPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "NoNewPrivileges": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NonBlocking": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "NotifyAccess": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "OOMPolicy": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "OOMScoreAdjust": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PAMName": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PIDFile": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "PassEnvironment": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Personality": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateDevices": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateIPC": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateMounts": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateNetwork": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateTmp": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateUsers": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProcSubset": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectClock": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectControlGroups": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectHome": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectHostname": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectKernelLogs": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectKernelModules": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectKernelTunables": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectProc": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectSystem": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ReadOnlyPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "ReadWritePaths": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RemainAfterExit": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "RemoveIPC": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Restart": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "RestartForceExitStatus": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "RestartKillSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "RestartPreventExitStatus": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "RestartSec": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "RestrictAddressFamilies": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictFileSystems": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictNamespaces": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictNetworkInterfaces": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "RestrictRealtime": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictSUIDSGID": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootDirectory": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootDirectoryStartOnly": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "RootHash": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootHashSignature": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootImage": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootImageOptions": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootVerity": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RuntimeDirectory": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RuntimeDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RuntimeDirectoryPreserve": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RuntimeMaxSec": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "RuntimeRandomizedExtraSec": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "SELinuxContext": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SecureBits": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SendSIGHUP": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "SendSIGKILL": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "SetCredential": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SetCredentialEncrypted": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "SetCredential"
+        },
+        "Slice": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "SmackProcessLabel": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SocketBindAllow": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "SocketBindDeny": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "SocketBindAllow"
+        },
+        "Sockets": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "StandardError": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StandardInput": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StandardInputData": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "StandardInputText"
+        },
+        "StandardInputText": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StandardOutput": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StartupAllowedCPUs": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "AllowedCPUs"
+        },
+        "StartupAllowedMemoryNodes": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "AllowedMemoryNodes"
+        },
+        "StartupCPUWeight": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "CPUWeight"
+        },
+        "StartupIOWeight": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IOWeight"
+        },
+        "StateDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "StateDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "SuccessExitStatus": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "SupplementaryGroups": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SyslogFacility": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SyslogIdentifier": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SyslogLevel": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SyslogLevelPrefix": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallArchitectures": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallErrorNumber": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallFilter": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallLog": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYColumns": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "TTYRows"
+        },
+        "TTYPath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYReset": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYRows": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYVHangup": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYVTDisallocate": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TasksAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "TasksMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "TemporaryFileSystem": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TimeoutAbortSec": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "TimeoutCleanSec": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TimeoutSec": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "TimeoutStartFailureMode": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "TimeoutStartSec": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "TimeoutStopFailureMode": {
+            "declaredInFile": "systemd.service.xml",
+            "declaredUnderKeyword": "TimeoutStartFailureMode"
+        },
+        "TimeoutStopSec": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "TimerSlackNSec": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Type": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "UMask": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "USBFunctionDescriptors": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "USBFunctionStrings": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "UnsetEnvironment": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "User": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "UtmpIdentifier": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "UtmpMode": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "WatchdogSec": {
+            "declaredInFile": "systemd.service.xml"
+        },
+        "WatchdogSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "WorkingDirectory": {
+            "declaredInFile": "systemd.exec.xml"
+        }
+    },
+    "Timer": {
+        "AccuracySec": {
+            "declaredInFile": "systemd.timer.xml"
+        },
+        "FixedRandomDelay": {
+            "declaredInFile": "systemd.timer.xml"
+        },
+        "OnActiveSec": {
+            "declaredInFile": "systemd.timer.xml"
+        },
+        "OnBootSec": {
+            "declaredInFile": "systemd.timer.xml",
+            "declaredUnderKeyword": "OnActiveSec"
+        },
+        "OnCalendar": {
+            "declaredInFile": "systemd.timer.xml"
+        },
+        "OnClockChange": {
+            "declaredInFile": "systemd.timer.xml"
+        },
+        "OnStartupSec": {
+            "declaredInFile": "systemd.timer.xml",
+            "declaredUnderKeyword": "OnActiveSec"
+        },
+        "OnTimezoneChange": {
+            "declaredInFile": "systemd.timer.xml",
+            "declaredUnderKeyword": "OnClockChange"
+        },
+        "OnUnitActiveSec": {
+            "declaredInFile": "systemd.timer.xml",
+            "declaredUnderKeyword": "OnActiveSec"
+        },
+        "OnUnitInactiveSec": {
+            "declaredInFile": "systemd.timer.xml",
+            "declaredUnderKeyword": "OnActiveSec"
+        },
+        "Persistent": {
+            "declaredInFile": "systemd.timer.xml"
+        },
+        "RandomizedDelaySec": {
+            "declaredInFile": "systemd.timer.xml"
+        },
+        "RemainAfterElapse": {
+            "declaredInFile": "systemd.timer.xml"
+        },
+        "Unit": {
+            "declaredInFile": "systemd.timer.xml"
+        },
+        "WakeSystem": {
+            "declaredInFile": "systemd.timer.xml"
+        }
+    },
+    "Automount": {
+        "DirectoryMode": {
+            "declaredInFile": "systemd.automount.xml"
+        },
+        "ExtraOptions": {
+            "declaredInFile": "systemd.automount.xml"
+        },
+        "TimeoutIdleSec": {
+            "declaredInFile": "systemd.automount.xml"
+        },
+        "Where": {
+            "declaredInFile": "systemd.automount.xml"
+        }
+    },
+    "Mount": {
+        "AllowedCPUs": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "AllowedMemoryNodes": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "AmbientCapabilities": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "AppArmorProfile": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "BPFProgram": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "BindPaths": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "BindReadOnlyPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "BindPaths"
+        },
+        "CPUAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUAffinity": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUQuota": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUQuotaPeriodSec": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUSchedulingPolicy": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUSchedulingPriority": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUSchedulingResetOnFork": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUWeight": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CacheDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "CacheDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "CapabilityBoundingSet": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ConfigurationDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "ConfigurationDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "CoredumpFilter": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Delegate": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "DeviceAllow": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "DevicePolicy": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "auto|closed|strict"
+        },
+        "DirectoryMode": {
+            "declaredInFile": "systemd.mount.xml"
+        },
+        "DisableControllers": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "DynamicUser": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Environment": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "EnvironmentFile": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ExecPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "ExecSearchPath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ExtensionDirectories": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ExtensionImages": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "FinalKillSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "ForceUnmount": {
+            "declaredInFile": "systemd.mount.xml"
+        },
+        "Group": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "User"
+        },
+        "IOAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IODeviceLatencyTargetSec": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IODeviceWeight": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOReadBandwidthMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOReadIOPSMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOSchedulingClass": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "IOSchedulingPriority": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "IOWeight": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOWriteBandwidthMax": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IOReadBandwidthMax"
+        },
+        "IOWriteIOPSMax": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IOReadIOPSMax"
+        },
+        "IPAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IPAddressAllow": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IPAddressDeny": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IPAddressAllow"
+        },
+        "IPCNamespacePath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "IPEgressFilterPath": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IPIngressFilterPath"
+        },
+        "IPIngressFilterPath": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IgnoreSIGPIPE": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "InaccessiblePaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "KeyringMode": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "KillMode": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "KillSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "LazyUnmount": {
+            "declaredInFile": "systemd.mount.xml"
+        },
+        "LimitAS": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitCORE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitCPU": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LimitDATA": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitFSIZE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitLOCKS": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitMEMLOCK": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitMSGQUEUE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitNICE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitNOFILE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitNPROC": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitRSS": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitRTPRIO": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitRTTIME": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitSIGPENDING": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitSTACK": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LoadCredential": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LoadCredentialEncrypted": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LoadCredential"
+        },
+        "LockPersonality": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogExtraFields": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogLevelMax": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogNamespace": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogRateLimitBurst": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LogRateLimitIntervalSec"
+        },
+        "LogRateLimitIntervalSec": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogsDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "LogsDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "ManagedOOMMemoryPressure": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "auto|kill",
+            "declaredUnderKeyword": "ManagedOOMSwap"
+        },
+        "ManagedOOMMemoryPressureLimit": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "ManagedOOMPreference": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "none|avoid|omit"
+        },
+        "ManagedOOMSwap": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "auto|kill"
+        },
+        "MemoryAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemoryDenyWriteExecute": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "MemoryHigh": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemoryLow": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "MemoryMin"
+        },
+        "MemoryMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemoryMin": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemorySwapMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MountAPIVFS": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "MountFlags": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "MountImages": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NUMAMask": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NUMAPolicy": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NetworkNamespacePath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Nice": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NoExecPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "NoNewPrivileges": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "OOMScoreAdjust": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Options": {
+            "declaredInFile": "systemd.mount.xml"
+        },
+        "PAMName": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PassEnvironment": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Personality": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateDevices": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateIPC": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateMounts": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateNetwork": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateTmp": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateUsers": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProcSubset": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectClock": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectControlGroups": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectHome": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectHostname": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectKernelLogs": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectKernelModules": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectKernelTunables": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectProc": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectSystem": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ReadOnlyPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "ReadWriteOnly": {
+            "declaredInFile": "systemd.mount.xml"
+        },
+        "ReadWritePaths": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RemoveIPC": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestartKillSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "RestrictAddressFamilies": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictFileSystems": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictNamespaces": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictNetworkInterfaces": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "RestrictRealtime": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictSUIDSGID": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootDirectory": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootHash": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootHashSignature": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootImage": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootImageOptions": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootVerity": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RuntimeDirectory": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RuntimeDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RuntimeDirectoryPreserve": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SELinuxContext": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SecureBits": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SendSIGHUP": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "SendSIGKILL": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "SetCredential": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SetCredentialEncrypted": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "SetCredential"
+        },
+        "Slice": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "SloppyOptions": {
+            "declaredInFile": "systemd.mount.xml"
+        },
+        "SmackProcessLabel": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SocketBindAllow": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "SocketBindDeny": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "SocketBindAllow"
+        },
+        "StandardError": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StandardInput": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StandardInputData": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "StandardInputText"
+        },
+        "StandardInputText": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StandardOutput": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StartupAllowedCPUs": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "AllowedCPUs"
+        },
+        "StartupAllowedMemoryNodes": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "AllowedMemoryNodes"
+        },
+        "StartupCPUWeight": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "CPUWeight"
+        },
+        "StartupIOWeight": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IOWeight"
+        },
+        "StateDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "StateDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "SupplementaryGroups": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SyslogFacility": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SyslogIdentifier": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SyslogLevel": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SyslogLevelPrefix": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallArchitectures": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallErrorNumber": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallFilter": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallLog": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYColumns": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "TTYRows"
+        },
+        "TTYPath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYReset": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYRows": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYVHangup": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYVTDisallocate": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TasksAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "TasksMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "TemporaryFileSystem": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TimeoutCleanSec": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TimeoutSec": {
+            "declaredInFile": "systemd.mount.xml"
+        },
+        "TimerSlackNSec": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Type": {
+            "declaredInFile": "systemd.mount.xml"
+        },
+        "UMask": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "UnsetEnvironment": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "User": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "UtmpIdentifier": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "UtmpMode": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "WatchdogSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "What": {
+            "declaredInFile": "systemd.mount.xml"
+        },
+        "Where": {
+            "declaredInFile": "systemd.mount.xml"
+        },
+        "WorkingDirectory": {
+            "declaredInFile": "systemd.exec.xml"
+        }
+    },
+    "Path": {
+        "DirectoryMode": {
+            "declaredInFile": "systemd.path.xml"
+        },
+        "DirectoryNotEmpty": {
+            "declaredInFile": "systemd.path.xml",
+            "declaredUnderKeyword": "PathExists"
+        },
+        "MakeDirectory": {
+            "declaredInFile": "systemd.path.xml"
+        },
+        "PathChanged": {
+            "declaredInFile": "systemd.path.xml",
+            "declaredUnderKeyword": "PathExists"
+        },
+        "PathExists": {
+            "declaredInFile": "systemd.path.xml"
+        },
+        "PathExistsGlob": {
+            "declaredInFile": "systemd.path.xml",
+            "declaredUnderKeyword": "PathExists"
+        },
+        "PathModified": {
+            "declaredInFile": "systemd.path.xml",
+            "declaredUnderKeyword": "PathExists"
+        },
+        "TriggerLimitBurst": {
+            "declaredInFile": "systemd.path.xml",
+            "declaredUnderKeyword": "TriggerLimitIntervalSec"
+        },
+        "TriggerLimitIntervalSec": {
+            "declaredInFile": "systemd.path.xml"
+        },
+        "Unit": {
+            "declaredInFile": "systemd.path.xml"
+        }
+    },
+    "Socket": {
+        "Accept": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "AllowedCPUs": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "AllowedMemoryNodes": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "AmbientCapabilities": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "AppArmorProfile": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "BPFProgram": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "Backlog": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "BindIPv6Only": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "BindPaths": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "BindReadOnlyPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "BindPaths"
+        },
+        "BindToDevice": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "Broadcast": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "CPUAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUAffinity": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUQuota": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUQuotaPeriodSec": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUSchedulingPolicy": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUSchedulingPriority": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUSchedulingResetOnFork": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUWeight": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CacheDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "CacheDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "CapabilityBoundingSet": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ConfigurationDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "ConfigurationDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "CoredumpFilter": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "DeferAcceptSec": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "Delegate": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "DeviceAllow": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "DevicePolicy": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "auto|closed|strict"
+        },
+        "DirectoryMode": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "DisableControllers": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "DynamicUser": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Environment": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "EnvironmentFile": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ExecPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "ExecSearchPath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ExecStartPost": {
+            "declaredInFile": "systemd.socket.xml",
+            "declaredUnderKeyword": "ExecStartPre"
+        },
+        "ExecStartPre": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "ExecStopPost": {
+            "declaredInFile": "systemd.socket.xml",
+            "declaredUnderKeyword": "ExecStopPre"
+        },
+        "ExecStopPre": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "ExtensionDirectories": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ExtensionImages": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "FileDescriptorName": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "FinalKillSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "FlushPending": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "FreeBind": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "Group": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "User"
+        },
+        "IOAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IODeviceLatencyTargetSec": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IODeviceWeight": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOReadBandwidthMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOReadIOPSMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOSchedulingClass": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "IOSchedulingPriority": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "IOWeight": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOWriteBandwidthMax": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IOReadBandwidthMax"
+        },
+        "IOWriteIOPSMax": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IOReadIOPSMax"
+        },
+        "IPAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IPAddressAllow": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IPAddressDeny": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IPAddressAllow"
+        },
+        "IPCNamespacePath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "IPEgressFilterPath": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IPIngressFilterPath"
+        },
+        "IPIngressFilterPath": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IPTOS": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "IPTTL": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "IgnoreSIGPIPE": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "InaccessiblePaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "KeepAlive": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "KeepAliveIntervalSec": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "KeepAliveProbes": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "KeepAliveTimeSec": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "KeyringMode": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "KillMode": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "KillSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "LimitAS": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitCORE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitCPU": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LimitDATA": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitFSIZE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitLOCKS": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitMEMLOCK": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitMSGQUEUE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitNICE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitNOFILE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitNPROC": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitRSS": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitRTPRIO": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitRTTIME": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitSIGPENDING": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitSTACK": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "ListenDatagram": {
+            "declaredInFile": "systemd.socket.xml",
+            "declaredUnderKeyword": "ListenStream"
+        },
+        "ListenFIFO": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "ListenMessageQueue": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "ListenNetlink": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "ListenSequentialPacket": {
+            "declaredInFile": "systemd.socket.xml",
+            "declaredUnderKeyword": "ListenStream"
+        },
+        "ListenSpecial": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "ListenStream": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "ListenUSBFunction": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "LoadCredential": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LoadCredentialEncrypted": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LoadCredential"
+        },
+        "LockPersonality": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogExtraFields": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogLevelMax": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogNamespace": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogRateLimitBurst": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LogRateLimitIntervalSec"
+        },
+        "LogRateLimitIntervalSec": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogsDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "LogsDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "ManagedOOMMemoryPressure": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "auto|kill",
+            "declaredUnderKeyword": "ManagedOOMSwap"
+        },
+        "ManagedOOMMemoryPressureLimit": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "ManagedOOMPreference": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "none|avoid|omit"
+        },
+        "ManagedOOMSwap": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "auto|kill"
+        },
+        "Mark": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "MaxConnections": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "MaxConnectionsPerSource": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "MemoryAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemoryDenyWriteExecute": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "MemoryHigh": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemoryLow": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "MemoryMin"
+        },
+        "MemoryMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemoryMin": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemorySwapMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MessageQueueMaxMessages": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "MessageQueueMessageSize": {
+            "declaredInFile": "systemd.socket.xml",
+            "declaredUnderKeyword": "MessageQueueMaxMessages"
+        },
+        "MountAPIVFS": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "MountFlags": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "MountImages": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NUMAMask": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NUMAPolicy": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NetworkNamespacePath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Nice": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NoDelay": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "NoExecPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "NoNewPrivileges": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "OOMScoreAdjust": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PAMName": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PassCredentials": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "PassEnvironment": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PassPacketInfo": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "PassSecurity": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "Personality": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PipeSize": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "Priority": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "PrivateDevices": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateIPC": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateMounts": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateNetwork": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateTmp": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateUsers": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProcSubset": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectClock": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectControlGroups": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectHome": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectHostname": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectKernelLogs": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectKernelModules": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectKernelTunables": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectProc": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectSystem": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ReadOnlyPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "ReadWritePaths": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ReceiveBuffer": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "RemoveIPC": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RemoveOnStop": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "RestartKillSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "RestrictAddressFamilies": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictFileSystems": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictNamespaces": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictNetworkInterfaces": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "RestrictRealtime": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictSUIDSGID": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ReusePort": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "RootDirectory": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootHash": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootHashSignature": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootImage": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootImageOptions": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootVerity": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RuntimeDirectory": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RuntimeDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RuntimeDirectoryPreserve": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SELinuxContext": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SELinuxContextFromNet": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "SecureBits": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SendBuffer": {
+            "declaredInFile": "systemd.socket.xml",
+            "declaredUnderKeyword": "ReceiveBuffer"
+        },
+        "SendSIGHUP": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "SendSIGKILL": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "Service": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "SetCredential": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SetCredentialEncrypted": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "SetCredential"
+        },
+        "Slice": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "SmackLabel": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "SmackLabelIPIn": {
+            "declaredInFile": "systemd.socket.xml",
+            "declaredUnderKeyword": "SmackLabel"
+        },
+        "SmackLabelIPOut": {
+            "declaredInFile": "systemd.socket.xml",
+            "declaredUnderKeyword": "SmackLabel"
+        },
+        "SmackProcessLabel": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SocketBindAllow": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "SocketBindDeny": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "SocketBindAllow"
+        },
+        "SocketGroup": {
+            "declaredInFile": "systemd.socket.xml",
+            "declaredUnderKeyword": "SocketUser"
+        },
+        "SocketMode": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "SocketProtocol": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "SocketUser": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "StandardError": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StandardInput": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StandardInputData": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "StandardInputText"
+        },
+        "StandardInputText": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StandardOutput": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StartupAllowedCPUs": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "AllowedCPUs"
+        },
+        "StartupAllowedMemoryNodes": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "AllowedMemoryNodes"
+        },
+        "StartupCPUWeight": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "CPUWeight"
+        },
+        "StartupIOWeight": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IOWeight"
+        },
+        "StateDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "StateDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "SupplementaryGroups": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Symlinks": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "SyslogFacility": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SyslogIdentifier": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SyslogLevel": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SyslogLevelPrefix": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallArchitectures": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallErrorNumber": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallFilter": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallLog": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TCPCongestion": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "TTYColumns": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "TTYRows"
+        },
+        "TTYPath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYReset": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYRows": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYVHangup": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYVTDisallocate": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TasksAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "TasksMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "TemporaryFileSystem": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TimeoutCleanSec": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TimeoutSec": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "TimerSlackNSec": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Timestamping": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "Transparent": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "TriggerLimitBurst": {
+            "declaredInFile": "systemd.socket.xml",
+            "declaredUnderKeyword": "TriggerLimitIntervalSec"
+        },
+        "TriggerLimitIntervalSec": {
+            "declaredInFile": "systemd.socket.xml"
+        },
+        "UMask": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "UnsetEnvironment": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "User": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "UtmpIdentifier": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "UtmpMode": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "WatchdogSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "WorkingDirectory": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Writable": {
+            "declaredInFile": "systemd.socket.xml"
+        }
+    },
+    "Swap": {
+        "AllowedCPUs": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "AllowedMemoryNodes": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "AmbientCapabilities": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "AppArmorProfile": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "BPFProgram": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "BindPaths": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "BindReadOnlyPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "BindPaths"
+        },
+        "CPUAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUAffinity": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUQuota": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUQuotaPeriodSec": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUSchedulingPolicy": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUSchedulingPriority": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUSchedulingResetOnFork": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "CPUWeight": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CacheDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "CacheDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "CapabilityBoundingSet": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ConfigurationDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "ConfigurationDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "CoredumpFilter": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Delegate": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "DeviceAllow": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "DevicePolicy": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "auto|closed|strict"
+        },
+        "DisableControllers": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "DynamicUser": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Environment": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "EnvironmentFile": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ExecPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "ExecSearchPath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ExtensionDirectories": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ExtensionImages": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "FinalKillSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "Group": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "User"
+        },
+        "IOAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IODeviceLatencyTargetSec": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IODeviceWeight": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOReadBandwidthMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOReadIOPSMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOSchedulingClass": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "IOSchedulingPriority": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "IOWeight": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOWriteBandwidthMax": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IOReadBandwidthMax"
+        },
+        "IOWriteIOPSMax": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IOReadIOPSMax"
+        },
+        "IPAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IPAddressAllow": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IPAddressDeny": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IPAddressAllow"
+        },
+        "IPCNamespacePath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "IPEgressFilterPath": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IPIngressFilterPath"
+        },
+        "IPIngressFilterPath": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IgnoreSIGPIPE": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "InaccessiblePaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "KeyringMode": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "KillMode": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "KillSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "LimitAS": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitCORE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitCPU": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LimitDATA": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitFSIZE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitLOCKS": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitMEMLOCK": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitMSGQUEUE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitNICE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitNOFILE": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitNPROC": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitRSS": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitRTPRIO": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitRTTIME": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitSIGPENDING": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LimitSTACK": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LimitCPU"
+        },
+        "LoadCredential": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LoadCredentialEncrypted": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LoadCredential"
+        },
+        "LockPersonality": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogExtraFields": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogLevelMax": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogNamespace": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogRateLimitBurst": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "LogRateLimitIntervalSec"
+        },
+        "LogRateLimitIntervalSec": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "LogsDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "LogsDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "ManagedOOMMemoryPressure": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "auto|kill",
+            "declaredUnderKeyword": "ManagedOOMSwap"
+        },
+        "ManagedOOMMemoryPressureLimit": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "ManagedOOMPreference": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "none|avoid|omit"
+        },
+        "ManagedOOMSwap": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "auto|kill"
+        },
+        "MemoryAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemoryDenyWriteExecute": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "MemoryHigh": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemoryLow": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "MemoryMin"
+        },
+        "MemoryMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemoryMin": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemorySwapMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MountAPIVFS": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "MountFlags": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "MountImages": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NUMAMask": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NUMAPolicy": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NetworkNamespacePath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Nice": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "NoExecPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "NoNewPrivileges": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "OOMScoreAdjust": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Options": {
+            "declaredInFile": "systemd.swap.xml"
+        },
+        "PAMName": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PassEnvironment": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Personality": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "Priority": {
+            "declaredInFile": "systemd.swap.xml"
+        },
+        "PrivateDevices": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateIPC": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateMounts": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateNetwork": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateTmp": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "PrivateUsers": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProcSubset": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectClock": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectControlGroups": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectHome": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectHostname": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectKernelLogs": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectKernelModules": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectKernelTunables": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectProc": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ProtectSystem": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "ReadOnlyPaths": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "ReadWritePaths"
+        },
+        "ReadWritePaths": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RemoveIPC": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestartKillSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "RestrictAddressFamilies": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictFileSystems": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictNamespaces": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictNetworkInterfaces": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "RestrictRealtime": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RestrictSUIDSGID": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootDirectory": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootHash": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootHashSignature": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootImage": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootImageOptions": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RootVerity": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RuntimeDirectory": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RuntimeDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "RuntimeDirectoryPreserve": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SELinuxContext": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SecureBits": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SendSIGHUP": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "SendSIGKILL": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "SetCredential": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SetCredentialEncrypted": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "SetCredential"
+        },
+        "Slice": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "SmackProcessLabel": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SocketBindAllow": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "SocketBindDeny": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "SocketBindAllow"
+        },
+        "StandardError": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StandardInput": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StandardInputData": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "StandardInputText"
+        },
+        "StandardInputText": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StandardOutput": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "StartupAllowedCPUs": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "AllowedCPUs"
+        },
+        "StartupAllowedMemoryNodes": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "AllowedMemoryNodes"
+        },
+        "StartupCPUWeight": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "CPUWeight"
+        },
+        "StartupIOWeight": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IOWeight"
+        },
+        "StateDirectory": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectory"
+        },
+        "StateDirectoryMode": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "RuntimeDirectoryMode"
+        },
+        "SupplementaryGroups": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SyslogFacility": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SyslogIdentifier": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SyslogLevel": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SyslogLevelPrefix": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallArchitectures": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallErrorNumber": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallFilter": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "SystemCallLog": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYColumns": {
+            "declaredInFile": "systemd.exec.xml",
+            "declaredUnderKeyword": "TTYRows"
+        },
+        "TTYPath": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYReset": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYRows": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYVHangup": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TTYVTDisallocate": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TasksAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "TasksMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "TemporaryFileSystem": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TimeoutCleanSec": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "TimeoutSec": {
+            "declaredInFile": "systemd.swap.xml"
+        },
+        "TimerSlackNSec": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "UMask": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "UnsetEnvironment": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "User": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "UtmpIdentifier": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "UtmpMode": {
+            "declaredInFile": "systemd.exec.xml"
+        },
+        "WatchdogSignal": {
+            "declaredInFile": "systemd.kill.xml"
+        },
+        "What": {
+            "declaredInFile": "systemd.swap.xml"
+        },
+        "WorkingDirectory": {
+            "declaredInFile": "systemd.exec.xml"
+        }
+    },
+    "Slice": {
+        "AllowedCPUs": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "AllowedMemoryNodes": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "BPFProgram": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUQuota": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUQuotaPeriodSec": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "CPUWeight": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "Delegate": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "DeviceAllow": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "DevicePolicy": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "auto|closed|strict"
+        },
+        "DisableControllers": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IODeviceLatencyTargetSec": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IODeviceWeight": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOReadBandwidthMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOReadIOPSMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOWeight": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IOWriteBandwidthMax": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IOReadBandwidthMax"
+        },
+        "IOWriteIOPSMax": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IOReadIOPSMax"
+        },
+        "IPAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IPAddressAllow": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "IPAddressDeny": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IPAddressAllow"
+        },
+        "IPEgressFilterPath": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IPIngressFilterPath"
+        },
+        "IPIngressFilterPath": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "ManagedOOMMemoryPressure": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "auto|kill",
+            "declaredUnderKeyword": "ManagedOOMSwap"
+        },
+        "ManagedOOMMemoryPressureLimit": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "ManagedOOMPreference": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "none|avoid|omit"
+        },
+        "ManagedOOMSwap": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "values": "auto|kill"
+        },
+        "MemoryAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemoryHigh": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemoryLow": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "MemoryMin"
+        },
+        "MemoryMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemoryMin": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "MemorySwapMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "RestrictNetworkInterfaces": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "Slice": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "SocketBindAllow": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "SocketBindDeny": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "SocketBindAllow"
+        },
+        "StartupAllowedCPUs": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "AllowedCPUs"
+        },
+        "StartupAllowedMemoryNodes": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "AllowedMemoryNodes"
+        },
+        "StartupCPUWeight": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "CPUWeight"
+        },
+        "StartupIOWeight": {
+            "declaredInFile": "systemd.resource-control.xml",
+            "declaredUnderKeyword": "IOWeight"
+        },
+        "TasksAccounting": {
+            "declaredInFile": "systemd.resource-control.xml"
+        },
+        "TasksMax": {
+            "declaredInFile": "systemd.resource-control.xml"
+        }
+    }
+}

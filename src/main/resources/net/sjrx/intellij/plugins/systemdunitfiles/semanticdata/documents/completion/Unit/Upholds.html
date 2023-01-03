@@ -1,0 +1,11 @@
+<p>Configures dependencies similar to <var>Wants=</var>, but as long as this unit
+        is up, all units listed in <var>Upholds=</var> are started whenever found to be inactive or
+        failed, and no job is queued for them. While a <var>Wants=</var> dependency on another unit
+        has a one-time effect when this units started, a <var>Upholds=</var> dependency on it has a
+        continuous effect, constantly restarting the unit if necessary. This is an alternative to the
+        <var>Restart=</var> setting of service units, to ensure they are kept running whatever
+        happens.</p>
+<p>When <var>Upholds=b.service</var> is used on a.service, this
+        dependency will show as <var>UpheldBy=a.service</var> in the property listing of
+        b.service. The <var>UpheldBy=</var> dependency cannot be specified
+        directly.</p>

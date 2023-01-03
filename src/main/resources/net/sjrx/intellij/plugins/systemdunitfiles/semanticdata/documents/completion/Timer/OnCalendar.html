@@ -1,0 +1,17 @@
+<p>Defines realtime (i.e. wallclock) timers with
+        calendar event expressions. See
+        <a href="http://man7.org/linux/man-pages/man7/systemd.time.7.html">systemd.time(7)
+    </a>
+        for more information on the syntax of calendar event
+        expressions. Otherwise, the semantics are similar to
+        <var>OnActiveSec=</var> and related settings.</p>
+<p>Note that timers do not necessarily expire at the
+        precise time configured with this setting, as it is subject to
+        the <var>AccuracySec=</var> setting
+        below.</p>
+<p>May be specified more than once, in which case the timer unit will trigger whenever any of the
+        specified expressions elapse. Moreover calendar timers and monotonic timers (see above) may be
+        combined within the same timer unit.</p>
+<p>If the empty string is assigned to any of these options, the list of timers is reset (both
+        <var>OnCalendar=</var> timers and monotonic timers, see above), and all prior assignments
+        will have no effect.</p>

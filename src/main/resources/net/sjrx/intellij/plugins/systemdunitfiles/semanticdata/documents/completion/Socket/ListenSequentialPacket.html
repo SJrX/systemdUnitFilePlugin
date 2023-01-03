@@ -1,0 +1,66 @@
+<p>Specifies an address to listen on for a stream
+        (SOCK_STREAM), datagram
+        (SOCK_DGRAM), or sequential packet
+        (SOCK_SEQPACKET) socket, respectively.
+        The address can be written in various formats:</p>
+<p>If the address starts with a slash
+        (/), it is read as file system socket in
+        the AF_UNIX socket family.</p>
+<p>If the address starts with an at symbol
+        (@), it is read as abstract namespace
+        socket in the AF_UNIX family. The
+        @ is replaced with a
+        NUL character before binding. For
+        details, see
+        <a href="http://man7.org/linux/man-pages/man7/unix.7.html">unix(7)
+    </a>.</p>
+<p>If the address string is a single number, it is read as
+        port number to listen on via IPv6. Depending on the value of
+        <var>BindIPv6Only=</var> (see below) this might result
+        in the service being available via both IPv6 and IPv4
+        (default) or just via IPv6.
+        </p>
+<p>If the address string is a string in the format
+        v.w.x.y:z, it is interpreted
+        as IPv4 address v.w.x.y and port z.</p>
+<p>If the address string is a string in the format
+        [x]:y, it is interpreted as
+        IPv6 address x and port y. An optional
+        interface scope (interface name or number) may be specified after a % symbol:
+        [x]:y%dev.
+        Interface scopes are only useful with link-local addresses, because the kernel ignores them in other
+        cases. Note that if an address is specified as IPv6, it might still make the service available via
+        IPv4 too, depending on the <var>BindIPv6Only=</var> setting (see below).</p>
+<p>If the address string is a string in the format
+        vsock:x:y, it is read as CID
+        x on a port y address in the
+        AF_VSOCK family.  The CID is a unique 32-bit integer identifier in
+        AF_VSOCK analogous to an IP address.  Specifying the CID is optional, and may be
+        set to the empty string.</p>
+<p>Note that SOCK_SEQPACKET (i.e.
+        <var>ListenSequentialPacket=</var>) is only available
+        for AF_UNIX sockets.
+        SOCK_STREAM (i.e.
+        <var>ListenStream=</var>) when used for IP sockets
+        refers to TCP sockets, SOCK_DGRAM (i.e.
+        <var>ListenDatagram=</var>) to UDP.</p>
+<p>These options may be specified more than once, in which
+        case incoming traffic on any of the sockets will trigger
+        service activation, and all listed sockets will be passed to
+        the service, regardless of whether there is incoming traffic
+        on them or not. If the empty string is assigned to any of
+        these options, the list of addresses to listen on is reset,
+        all prior uses of any of these options will have no
+        effect.</p>
+<p>It is also possible to have more than one socket unit
+        for the same service when using <var>Service=</var>,
+        and the service will receive all the sockets configured in all
+        the socket units. Sockets configured in one unit are passed in
+        the order of configuration, but no ordering between socket
+        units is specified.</p>
+<p>If an IP address is used here, it is often desirable to
+        listen on it before the interface it is configured on is up
+        and running, and even regardless of whether it will be up and
+        running at any point. To deal with this, it is recommended to
+        set the <var>FreeBind=</var> option described
+        below.</p>

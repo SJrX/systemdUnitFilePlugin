@@ -1,0 +1,248 @@
+<p>Takes a space-separated list of system call names. If this setting is used, all
+        system calls executed by the unit processes except for the listed ones will result in immediate
+        process termination with the SIGSYS signal (allow-listing). (See
+        <var>SystemCallErrorNumber=</var> below for changing the default action). If the first
+        character of the list is ~, the effect is inverted: only the listed system calls
+        will result in immediate process termination (deny-listing). Deny-listed system calls and system call
+        groups may optionally be suffixed with a colon (:) and errno
+        error number (between 0 and 4095) or errno name such as EPERM,
+        EACCES or EUCLEAN (see <a href="http://man7.org/linux/man-pages/man3/errno.3.html">errno(3)
+    </a> for a
+        full list). This value will be returned when a deny-listed system call is triggered, instead of
+        terminating the processes immediately. Special setting kill can be used to
+        explicitly specify killing. This value takes precedence over the one given in
+        <var>SystemCallErrorNumber=</var>, see below. If running in user mode, or in system mode,
+        but without the CAP_SYS_ADMIN capability (e.g. setting
+        <var>User=</var>), <var>NoNewPrivileges=yes</var> is implied. This feature
+        makes use of the Secure Computing Mode 2 interfaces of the kernel ('seccomp filtering') and is useful
+        for enforcing a minimal sandboxing environment. Note that the execve(),
+        exit(), exit_group(), getrlimit(),
+        rt_sigreturn(), sigreturn() system calls and the system calls
+        for querying time and sleeping are implicitly allow-listed and do not need to be listed
+        explicitly. This option may be specified more than once, in which case the filter masks are
+        merged. If the empty string is assigned, the filter is reset, all prior assignments will have no
+        effect. This does not affect commands prefixed with +.</p>
+<p>Note that on systems supporting multiple ABIs (such as x86/x86-64) it is recommended to turn off
+        alternative ABIs for services, so that they cannot be used to circumvent the restrictions of this
+        option. Specifically, it is recommended to combine this option with
+        <var>SystemCallArchitectures=native</var> or similar.</p>
+<p>Note that strict system call filters may impact execution and error handling code paths of the service
+        invocation. Specifically, access to the execve() system call is required for the execution
+        of the service binary — if it is blocked service invocation will necessarily fail. Also, if execution of the
+        service binary fails for some reason (for example: missing service executable), the error handling logic might
+        require access to an additional set of system calls in order to process and log this failure correctly. It
+        might be necessary to temporarily disable system call filters in order to simplify debugging of such
+        failures.</p>
+<p>If you specify both types of this option (i.e. allow-listing and deny-listing), the first
+        encountered will take precedence and will dictate the default action (termination or approval of a
+        system call). Then the next occurrences of this option will add or delete the listed system calls
+        from the set of the filtered system calls, depending of its type and the default action. (For
+        example, if you have started with an allow list rule for read() and
+        write(), and right after it add a deny list rule for write(),
+        then write() will be removed from the set.)</p>
+<p>As the number of possible system calls is large, predefined sets of system calls are provided. A set
+        starts with @ character, followed by name of the set.
+
+        
+          Currently predefined system call sets
+
+          
+            
+            
+            
+              
+                Set
+                Description
+              
+            
+            
+              
+                @aio
+                Asynchronous I/O (<a href="http://man7.org/linux/man-pages/man2/io_setup.2.html">io_setup(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/io_submit.2.html">io_submit(2)
+    </a>, and related calls)
+              
+              
+                @basic-io
+                System calls for basic I/O: reading, writing, seeking, file descriptor duplication and closing (<a href="http://man7.org/linux/man-pages/man2/read.2.html">read(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/write.2.html">write(2)
+    </a>, and related calls)
+              
+              
+                @chown
+                Changing file ownership (<a href="http://man7.org/linux/man-pages/man2/chown.2.html">chown(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/fchownat.2.html">fchownat(2)
+    </a>, and related calls)
+              
+              
+                @clock
+                System calls for changing the system clock (<a href="http://man7.org/linux/man-pages/man2/adjtimex.2.html">adjtimex(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/settimeofday.2.html">settimeofday(2)
+    </a>, and related calls)
+              
+              
+                @cpu-emulation
+                System calls for CPU emulation functionality (<a href="http://man7.org/linux/man-pages/man2/vm86.2.html">vm86(2)
+    </a> and related calls)
+              
+              
+                @debug
+                Debugging, performance monitoring and tracing functionality (<a href="http://man7.org/linux/man-pages/man2/ptrace.2.html">ptrace(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/perf_event_open.2.html">perf_event_open(2)
+    </a> and related calls)
+              
+              
+                @file-system
+                File system operations: opening, creating files and directories for read and write, renaming and removing them, reading file properties, or creating hard and symbolic links
+              
+              
+                @io-event
+                Event loop system calls (<a href="http://man7.org/linux/man-pages/man2/poll.2.html">poll(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/select.2.html">select(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man7/epoll.7.html">epoll(7)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/eventfd.2.html">eventfd(2)
+    </a> and related calls)
+              
+              
+                @ipc
+                Pipes, SysV IPC, POSIX Message Queues and other IPC (<a href="http://man7.org/linux/man-pages/man7/mq_overview.7.html">mq_overview(7)
+    </a>, <a href="http://man7.org/linux/man-pages/man7/svipc.7.html">svipc(7)
+    </a>)
+              
+              
+                @keyring
+                Kernel keyring access (<a href="http://man7.org/linux/man-pages/man2/keyctl.2.html">keyctl(2)
+    </a> and related calls)
+              
+              
+                @memlock
+                Locking of memory in RAM (<a href="http://man7.org/linux/man-pages/man2/mlock.2.html">mlock(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/mlockall.2.html">mlockall(2)
+    </a> and related calls)
+              
+              
+                @module
+                Loading and unloading of kernel modules (<a href="http://man7.org/linux/man-pages/man2/init_module.2.html">init_module(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/delete_module.2.html">delete_module(2)
+    </a> and related calls)
+              
+              
+                @mount
+                Mounting and unmounting of file systems (<a href="http://man7.org/linux/man-pages/man2/mount.2.html">mount(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/chroot.2.html">chroot(2)
+    </a>, and related calls)
+              
+              
+                @network-io
+                Socket I/O (including local AF_UNIX): <a href="http://man7.org/linux/man-pages/man7/socket.7.html">socket(7)
+    </a>, <a href="http://man7.org/linux/man-pages/man7/unix.7.html">unix(7)
+    </a>
+              
+              
+                @obsolete
+                Unusual, obsolete or unimplemented (<a href="http://man7.org/linux/man-pages/man2/create_module.2.html">create_module(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/gtty.2.html">gtty(2)
+    </a>, …)
+              
+              
+                @privileged
+                All system calls which need super-user capabilities (<a href="http://man7.org/linux/man-pages/man7/capabilities.7.html">capabilities(7)
+    </a>)
+              
+              
+                @process
+                Process control, execution, namespacing operations (<a href="http://man7.org/linux/man-pages/man2/clone.2.html">clone(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/kill.2.html">kill(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man7/namespaces.7.html">namespaces(7)
+    </a>, …)
+              
+              
+                @raw-io
+                Raw I/O port access (<a href="http://man7.org/linux/man-pages/man2/ioperm.2.html">ioperm(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/iopl.2.html">iopl(2)
+    </a>, pciconfig_read(), …)
+              
+              
+                @reboot
+                System calls for rebooting and reboot preparation (<a href="http://man7.org/linux/man-pages/man2/reboot.2.html">reboot(2)
+    </a>, kexec(), …)
+              
+              
+                @resources
+                System calls for changing resource limits, memory and scheduling parameters (<a href="http://man7.org/linux/man-pages/man2/setrlimit.2.html">setrlimit(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/setpriority.2.html">setpriority(2)
+    </a>, …)
+              
+              
+                @setuid
+                System calls for changing user ID and group ID credentials, (<a href="http://man7.org/linux/man-pages/man2/setuid.2.html">setuid(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/setgid.2.html">setgid(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/setresuid.2.html">setresuid(2)
+    </a>, …)
+              
+              
+                @signal
+                System calls for manipulating and handling process signals (<a href="http://man7.org/linux/man-pages/man2/signal.2.html">signal(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/sigprocmask.2.html">sigprocmask(2)
+    </a>, …)
+              
+              
+                @swap
+                System calls for enabling/disabling swap devices (<a href="http://man7.org/linux/man-pages/man2/swapon.2.html">swapon(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/swapoff.2.html">swapoff(2)
+    </a>)
+              
+              
+                @sync
+                Synchronizing files and memory to disk (<a href="http://man7.org/linux/man-pages/man2/fsync.2.html">fsync(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/msync.2.html">msync(2)
+    </a>, and related calls)
+              
+              
+                @system-service
+                A reasonable set of system calls used by common system services, excluding any special purpose calls. This is the recommended starting point for allow-listing system calls for system services, as it contains what is typically needed by system services, but excludes overly specific interfaces. For example, the following APIs are excluded: @clock, @mount, @swap, @reboot.
+              
+              
+                @timer
+                System calls for scheduling operations by time (<a href="http://man7.org/linux/man-pages/man2/alarm.2.html">alarm(2)
+    </a>, <a href="http://man7.org/linux/man-pages/man2/timer_create.2.html">timer_create(2)
+    </a>, …)
+              
+              
+                @known
+                All system calls defined by the kernel. This list is defined statically in systemd based on a kernel version that was available when this systemd version was released. It will become progressively more out-of-date as the kernel is updated.
+              
+            
+          
+        
+
+        Note, that as new system calls are added to the kernel, additional system calls might be added to the groups
+        above. Contents of the sets may also change between systemd versions. In addition, the list of system calls
+        depends on the kernel version and architecture for which systemd was compiled. Use
+        systemd-analyze syscall-filter to list the actual list of system calls in each
+        filter.</p>
+<p>Generally, allow-listing system calls (rather than deny-listing) is the safer mode of
+        operation. It is recommended to enforce system call allow lists for all long-running system
+        services. Specifically, the following lines are a relatively safe basic choice for the majority of
+        system services:</p>
+<p>Note that various kernel system calls are defined redundantly: there are multiple system calls
+        for executing the same operation. For example, the pidfd_send_signal() system
+        call may be used to execute operations similar to what can be done with the older
+        kill() system call, hence blocking the latter without the former only provides
+        weak protection. Since new system calls are added regularly to the kernel as development progresses,
+        keeping system call deny lists comprehensive requires constant work. It is thus recommended to use
+        allow-listing instead, which offers the benefit that new system calls are by default implicitly
+        blocked until the allow list is updated.</p>
+<p>Also note that a number of system calls are required to be accessible for the dynamic linker to
+        work. The dynamic linker is required for running most regular programs (specifically: all dynamic ELF
+        binaries, which is how most distributions build packaged programs). This means that blocking these
+        system calls (which include open(), openat() or
+        mmap()) will make most programs typically shipped with generic distributions
+        unusable.</p>
+<p>It is recommended to combine the file system namespacing related options with
+        <var>SystemCallFilter=~@mount</var>, in order to prohibit the unit's processes to undo the
+        mappings. Specifically these are the options <var>PrivateTmp=</var>,
+        <var>PrivateDevices=</var>, <var>ProtectSystem=</var>, <var>ProtectHome=</var>,
+        <var>ProtectKernelTunables=</var>, <var>ProtectControlGroups=</var>,
+        <var>ProtectKernelLogs=</var>, <var>ProtectClock=</var>, <var>ReadOnlyPaths=</var>,
+        <var>InaccessiblePaths=</var> and <var>ReadWritePaths=</var>.</p>

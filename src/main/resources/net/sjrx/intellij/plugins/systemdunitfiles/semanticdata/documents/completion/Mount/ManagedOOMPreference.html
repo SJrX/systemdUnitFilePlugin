@@ -1,0 +1,32 @@
+<p>Allows deprioritizing or omitting this unit's cgroup as a candidate when
+          systemd-oomd needs to act. Requires support for extended attributes (see
+          <a href="http://man7.org/linux/man-pages/man7/xattr.7.html">xattr(7)
+    </a>)
+          in order to use <var>avoid</var> or <var>omit</var>.</p>
+<p>When calculating candidates to relieve swap usage, systemd-oomd will
+          only respect these extended attributes if the unit's cgroup is owned by root.</p>
+<p>When calculating candidates to relieve memory pressure, systemd-oomd
+          will only respect these extended attributes if the unit's cgroup owner, and the
+          owner of the monitored ancestor cgroup are the same. For example, if systemd-oomd
+          is calculating candidates for -.slice, then extended attributes set
+          on descendants of /user.slice/user-1000.slice/user@1000.service/
+          will be ignored because the descendants are owned by UID 1000, and -.slice
+          is owned by UID 0. But, if calculating candidates for
+          /user.slice/user-1000.slice/user@1000.service/, then extended attributes set
+          on the descendants would be respected.</p>
+<p>If this property is set to <var>avoid</var>, the service manager will convey this to
+          systemd-oomd, which will only select this cgroup if there are no other viable
+          candidates.</p>
+<p>If this property is set to <var>omit</var>, the service manager will convey this to
+          systemd-oomd, which will ignore this cgroup as a candidate and will not perform
+          any actions on it.</p>
+<p>It is recommended to use <var>avoid</var> and <var>omit</var> sparingly, as it
+          can adversely affect systemd-oomd's kill behavior. Also note that these extended
+          attributes are not applied recursively to cgroups under this unit's cgroup.</p>
+<p>Defaults to <var>none</var> which means systemd-oomd will rank this
+          unit's cgroup as defined in
+          <a href="http://man7.org/linux/man-pages/man8/systemd-oomd.service.8.html">systemd-oomd.service(8)
+    </a>
+          and <a href="http://man7.org/linux/man-pages/man5/oomd.conf.5.html">oomd.conf(5)
+    </a>.
+          </p>

@@ -1,0 +1,12 @@
+<p>Set the per-device overall block I/O bandwidth maximum limit for the executed processes, if the unified
+          control group hierarchy is used on the system. This limit is not work-conserving and the executed processes
+          are not allowed to use more even if the device has idle capacity.  Takes a space-separated pair of a file
+          path and a bandwidth value (in bytes per second) to specify the device specific bandwidth. The file path may
+          be a path to a block device node, or as any other file in which case the backing block device of the file
+          system of the file is used. If the bandwidth is suffixed with K, M, G, or T, the specified bandwidth is
+          parsed as Kilobytes, Megabytes, Gigabytes, or Terabytes, respectively, to the base of 1000. (Example:
+          "/dev/disk/by-path/pci-0000:00:1f.2-scsi-0:0:0:0 5M"). This controls the io.max control
+          group attributes. Use this option multiple times to set bandwidth limits for multiple devices. For details
+          about this control group attribute, see <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html#io-interface-files">IO Interface Files</a>.
+          </p>
+<p>Similar restrictions on block device discovery as for <var>IODeviceWeight=</var> apply, see above.</p>

@@ -1,0 +1,24 @@
+<p>Takes a boolean argument. If true, sets up a new IPC namespace for the executed processes.
+        Each IPC namespace has its own set of System V IPC identifiers and its own POSIX message queue file system.
+        This is useful to avoid name clash of IPC identifiers. Defaults to false. It is possible to run two or
+        more units within the same private IPC namespace by using the <var>JoinsNamespaceOf=</var> directive,
+        see <a href="http://man7.org/linux/man-pages/man5/systemd.unit.5.html">systemd.unit(5)
+    </a> for
+        details.</p>
+<p>Note that IPC namespacing does not have an effect on
+        AF_UNIX sockets, which are the most common
+        form of IPC used on Linux. Instead, AF_UNIX
+        sockets in the file system are subject to mount namespacing, and
+        those in the abstract namespace are subject to network namespacing.
+        IPC namespacing only has an effect on SysV IPC (which is mostly
+        legacy) as well as POSIX message queues (for which
+        AF_UNIX/SOCK_SEQPACKET
+        sockets are typically a better replacement). IPC namespacing also
+        has no effect on POSIX shared memory (which is subject to mount
+        namespacing) either. See
+        <a href="http://man7.org/linux/man-pages/man7/ipc_namespaces.7.html">ipc_namespaces(7)
+    </a> for
+        the details.</p>
+<p>Note that the implementation of this setting might be impossible (for example if IPC namespaces are
+        not available), and the unit should be written in a way that does not solely rely on this setting for
+        security.</p>

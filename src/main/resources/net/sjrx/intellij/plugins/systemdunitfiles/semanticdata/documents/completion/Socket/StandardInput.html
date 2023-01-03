@@ -1,0 +1,48 @@
+<p>Controls where file descriptor 0 (STDIN) of the executed processes is connected to. Takes one
+        of <var>null</var>, <var>tty</var>, <var>tty-force</var>, <var>tty-fail</var>,
+        <var>data</var>, <var>file:path</var>, <var>socket</var> or
+        <var>fd:name</var>.</p>
+<p>If <var>null</var> is selected, standard input will be connected to /dev/null,
+        i.e. all read attempts by the process will result in immediate EOF.</p>
+<p>If <var>tty</var> is selected, standard input is connected to a TTY (as configured by
+        <var>TTYPath=</var>, see below) and the executed process becomes the controlling process of the
+        terminal. If the terminal is already being controlled by another process, the executed process waits until the
+        current controlling process releases the terminal.</p>
+<p><var>tty-force</var> is similar to <var>tty</var>, but the executed process is forcefully and
+        immediately made the controlling process of the terminal, potentially removing previous controlling processes
+        from the terminal.</p>
+<p><var>tty-fail</var> is similar to <var>tty</var>, but if the terminal already has a
+        controlling process start-up of the executed process fails.</p>
+<p>The <var>data</var> option may be used to configure arbitrary textual or binary data to pass via
+        standard input to the executed process. The data to pass is configured via
+        <var>StandardInputText=</var>/<var>StandardInputData=</var> (see below). Note that the actual
+        file descriptor type passed (memory file, regular file, UNIX pipe, …) might depend on the kernel and available
+        privileges. In any case, the file descriptor is read-only, and when read returns the specified data followed by
+        EOF.</p>
+<p>The <var>file:path</var> option may be used to connect a specific file
+        system object to standard input. An absolute path following the : character is expected,
+        which may refer to a regular file, a FIFO or special file. If an AF_UNIX socket in the
+        file system is specified, a stream socket is connected to it. The latter is useful for connecting standard
+        input of processes to arbitrary system services.</p>
+<p>The <var>socket</var> option is valid in socket-activated services only, and requires the relevant
+        socket unit file (see
+        <a href="http://man7.org/linux/man-pages/man5/systemd.socket.5.html">systemd.socket(5)
+    </a> for details)
+        to have <var>Accept=yes</var> set, or to specify a single socket only. If this option is set, standard
+        input will be connected to the socket the service was activated from, which is primarily useful for
+        compatibility with daemons designed for use with the traditional <a href="http://man7.org/linux/man-pages/man8/inetd.8.html">inetd(8)
+    </a> socket activation
+        daemon.</p>
+<p>The <var>fd:name</var> option connects standard input to a specific,
+        named file descriptor provided by a socket unit. The name may be specified as part of this option, following a
+        : character (e.g. fd:foobar). If no name is specified, the name
+        stdin is implied (i.e. fd is equivalent to fd:stdin).
+        At least one socket unit defining the specified name must be provided via the <var>Sockets=</var>
+        option, and the file descriptor name may differ from the name of its containing socket unit. If multiple
+        matches are found, the first one will be used. See <var>FileDescriptorName=</var> in
+        <a href="http://man7.org/linux/man-pages/man5/systemd.socket.5.html">systemd.socket(5)
+    </a> for more
+        details about named file descriptors and their ordering.</p>
+<p>This setting defaults to <var>null</var>, unless
+        <var>StandardInputText=</var>/<var>StandardInputData=</var> are set, in which case it
+        defaults to <var>data</var>.</p>

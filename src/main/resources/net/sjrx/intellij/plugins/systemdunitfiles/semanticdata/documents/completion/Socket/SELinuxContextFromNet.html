@@ -1,0 +1,15 @@
+<p>Takes a boolean argument. When true, systemd
+         will attempt to figure out the SELinux label used for the
+         instantiated service from the information handed by the peer
+         over the network. Note that only the security level is used
+         from the information provided by the peer. Other parts of the
+         resulting SELinux context originate from either the target
+         binary that is effectively triggered by socket unit or from
+         the value of the <var>SELinuxContext=</var> option.
+         This configuration option applies only when activated service
+         is passed in single socket file descriptor, i.e. service
+         instances that have standard input connected to a socket or
+         services triggered by exactly one socket unit. Also note
+         that this option is useful only when MLS/MCS SELinux policy
+         is deployed. Defaults to
+         false. </p>

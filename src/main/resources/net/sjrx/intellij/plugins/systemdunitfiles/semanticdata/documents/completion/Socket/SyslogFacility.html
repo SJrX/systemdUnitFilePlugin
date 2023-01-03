@@ -1,0 +1,12 @@
+<p>Sets the syslog facility identifier to use when logging. One of
+        <var>kern</var>, <var>user</var>, <var>mail</var>, <var>daemon</var>,
+        <var>auth</var>, <var>syslog</var>, <var>lpr</var>, <var>news</var>,
+        <var>uucp</var>, <var>cron</var>, <var>authpriv</var>, <var>ftp</var>,
+        <var>local0</var>, <var>local1</var>, <var>local2</var>, <var>local3</var>,
+        <var>local4</var>, <var>local5</var>, <var>local6</var> or
+        <var>local7</var>. See <a href="http://man7.org/linux/man-pages/man3/syslog.3.html">syslog(3)
+    </a> for
+        details. This option is only useful when <var>StandardOutput=</var> or
+        <var>StandardError=</var> are set to <var>journal</var> or <var>kmsg</var> (or to
+        the same settings in combination with <var>+console</var>), and only applies to log messages
+        written to stdout or stderr. Defaults to <var>daemon</var>.</p>

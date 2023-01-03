@@ -1,0 +1,23 @@
+<p>Takes time (in seconds) as argument. If set,
+        the listening process will be awakened only when data arrives
+        on the socket, and not immediately when connection is
+        established. When this option is set, the
+        TCP_DEFER_ACCEPT socket option will be
+        used (see
+        <a href="http://man7.org/linux/man-pages/man7/tcp.7.html">tcp(7)
+    </a>),
+        and the kernel will ignore initial ACK packets without any
+        data. The argument specifies the approximate amount of time
+        the kernel should wait for incoming data before falling back
+        to the normal behavior of honoring empty ACK packets. This
+        option is beneficial for protocols where the client sends the
+        data first (e.g. HTTP, in contrast to SMTP), because the
+        server process will not be woken up unnecessarily before it
+        can take any action.
+        </p>
+<p>If the client also uses the
+        TCP_DEFER_ACCEPT option, the latency of
+        the initial connection may be reduced, because the kernel will
+        send data in the final packet establishing the connection (the
+        third packet in the "three-way handshake").</p>
+<p>Disabled by default.</p>

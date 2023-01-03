@@ -1,0 +1,11 @@
+<p>Similar to <var>Requires=</var>. However, if the units listed here
+        are not started already, they will not be started and the starting of this unit will fail
+        immediately. <var>Requisite=</var> does not imply an ordering dependency, even if
+        both units are started in the same transaction. Hence this setting should usually be
+        combined with <var>After=</var>, to ensure this unit is not started before the other
+        unit.</p>
+<p>When <var>Requisite=b.service</var> is used on
+        a.service, this dependency will show as
+        <var>RequisiteOf=a.service</var> in property listing of
+        b.service. <var>RequisiteOf=</var>
+        dependency cannot be specified directly.</p>

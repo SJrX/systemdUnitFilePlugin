@@ -1,0 +1,7 @@
+<p>Takes a boolean parameter. If set, all System V and POSIX IPC objects owned by the user and
+        group the processes of this unit are run as are removed when the unit is stopped. This setting only has an
+        effect if at least one of <var>User=</var>, <var>Group=</var> and
+        <var>DynamicUser=</var> are used. It has no effect on IPC objects owned by the root user. Specifically,
+        this removes System V semaphores, as well as System V and POSIX shared memory segments and message queues. If
+        multiple units use the same user or group the IPC objects are removed when the last of these units is
+        stopped. This setting is implied if <var>DynamicUser=</var> is set.</p>

@@ -1,0 +1,29 @@
+<p>Takes a boolean argument. If set, attempts to create memory mappings that are writable and
+        executable at the same time, or to change existing memory mappings to become executable, or mapping shared
+        memory segments as executable, are prohibited. Specifically, a system call filter is added that rejects
+        <a href="http://man7.org/linux/man-pages/man2/mmap.2.html">mmap(2)
+    </a> system calls with both
+        PROT_EXEC and PROT_WRITE set,
+        <a href="http://man7.org/linux/man-pages/man2/mprotect.2.html">mprotect(2)
+    </a> or
+        <a href="http://man7.org/linux/man-pages/man2/pkey_mprotect.2.html">pkey_mprotect(2)
+    </a> system calls
+        with PROT_EXEC set and
+        <a href="http://man7.org/linux/man-pages/man2/shmat.2.html">shmat(2)
+    </a> system calls with
+        SHM_EXEC set. Note that this option is incompatible with programs and libraries that
+        generate program code dynamically at runtime, including JIT execution engines, executable stacks, and code
+        "trampoline" feature of various C compilers. This option improves service security, as it makes harder for
+        software exploits to change running code dynamically. However, the protection can be circumvented, if
+        the service can write to a filesystem, which is not mounted with noexec (such as
+        /dev/shm), or it can use memfd_create(). This can be
+        prevented by making such file systems inaccessible to the service
+        (e.g. <var>InaccessiblePaths=/dev/shm</var>) and installing further system call filters
+        (<var>SystemCallFilter=~memfd_create</var>). Note that this feature is fully available on
+        x86-64, and partially on x86. Specifically, the shmat() protection is not
+        available on x86. Note that on systems supporting multiple ABIs (such as x86/x86-64) it is
+        recommended to turn off alternative ABIs for services, so that they cannot be used to circumvent the
+        restrictions of this option. Specifically, it is recommended to combine this option with
+        <var>SystemCallArchitectures=native</var> or similar. If running in user mode, or in system
+        mode, but without the CAP_SYS_ADMIN capability (e.g. setting
+        <var>User=</var>), <var>NoNewPrivileges=yes</var> is implied.</p>

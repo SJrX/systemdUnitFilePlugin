@@ -1,0 +1,13 @@
+<p>Verify that the overall system (memory, CPU or IO) pressure is below or equal to a threshold.
+          This setting takes a threshold value as argument. It can be specified as a simple percentage value,
+          suffixed with %, in which case the pressure will be measured as an average over the last
+          five minutes before the attempt to start the unit is performed.
+          Alternatively, the average timespan can also be specified using / as a separator, for
+          example: 10%/1min. The supported timespans match what the kernel provides, and are
+          limited to 10sec, 1min and 5min. The
+          full PSI will be checked first, and if not found some will be
+          checked. For more details, see the documentation on <a href="https://docs.kernel.org/accounting/psi.html">PSI (Pressure Stall Information)
+          </a>.</p>
+<p>Optionally, the threshold value can be prefixed with the slice unit under which the pressure will be checked,
+          followed by a :. If the slice unit is not specified, the overall system pressure will be measured,
+          instead of a particular cgroup's.</p>

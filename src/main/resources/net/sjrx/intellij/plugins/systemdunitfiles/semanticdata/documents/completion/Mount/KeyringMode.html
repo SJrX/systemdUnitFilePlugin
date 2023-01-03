@@ -1,0 +1,15 @@
+<p>Controls how the kernel session keyring is set up for the service (see <a href="http://man7.org/linux/man-pages/man7/session-keyring.7.html">session-keyring(7)
+    </a> for
+        details on the session keyring). Takes one of <var>inherit</var>, <var>private</var>,
+        <var>shared</var>. If set to <var>inherit</var> no special keyring setup is done, and the kernel's
+        default behaviour is applied. If <var>private</var> is used a new session keyring is allocated when a
+        service process is invoked, and it is not linked up with any user keyring. This is the recommended setting for
+        system services, as this ensures that multiple services running under the same system user ID (in particular
+        the root user) do not share their key material among each other. If <var>shared</var> is used a new
+        session keyring is allocated as for <var>private</var>, but the user keyring of the user configured with
+        <var>User=</var> is linked into it, so that keys assigned to the user may be requested by the unit's
+        processes. In this modes multiple units running processes under the same user ID may share key material. Unless
+        <var>inherit</var> is selected the unique invocation ID for the unit (see below) is added as a protected
+        key by the name invocation_id to the newly created session keyring. Defaults to
+        <var>private</var> for services of the system service manager and to <var>inherit</var> for
+        non-service units and for services of the user service manager.</p>

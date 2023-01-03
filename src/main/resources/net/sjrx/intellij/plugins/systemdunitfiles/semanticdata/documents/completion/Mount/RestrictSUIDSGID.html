@@ -1,0 +1,12 @@
+<p>Takes a boolean argument. If set, any attempts to set the set-user-ID (SUID) or
+        set-group-ID (SGID) bits on files or directories will be denied (for details on these bits see
+        <a href="http://man7.org/linux/man-pages/man7/inode.7.html">inode(7)
+    </a>). If
+        running in user mode, or in system mode, but without the CAP_SYS_ADMIN
+        capability (e.g. setting <var>User=</var>), <var>NoNewPrivileges=yes</var> is
+        implied. As the SUID/SGID bits are mechanisms to elevate privileges, and allow users to acquire the
+        identity of other users, it is recommended to restrict creation of SUID/SGID files to the few
+        programs that actually require them. Note that this restricts marking of any type of file system
+        object with these bits, including both regular files and directories (where the SGID is a different
+        meaning than for files, see documentation). This option is implied if <var>DynamicUser=</var>
+        is enabled. Defaults to off.</p>

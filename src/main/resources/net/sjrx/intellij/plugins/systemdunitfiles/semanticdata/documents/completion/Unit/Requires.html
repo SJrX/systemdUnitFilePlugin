@@ -1,0 +1,19 @@
+<p>Similar to <var>Wants=</var>, but declares a stronger requirement
+        dependency. Dependencies of this type may also be configured by adding a symlink to a
+        .requires/ directory accompanying the unit file.</p>
+<p>If this unit gets activated, the units listed will be activated as well. If one of
+        the other units fails to activate, and an ordering dependency <var>After=</var> on the
+        failing unit is set, this unit will not be started. Besides, with or without specifying
+        <var>After=</var>, this unit will be stopped (or restarted) if one of the other units is
+        explicitly stopped (or restarted).</p>
+<p>Often, it is a better choice to use <var>Wants=</var> instead of
+        <var>Requires=</var> in order to achieve a system that is more robust when dealing with
+        failing services.</p>
+<p>Note that this dependency type does not imply that the other unit always has to be in active state when
+        this unit is running. Specifically: failing condition checks (such as <var>ConditionPathExists=</var>,
+        <var>ConditionPathIsSymbolicLink=</var>, … — see below) do not cause the start job of a unit with a
+        <var>Requires=</var> dependency on it to fail. Also, some unit types may deactivate on their own (for
+        example, a service process may decide to exit cleanly, or a device may be unplugged by the user), which is not
+        propagated to units having a <var>Requires=</var> dependency. Use the <var>BindsTo=</var>
+        dependency type together with <var>After=</var> to ensure that a unit may never be in active state
+        without a specific other unit also in active state (see below).</p>

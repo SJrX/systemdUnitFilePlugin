@@ -1,0 +1,11 @@
+<p>Restrict processes to be executed on specific memory NUMA nodes. Takes a list of memory NUMA nodes indices
+          or ranges separated by either whitespace or commas. Memory NUMA nodes ranges are specified by the lower and upper
+          NUMA nodes indices separated by a dash.</p>
+<p>Setting <var>AllowedMemoryNodes=</var> or <var>StartupAllowedMemoryNodes=</var> doesn't
+          guarantee that all of the memory NUMA nodes will be used by the processes as it may be limited by parent units.
+          The effective configuration is reported as <var>EffectiveMemoryNodes=</var>.</p>
+<p>While <var>StartupAllowedMemoryNodes=</var> applies to the startup and shutdown phases of the system,
+          <var>AllowedMemoryNodes=</var> applies to normal runtime of the system, and if the former is not set also to
+          the startup and shutdown phases. Using <var>StartupAllowedMemoryNodes=</var> allows prioritizing specific services at
+          boot-up and shutdown differently than during normal runtime.</p>
+<p>This setting is supported only with the unified control group hierarchy.</p>

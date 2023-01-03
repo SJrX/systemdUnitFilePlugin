@@ -1,0 +1,10 @@
+<p>Takes a boolean argument. If true and <var>StandardOutput=</var> or
+        <var>StandardError=</var> are set to <var>journal</var> or <var>kmsg</var> (or to
+        the same settings in combination with <var>+console</var>), log lines written by the executed
+        process that are prefixed with a log level will be processed with this log level set but the prefix
+        removed. If set to false, the interpretation of these prefixes is disabled and the logged lines are
+        passed on as-is. This only applies to log messages written to stdout or stderr. For details about
+        this prefixing see
+        <a href="http://man7.org/linux/man-pages/man3/sd-daemon.3.html">sd-daemon(3)
+    </a>.
+        Defaults to true.</p>

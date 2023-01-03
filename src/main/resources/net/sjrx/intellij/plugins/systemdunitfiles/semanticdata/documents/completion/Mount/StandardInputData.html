@@ -1,0 +1,22 @@
+<p>Configures arbitrary textual or binary data to pass via file descriptor 0 (STDIN) to
+        the executed processes. These settings have no effect unless <var>StandardInput=</var> is set
+        to <var>data</var> (which is the default if <var>StandardInput=</var> is not set
+        otherwise, but <var>StandardInputText=</var>/<var>StandardInputData=</var> is). Use
+        this option to embed process input data directly in the unit file.</p>
+<p><var>StandardInputText=</var> accepts arbitrary textual data. C-style escapes for special
+        characters as well as the usual %-specifiers are resolved. Each time this setting is used
+        the specified text is appended to the per-unit data buffer, followed by a newline character (thus every use
+        appends a new line to the end of the buffer). Note that leading and trailing whitespace of lines configured
+        with this option is removed. If an empty line is specified the buffer is cleared (hence, in order to insert an
+        empty line, add an additional \n to the end or beginning of a line).</p>
+<p><var>StandardInputData=</var> accepts arbitrary binary data, encoded in <a href="https://tools.ietf.org/html/rfc2045#section-6.8">Base64</a>. No escape sequences or specifiers are
+        resolved. Any whitespace in the encoded version is ignored during decoding.</p>
+<p>Note that <var>StandardInputText=</var> and <var>StandardInputData=</var> operate on the
+        same data buffer, and may be mixed in order to configure both binary and textual data for the same input
+        stream. The textual or binary data is joined strictly in the order the settings appear in the unit
+        file. Assigning an empty string to either will reset the data buffer.</p>
+<p>Please keep in mind that in order to maintain readability long unit file settings may be split into
+        multiple lines, by suffixing each line (except for the last) with a \ character (see
+        <a href="http://man7.org/linux/man-pages/man5/systemd.unit.5.html">systemd.unit(5)
+    </a> for
+        details). This is particularly useful for large data configured with these two options. Example:</p>

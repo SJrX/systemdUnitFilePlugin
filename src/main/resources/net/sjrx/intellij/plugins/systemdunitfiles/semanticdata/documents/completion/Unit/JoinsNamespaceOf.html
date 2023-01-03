@@ -1,0 +1,15 @@
+<p>For units that start processes (such as service units), lists one or more other units
+        whose network and/or temporary file namespace to join. This only applies to unit types which support
+        the <var>PrivateNetwork=</var>, <var>NetworkNamespacePath=</var>,
+        <var>PrivateIPC=</var>, <var>IPCNamespacePath=</var>, and
+        <var>PrivateTmp=</var> directives (see
+        <a href="http://man7.org/linux/man-pages/man5/systemd.exec.5.html">systemd.exec(5)
+    </a> for
+        details). If a unit that has this setting set is started, its processes will see the same
+        /tmp/, /var/tmp/, IPC namespace and network namespace as
+        one listed unit that is started. If multiple listed units are already started, it is not defined
+        which namespace is joined. Note that this setting only has an effect if
+        <var>PrivateNetwork=</var>/<var>NetworkNamespacePath=</var>,
+        <var>PrivateIPC=</var>/<var>IPCNamespacePath=</var> and/or
+        <var>PrivateTmp=</var> is enabled for both the unit that joins the namespace and the unit
+        whose namespace is joined.</p>

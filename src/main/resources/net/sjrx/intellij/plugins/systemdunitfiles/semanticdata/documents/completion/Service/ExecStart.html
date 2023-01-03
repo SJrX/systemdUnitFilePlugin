@@ -1,0 +1,30 @@
+<p>Commands with their arguments that are
+        executed when this service is started. The value is split into
+        zero or more command lines according to the rules described
+        below (see section "Command Lines" below).
+        </p>
+<p>Unless <var>Type=</var> is <var>oneshot</var>, exactly one command must be given. When
+        <var>Type=oneshot</var> is used, zero or more commands may be specified. Commands may be specified by
+        providing multiple command lines in the same directive, or alternatively, this directive may be specified more
+        than once with the same effect. If the empty string is assigned to this option, the list of commands to start
+        is reset, prior assignments of this option will have no effect. If no <var>ExecStart=</var> is
+        specified, then the service must have <var>RemainAfterExit=yes</var> and at least one
+        <var>ExecStop=</var> line set. (Services lacking both <var>ExecStart=</var> and
+        <var>ExecStop=</var> are not valid.)</p>
+<p>For each of the specified commands, the first argument must be either an absolute path to an executable
+        or a simple file name without any slashes. Optionally, this filename may be prefixed with a number of special
+        characters:</p>
+<p>@, -, :, and one of
+        +/!/!! may be used together and they can appear in any
+        order. However, only one of +, !, !! may be used at a
+        time. Note that these prefixes are also supported for the other command line settings,
+        i.e. <var>ExecStartPre=</var>, <var>ExecStartPost=</var>, <var>ExecReload=</var>,
+        <var>ExecStop=</var> and <var>ExecStopPost=</var>.</p>
+<p>If more than one command is specified, the commands are
+        invoked sequentially in the order they appear in the unit
+        file. If one of the commands fails (and is not prefixed with
+        -), other lines are not executed, and the
+        unit is considered failed.</p>
+<p>Unless <var>Type=forking</var> is set, the
+        process started via this command line will be considered the
+        main process of the daemon.</p>

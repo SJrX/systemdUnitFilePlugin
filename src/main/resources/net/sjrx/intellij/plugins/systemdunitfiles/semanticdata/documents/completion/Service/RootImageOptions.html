@@ -1,0 +1,13 @@
+<p>Takes a comma-separated list of mount options that will be used on disk images specified by
+        <var>RootImage=</var>. Optionally a partition name can be prefixed, followed by colon, in
+        case the image has multiple partitions, otherwise partition name root is implied.
+        Options for multiple partitions can be specified in a single line with space separators. Assigning an empty
+        string removes previous assignments. Duplicated options are ignored. For a list of valid mount options, please
+        refer to
+        <a href="http://man7.org/linux/man-pages/man8/mount.8.html">mount(8)
+    </a>.
+        </p>
+<p>Valid partition names follow the <a href="https://systemd.io/DISCOVERABLE_PARTITIONS">Discoverable Partitions Specification</a>:
+        root, usr, home, srv,
+        esp, xbootldr, tmp,
+        var.</p>
