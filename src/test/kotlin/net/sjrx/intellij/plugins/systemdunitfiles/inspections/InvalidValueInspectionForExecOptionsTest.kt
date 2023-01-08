@@ -7,6 +7,7 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
 
   fun testWeakWarningWhenUsingNonAbsolutePathForExecOptions() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            ExecStartPre=docker-compose
