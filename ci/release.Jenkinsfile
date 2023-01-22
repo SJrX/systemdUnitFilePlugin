@@ -316,9 +316,7 @@ pipeline {
                   
                   VERSION=\$(ls -1 ./build/distributions/*.zip | sort | tail -n 1 | sed -E "s/.+-(.+).zip\$/\\1/g")
                   
-                  echo "Current Version \$VERSION"
-                  
-                  
+                
                   cp /github-ssh-host-key/* ~/.ssh/
                   export GIT_SSH_COMMAND="ssh -i \$KEYFILE"
                   git config --global user.email "jenkins@sjrx.net"
@@ -326,6 +324,12 @@ pipeline {
                   
                   git status
                   
+                  echo "Current Version \$VERSION"
+                  
+                  git tag "v\${VERSION}"
+                  git push -f "v\${VERSION}"
+                  
+                 
                   printenv
                   
                   exit 0;
