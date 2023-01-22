@@ -322,16 +322,16 @@ pipeline {
 
                     VERSION=\$(ls -1 ./build/distributions/*.zip | sort | tail -n 1 | sed -E "s/.+-(.+).zip\$/\\1/g")
                     cp /github-ssh-host-key/* ~/.ssh/
-                    export GIT_SSH_COMMAND="ssh -i \\$KEYFILE"
+                    export GIT_SSH_COMMAND="ssh -i \$KEYFILE"
                     git config --global user.email "jenkins@sjrx.net"
                     git config --global user.name "Jenkins CI System"
   
                     git status
   
-                    echo "Current Version \\$VERSION"
+                    echo "Current Version \$VERSION"
   
-                    git tag "v\\${VERSION}"
-                    git push -f "v\\${VERSION}"
+                    git tag "v\${VERSION}"
+                    git push -f "v\${VERSION}"
   
   
                     printenv
