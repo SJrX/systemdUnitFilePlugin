@@ -312,9 +312,31 @@ pipeline {
                   exit 0
                   """)
                 script {
-                  if (env.BRANCH_NAME ==~ /([0-9][0-9][0-9].x|issue-175)/) {
+                  if (env.BRANCH_NAME ==~ /^([0-9][0-9][0-9].x|issue-175)$/) {
                     sh("""
                     echo "Tagging"
+                    mkdir -p ~/.ssh/
+                    #Delete me
+                    mkdir -p ./build/distributions/
+                    touch build/distributions/systemdUnitFilePlugin-223.230108.113.zip
+
+                    VERSION=\$(ls -1 ./build/distributions/*.zip | sort | tail -n 1 | sed -E "s/.+-(.+).zip\$/\\1/g")
+                    cp /github-ssh-host-key/* ~/.ssh/
+                    export GIT_SSH_COMMAND="ssh -i \\$KEYFILE"
+                    git config --global user.email "jenkins@sjrx.net"
+                    git config --global user.name "Jenkins CI System"
+  
+                    git status
+  
+                    echo "Current Version \\$VERSION"
+  
+                    git tag "v\\${VERSION}"
+                    git push -f "v\\${VERSION}"
+  
+  
+                    printenv
+  
+                    exit 0;
 """
                     )
                   } else {
@@ -323,29 +345,7 @@ pipeline {
 """)                  }
                   }
 //                  if [[ \$BRANCH_NAME ~=  ]]; then
-//                    mkdir -p ~/.ssh/
-//                    #Delete me
-//                    mkdir -p ./build/distributions/
-//
-//                    touch build/distributions/systemdUnitFilePlugin-223.230108.113.zip
-//
-//                    VERSION=\$(ls -1 ./build/distributions/*.zip | sort | tail -n 1 | sed -E "s/.+-(.+).zip\$/\\1/g")
-//                  cp /github-ssh-host-key/* ~/.ssh/
-//                  export GIT_SSH_COMMAND="ssh -i \$KEYFILE"
-//                  git config --global user.email "jenkins@sjrx.net"
-//                  git config --global user.name "Jenkins CI System"
-//
-//                  git status
-//
-//                  echo "Current Version \$VERSION"
-//
-//                  git tag "v\${VERSION}"
-//                  git push -f "v\${VERSION}"
-//
-//
-//                  printenv
-//
-//                  exit 0;
+
 //            archiveArtifacts artifacts: 'build/distributions/*.zip'
 //           archiveArtifacts artifacts: 'build/reports/**'
             }
