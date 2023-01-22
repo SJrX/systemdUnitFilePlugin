@@ -308,7 +308,7 @@ pipeline {
             //unstash 'ubuntu-units'
             withCredentials([sshUserPrivateKey(credentialsId: 'ci-ssh-key', keyFileVariable: 'KEYFILE')]) {
                 sh("""
-                  mkdir -p /root/.ssh/
+                  mkdir -p ~/.ssh/
                   #Delete me
                   mkdir -p ./build/distributions/
                   
@@ -319,7 +319,7 @@ pipeline {
                   echo "Current Version \$VERSION"
                   
                   
-                  cp /github-ssh-host-key/* /root/.ssh/
+                  cp /github-ssh-host-key/* ~/.ssh/
                   export GIT_SSH_COMMAND="ssh -i \$KEYFILE"
                   git config --global user.email "jenkins@sjrx.net"
                   git config --global user.name "Jenkins CI System"
