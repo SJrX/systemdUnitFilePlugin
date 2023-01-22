@@ -88,7 +88,7 @@ class NumaPolicyOptionValue : AbstractEnumOptionValue(ImmutableSet.of("default",
 
 class IOSchedulingClassOptionValue : AbstractEnumOptionValue(ImmutableSet.of("realtime", "best-effort", "idle"), VALIDATOR_NAME) {
   companion object {
-    const val VALIDATOR_NAME = "config_parse_exec_io_priority"
+    const val VALIDATOR_NAME = "config_parse_exec_io_class"
   }
 }
 
