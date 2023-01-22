@@ -311,7 +311,9 @@ pipeline {
                   mkdir -p /root/.ssh/
 
                   cp /github-ssh-host-key/* /root/.ssh/
-                  export GIT_SSH_COMMAND="ssh -i \\$KEYFILE"
+                  export GIT_SSH_COMMAND="ssh -i \$KEYFILE"
+                  git config --global user.email "jenkins@sjrx.net"
+                  git config --global user.name "Jenkins CI System"
                   
                   git status
                   
