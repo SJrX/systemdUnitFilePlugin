@@ -309,6 +309,8 @@ pipeline {
             withCredentials([sshUserPrivateKey(credentialsId: 'ci-ssh-key', keyFileVariable: 'KEYFILE')]) {
                 sh("""
                   #./gradlew --build-cache clean build buildPlugin --scan
+                     mkdir -p ./build/distributions/
+                    touch build/distributions/systemdUnitFilePlugin-223.230108.114.zip
                   exit 0
                   """)
                 script {
@@ -317,8 +319,7 @@ pipeline {
                     echo "Tagging"
                     mkdir -p ~/.ssh/
                     #Delete me
-                    mkdir -p ./build/distributions/
-                    touch build/distributions/systemdUnitFilePlugin-223.230108.113.zip
+                 
 
                     VERSION=\$(ls -1 ./build/distributions/*.zip | sort | tail -n 1 | sed -E "s/.+-(.+).zip\$/\\1/g")
                     cp /github-ssh-host-key/* ~/.ssh/
