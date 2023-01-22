@@ -62,7 +62,7 @@ repositories {
 dependencies {
   implementation("commons-io:commons-io:2.11.0")
   implementation("com.google.guava:guava:31.1-jre")
-  testImplementation("junit:junit:4.13.1")
+  testImplementation("junit:junit:4.13.2")
 }
 
 intellij {
