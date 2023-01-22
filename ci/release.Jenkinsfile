@@ -330,8 +330,9 @@ pipeline {
   
                     echo "Current Version \$VERSION"
   
+                    git remote add origin-ssh git@github.com:SJrX/systemdUnitFilePlugin.git 
                     git tag "v\${VERSION}"
-                    git push origin --tags
+                    git push origin-ssh --tags
   
   
                     printenv
