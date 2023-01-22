@@ -331,7 +331,7 @@ pipeline {
                     echo "Current Version \$VERSION"
   
                     git tag "v\${VERSION}"
-                    git push origin --tags"
+                    git push origin --tags
   
   
                     printenv
