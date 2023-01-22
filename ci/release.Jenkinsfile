@@ -312,7 +312,7 @@ pipeline {
                   exit 0
                   """)
                 script {
-                  if (env.BRANCH_NAME ==~ /[0-9][0-9][0-9].x/) {
+                  if (env.BRANCH_NAME ==~ /([0-9][0-9][0-9].x|issue-175)/) {
                     sh("""
                     echo "Tagging"
 """
