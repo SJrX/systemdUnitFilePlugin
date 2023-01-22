@@ -71,10 +71,7 @@ class SemanticDataRepository private constructor() {
 
           validatorMap.putAll(BooleanOptionValue.validators)
           validatorMap.putAll(DocumentationOptionValue.validators)
-          validatorMap.putAll(KillModeOptionValue.validators)
           validatorMap.putAll(ModeStringOptionValue.validators)
-          validatorMap.putAll(RestartOptionValue.validators)
-          validatorMap.putAll(ServiceTypeOptionValue.validators)
           validatorMap.putAll(ExecOptionValue.validators)
           validatorMap.putAll(UnitDependencyOptionValue.validators)
           validatorMap.putAll(NullOptionValue.validators)
@@ -82,9 +79,8 @@ class SemanticDataRepository private constructor() {
           validatorMap.putAll(SignalOptionValue.validators)
           validatorMap.putAll(NamespacePathOptionValue.validators)
           validatorMap.putAll(UnsignedIntegerOptionValue.validators)
-          validatorMap.putAll(ManagedOOMModeOptionValue.validators)
-          validatorMap.putAll(EmergencyActionOptionValue.validators)
           validatorMap.putAll(PathOptionValue.validators)
+          validatorMap.putAll(EnumOptionValues.validators)
 
          // Scopes are not supported since they aren't standard unit files.
 
@@ -493,6 +489,6 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
   }
 }
 
-data class Validator(val validatorName: String, val validatorArgument: String) {
+data class Validator(val validatorName: String, val validatorArgument: String = "0") {
   override fun toString() = "${validatorName}(${validatorArgument})"
 }
