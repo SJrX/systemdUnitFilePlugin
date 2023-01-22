@@ -308,33 +308,44 @@ pipeline {
             //unstash 'ubuntu-units'
             withCredentials([sshUserPrivateKey(credentialsId: 'ci-ssh-key', keyFileVariable: 'KEYFILE')]) {
                 sh("""
-                  mkdir -p ~/.ssh/
-                  #Delete me
-                  mkdir -p ./build/distributions/
-                  
-                  touch build/distributions/systemdUnitFilePlugin-223.230108.113.zip
-                  
-                  VERSION=\$(ls -1 ./build/distributions/*.zip | sort | tail -n 1 | sed -E "s/.+-(.+).zip\$/\\1/g")
-                  
-                
-                  cp /github-ssh-host-key/* ~/.ssh/
-                  export GIT_SSH_COMMAND="ssh -i \$KEYFILE"
-                  git config --global user.email "jenkins@sjrx.net"
-                  git config --global user.name "Jenkins CI System"
-                  
-                  git status
-                  
-                  echo "Current Version \$VERSION"
-                  
-                  git tag "v\${VERSION}"
-                  git push -f "v\${VERSION}"
-                  
-                 
-                  printenv
-                  
-                  exit 0;
-                  ./gradlew --build-cache clean build buildPlugin --scan
-   """)
+                  #./gradlew --build-cache clean build buildPlugin --scan
+                  exit 0
+                  """)
+                script {
+                  if (env.BRANCH_NAME ==~ /[0-9][0-9][0-9].x/) {
+                    sh("""
+                    echo "Tagging"
+"""
+                    )
+                  } else {
+                    sh("""
+                    echo "No tagging"
+""")                  }
+                  }
+//                  if [[ \$BRANCH_NAME ~=  ]]; then
+//                    mkdir -p ~/.ssh/
+//                    #Delete me
+//                    mkdir -p ./build/distributions/
+//
+//                    touch build/distributions/systemdUnitFilePlugin-223.230108.113.zip
+//
+//                    VERSION=\$(ls -1 ./build/distributions/*.zip | sort | tail -n 1 | sed -E "s/.+-(.+).zip\$/\\1/g")
+//                  cp /github-ssh-host-key/* ~/.ssh/
+//                  export GIT_SSH_COMMAND="ssh -i \$KEYFILE"
+//                  git config --global user.email "jenkins@sjrx.net"
+//                  git config --global user.name "Jenkins CI System"
+//
+//                  git status
+//
+//                  echo "Current Version \$VERSION"
+//
+//                  git tag "v\${VERSION}"
+//                  git push -f "v\${VERSION}"
+//
+//
+//                  printenv
+//
+//                  exit 0;
 //            archiveArtifacts artifacts: 'build/distributions/*.zip'
 //           archiveArtifacts artifacts: 'build/reports/**'
             }
