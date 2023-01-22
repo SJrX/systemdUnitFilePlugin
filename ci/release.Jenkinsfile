@@ -309,7 +309,16 @@ pipeline {
             withCredentials([sshUserPrivateKey(credentialsId: 'ci-ssh-key', keyFileVariable: 'KEYFILE')]) {
                 sh("""
                   mkdir -p /root/.ssh/
-
+                  #Delete me
+                  mkdir -p ./build/distributions/
+                  
+                  touch build/distributions/systemdUnitFilePlugin-223.230108.113.zip
+                  
+                  VERSION=\$(ls -1 ./build/distributions/*.zip | sort | tail -n 1 | sed -E "s/.+-(.+).zip\$/\\1/g")
+                  
+                  echo "Current Version \$VERSION"
+                  
+                  
                   cp /github-ssh-host-key/* /root/.ssh/
                   export GIT_SSH_COMMAND="ssh -i \$KEYFILE"
                   git config --global user.email "jenkins@sjrx.net"
