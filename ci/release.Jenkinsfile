@@ -299,7 +299,7 @@ pipeline {
               defaultContainer 'worker-pod'
 
               // language=yaml
-              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-build-environment:$buildEnvironmentHash", false,false)
+              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-build-environment:bb76be5adbff362a15efe3fbbe1c083ce07cd1b99d7549e7d9429bcbdfc755b3", false,false)
               //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
             }
           }
