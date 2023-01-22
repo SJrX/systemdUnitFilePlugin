@@ -65,6 +65,9 @@ spec:
     resources:
       requests:
         memory: "2048Mi"
+    volumeMounts:
+    - name: github-ssh-host-key
+      mountPath:  /github-ssh-host-key   
     securityContext:
       runAsUser: 1000 # default UID of jenkins user in agent image
 """
@@ -87,6 +90,8 @@ spec:
     volumeMounts:
     - name: jenkins-docker-cfg
       mountPath: /kaniko/.docker
+    - name: github-ssh-host-key
+      mountPath:  /github-ssh-host-key
     securityContext:
       runAsUser: 1000 # default UID of jenkins user in agent image
 """
@@ -106,7 +111,7 @@ pipeline {
   agent none
 
   stages {
-    stage('Create Build Environment') {
+    stage('Create Build Docker Image(s)') {
       stages {
         stage('Determine Image Hashes') {
           agent {
@@ -242,71 +247,99 @@ pipeline {
             }
           }
         }
-        stage("Assemble Metadata") {
-          parallel {
-            stage('Assemble Ubuntu Units') {
-              agent {
-                kubernetes {
-                  //cloud 'kubernetes'
-                  defaultContainer 'worker-pod'
-
-                  // language=yaml
-                  yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-ubuntu-image:$ubuntuUnitsHash", false, false)
-                  //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
-                }
-              }
-              steps {
-                sh("""
-                   mkdir -p ./systemd-build/build
-                   
-                   cp /ubuntu-units.txt ./systemd-build/build/ubuntu-units.txt
-                   """)
-                stash includes: 'systemd-build/build/**', name: 'ubuntu-units', allowEmpty: true
-                }
-            }
-            stage('Assemble systemd metadata') {
-              agent {
-                kubernetes {
-                  //cloud 'kubernetes'
-                  defaultContainer 'worker-pod'
-
-                  // language=yaml
-                  yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-systemd-builder-image:$systemdBuilderHash", false,false)
-                  //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
-                }
-              }
-              steps {
-
-                  sh("""
-                      mkdir -p ./systemd-build/build
-                      cp /opt/systemd-source/systemd/load-fragment-gperf.gperf ./systemd-build/build
-                      cp -R /opt/systemd-source/systemd/man ./systemd-build/build
-                    """)
-                stash includes: 'systemd-build/build/**', name: 'systemd-build-build', allowEmpty: false
-              }
-            }
-          }
-        }
-        stage("Build") {
+      }
+    }
+    stage("Assemble Metadata") {
+      parallel {
+        stage('Assemble Ubuntu Units') {
           agent {
             kubernetes {
               //cloud 'kubernetes'
               defaultContainer 'worker-pod'
 
               // language=yaml
-              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-build-environment:$buildEnvironmentHash", false,false)
+              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-ubuntu-image:$ubuntuUnitsHash", false, false)
               //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
             }
           }
           steps {
-            unstash 'systemd-build-build'
-            unstash 'ubuntu-units'
             sh("""
-            ./gradlew --build-cache clean build buildPlugin --scan
- """)
-            archiveArtifacts artifacts: 'build/distributions/*.zip'
-            archiveArtifacts artifacts: 'build/reports/**'
+               mkdir -p ./systemd-build/build
+
+               cp /ubuntu-units.txt ./systemd-build/build/ubuntu-units.txt
+               """)
+            stash includes: 'systemd-build/build/**', name: 'ubuntu-units', allowEmpty: true
+            }
+        }
+        stage('Assemble systemd metadata') {
+          agent {
+            kubernetes {
+              //cloud 'kubernetes'
+              defaultContainer 'worker-pod'
+
+              // language=yaml
+              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-systemd-builder-image:$systemdBuilderHash", false,false)
+              //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
+            }
           }
+          steps {
+
+              sh("""
+                  mkdir -p ./systemd-build/build
+                  cp /opt/systemd-source/systemd/load-fragment-gperf.gperf ./systemd-build/build
+                  cp -R /opt/systemd-source/systemd/man ./systemd-build/build
+                """)
+            stash includes: 'systemd-build/build/**', name: 'systemd-build-build', allowEmpty: false
+          }
+        }
+      }
+    }
+    stage("Build") {
+      agent {
+        kubernetes {
+          //cloud 'kubernetes'
+          defaultContainer 'worker-pod'
+
+          // language=yaml
+          yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-build-environment:$buildEnvironmentHash", false,false)
+          //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
+        }
+      }
+      steps {
+        withCredentials([sshUserPrivateKey(credentialsId: 'ci-ssh-key', keyFileVariable: 'KEYFILE')]) {
+          unstash 'systemd-build-build'
+          unstash 'ubuntu-units'
+            sh("""
+              ./gradlew --build-cache clean build buildPlugin --scan
+              """)
+            script {
+              if (env.BRANCH_NAME ==~ /^([0-9][0-9][0-9].x)$/) {
+                sh("""
+                echo "Tagging"
+                mkdir -p ~/.ssh/
+               
+                VERSION=\$(ls -1 ./build/distributions/*.zip | sort | tail -n 1 | sed -E "s/.+-(.+).zip\$/\\1/g")
+                cp /github-ssh-host-key/* ~/.ssh/
+                export GIT_SSH_COMMAND="ssh -i \$KEYFILE"
+                git config --global user.email "jenkins@sjrx.net"
+                git config --global user.name "Jenkins CI System"
+
+
+                echo "Current Version \$VERSION"
+
+                git remote add origin-ssh git@github.com:SJrX/systemdUnitFilePlugin.git 
+                git tag "v\${VERSION}"
+                git push origin-ssh --tags  
+"""
+                )
+              } else {
+                sh("""
+                echo "No tagging"
+""")                  }
+              }
+
+          archiveArtifacts artifacts: 'build/distributions/*.zip'
+          archiveArtifacts artifacts: 'build/reports/**'
         }
       }
     }
