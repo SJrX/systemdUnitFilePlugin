@@ -17,7 +17,7 @@ class AddPropertyQuickFix(val section: String, val key: String) : LocalQuickFix 
 
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
 
-    val file = descriptor.psiElement.containingFile ?: return
+    descriptor.psiElement.containingFile ?: return
     val sectionGroup = PsiTreeUtil.getParentOfType(descriptor.psiElement, UnitFileSectionGroups::class.java) ?: return
     val dummyFile = UnitElementFactory.createFile(project, sectionGroup.text + "\n${key}=")
 

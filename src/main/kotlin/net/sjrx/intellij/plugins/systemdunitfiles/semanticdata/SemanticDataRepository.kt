@@ -62,8 +62,8 @@ class SemanticDataRepository private constructor() {
 
 
                 else -> {
-                  val validator = Validator(validator, mysteryValue)
-                  sectionToKeyAndValidatorMap.computeIfAbsent(intern(cache, section)) { k: String? -> HashMap() }[intern(cache, key)] = intern(cache2, validator)
+                  val myValidator = Validator(validator, mysteryValue)
+                  sectionToKeyAndValidatorMap.computeIfAbsent(intern(cache, section)) { _: String? -> HashMap() }[intern(cache, key)] = intern(cache2, myValidator)
                 }
               }
             }
