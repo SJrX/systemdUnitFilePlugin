@@ -109,6 +109,19 @@ class UtmpModeOptionValue : AbstractEnumOptionValue(ImmutableSet.of("init", "log
     const val VALIDATOR_NAME = "config_parse_exec_utmp_mode"
   }
 }
+
+class DevicePolicyOptionValue : AbstractEnumOptionValue(ImmutableSet.of("auto", "closed", "strict"), VALIDATOR_NAME) {
+  companion object {
+    const val VALIDATOR_NAME = "config_parse_device_policy"
+  }
+}
+
+class ManagedOOMPreferenceOptionValue : AbstractEnumOptionValue(ImmutableSet.of("none", "avoid", "omit"), VALIDATOR_NAME) {
+  companion object {
+    const val VALIDATOR_NAME = "config_parse_managed_oom_preference"
+  }
+}
+
 object EnumOptionValues {
   val validators =
 
@@ -128,6 +141,8 @@ object EnumOptionValues {
       Validator(LogLevelOptionValue.VALIDATOR_NAME) to LogLevelOptionValue(),
       Validator(SysLogFacilityOptionValue.VALIDATOR_NAME) to SysLogFacilityOptionValue(),
       Validator(UtmpModeOptionValue.VALIDATOR_NAME) to UtmpModeOptionValue(),
+      Validator(DevicePolicyOptionValue.VALIDATOR_NAME) to DevicePolicyOptionValue(),
+      Validator(ManagedOOMPreferenceOptionValue.VALIDATOR_NAME) to ManagedOOMPreferenceOptionValue(),
     )
 
 }
