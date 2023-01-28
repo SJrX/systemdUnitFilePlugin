@@ -73,7 +73,6 @@ class MissingRequiredKeyInspection : LocalInspectionTool() {
     override fun visitPropertyType(property: UnitFilePropertyType) {
       val section = PsiTreeUtil.getParentOfType(property, UnitFileSectionGroups::class.java) ?: return
       val key = property.key
-      val ovi = SemanticDataRepository.instance.getOptionValidator(section.sectionName, key)
       keys.add("${section.sectionName}.${key}")
     }
   }

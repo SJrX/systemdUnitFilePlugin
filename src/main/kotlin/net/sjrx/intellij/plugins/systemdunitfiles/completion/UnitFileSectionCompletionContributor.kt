@@ -20,7 +20,7 @@ class UnitFileSectionCompletionContributor() : CompletionContributor() {
         override fun addCompletions(parameters: CompletionParameters,
                                       context: ProcessingContext,
                                       resultSet: CompletionResultSet) {
-          val extension = parameters.position.containingFile.name.substringAfterLast(".", "")
+          parameters.position.containingFile.name.substringAfterLast(".", "")
 
           val completeSections = SemanticDataRepository.instance.getAllowedSectionsInFile(parameters.position.containingFile.name)
 
