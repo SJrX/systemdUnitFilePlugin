@@ -843,6 +843,83 @@ class InvalidValueInspectionForUtmpModeOptionValue : AbstractUnitFileTest() {
 }
 
 
+class InvalidValueInspectionForDevicePolicyOptionValue : AbstractUnitFileTest() {
+  fun testNoWarningWhenValidValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Swap]
+           DevicePolicy=strict
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.swap", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
+  fun testWarningWhenUnknownValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Swap]
+           DevicePolicy=unknown
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.swap", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+  }
+}
+
+
+class InvalidValueInspectionForManagedOOMPreferenceOptionValue : AbstractUnitFileTest() {
+  fun testNoWarningWhenValidValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Swap]
+           ManagedOOMPreference=omit
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.swap", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
+  fun testWarningWhenUnknownValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Swap]
+           ManagedOOMPreference=unknown
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.swap", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+  }
+}
+
 
 
 
