@@ -43,7 +43,7 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
         run: |
-          ./gradlew buildPlugin
+          ./gradlew test buildPlugin
           ./gradlew --stop
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
