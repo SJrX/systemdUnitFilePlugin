@@ -233,6 +233,12 @@ tasks {
    }
 }
 
+tasks {
+  buildSearchableOptions {
+    enabled = false
+  }
+}
+
 /*
  * Build Tasks
  */

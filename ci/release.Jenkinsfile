@@ -310,7 +310,7 @@ pipeline {
           unstash 'systemd-build-build'
           unstash 'ubuntu-units'
             sh("""
-              ./gradlew --build-cache clean build buildPlugin --scan
+              ./gradlew --no-daemon -I ./build-cache-init.gradle.kts --build-cache clean build buildPlugin --scan
               """)
             script {
               if (env.BRANCH_NAME ==~ /^([0-9][0-9][0-9].x)$/) {
