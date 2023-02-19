@@ -921,6 +921,271 @@ class InvalidValueInspectionForManagedOOMPreferenceOptionValue : AbstractUnitFil
 }
 
 
+class InvalidValueInspectionForServiceExitTypeOptionValue : AbstractUnitFileTest() {
+  fun testNoWarningWhenValidValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Service]
+           ExitType=cgroup
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
+  fun testWarningWhenUnknownValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Service]
+           ExitType=unknown
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+  }
+}
+
+class InvalidValueInspectionForServiceTimeoutFailureModeOptionValue : AbstractUnitFileTest() {
+  fun testNoWarningWhenValidValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Service]
+           TimeoutStartFailureMode=kill
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
+  fun testWarningWhenUnknownValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Service]
+           TimeoutStartFailureMode=unknown
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+  }
+}
+
+class InvalidValueInspectionForNotifyAccessOptionValue : AbstractUnitFileTest() {
+  fun testNoWarningWhenValidValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Service]
+           NotifyAccess=none
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
+  fun testWarningWhenUnknownValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Service]
+           NotifyAccess=unknown
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+  }
+}
+
+class InvalidValueInspectionForOOMPolicyOptionValue : AbstractUnitFileTest() {
+  fun testNoWarningWhenValidValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Service]
+           OOMPolicy=kill
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
+  fun testWarningWhenUnknownValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Service]
+           OOMPolicy=unknown
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+  }
+}
+
+class InvalidValueInspectionForSocketTimestampingOptionValue : AbstractUnitFileTest() {
+  fun testNoWarningWhenValidValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Socket]
+           Timestamping=µs
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.socket", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
+  fun testWarningWhenUnknownValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Socket]
+           Timestamping=ms
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.socket", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+  }
+}
+
+class InvalidValueInspectionForSocketProtocolOptionValue : AbstractUnitFileTest() {
+  fun testNoWarningWhenValidValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Socket]
+           SocketProtocol=udplite
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.socket", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
+  fun testWarningWhenUnknownValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Socket]
+           Timestamping=udplight
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.socket", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+  }
+}
+
+class InvalidValueInspectionForSocketBindOptionValue : AbstractUnitFileTest() {
+  fun testNoWarningWhenValidValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Socket]
+           BindIPv6Only=ipv6-only
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.socket", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
+  fun testWarningWhenUnknownValueSpecified() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Socket]
+           BindIPv6Only=ipv4-only
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.socket", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+  }
+}
 
 
 

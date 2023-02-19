@@ -122,6 +122,48 @@ class ManagedOOMPreferenceOptionValue : AbstractEnumOptionValue(ImmutableSet.of(
   }
 }
 
+class ServiceExitTypeOptionValue : AbstractEnumOptionValue(ImmutableSet.of("main", "cgroup"), VALIDATOR_NAME) {
+  companion object {
+    const val VALIDATOR_NAME = "config_parse_service_exit_type"
+  }
+}
+
+class ServiceTimeoutFailureModeOptionValue : AbstractEnumOptionValue(ImmutableSet.of("terminate", "abort", "kill"), VALIDATOR_NAME) {
+  companion object {
+    const val VALIDATOR_NAME = "config_parse_service_timeout_failure_mode"
+  }
+}
+class NotifyAccessOptionValue : AbstractEnumOptionValue(ImmutableSet.of("none", "main", "exec", "all"), VALIDATOR_NAME) {
+  companion object {
+    const val VALIDATOR_NAME = "config_parse_notify_access"
+  }
+}
+
+class OOMPolicyOptionValue : AbstractEnumOptionValue(ImmutableSet.of("continue", "stop", "kill"), VALIDATOR_NAME) {
+  companion object {
+    const val VALIDATOR_NAME = "config_parse_oom_policy"
+  }
+}
+
+class SocketTimestampingOptionValue : AbstractEnumOptionValue(ImmutableSet.of("off", "us", "usec", "µs", "ns", "nsec"), VALIDATOR_NAME) {
+  companion object {
+    const val VALIDATOR_NAME = "config_parse_socket_timestamping"
+  }
+}
+
+class SocketProtocolOptionValue : AbstractEnumOptionValue(ImmutableSet.of("udplite", "sctp"), VALIDATOR_NAME) {
+  companion object {
+    const val VALIDATOR_NAME = "config_parse_socket_protocol"
+  }
+}
+
+class SocketBindOptionValue : AbstractEnumOptionValue(ImmutableSet.of("default", "both", "ipv6-only"), VALIDATOR_NAME) {
+
+  companion object {
+    const val VALIDATOR_NAME = "config_parse_socket_bind"
+  }
+}
+
 object EnumOptionValues {
   val validators =
 
@@ -143,6 +185,13 @@ object EnumOptionValues {
       Validator(UtmpModeOptionValue.VALIDATOR_NAME) to UtmpModeOptionValue(),
       Validator(DevicePolicyOptionValue.VALIDATOR_NAME) to DevicePolicyOptionValue(),
       Validator(ManagedOOMPreferenceOptionValue.VALIDATOR_NAME) to ManagedOOMPreferenceOptionValue(),
+      Validator(ServiceExitTypeOptionValue.VALIDATOR_NAME) to ServiceExitTypeOptionValue(),
+      Validator(ServiceTimeoutFailureModeOptionValue.VALIDATOR_NAME) to ServiceTimeoutFailureModeOptionValue(),
+      Validator(NotifyAccessOptionValue.VALIDATOR_NAME) to NotifyAccessOptionValue(),
+      Validator(OOMPolicyOptionValue.VALIDATOR_NAME) to OOMPolicyOptionValue(),
+      Validator(SocketTimestampingOptionValue.VALIDATOR_NAME) to SocketTimestampingOptionValue(),
+      Validator(SocketProtocolOptionValue.VALIDATOR_NAME) to SocketProtocolOptionValue(),
+      Validator(SocketBindOptionValue.VALIDATOR_NAME) to SocketBindOptionValue(),
     )
 
 }
