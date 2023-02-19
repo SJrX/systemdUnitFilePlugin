@@ -21,7 +21,7 @@ class SemanticDataDocumentationCompletionTest : AbstractUnitFileTest() {
     println(doc.size)
     println(code.size)
     val codeButNotDoc: MutableSet<String> = TreeSet(code)
-    val docButNotCode: MutableSet<String> = TreeSet(code)
+    val docButNotCode: MutableSet<String> = TreeSet(doc)
     codeButNotDoc.removeAll(doc)
     docButNotCode.removeAll(code)
     System.err.println("***** (Code but not doc) *****")
