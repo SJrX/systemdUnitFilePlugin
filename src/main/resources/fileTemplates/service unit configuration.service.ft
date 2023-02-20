@@ -1,0 +1,17 @@
+[Unit]
+# A short human readable title of the unit.
+Description=
+
+# Ensures that this unit is started after the network.
+After=network.target
+
+[Service]
+# Command to start
+ExecStart=
+Type=simple
+Restart=on-failure
+
+[Install]
+# Ensures that the unit is
+WantedBy=multi-user.target
+
