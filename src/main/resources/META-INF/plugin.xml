@@ -90,6 +90,9 @@
 
   <actions>
     <!-- Add your actions here -->
+    <action id="systemd.NewFile" class="net.sjrx.intellij.plugins.systemdunitfiles.actions.NewUnitFileAction">
+      <add-to-group group-id="NewGroup"/>
+    </action>
   </actions>
 
 </idea-plugin>
