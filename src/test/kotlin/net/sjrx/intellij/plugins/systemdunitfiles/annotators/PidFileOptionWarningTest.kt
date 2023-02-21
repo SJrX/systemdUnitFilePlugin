@@ -5,16 +5,19 @@ import com.intellij.openapi.util.TextRange
 import junit.framework.TestCase
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 
-class PropertyIsNotInSectionAnnotatorTest : AbstractUnitFileTest() {
-  fun testAnnotated() {
+class PidFileOptionWarningTest : AbstractUnitFileTest() {
+
+  fun testPidFileAnnotated() {
+
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
-           Key=Value
            [Service]
-           Second=Value
-           
+           Type=forking
+           PIDFile=/run/foo.pid
+
            """.trimIndent()
+
     setupFileInEditor("file.service", file)
 
     // Exercise SUT
@@ -23,22 +26,24 @@ class PropertyIsNotInSectionAnnotatorTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    TestCase.assertEquals(PropertyIsNotInSectionAnnotator.ANNOTATION_ERROR_MSG, info!!.description)
-    TestCase.assertEquals(HighlightInfoType.ERROR, info.type)
+    TestCase.assertEquals(PidFileOptionWarning.ANNOTATION_ERROR_MSG, info!!.description)
+    TestCase.assertEquals(HighlightInfoType.WEAK_WARNING, info.type)
     val highlightElement = myFixture.file.findElementAt(info.getStartOffset())
     val annotatedText = myFixture.getDocument(myFixture.file).getText(TextRange.create(info.startOffset, info.endOffset))
     TestCase.assertNotNull(highlightElement)
-    TestCase.assertEquals("Key=Value", annotatedText)
+    TestCase.assertEquals("PIDFile", annotatedText)
   }
 
-  fun testNotAnnotated() {
+  fun testPidFileInXSectionNotAnnotated() {
+
     // Fixture Setup
     // language="unit file (systemd)"
-    val file = ("[Service]\n"
-      + "ExecStart=/bin/bash \\\n"
-      + ";A nice comment\n"
-      + "X-Garbage=\t    \\\n"
-      + "X-Garbage-Two=")
+    val file = """
+           [X-TestService]
+           PIDFile=/run/foo.pid
+
+           """.trimIndent()
+
     setupFileInEditor("file.service", file)
 
     // Exercise SUT
@@ -47,4 +52,5 @@ class PropertyIsNotInSectionAnnotatorTest : AbstractUnitFileTest() {
     // Verification
     assertSize(0, highlights)
   }
+
 }

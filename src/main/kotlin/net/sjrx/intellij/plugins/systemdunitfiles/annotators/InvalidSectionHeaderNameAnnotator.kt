@@ -11,17 +11,16 @@ import java.util.regex.Pattern
 class InvalidSectionHeaderNameAnnotator : Annotator {
   override fun annotate(element: PsiElement, holder: AnnotationHolder) {
     if (element is UnitFileSectionType) {
-      val sectionElement = element
 
       var validSection = true
-      if (!p.matcher(sectionElement.sectionName).find()) {
+      if (!p.matcher(element.sectionName).find()) {
 
         // First child is the section group element
         holder.newAnnotation(HighlightSeverity.ERROR, ILLEGAL_SECTION_NAME).range(element.getFirstChild()).create()
         validSection = false
 
       }
-      val text = sectionElement.firstChild.text
+      val text = element.firstChild.text
       if (text[0] != '[' || text[text.length - 1] != ']') {
         holder.newAnnotation(HighlightSeverity.ERROR, ILLEGAL_SECTION_NAME).range(element.getFirstChild()).create()
         validSection = false
