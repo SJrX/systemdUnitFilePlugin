@@ -25,16 +25,6 @@
       "replacedWithKey": "IOWriteBandwidthMax",
       "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
     },
-    "CPUSetCpus": {
-      "reason": "manual",
-      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
-      "description":"<p><var>CPUSetsCpu=</var> not supported</p>."
-    },
-    "CPUSetMems": {
-      "reason": "manual",
-      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
-      "description":"<p><var>CPUSetsMem=</var> not supported</p>."
-    },
     "CPUShares": {
       "reason": "moved",
       "replacedWithKey": "CPUWeight",
@@ -106,16 +96,6 @@
       "reason": "moved",
       "replacedWithKey": "IOWriteBandwidthMax",
       "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
-    },
-    "CPUSetCpus": {
-      "reason": "manual",
-      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
-      "description":"<p><var>CPUSetsCpu=</var> not supported</p>."
-    },
-    "CPUSetMems": {
-      "reason": "manual",
-      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
-      "description":"<p><var>CPUSetsMem=</var> not supported</p>."
     },
     "CPUShares": {
       "reason": "moved",
@@ -219,16 +199,6 @@
       "replacedWithKey": "IOWriteBandwidthMax",
       "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
     },
-    "CPUSetCpus": {
-      "reason": "manual",
-      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
-      "description":"<p><var>CPUSetsCpu=</var> not supported</p>."
-    },
-    "CPUSetMems": {
-      "reason": "manual",
-      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
-      "description":"<p><var>CPUSetsMem=</var> not supported</p>."
-    },
     "CPUShares": {
       "reason": "moved",
       "replacedWithKey": "CPUWeight",
@@ -285,16 +255,6 @@
       "reason": "moved",
       "replacedWithKey": "IOWriteBandwidthMax",
       "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
-    },
-    "CPUSetCpus": {
-      "reason": "manual",
-      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
-      "description":"<p><var>CPUSetsCpu=</var> not supported</p>."
-    },
-    "CPUSetMems": {
-      "reason": "manual",
-      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
-      "description":"<p><var>CPUSetsMem=</var> not supported</p>."
     },
     "CPUShares": {
       "reason": "moved",
@@ -368,16 +328,6 @@
       "replacedWithKey": "IOWriteBandwidthMax",
       "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
     },
-    "CPUSetCpus": {
-      "reason": "manual",
-      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
-      "description":"<p><var>CPUSetsCpu=</var> not supported</p>."
-    },
-    "CPUSetMems": {
-      "reason": "manual",
-      "documentationLink": "https://github.com/keszybz/systemd/commit/581b2e1869f6894b8d6c00808d07ed623ccc263d",
-      "description":"<p><var>CPUSetsMem=</var> not supported</p>."
-    },
     "CPUShares": {
       "reason": "moved",
       "replacedWithKey": "CPUWeight",
@@ -425,18 +375,10 @@
     }
   },
   "Unit": {
-    "AssertNull": {
-      "reason": "unsupported",
-      "documentationLink": "https://github.com/systemd/systemd/issues/11812"
-    },
     "BindTo": {
       "reason": "moved",
       "replacedWithKey": "BindsTo",
       "documentationLink": "https://github.com/systemd/systemd/commit/7f2cddae09"
-    },
-    "ConditionNull": {
-      "reason": "unsupported",
-      "documentationLink": "https://github.com/systemd/systemd/issues/11812"
     },
     "PropagateReloadTo": {
       "reason": "moved",
