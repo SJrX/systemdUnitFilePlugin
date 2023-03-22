@@ -19,7 +19,7 @@ class MountFileType private constructor() : AbstractUnitFileType(UnitFileLanguag
   }
 
   override fun getIcon(): Icon? {
-    return UnitFileIcon.FILE
+    return UnitFileIcon.MOUNT
   }
 
   override fun getDisplayName(): @Nls String {

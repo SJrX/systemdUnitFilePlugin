@@ -1,0 +1,31 @@
+[Unit]
+# A short human readable title of the unit
+Description=
+# A list of units whose activations will wait until after this unit has completed.
+Before=
+# A list of units whose activations will occur before this unit starts.
+After=network.target
+# A list of units to activate when this one is activated, if any unit listed here fails this unit will deactivate.
+Requires=
+# A list of units to activate when this one is activated, if a unit listed here fails this unit will continue to run.
+Wants=
+
+[Service]
+# Configures the process start-up type for this service unit, one of:
+# simple - The process defined in ExecStart= will stay in the foreground while the unit is activated.
+# forking - The process defined in ExecStart= will fork a background process and exit right away.
+# oneshot - The process will exit right away, use with RemainAfterExit= to ensure the serice is marked as active.
+# Consult the documentantion for types (https://www.freedesktop.org/software/systemd/man/systemd.service.html#Type=) other options.
+Type=simple
+# Command with arguments to invoke when the unit is activated.
+ExecStart=
+# Command with arguments to invoke when the unit is deactivated.
+ExecStop=
+# Configures under what conditions the unit will be restarted.
+Restart=on-failure
+
+[Install]
+# A list of units who when activated will try and activate this unit
+WantedBy=multi-user.target
+# A list of units to enable or disable when this unit is enabled or disabled (e.g., with systemctl enable)
+Also=

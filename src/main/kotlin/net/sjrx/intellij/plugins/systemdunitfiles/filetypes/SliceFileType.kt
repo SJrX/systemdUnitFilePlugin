@@ -19,7 +19,7 @@ class SliceFileType private constructor() : AbstractUnitFileType(UnitFileLanguag
   }
 
   override fun getIcon(): Icon? {
-    return UnitFileIcon.FILE
+    return UnitFileIcon.SLICE
   }
 
   override fun getDisplayName(): @Nls String {

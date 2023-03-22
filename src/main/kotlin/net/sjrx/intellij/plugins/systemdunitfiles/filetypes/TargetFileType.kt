@@ -19,7 +19,7 @@ class TargetFileType private constructor() : AbstractUnitFileType(UnitFileLangua
   }
 
   override fun getIcon(): Icon? {
-    return UnitFileIcon.FILE
+    return UnitFileIcon.TARGET
   }
 
   override fun getDisplayName(): @Nls String {

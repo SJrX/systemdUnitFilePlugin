@@ -19,7 +19,7 @@ class ServiceFileType private constructor() : AbstractUnitFileType(UnitFileLangu
   }
 
   override fun getIcon(): Icon? {
-    return UnitFileIcon.FILE
+    return UnitFileIcon.SERVICE
   }
 
   override fun getDisplayName(): @Nls String {

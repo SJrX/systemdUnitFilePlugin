@@ -1,0 +1,24 @@
+[Unit]
+# A short human readable title of the unit
+Description=
+# A list of units whose activations will wait until after this unit has completed.
+Before=
+# A list of units whose activations will occur before this unit starts.
+After=network.target
+# A list of units to activate when this one is activated, if any unit listed here fails this unit will deactivate.
+Requires=
+# A list of units to activate when this one is activated, if a unit listed here fails this unit will continue to run.
+Wants=
+
+[Swap]
+# Takes an absolute path of a device node or file to use for paging.
+What=
+# Swap priority to use when activating the swap device or file.
+Priority=
+# Specify swap options in a fstab-compatible comma separated string (e.g., discard=pages,nofail) (See: https://man7.org/linux/man-pages/man8/swapon.8.html)
+Options=
+
+[Install]
+# A list of units who when activated will try and activate this unit
+WantedBy=multi-user.target
+

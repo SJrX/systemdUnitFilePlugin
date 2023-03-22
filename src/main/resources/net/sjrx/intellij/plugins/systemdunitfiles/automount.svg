@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:cc="http://creativecommons.org/ns#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    id="Layer_1"
+    data-name="Layer 1"
+    viewBox="0 0 16 16"
+    version="1.1"
+    sodipodi:docname="automount.svg"
+    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+    xmlns="http://www.w3.org/2000/svg">
+  <metadata
+     id="metadata23">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>xml</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs21" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="2560"
+     inkscape:window-height="1367"
+     id="namedview19"
+     showgrid="true"
+     inkscape:zoom="45.254834"
+     inkscape:cx="-5.4027377"
+     inkscape:cy="12.727922"
+     inkscape:window-x="2560"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="idea/community/platform/icons/src/general/inspectionsEye"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid932" />
+  </sodipodi:namedview>
+  <title
+     id="title2">xml</title>
+  <g
+     id="g16">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:5.33333px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       x="3.3220339"
+       y="10.40678"
+       id="text944" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:5.33333px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       x="8"
+       y="11.779661"
+       id="text1039" />
+    <g
+       id="g304"
+       transform="translate(0.02453613,-8.152166e-4)">
+      <g
+         id="g13511"
+         style="fill:#9aa7b0;fill-opacity:0.80000001">
+        <rect
+           style="fill:#9aa7b0;fill-opacity:0.80000001;stroke-width:1.08268"
+           id="rect926"
+           width="3"
+           height="1.0338984"
+           x="1"
+           y="9"
+           ry="0" />
+        <rect
+           style="fill:#9aa7b0;fill-opacity:0.80000001;stroke-width:0.843024"
+           id="rect928"
+           width="1"
+           height="3.9584985"
+           x="1"
+           y="9.9982576" />
+        <rect
+           style="fill:#9aa7b0;fill-opacity:0.80000001;stroke-width:1.07208"
+           id="rect930"
+           width="3"
+           height="1.0508474"
+           x="1"
+           y="13.949153" />
+        <rect
+           style="fill:#9aa7b0;fill-opacity:0.80000001"
+           id="rect934"
+           width="3"
+           height="1"
+           x="12"
+           y="9" />
+        <rect
+           style="fill:#9aa7b0;fill-opacity:0.80000001;stroke-width:1.01246"
+           id="rect936"
+           width="1.0220904"
+           height="4.011735"
+           x="13.978584"
+           y="9.9983139" />
+        <rect
+           style="fill:#9aa7b0;fill-opacity:0.80000001"
+           id="rect938"
+           width="3"
+           height="1"
+           x="12"
+           y="14" />
+      </g>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:5.33333px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#62b543;fill-opacity:0.80000001;stroke:none"
+         x="3.8644071"
+         y="14.542375"
+         id="text1035"><tspan
+           sodipodi:role="line"
+           id="tspan1033"
+           x="3.8644071"
+           y="14.542375"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:6.66667px;font-family:monospace;-inkscape-font-specification:'monospace Bold';fill:#62b543;fill-opacity:0.80000001">OK</tspan></text>
+      <g
+         id="idea/community/platform/icons/src/general/inspectionsEye"
+         transform="matrix(1,0,0,0.65499981,-0.04375552,-0.25537051)">
+        <path
+           id="Shape Copy 2"
+           fill-rule="evenodd"
+           clip-rule="evenodd"
+           d="M 8,4 C 5.27273,4 2.94364,5.77714 2,8.28571 c 0.94364,2.50859 3.27273,4.28569 6,4.28569 2.7273,0 5.0564,-1.7771 6,-4.28569 C 13.0564,5.77714 10.7273,4 8,4 Z m 0,7.2857 c -1.656,0 -3,-1.34399 -3,-2.99999 0,-1.656 1.344,-3 3,-3 1.656,0 3,1.344 3,3 0,1.656 -1.344,2.99999 -3,2.99999 z m -10e-6,-4.71427 c -0.94857,0 -1.71428,0.76571 -1.71428,1.71428 C 6.28571,9.23429 7.05142,10 7.99999,10 8.94856,10 9.71428,9.23429 9.71428,8.28571 9.71428,7.33714 8.94856,6.57143 7.99999,6.57143 Z"
+           fill="#6e6e6e"
+           style="fill:#9aa7b0;fill-opacity:0.80000001" />
+      </g>
+    </g>
+  </g>
+</svg>

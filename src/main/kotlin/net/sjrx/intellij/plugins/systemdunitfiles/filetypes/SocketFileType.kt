@@ -19,7 +19,7 @@ class SocketFileType private constructor() : AbstractUnitFileType(UnitFileLangua
   }
 
   override fun getIcon(): Icon? {
-    return UnitFileIcon.FILE
+    return UnitFileIcon.SOCKET
   }
 
   override fun getDisplayName(): @Nls String {
