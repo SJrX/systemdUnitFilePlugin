@@ -351,7 +351,7 @@ pipeline {
 
     }
     fixed {
-      mail body: "<b>Example</b><br>Project: ${env.JOB_NAME} <br>Build: <a href=\"${env.BUILD_URL}\">${env.BUILD_NUMBER}</a> Failed\"", charset: 'UTF-8', mimeType: 'text/html',
+      mail body: "<b>Example</b><br>Project: ${env.JOB_NAME} <br>Build: <a href=\"${env.BUILD_URL}\">${env.BUILD_NUMBER}</a> Fixed\"", charset: 'UTF-8', mimeType: 'text/html',
            subject: "OK CI: Project name -> ${env.JOB_NAME}", to: "${env.FAILED_BUILD_NOTIFICATION_EMAIL}"
     }
   }
