@@ -19,7 +19,7 @@ class PathFileType private constructor() : AbstractUnitFileType(UnitFileLanguage
   }
 
   override fun getIcon(): Icon? {
-    return UnitFileIcon.FILE
+    return UnitFileIcon.PATH
   }
 
   override fun getDisplayName(): @Nls String {

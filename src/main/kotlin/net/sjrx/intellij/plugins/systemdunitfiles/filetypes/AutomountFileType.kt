@@ -19,7 +19,7 @@ class AutomountFileType private constructor() : AbstractUnitFileType(UnitFileLan
   }
 
   override fun getIcon(): Icon? {
-    return UnitFileIcon.FILE
+    return UnitFileIcon.AUTOMOUNT
   }
 
   override fun getDisplayName(): @Nls String {

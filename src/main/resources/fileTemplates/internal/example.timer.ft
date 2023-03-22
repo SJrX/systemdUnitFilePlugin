@@ -1,0 +1,40 @@
+[Unit]
+# A short human readable title of the unit
+Description=
+# A list of units whose activations will wait until after this unit has completed.
+Before=
+# A list of units whose activations will occur before this unit starts.
+After=network.target
+# A list of units to activate when this one is activated, if any unit listed here fails this unit will deactivate.
+Requires=
+# A list of units to activate when this one is activated, if a unit listed here fails this unit will continue to run.
+Wants=
+
+[Timer]
+# The syntax for timers is described in (https://www.freedesktop.org/software/systemd/man/systemd.time.html#)
+# A shorthand version is that you can specify timers by specifying values using (us, ms, s, m, h, days, weeks, months, years)
+# e.g., 2 weeks 1 hours or 1 year 6 months or 5 m 30 s
+
+# Defines a timer relative to the moment the timer unit itself is activated.
+OnActiveSec=
+# Defines a timer relative to when the machine was booted up
+OnBootSec=
+# Defines a timer relative to when the service manager was first started
+OnStartupSec=
+# Defines a timer relative to when the unit the timer unit is activating was last activated.
+OnUnitActiveSec=
+# Defines a timer relative to when the unit the timer unit is activating was last deactivated.
+OnUnitInactiveSec=
+
+# In addition to the above, OnCalendar takes a cron like syntax or values such as (minutely, hourly, daily, monthly, weekly,...)
+# Defines realtime (i.e. wallclock) timers with calendar event expressions
+OnCalendar=daily
+
+#Defines the unit to activate (if omitted will enable a unit of the same name of the timer)
+Unit=
+
+[Install]
+# A list of units who when activated will try and activate this unit
+WantedBy=multi-user.target
+# A list of units to enable or disable when this unit is enabled or disabled (e.g., with systemctl enable)
+Also=

@@ -30,11 +30,13 @@ class InvalidSectionHeaderNameAnnotator : Annotator {
       if (validSection) {
         val sectionName = text.substring(1, text.length - 1)
         val allowedSections = SemanticDataRepository.instance.getAllowedSectionsInFile(element.containingFile.name)
+
         val unitType = SemanticDataRepository.instance.getUnitType(element.containingFile.name)
 
         // Sections that start with an X- are ignored by systemd
         // https://www.freedesktop.org/software/systemd/man/systemd.unit.html#Description
-        if ((sectionName !in allowedSections) && !sectionName.startsWith("X-")){
+        // Also if we don't have any sections then we can ignore the warning (this is a hack, to prevent templates in the plugin from having errors).
+        if ((sectionName !in allowedSections) && !sectionName.startsWith("X-") && !allowedSections.isEmpty()) {
           val errorString = SECTION_IN_WRONG_FILE.format(sectionName, unitType, allowedSections)
           holder.newAnnotation(HighlightSeverity.ERROR, errorString).range(element.getFirstChild()).create()
         }

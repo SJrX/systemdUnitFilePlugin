@@ -19,7 +19,7 @@ class TimerFileType private constructor() : AbstractUnitFileType(UnitFileLanguag
   }
 
   override fun getIcon(): Icon? {
-    return UnitFileIcon.FILE
+    return UnitFileIcon.TIMER
   }
 
   override fun getDisplayName(): @Nls String {

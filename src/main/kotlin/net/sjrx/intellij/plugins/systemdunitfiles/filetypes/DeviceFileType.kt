@@ -19,7 +19,7 @@ class DeviceFileType private constructor() : AbstractUnitFileType(UnitFileLangua
   }
 
   override fun getIcon(): Icon? {
-    return UnitFileIcon.FILE
+    return UnitFileIcon.DEVICE
   }
 
   override fun getDisplayName(): @Nls String {

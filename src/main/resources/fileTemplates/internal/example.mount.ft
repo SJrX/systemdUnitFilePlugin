@@ -1,0 +1,25 @@
+[Unit]
+# A short human readable title of the unit
+Description=
+# A list of units whose activations will wait until after this unit has completed.
+Before=
+# A list of units whose activations will occur before this unit starts.
+After=network.target
+# A list of units to activate when this one is activated, if any unit listed here fails this unit will deactivate.
+Requires=
+# A list of units to activate when this one is activated, if a unit listed here fails this unit will continue to run.
+Wants=
+
+[Mount]
+# The absolute path of a device node (e.g., /dev/hda2), file or other resource to mount.
+What=
+# The absolute path to the mount point
+Where=
+# The file system type (e.g., -t argument to mount)
+Type=
+# The options for mount, comma separated (e.g., -o argument to mount)
+
+[Install]
+# A list of units who when activated will try and activate this unit
+WantedBy=multi-user.target
+
