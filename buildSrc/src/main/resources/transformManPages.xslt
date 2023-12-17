@@ -56,7 +56,7 @@
 
           <!-- We need to keep track of the section so we can know it is-->
 
-          <section><xsl:value-of select="../../../../title[text()]"/></section>
+          <section><xsl:value-of select="ancestor::refsect1/title[text()]"/></section>
 
           <description>
             <!-- For each paragraph apply templates -->
@@ -78,7 +78,7 @@
 
           <!-- We need to keep track of the section so we can know it is-->
 
-          <section><xsl:value-of select="../../../../title[text()]"/></section>
+          <section><xsl:value-of select="ancestor::refsect1/title[text()]"/></section>
 
           <description>
             <!-- For each paragraph apply templates -->
