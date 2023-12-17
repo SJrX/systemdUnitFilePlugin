@@ -24,10 +24,15 @@ class SemanticDataDocumentationCompletionTest : AbstractUnitFileTest() {
     val docButNotCode: MutableSet<String> = TreeSet(doc)
     codeButNotDoc.removeAll(doc)
     docButNotCode.removeAll(code)
-    System.err.println("***** (Code but not doc) *****")
-    System.err.flush()
-    assertEmpty("Expected that everything in the documentation was in the code, but we have documentation for the following unknown thingies: ", docButNotCode)
+
+    System.err.println("***** (Code but not Doc) *****")
     assertEmpty("Expected that everything in the code was in the documentation, but we are missing the following:", codeButNotDoc)
+
+
+    System.err.println("***** (Doc but not code) *****")
+    System.err.flush()
+
+    assertEmpty("Expected that everything in the documentation was in the code, but we have documentation for the following unknown thingies: ", docButNotCode)
 
   }
 }

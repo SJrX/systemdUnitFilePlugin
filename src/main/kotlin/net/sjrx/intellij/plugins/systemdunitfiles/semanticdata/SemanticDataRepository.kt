@@ -470,7 +470,7 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
   companion object {
     private val LOG = Logger.getInstance(SemanticDataRepository::class.java)
     const val SEMANTIC_DATA_ROOT = "net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/"
-    private const val GPERF_REGEX = "^(?<Section>[A-Z][a-z]+).(?<Key>\\w+),\\s*(?<Validator>\\w+),\\s*(?<MysteryColumn>\\w+)\\s*,.+$"
+    private const val GPERF_REGEX = "^(?<Section>[A-Z][a-z]+).(?<Key>\\w+)\\s*,\\s*(?<Validator>\\w+)\\s*,\\s*(?<MysteryColumn>\\w+)\\s*,.+$"
     private val LINE_MATCHER = Pattern.compile(GPERF_REGEX)
     private val NULL_VALIDATOR = Validator("NULL", "0")
 

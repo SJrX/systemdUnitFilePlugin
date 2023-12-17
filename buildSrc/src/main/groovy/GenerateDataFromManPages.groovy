@@ -226,7 +226,7 @@ class GenerateDataFromManPages extends DefaultTask {
 
         try {
 
-          String titleOfSection = xpath.evaluate("../../title[text()]", varListEntry)
+          String titleOfSection = xpath.evaluate("ancestor::refsect1/title[text()]", varListEntry)
           List<String> sections = fileAndSectionTitleToSectionName[filename]['sections'][titleOfSection]
 
           String originalSection = xpath.evaluate("term/varname[text()]", varListEntry, XPathConstants.STRING)
