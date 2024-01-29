@@ -2,20 +2,16 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues
 
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.Strings
-import com.intellij.openapi.vfs.newvfs.persistent.FSRecords
-import com.intellij.psi.search.FilenameIndex.processAllFileNames
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.util.containers.CollectionFactory
+import com.intellij.psi.search.FilenameIndex
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
+import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
+import java.io.InputStreamReader
 import java.util.*
 
 /**
@@ -48,8 +44,12 @@ class UnitDependencyOptionValue : OptionValueInformation {
   }
 
   override fun getAutoCompleteOptions(project: Project): Set<String> {
-    val autoCompletionOptions = CollectionFactory.createSmallMemoryFootprintSet(unitNames ?: emptySet())
-    autoCompletionOptions.addAll(getAllProjectUnitFileNames(project))
+    val autoCompletionOptions: MutableSet<String> = HashSet(unitNames)
+    for (unitTypes in validUnitTypes) {
+      for (file in FilenameIndex.getAllFilesByExt(project, unitTypes)) {
+        autoCompletionOptions.add(file.name)
+      }
+    }
     return autoCompletionOptions
   }
 
@@ -82,8 +82,8 @@ class UnitDependencyOptionValue : OptionValueInformation {
         val unitType = word.substring(lastDot + 1)
         if (!validUnitTypes.contains(unitType)) {
           holder.registerProblem(
-                  property.valueNode.psi, range,
-                  "Unit type " + unitType + " is unsupported, valid types are: " + Strings.join(validUnitTypes, ", ")
+            property.valueNode.psi, range,
+            "Unit type " + unitType + " is unsupported, valid types are: " + Strings.join(validUnitTypes, ", ")
           )
         }
       } else {
@@ -96,51 +96,6 @@ class UnitDependencyOptionValue : OptionValueInformation {
 
   override val validatorName: String
     get() = VALIDATOR_NAME
-
-  /**
-   * That's a simplified version of `com.intellij.psi.search.FilenameIndex.getAllFilesByExt()`
-   * since we need only file names, but not whole VirtualFile's
-   */
-  private fun getAllProjectUnitFileNames(project: Project): Set<String> {
-    return CachedValuesManager.getManager(project).getCachedValue(project, CachedValueProvider {
-      return@CachedValueProvider CachedValueProvider.Result<Set<String>>(
-              getAllProjectUnitFileNamesImpl(project),
-              getFilenameIndexModificationTracker(),
-      )
-    })
-  }
-
-  /*
-   * Simplified copy of com.intellij.openapi.fileEditor.impl.UniqueVFilePathBuilderImpl.getFilenameIndexModificationTracker
-   * Assuming FileBasedIndexExtension.USE_VFS_FOR_FILENAME_INDEX == true (it was set so at least since 2022.2)
-   */
-  private fun getFilenameIndexModificationTracker(): ModificationTracker {
-    return ModificationTracker {
-      @Suppress("UnstableApiUsage")
-      FSRecords.getNamesIndexModCount()
-    }
-  }
-
-  private fun getAllProjectUnitFileNamesImpl(project: Project): Set<String> {
-    val names = CollectionFactory.createSmallMemoryFootprintSet<String>()
-    val minNameLength = validUnitTypes.minOf { it.length } + 2 /* dot and at least on character in name */
-    val maxExtLength = validUnitTypes.maxOf { it.length }
-
-    processAllFileNames({ name: String ->
-      val length = name.length
-      if (length >= minNameLength) {
-        val dot = name.lastIndexOf('.')
-        if (dot != -1 && (length - (dot + 1) <= maxExtLength)) {
-          val ext = name.substring(dot + 1)
-          if (ext in validUnitTypes || ext.lowercase() in validUnitTypes) {
-            names.add(name)
-          }
-        }
-      }
-      true
-    }, GlobalSearchScope.allScope(project), null)
-    return names
-  }
 
   companion object {
     @Volatile
