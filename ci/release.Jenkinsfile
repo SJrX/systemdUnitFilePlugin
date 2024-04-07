@@ -33,7 +33,7 @@ spec:
   if (kanikoEnabled) {
     yaml += """
   - name: kaniko
-    image: gcr.io/kaniko-project/executor:v1.8.1-debug
+    image: gcr.io/kaniko-project/executor:v1.22.0-debug
     imagePullPolicy: Always
     command:
     - sleep
@@ -179,7 +179,7 @@ pipeline {
                   steps {
                     container('kaniko') {
                       sh """
-                        /kaniko/executor --force -f `pwd`/systemd-build/Ubuntu-Units.Dockerfile -c `pwd`/systemd-build/ --cache=true --compressed-caching=false --destination=${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-ubuntu-image:$ubuntuUnitsHash
+                        /kaniko/executor --force  -f `pwd`/systemd-build/Ubuntu-Units.Dockerfile  -c `pwd`/systemd-build/ --cache=true --compressed-caching=false --destination=${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-ubuntu-image:$ubuntuUnitsHash --cache-copy-layers
                       """
                     }
                   }
@@ -208,7 +208,7 @@ pipeline {
                   steps {
                     container('kaniko') {
                       sh """
-                    /kaniko/executor --force -f `pwd`/systemd-build/Systemd-Builder.Dockerfile -c `pwd`/systemd-build/ --cache=true --compressed-caching=false --destination=${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-systemd-builder-image:$systemdBuilderHash
+                    /kaniko/executor --force -f `pwd`/systemd-build/Systemd-Builder.Dockerfile  -c `pwd`/systemd-build/   --cache=true  --compressed-caching=false --destination=${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-systemd-builder-image:$systemdBuilderHash  --cache-copy-layers
                       """
                     }
                   }
