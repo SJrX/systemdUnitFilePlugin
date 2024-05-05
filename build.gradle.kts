@@ -345,6 +345,16 @@ tasks {
     dependsOn("generateUnitAutoCompleteData")
   }
 
+  checkstyleMain {
+    dependsOn("generateDataFromManPages")
+    dependsOn("generateUnitAutoCompleteData")
+  }
+
+  instrumentedJar {
+    dependsOn("generateDataFromManPages")
+    dependsOn("generateUnitAutoCompleteData")
+  }
+
   compileTestKotlin {
     dependsOn("generateUnitAutoCompleteData")
     dependsOn("generateDataFromManPages")
