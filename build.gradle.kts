@@ -1,11 +1,9 @@
-import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.grammarkit.tasks.GenerateLexerTask
 import org.jetbrains.grammarkit.tasks.GenerateParserTask
-
-import java.time.ZoneId
-import java.time.Instant
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter.*
+import java.time.format.DateTimeFormatter.ofPattern
 
 fun properties(key: String) = project.findProperty(key).toString()
 
@@ -70,6 +68,17 @@ intellij {
   version.set(properties("intellijVersion"))
 }
 
+val relativePath = "CHANGELOG"
+val filePath = Paths.get(project.buildDir.path, relativePath)
+
+// Check if the file exists and read its content or use a default string
+val changeLogContents: String = if (Files.exists(filePath)) {
+  filePath.toFile().readText()
+} else {
+  "Development Build"
+}
+
+
 tasks {
   compileKotlin {
     kotlinOptions {
@@ -80,112 +89,7 @@ tasks {
 
 tasks {
   patchPluginXml {
-      changeNotes.set("""
-    <h3>v0.3.10</h3>
-      <ul>
-        <li>Add support for IntelliJ 2022.3 and Update systemd data for v252 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/150">#150</a></li>
-      </ul>
-    <h3>v0.3.9</h3>
-      <ul>
-        <li>Add support for IntelliJ 2022.2 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/143">#143</a></li>
-      </ul>
-    <h3>v0.3.8</h3>
-      <ul>
-        <li>Fix weak warning for absolute paths when using allowed prefix <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/141">#141</a></li>
-      </ul>
-    <h3>v0.3.7</h3>
-      <ul>
-        <li>Update build to be based off of systemd v251 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/131">#131</a></li>
-        <li>Fix NPE in some cases when getting doc link <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/114">#114</a></li>
-        <li>Validation warning when shell meta-characters are in an Exec directive <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/60">#60</a></li>
-        <li>Add support for auto-completion / validation of Unit options <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/102">#102</a></li>
-        <li>Add weak warning when an absolute path isn"t used on an Exec directive<a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/133">#133</a></li>
-        <li>Fix missing documentation for Condition= and Assert directives <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/96">#96</a></li>
-      </ul>
-    <h3>v0.3.6</h3>
-      <ul>
-        <li>Add support for Go Land 2022.1<a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/128">#128</a></li>
-      </ul>
-    <h3>v0.3.5</h3>
-      <ul>
-        <li>Add support for IntelliJ 2022.1 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/126">#126</a></li>
-      </ul>
-    <h3>v0.3.4</h3>
-      <ul>
-        <li>Add support for IntelliJ 2021.3 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/119">#119</a></li>
-        <li>Remove support for IntelliJ 2021.1, due to plugin compatibility fixes</li>
-        <li>Fix file type issue description <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/106"/>#106</a></li>
-        <li>Fix deprecation warnings <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/123"/>#123</a></li>
-      </ul>
-    <h3>v0.3.3</h3>
-      <ul>
-        <li>Add support for IntelliJ 2021.2 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/111">#111</a></li>
-      </ul>
-    <h3>v0.3.2</h3>
-      <ul>
-        <li>Add support for IntelliJ 2021.1 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/107">#107</a></li>"
-      </ul>
-    <h3>v0.3.1</h3>
-      <ul>
-        <li>Add support for IntelliJ 2020.3 and systemd v247 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issue-103">#103</a> (drops support for 2020.2 <a href="https://blog.jetbrains.com/platform/2020/09/intellij-project-migrates-to-java-11/">due to Java 11 Upgrade</a>) </li>
-      </ul>
-    <h3>v0.3.0</h3>
-      <ul>
-        <li>Add support for IntelliJ 2020.2 (and drops support for anything before IntelliJ 2020.1) <a href="https://github.com/SJrX/systemdUnitFilePlugin/pull/92">#92</a></li>
-        <li>Add support for systemd v245 (and maybe a little bit of v246) <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/95">#95</a></li>
-      </ul>
-    <h3>v0.2.6</h3>
-    <ul>
-      <li>Improved Error Handling, Memory Management, Misc fixes <a href="https://github.com/SJrX/systemdUnitFilePlugin/pull/88">#88></a></li>
-      <li>New plugin logo <a href="https://github.com/SJrX/systemdUnitFilePlugin/pull/92">#92</a></li>
-    </ul>
-    <h3>v0.2.5</h3>
-    <ul>
-      <li>Add support IntelliJ 2020.1 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/86">#86</a>
-    </ul>
-    <h3>v0.2.5</h3>
-    <ul>
-      <li>Add support IntelliJ 2020.1 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/86">#86</a>
-    </ul>
-    <h3>v0.2.4</h3>
-    <ul>
-      <li>Add support for systemd v244 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/85">#85</a></li>
-      <li>Change Logo<a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/84">#84</a></li>
-      <li>Add support IntelliJ 2019.3 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/82">#82</a>
-    </ul>
-    <h3>v0.2.3</h3>
-    <ul>
-      <li>Add support for systemd v243 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/79">#79</a></li>
-    </ul>
-    <h3>v0.2.2</h3>
-    <ul>
-      <li>Add support for IntelliJ 2019.2 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/76">#76</a></li>
-    </ul>
-    <h3>v0.2.1</h3>
-    <ul>
-      <li>Add support for IntelliJ 2019.1 <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/73">#73</a></li>
-      <li>Add support for <em>all</em> deprecated / undocumented options <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/67">#67</a>
-      , <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/71">#71</a></li>
-    </ul>
-    <h3>v0.2.0</h3>
-    <ul>
-      <li>Updating syntax highlighting to properly handle comments with line continuations.</li>
-      <li>Warning when line continuation character is followed by whitespace</li>
-      <li>New inspection for deprecated options</li>
-    <h3>v0.1.2</h3>
-    <ul>
-      <li>Added support for systemd v240 keywords.</li>
-      <li>Fixed bug with tab character causing issues with syntax highlighting <a href="https://github.com/SJrX/systemdUnitFilePlugin/issues/51">#51</a>.</li>
-    </ul>
-    <h3>v0.1.1</h3>
-    <ul>
-      <li>Added support for IntelliJ 2018.3.</li>
-    </ul>
-    <h3>v0.1.0</h3>
-    <ul>
-      <li>Initial Release.</li>
-    </ul>
-  """)
+      changeNotes.set(changeLogContents)
       sinceBuild.set(properties("sinceVersion"))
       untilBuild.set(properties("untilVersion"))
   }
