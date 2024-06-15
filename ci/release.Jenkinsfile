@@ -287,6 +287,7 @@ pipeline {
               sh("""
                   mkdir -p ./systemd-build/build
                   cp /opt/systemd-source/systemd/load-fragment-gperf.gperf ./systemd-build/build
+                  cp /opt/systemd-source/systemd/last_commit_date /opt/systemd-source/systemd/last_commit_hash ./systemd-build/build
                   cp -R /opt/systemd-source/systemd/man ./systemd-build/build
                 """)
             stash includes: 'systemd-build/build/**', name: 'systemd-build-build', allowEmpty: false
@@ -310,7 +311,9 @@ pipeline {
           unstash 'systemd-build-build'
           unstash 'ubuntu-units'
             sh("""
-              ./gradlew --no-daemon -I ./build-cache-init.gradle.kts --build-cache clean build buildPlugin --scan
+              mkdir -p ./build
+              ./generate-changelog  > build/CHANGELOG
+              ./gradlew --no-daemon -I ./build-cache-init.gradle.kts --build-cache build buildPlugin --scan
               """)
             script {
               if (env.BRANCH_NAME ==~ /^([0-9][0-9][0-9].x)$/) {

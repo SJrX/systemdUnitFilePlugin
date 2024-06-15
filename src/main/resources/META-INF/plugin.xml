@@ -5,24 +5,17 @@
   <vendor email="commits@sjrx.net">Steve Ramage</vendor>
 
   <description><![CDATA[
-      Adds support for systemd unit files, including the following features:
+      Adds support for <a href='https://systemd.io/'>systemd</a> <a href="https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html">unit files</a> which are used to configure (some/most) Linux distributions.
+      <br/>
+      <br/>
+      This plugin adds the following features to the IDE:
       <ul>
-       <li>Syntax highlighting for unit files</li>
-        <li>Auto-completion for:
-          <ul>
-            <li>Option names in a section</li>
-            <li>Boolean options</li>
-            <li>Octal options</li>
-            <li>Some other common options (<var>KillMode=</var>, <var>Type=</var>, <var>Restart=</var>)
-          </ul>
-        </li>
-        <li>Inspections:
-          <ul>
-            <li>Invalid values for boolean options</li>
-            <li>Unknown option in section (ignoring those starting with <em>X-</em>)</li>
-            <li>Deprecated options</li>
-          </ul>
-        </li>
+        <li>Syntax highlighting for unit files</li>
+        <li>Auto-completion for a number of options</li>
+        <li>Inspections for some errors such as invalid or unknown or deprecated options</li>
+        <li>Quick fixes</li>
+        <li>Built-in documentation reference for options</li>
+      </ul>
     ]]></description>
 
   <change-notes><!-- From gradle, this section must be 40 characters long, so here you go -->0123456789012345678901234567890123456789</change-notes>

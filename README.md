@@ -48,6 +48,7 @@ This plugin is avaliable to install at the [JetBrains Plugin Repository](https:/
 
 Contributors
 -------------
+* [Steve Ramage](https://github.com/SJrX)
 * [Vlad Rassokhin](https://github.com/VladRassokhin)
 
 Acknowledgements

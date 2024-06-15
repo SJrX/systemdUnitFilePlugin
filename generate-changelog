@@ -1,0 +1,10 @@
+#!/bin/bash
+
+SYSTEMD_DATE=$(<./systemd-build/build/last_commit_date tr -d '\n')
+SYSTEMD_COMMIT=$(<./systemd-build/build/last_commit_hash tr -d '\n')
+SYSTEMD_MESSAGE=$(echo "<li><b>[$SYSTEMD_DATE]</b> Update of systemd unit metadata (<a href='https://github.com/systemd/systemd/commit/$SYSTEMD_COMMIT'>$SYSTEMD_COMMIT</a>)</li></br>")
+
+echo "<h3>Changes</h3>"
+echo "<ul>"
+{ git log --format="%H %aE"  | grep -v dependabot | head -n 20 | cut -d ' ' -f 1 | xargs -d "\n" -n 1 git log -n 1 "--pretty=format:<li><b>[%ad]</b> %s</li></br>%n" --date=format:%Y-%m-%d | sed -E "s%#([0-9]+)%\<a href='https://github.com/SJrX/systemdUnitFilePlugin/issues/\1'>#\1</a>%g"; echo $SYSTEMD_MESSAGE; } | sort -r
+echo "</ul>"
