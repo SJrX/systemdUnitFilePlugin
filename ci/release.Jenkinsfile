@@ -4,6 +4,14 @@
 
 def buildDate = new Date().format("yyMMdd", TimeZone.getTimeZone('UTC'))
 
+cron_string = ""
+
+// Build nightly on a release branch
+
+if (BRANCH_NAME ==~ /^([0-9][0-9][0-9].x)$/) {
+  cron_string = "H 1 * * *"
+}
+
 def buildPodDefinition(workerPodImage, ciUtilsEnabled, kanikoEnabled) {
   // language=yaml
   yaml = """
@@ -107,6 +115,9 @@ pipeline {
     timestamps()
     quietPeriod(1)
     //skipDefaultCheckout()
+  }
+  triggers {
+    cron(cron_string)
   }
   agent none
 
