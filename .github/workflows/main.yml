@@ -43,6 +43,8 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Build with Gradle
         run: |
+          mkdir -p ./build
+          ./generate-changelog  > build/CHANGELOG
           ./gradlew composeUp
           ./gradlew test buildPlugin
           ./gradlew --stop

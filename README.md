@@ -65,6 +65,11 @@ License
 
 ## Development Notes
 
+### Commit Format
+
+This has adopted [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format for commit messages, in theory anyway. 
+The main effect is that certain tags will be excluded from the automatic changelog.
+
 ### System Requirements
  
 Java 17

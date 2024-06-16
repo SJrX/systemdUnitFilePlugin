@@ -6,5 +6,5 @@ SYSTEMD_MESSAGE=$(echo "<li><b>[$SYSTEMD_DATE]</b> Update of systemd unit metada
 
 echo "<h3>Changes</h3>"
 echo "<ul>"
-{ git log --format="%H %aE"  | grep -v dependabot | head -n 20 | cut -d ' ' -f 1 | xargs -d "\n" -n 1 git log -n 1 "--pretty=format:<li><b>[%ad]</b> %s</li></br>%n" --date=format:%Y-%m-%d | sed -E "s%#([0-9]+)%\<a href='https://github.com/SJrX/systemdUnitFilePlugin/issues/\1'>#\1</a>%g"; echo $SYSTEMD_MESSAGE; } | sort -r
+{ git log --format="%H %aE"  | grep -v dependabot | head -n 100 | cut -d ' ' -f 1 | xargs -d "\n" -n 1 git log -n 1 "--pretty=format:<li><b>[%ad]</b> %s</li></br>%n" --date=format:%Y-%m-%d 2> /dev/null | grep -v -E "</b> (ci|chore|docs|build|style|refactor|test):" | head -n 20 | sed -E "s%#([0-9]+)%\<a href='https://github.com/SJrX/systemdUnitFilePlugin/issues/\1'>#\1</a>%g"; echo $SYSTEMD_MESSAGE; } | sort -r
 echo "</ul>"
