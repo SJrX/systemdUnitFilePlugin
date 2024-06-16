@@ -22,7 +22,8 @@ This plugin adds support for [systemd unit files](https://www.freedesktop.org/so
    * When the section name is invalid or used in the wrong file type
    * Whitespace after a line continuation \ character.
    * When a key has been deprecated.
- * Built-in documentation for options or section name (available when hitting <kbd>CTRL+Q</kbd> or <kbd>F1</kbd> on Mac)   
+ * Built-in documentation for options or section name (available when hitting <kbd>CTRL+Q</kbd> or <kbd>F1</kbd> on Mac)
+ * Templates for several unit types
 
       
 ## Usage
