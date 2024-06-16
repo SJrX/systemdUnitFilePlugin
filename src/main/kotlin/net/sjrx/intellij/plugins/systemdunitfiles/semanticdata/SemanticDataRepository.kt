@@ -70,6 +70,7 @@ class SemanticDataRepository private constructor() {
           }
 
           validatorMap.putAll(BooleanOptionValue.validators)
+          validatorMap.putAll(TriStateOptionValue.validators)
           validatorMap.putAll(DocumentationOptionValue.validators)
           validatorMap.putAll(ModeStringOptionValue.validators)
           validatorMap.putAll(ExecOptionValue.validators)
@@ -81,7 +82,9 @@ class SemanticDataRepository private constructor() {
           validatorMap.putAll(UnsignedIntegerOptionValue.validators)
           validatorMap.putAll(PathOptionValue.validators)
           validatorMap.putAll(EnumOptionValues.validators)
-          validatorMap.putAll(ConfigParseSecOptionValue.validators)
+          validatorMap.putAll(ConfigParseSecValidators.validators)
+          validatorMap.putAll(AllowedCpuSetOptionValue.validators)
+          validatorMap.putAll(TtySizeOptionValue.validators)
 
          // Scopes are not supported since they aren't standard unit files.
 

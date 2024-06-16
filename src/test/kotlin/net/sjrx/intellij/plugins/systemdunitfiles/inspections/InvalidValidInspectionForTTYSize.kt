@@ -3,19 +3,19 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections
 import junit.framework.TestCase
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 
-class InvalidValidInspectionForUnsignedInteger : AbstractUnitFileTest() {
+class InvalidValidInspectionForTTYSize : AbstractUnitFileTest() {
 
   fun testWeakWarningWhenNegativeIntegerSpecified() {
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
-           [Swap]
-           LogRateLimitBurst=-5
+           [Service]
+           TTYRows=-5
            """.trimIndent()
 
 
     // Execute SUT
-    setupFileInEditor("file.swap", file)
+    setupFileInEditor("file.service", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
@@ -30,13 +30,13 @@ class InvalidValidInspectionForUnsignedInteger : AbstractUnitFileTest() {
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
-           [Swap]
-           LogRateLimitBurst=foo
+           [Service]
+           TTYRows=foo
            """.trimIndent()
 
 
     // Execute SUT
-    setupFileInEditor("file.swap", file)
+    setupFileInEditor("file.service", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
@@ -51,13 +51,13 @@ class InvalidValidInspectionForUnsignedInteger : AbstractUnitFileTest() {
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
-           [Swap]
-           LogRateLimitBurst=2
+           [Service]
+           TTYRows=2
            """.trimIndent()
 
 
     // Execute SUT
-    setupFileInEditor("file.swap", file)
+    setupFileInEditor("file.service", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 

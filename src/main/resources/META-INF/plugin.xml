@@ -15,6 +15,7 @@
         <li>Inspections for some errors such as invalid or unknown or deprecated options</li>
         <li>Quick fixes</li>
         <li>Built-in documentation reference for options</li>
+        <li>Templates for unit files</li>
       </ul>
     ]]></description>
 

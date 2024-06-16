@@ -7,6 +7,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 class InvalidValueInspectionTest : AbstractUnitFileTest() {
   fun testAllValidBooleanValuesDoNotThrowError() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            TTYReset=1
@@ -36,9 +37,71 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
 
   fun testIllegalBooleanValueTriggersInspection() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            TTYReset=Most Def
+           
+           """.trimIndent()
+
+    // Exercise SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+
+    // Verification
+    val highlights = myFixture.doHighlighting()
+
+
+    // Verification
+    assertSize(1, highlights)
+    val info = highlights[0]
+    AbstractUnitFileTest.Companion.assertStringContains("Most Def", info!!.description)
+    AbstractUnitFileTest.Companion.assertStringContains("must be one of", info.description)
+    AbstractUnitFileTest.Companion.assertStringContains("on", info.description)
+    AbstractUnitFileTest.Companion.assertStringContains("off", info.description)
+    TestCase.assertEquals(HighlightInfoType.WARNING, info.type)
+    val highlightElement = myFixture.file.findElementAt(info.getStartOffset())
+    TestCase.assertNotNull(highlightElement)
+    TestCase.assertEquals("Most Def", highlightElement!!.text)
+  }
+
+  fun testAllValidTristateValuesDoNotThrowError() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Service]
+           SetLoginEnvironment=1
+           SetLoginEnvironment=yes
+           SetLoginEnvironment=y
+           SetLoginEnvironment=true
+           SetLoginEnvironment=t
+           SetLoginEnvironment=on
+           SetLoginEnvironment=0
+           SetLoginEnvironment=no
+           SetLoginEnvironment=n
+           SetLoginEnvironment=false
+           SetLoginEnvironment=f
+           SetLoginEnvironment=off
+           SetLoginEnvironment=
+           
+           """.trimIndent()
+
+    // Exercise SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
+  fun testIllegalTristateValueTriggersInspection() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Service]
+           SetLoginEnvironment=Most Def
            
            """.trimIndent()
 
@@ -88,6 +151,7 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
 
   fun testValidDocumentationValuesOnSingleLineDoNotThrowException() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Unit]
            Documentation=http://www.google.com https://www.google.com file:/tmp/test.txt info:gcc#G++_and_GCC man:test(7)
@@ -107,6 +171,7 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
 
   fun testInvalidDocumentationValuesOnDistinctLinesTriggersInspection() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Unit]
            Documentation=http://www.google.com
@@ -138,6 +203,7 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
 
   fun testInvalidDocumentationValuesOnSingleLineTriggersInspection() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Unit]
            Documentation=http://www.google.com https://www.google.com file:/tmp/test.txt ftp://www.google.com/rules.txt info:gcc#G++_and_GCC man:test(7)
@@ -166,6 +232,7 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
 
   fun testValidModeStringOptionsDoNotTriggerInspection() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            UMask=0000
@@ -192,6 +259,7 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
 
   fun testIllegalModeStringOptionsTriggersInspection() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            UMask=rwxrwxrwx
@@ -225,6 +293,7 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
 
   fun testInvalidNameInAfterTriggersWarning() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Unit]
            After=mysql
@@ -244,6 +313,7 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
 
   fun testInvalidUnitTypeInWantsTriggersWarning() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Unit]
            Wants=mysql.foo
