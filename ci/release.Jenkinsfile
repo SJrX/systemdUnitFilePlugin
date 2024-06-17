@@ -8,8 +8,25 @@ cron_string = ""
 
 // Build nightly on a release branch
 
-if (BRANCH_NAME ==~ /^([0-9][0-9][0-9].x)$/) {
-  cron_string = "H 1 * * *"
+if (BRANCH_NAME ==~ /^([0-9][0-9][0-9]\.x)$/) {
+  cron_string = "H 10 * * *"
+}
+
+//if (BRANCH_NAME == "issue-259") {
+//  cron_string = "H/15 * * * *"
+//}
+
+isMonday = new Date().format("E", TimeZone.getTimeZone('UTC')) == "Mon"
+
+//currentBuild.getBuildCauses()[0].getShortDescription()
+echo "Build cause: ${currentBuild.getBuildCauses()[0]}"
+
+def started_by_timer = currentBuild.getBuildCauses()[0]["shortDescription"].matches("Started by timer")
+echo "Started by timer: ${started_by_timer}"
+
+releaseChannel = "dev"
+if (isMonday) {
+  releaseChannel = "default"
 }
 
 def buildPodDefinition(workerPodImage, ciUtilsEnabled, kanikoEnabled) {
@@ -327,7 +344,7 @@ pipeline {
               ./gradlew --no-daemon -I ./build-cache-init.gradle.kts --build-cache build buildPlugin --scan
               """)
             script {
-              if (env.BRANCH_NAME ==~ /^([0-9][0-9][0-9].x)$/) {
+              if (env.BRANCH_NAME ==~ /^([0-9][0-9][0-9]\.x)|(issue-259)$/) {
                 sh("""
                 echo "Tagging"
                 mkdir -p ~/.ssh/
@@ -346,9 +363,13 @@ pipeline {
                 git push origin-ssh --tags  
 """
                 )
+                sh("""
+                ./gradlew --no-daemon -I ./build-cache-init.gradle.kts --build-cache publishPluginStandalone --scan
+""")
               } else {
                 sh("""
                 echo "No tagging"
+                
 """)                  }
               }
 
