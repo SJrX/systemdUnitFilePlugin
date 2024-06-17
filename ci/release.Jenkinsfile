@@ -7,10 +7,23 @@ def buildDate = new Date().format("yyMMdd", TimeZone.getTimeZone('UTC'))
 cron_string = ""
 
 // Build nightly on a release branch
-
-if (BRANCH_NAME ==~ /^([0-9][0-9][0-9].x)$/) {
-  cron_string = "H 1 * * *"
+if (BRANCH_NAME ==~ /^([0-9][0-9][0-9]\.x)$/) {
+  cron_string = "H 10 * * *"
 }
+
+isReleaseDay = new Date().format("E", TimeZone.getTimeZone('UTC')) == "Wed"
+
+def started_by_timer = currentBuild.getBuildCauses()[0]["shortDescription"].matches("Started by timer")
+echo "Started by timer: ${started_by_timer}"
+
+
+if (isReleaseDay && started_by_timer) {
+  releaseChannel = "default"
+} else {
+  releaseChannel = "dev"
+}
+
+echo "Release channel $releaseChannel"
 
 def buildPodDefinition(workerPodImage, ciUtilsEnabled, kanikoEnabled) {
   // language=yaml
@@ -318,16 +331,22 @@ pipeline {
         }
       }
       steps {
-        withCredentials([sshUserPrivateKey(credentialsId: 'ci-ssh-key', keyFileVariable: 'KEYFILE')]) {
-          unstash 'systemd-build-build'
-          unstash 'ubuntu-units'
+        withCredentials(
+          [
+            sshUserPrivateKey(credentialsId: 'ci-ssh-key', keyFileVariable: 'KEYFILE'),
+            string(credentialsId: 'systemd-publish-token', variable: 'PUBLISH_TOKEN')
+          ]
+        ) {
+          withEnv(["RELEASE_CHANNEL=${releaseChannel}"]) {
+            unstash 'systemd-build-build'
+            unstash 'ubuntu-units'
             sh("""
               mkdir -p ./build
               ./generate-changelog  > build/CHANGELOG
               ./gradlew --no-daemon -I ./build-cache-init.gradle.kts --build-cache build buildPlugin --scan
               """)
             script {
-              if (env.BRANCH_NAME ==~ /^([0-9][0-9][0-9].x)$/) {
+              if (env.BRANCH_NAME ==~ /^([0-9][0-9][0-9]\.x)$/) {
                 sh("""
                 echo "Tagging"
                 mkdir -p ~/.ssh/
@@ -346,14 +365,21 @@ pipeline {
                 git push origin-ssh --tags  
 """
                 )
-              } else {
                 sh("""
-                echo "No tagging"
-""")                  }
+                ./gradlew --no-daemon -I ./build-cache-init.gradle.kts --build-cache publishPluginStandalone --scan
+""")
+              }
+              else {
+                sh("""
+                echo "No tagging"           
+""")
               }
 
-          archiveArtifacts artifacts: 'build/distributions/*.zip'
-          archiveArtifacts artifacts: 'build/reports/**'
+            }
+
+            archiveArtifacts artifacts: 'build/distributions/*.zip'
+            archiveArtifacts artifacts: 'build/reports/**'
+          }
         }
       }
     }
