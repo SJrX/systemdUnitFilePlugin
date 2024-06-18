@@ -35,6 +35,7 @@ plugins {
 
 dockerCompose {
   dockerComposeWorkingDirectory.set(file("./systemd-build/"))
+  setProjectName("systemdbuild")
 }
 
 group = "net.sjrx.intellij.plugins"

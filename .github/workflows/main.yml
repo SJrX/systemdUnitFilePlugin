@@ -44,8 +44,8 @@ jobs:
       - name: Build with Gradle
         run: |
           mkdir -p ./build
+          docker compose --project-directory ./systemd-build up --build
           ./generate-changelog  > build/CHANGELOG
-          ./gradlew composeUp
           ./gradlew test buildPlugin
           ./gradlew --stop
       - name: Publish Unit Test Results

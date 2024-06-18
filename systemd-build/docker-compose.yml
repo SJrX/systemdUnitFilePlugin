@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Systemd-Builder.Dockerfile
+      args:
+        BUILDDATE: "unset"
     volumes:
       - ./build:/mount/
   ubuntu-units-builder:
