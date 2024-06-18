@@ -168,9 +168,9 @@ pipeline {
                 /check-if-image-exists
                 ''', returnStatus: true)
               }
-              systemdBuilderHash = sh(script: '''
-                  sha256sum ./systemd-build/Systemd-Builder.Dockerfile ./systemd-build/systemd-build.sh | sha256sum | sed -E "s/\\s.+$//g"
-            ''', returnStdout: true
+              systemdBuilderHash = sh(script: """
+                  sha256sum ./systemd-build/Systemd-Builder.Dockerfile ./systemd-build/systemd-build.sh | sha256sum | sed -E "s/\\s.+\$/-${buildDate}/g"
+            """, returnStdout: true
               ).trim()
               withEnv(["IMAGE=sjrx/systemd-plugin-systemd-builder-image", "TAG=${systemdBuilderHash}"]) {
                 systemdBuilderBuildNeeded = sh(script: '''
@@ -232,7 +232,7 @@ pipeline {
                   steps {
                     container('kaniko') {
                       sh """
-                    /kaniko/executor --force -f `pwd`/systemd-build/Systemd-Builder.Dockerfile  -c `pwd`/systemd-build/   --cache=true  --compressed-caching=false --destination=${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-systemd-builder-image:$systemdBuilderHash  --cache-copy-layers
+                    /kaniko/executor --force -f `pwd`/systemd-build/Systemd-Builder.Dockerfile  -c `pwd`/systemd-build/  --build-arg BUILDDATE=${buildDate} --cache=true  --compressed-caching=false --destination=${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-systemd-builder-image:$systemdBuilderHash  --cache-copy-layers
                       """
                     }
                   }
