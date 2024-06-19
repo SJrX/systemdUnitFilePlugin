@@ -8,7 +8,7 @@ echo "Git Pull" && \
   echo "Copy file(s)" && \
   cp load-fragment-gperf.gperf /mount/load-fragment-gperf.gperf && \
   cp -R ./man /mount/ && \
-  git log -1 --format="%at" | xargs -I{} date -d @{} +%Y-%m-%d > last_commit_date && \
+  git log --format="%at" | sort | tail -n 1 | xargs -I{} date -d @{} +%Y-%m-%d > last_commit_date && \
   git rev-parse --short=10 HEAD > last_commit_hash && \
   cp last_commit_date last_commit_hash /mount/ && \
   echo "Reset Permissions" && \
