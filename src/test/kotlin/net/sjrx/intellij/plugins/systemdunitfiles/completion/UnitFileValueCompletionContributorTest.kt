@@ -92,7 +92,7 @@ class UnitFileValueCompletionContributorTest : AbstractUnitFileTest() {
     val completions = basicCompletionResultStrings
 
     // Verification
-    assertContainsElements(completions, "forking", "oneshot", "notify")
+    assertContainsElements(completions, "forking", "oneshot", "notify", "notify-reload")
   }
 
   fun testCompletionOfUnitDependencyIncludesUnitsInFilename() {

@@ -380,6 +380,7 @@ class InvalidValueInspectionForServiceTypeOptionValues : AbstractUnitFileTest() 
            Type=oneshot
            Type=dbus
            Type=notify
+           Type=notify-reload
            Type=idle
            Type=exec
            
@@ -423,6 +424,7 @@ class InvalidValueInspectionForServiceTypeOptionValues : AbstractUnitFileTest() 
     assertStringContains("oneshot", info.description)
     assertStringContains("dbus", info.description)
     assertStringContains("notify", info.description)
+    assertStringContains("notify-reload", info.description)
     assertStringContains("idle", info.description)
     assertStringContains("exec", info.description)
     TestCase.assertEquals(HighlightInfoType.WARNING, info.type)
@@ -453,6 +455,7 @@ class InvalidValueInspectionForServiceTypeOptionValues : AbstractUnitFileTest() 
     assertStringContains("oneshot", info.description)
     assertStringContains("dbus", info.description)
     assertStringContains("notify", info.description)
+    assertStringContains("notify-reload", info.description)
     assertStringContains("idle", info.description)
     assertStringContains("exec", info.description)
     TestCase.assertEquals(HighlightInfoType.WARNING, info.type)

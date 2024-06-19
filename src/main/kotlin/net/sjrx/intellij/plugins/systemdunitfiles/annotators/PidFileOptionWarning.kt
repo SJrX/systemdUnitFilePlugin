@@ -20,6 +20,6 @@ class PidFileOptionWarning : Annotator {
   }
 
     companion object {
-      const val ANNOTATION_ERROR_MSG = "PID files should be avoided in modern projects. Use type=notify, Type=notify-release or Type=simple  where possible, which does not require use of PID files to determine the main process of a service and avoids needless forking."
+      const val ANNOTATION_ERROR_MSG = "PID files should be avoided in modern projects. Use Type=notify, Type=notify-reload or Type=simple where possible, which does not require use of PID files to determine the main process of a service and avoids needless forking."
     }
 }
