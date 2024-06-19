@@ -40,7 +40,7 @@ class RestartOptionValue : AbstractEnumOptionValue(validOptions, VALIDATOR_NAME)
 class ServiceTypeOptionValue : AbstractEnumOptionValue(validOptions, VALIDATOR_NAME) {
 
   companion object {
-    private val validOptions: Set<String> = ImmutableSet.of("simple", "forking", "oneshot", "dbus", "notify", "idle", "exec")
+    private val validOptions: Set<String> = ImmutableSet.of("simple", "forking", "oneshot", "dbus", "notify", "notify-reload", "idle", "exec")
     const val VALIDATOR_NAME = "config_parse_service_type"
   }
 }
