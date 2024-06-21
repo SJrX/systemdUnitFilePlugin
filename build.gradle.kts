@@ -26,7 +26,7 @@ fun getVersionNumber() : String {
 plugins {
   id("java")
   id("org.jetbrains.intellij") version "1.13.2"
-  id("org.jetbrains.grammarkit") version "2022.3"
+  id("org.jetbrains.grammarkit") version "2022.3.2.2"
   id("checkstyle")
   id("com.avast.gradle.docker-compose") version "0.16.11"
   id("org.jetbrains.kotlin.jvm") version "2.0.0"
@@ -165,9 +165,8 @@ tasks.register<GenerateLexerTask>("generateLexerTask") {
   description = "Generate the lexer necessary for parsing unit files using JFlex"
   group = "generation"
 
-  source.set("src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/lexer/SystemdUnitFile.flex")
-  targetDir.set("src/main/gen/net/sjrx/intellij/plugins/systemdunitfiles/generated/")
-  targetClass.set("UnitFileLexer")
+  sourceFile.set(file("src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/lexer/SystemdUnitFile.flex"))
+  targetOutputDir.set(file("src/main/gen/net/sjrx/intellij/plugins/systemdunitfiles/generated/"))
   purgeOldFiles.set(true)
 
   mustRunAfter(tasks.compileJava)
@@ -176,8 +175,8 @@ tasks.register<GenerateLexerTask>("generateLexerTask") {
 tasks.register<GenerateParserTask>("generateParserTask") {
   description = "Generate the grammar necessary for parsing unit files using GrammarKit"
   group = "generation"
-  source.set("src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/grammar/SystemdUnitFile.bnf")
-  targetRoot.set("src/main/gen/")
+  sourceFile.set(file("src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/grammar/SystemdUnitFile.bnf"))
+  targetRootOutputDir.set(file("src/main/gen/"))
 
   // path to a parser file, relative to the targetRoot
   pathToParser.set("net/sjrx/intellij/plugins/systemdunitfiles/generated/UnitFileParser.java")
