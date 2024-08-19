@@ -1,5 +1,6 @@
 import org.jetbrains.grammarkit.tasks.GenerateLexerTask
 import org.jetbrains.grammarkit.tasks.GenerateParserTask
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -72,6 +73,8 @@ dependencies {
   implementation("commons-io:commons-io:2.16.1")
   implementation("com.google.guava:guava:33.2.1-jre")
   testImplementation("junit:junit:4.13.2")
+  testImplementation("org.opentest4j:opentest4j:1.3.0")
+
   intellijPlatform {
     val type = providers.gradleProperty("platformType")
     val version = providers.gradleProperty("intellijVersion")
@@ -80,6 +83,7 @@ dependencies {
 
     pluginVerifier()
     instrumentationTools()
+    testFramework(TestFrameworkType.Platform)
   }
 }
 
