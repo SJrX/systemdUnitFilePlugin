@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.pom.Navigatable
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.childrenOfType
-import com.intellij.refactoring.suggested.endOffset
+import com.intellij.psi.util.endOffset
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups
 
 class AddPropertyQuickFix(val section: String, val key: String) : LocalQuickFix {

@@ -7,3 +7,4 @@ out/
 buildSrc/.gradle
 buildSrc/build
 systemd-build/build
+.intellijPlatform

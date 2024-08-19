@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         distribution: [ 'temurin' ]
-        java: [ '17' ]
+        java: [ '21' ]
     name: Java ${{ matrix.Java }} Build
     steps:
       - name: Check out Git repository
