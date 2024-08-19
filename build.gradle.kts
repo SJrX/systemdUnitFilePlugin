@@ -87,13 +87,8 @@ dependencies {
   }
 }
 
-//intellij {
-//  //version "LATEST-EAP-SNAPSHOT"
-//  version.set(properties("intellijVersion"))
-//}
-
 val relativePath = "CHANGELOG"
-val filePath = Paths.get(project.buildDir.path, relativePath)
+val filePath = Paths.get(project.layout.buildDirectory.toString(), relativePath)
 
 // Check if the file exists and read its content or use a default string
 val changeLogContents: String = if (Files.exists(filePath)) {
