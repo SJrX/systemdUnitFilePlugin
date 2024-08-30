@@ -10,7 +10,7 @@ RUN useradd -m builduser -u 1000
 
 USER 1000
 
-ARG BRANCH=issue-272
+ARG BRANCH=242.x
 
 RUN git clone --depth 1 -b ${BRANCH} https://github.com/SJrX/systemdUnitFilePlugin.git && \
       cd /tmp/systemdUnitFilePlugin && \

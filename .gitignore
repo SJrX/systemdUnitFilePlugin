@@ -1,4 +1,5 @@
 out/
+/.kotlin
 /.idea
 /.gradle
 /build
