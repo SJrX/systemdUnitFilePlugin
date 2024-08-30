@@ -289,15 +289,14 @@ if (hasProperty("buildScan")) {
 }
 
 
-//tasks.register<org.jetbrains.intellij.tasks.PublishPluginTask>("publishPluginStandalone") {
-//  token.set(System.getenv("PUBLISH_TOKEN"))
-//  // pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
-//  // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
-//  // https://jetbrains.org/intellij/sdk/docs/tutorials/build_system/deployment.html#specifying-a-release-channel
-//  channels.set(listOf(System.getenv("RELEASE_CHANNEL")?:"dev"))
-//  host.set("https://plugins.jetbrains.com")
-//  toolboxEnterprise.set(false)
-//
-//  // Set the distribution file in gradle build to the archive file of the buildPlugin task
-//  distributionFile.set(project.file("build/distributions/${project.name}-${project.version}.zip"))
-//}
+tasks.register<org.jetbrains.intellij.platform.gradle.tasks.PublishPluginTask>("publishPluginStandalone") {
+  token.set(System.getenv("PUBLISH_TOKEN"))
+  // pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
+  // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
+  // https://jetbrains.org/intellij/sdk/docs/tutorials/build_system/deployment.html#specifying-a-release-channel
+  channels.set(listOf(System.getenv("RELEASE_CHANNEL")?:"dev"))
+  host.set("https://plugins.jetbrains.com")
+
+  // Set the distribution file in gradle build to the archive file of the buildPlugin task
+  archiveFile.set(project.file("build/distributions/${project.name}-${project.version}.zip"))
+}
