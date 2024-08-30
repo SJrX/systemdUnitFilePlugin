@@ -1,11 +1,15 @@
 import org.jetbrains.grammarkit.tasks.GenerateLexerTask
 import org.jetbrains.grammarkit.tasks.GenerateParserTask
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter.ofPattern
 
 fun properties(key: String) = project.findProperty(key).toString()
+
+val JavaVersion = 21
 
 fun getVersionNumber() : String {
   val major = properties("pluginMajorVersion")
@@ -25,7 +29,7 @@ fun getVersionNumber() : String {
 
 plugins {
   id("java")
-  id("org.jetbrains.intellij") version "1.13.2"
+  id("org.jetbrains.intellij.platform") version "2.0.1"
   id("org.jetbrains.grammarkit") version "2022.3.2.2"
   id("checkstyle")
   id("com.avast.gradle.docker-compose") version "0.16.11"
@@ -43,34 +47,48 @@ version = getVersionNumber()
 
 java {
   toolchain {
-    languageVersion.set(JavaLanguageVersion.of(17))
+    languageVersion.set(JavaLanguageVersion.of(JavaVersion))
   }
 }
 
 kotlin {
   jvmToolchain {
-    languageVersion.set(JavaLanguageVersion.of(17))
+    languageVersion.set(JavaLanguageVersion.of(JavaVersion))
+  }
+
+  compilerOptions {
+    jvmTarget.set(JvmTarget.JVM_21)
   }
 
 }
 
 repositories {
   mavenCentral()
+  intellijPlatform {
+    defaultRepositories()
+  }
 }
 
 dependencies {
   implementation("commons-io:commons-io:2.16.1")
   implementation("com.google.guava:guava:33.2.1-jre")
   testImplementation("junit:junit:4.13.2")
-}
+  testImplementation("org.opentest4j:opentest4j:1.3.0")
 
-intellij {
-  //version "LATEST-EAP-SNAPSHOT"
-  version.set(properties("intellijVersion"))
+  intellijPlatform {
+    val type = providers.gradleProperty("platformType")
+    val version = providers.gradleProperty("intellijVersion")
+
+    create(type, version)
+
+    pluginVerifier()
+    instrumentationTools()
+    testFramework(TestFrameworkType.Platform)
+  }
 }
 
 val relativePath = "CHANGELOG"
-val filePath = Paths.get(project.buildDir.path, relativePath)
+val filePath = Paths.get(project.layout.buildDirectory.toString(), relativePath)
 
 // Check if the file exists and read its content or use a default string
 val changeLogContents: String = if (Files.exists(filePath)) {
@@ -79,14 +97,6 @@ val changeLogContents: String = if (Files.exists(filePath)) {
   "Development Build"
 }
 
-
-tasks {
-  compileKotlin {
-    kotlinOptions {
-      jvmTarget = "17"
-    }
-  }
-}
 
 tasks {
   patchPluginXml {
@@ -279,15 +289,15 @@ if (hasProperty("buildScan")) {
 }
 
 
-tasks.register<org.jetbrains.intellij.tasks.PublishPluginTask>("publishPluginStandalone") {
-  token.set(System.getenv("PUBLISH_TOKEN"))
-  // pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
-  // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
-  // https://jetbrains.org/intellij/sdk/docs/tutorials/build_system/deployment.html#specifying-a-release-channel
-  channels.set(listOf(System.getenv("RELEASE_CHANNEL")?:"dev"))
-  host.set("https://plugins.jetbrains.com")
-  toolboxEnterprise.set(false)
-
-  // Set the distribution file in gradle build to the archive file of the buildPlugin task
-  distributionFile.set(project.file("build/distributions/${project.name}-${project.version}.zip"))
-}
+//tasks.register<org.jetbrains.intellij.tasks.PublishPluginTask>("publishPluginStandalone") {
+//  token.set(System.getenv("PUBLISH_TOKEN"))
+//  // pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
+//  // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
+//  // https://jetbrains.org/intellij/sdk/docs/tutorials/build_system/deployment.html#specifying-a-release-channel
+//  channels.set(listOf(System.getenv("RELEASE_CHANNEL")?:"dev"))
+//  host.set("https://plugins.jetbrains.com")
+//  toolboxEnterprise.set(false)
+//
+//  // Set the distribution file in gradle build to the archive file of the buildPlugin task
+//  distributionFile.set(project.file("build/distributions/${project.name}-${project.version}.zip"))
+//}

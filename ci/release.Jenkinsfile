@@ -8,7 +8,7 @@ cron_string = ""
 
 // Build nightly on a release branch
 if (BRANCH_NAME ==~ /^([0-9][0-9][0-9]\.x)$/) {
-  cron_string = "H 10 * * *"
+  cron_string = "H 9 * * *"
 }
 
 isReleaseDay = new Date().format("E", TimeZone.getTimeZone('UTC')) == "Wed"
