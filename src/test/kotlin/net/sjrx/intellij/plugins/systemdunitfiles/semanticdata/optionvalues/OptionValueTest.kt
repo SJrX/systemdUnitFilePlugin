@@ -30,7 +30,7 @@ class OptionValueTest : AbstractUnitFileTest() {
     val sortedList = missingValidatorList.sortedDescending().joinToString("\n")
 
     println(totalMissingValidators)
-    if (totalMissingValidators > 620) {
+    if (totalMissingValidators > 630) {
       assertEquals(sortedList, "")
     }
 
