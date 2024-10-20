@@ -12,6 +12,7 @@ class OptionValueTest : AbstractUnitFileTest() {
 
     val missingValidators = hashMapOf<Validator, Int>()
     var totalMissingValidators = 0
+    var totalFoundValidators = 0
     for (sectionName in SemanticDataRepository.instance.sectionNamesFromValidators) {
       for (key in SemanticDataRepository.instance.getAllowedKeywordsInSectionFromValidators(sectionName)) {
 
@@ -21,6 +22,8 @@ class OptionValueTest : AbstractUnitFileTest() {
         if (!validatorMap.containsKey(validator)) {
           missingValidators[validator] = (missingValidators[validator] ?: 0) + 1
           totalMissingValidators++
+        } else {
+          totalFoundValidators++
         }
       }
     }
@@ -29,8 +32,9 @@ class OptionValueTest : AbstractUnitFileTest() {
 
     val sortedList = missingValidatorList.sortedDescending().joinToString("\n")
 
-    println(totalMissingValidators)
-    if (totalMissingValidators > 630) {
+    println("Missing:$totalMissingValidators")
+    println("Found:$totalFoundValidators")
+    if (totalMissingValidators > 600) {
       assertEquals(sortedList, "")
     }
 
