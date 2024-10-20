@@ -15,7 +15,7 @@ class ExecDirectoriesOptionValue : OptionValueInformation {
     // loop over element in values
     for (element in values) {
       if (element.startsWith("/")) {
-        return "Invalid path: '${element}'. Takes a list of absolute paths."
+        return "Invalid path: '${element}'. Takes a list of relative paths."
       } else if (element.contains("..")) {
         return "Invalid path: '${element}'. Path cannot contain `..`."
       }
