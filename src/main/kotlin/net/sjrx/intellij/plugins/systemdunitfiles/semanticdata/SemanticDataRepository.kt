@@ -74,6 +74,7 @@ class SemanticDataRepository private constructor() {
           validatorMap.putAll(DocumentationOptionValue.validators)
           validatorMap.putAll(ModeStringOptionValue.validators)
           validatorMap.putAll(ExecOptionValue.validators)
+          validatorMap.putAll(ExecOutputOptionValue.validators)
           validatorMap.putAll(UnitDependencyOptionValue.validators)
           validatorMap.putAll(NullOptionValue.validators)
           validatorMap.putAll(MemoryLimitOptionValue.validators)
@@ -85,6 +86,7 @@ class SemanticDataRepository private constructor() {
           validatorMap.putAll(ConfigParseSecValidators.validators)
           validatorMap.putAll(AllowedCpuSetOptionValue.validators)
           validatorMap.putAll(TtySizeOptionValue.validators)
+          validatorMap.putAll(ExecDirectoriesOptionValue.validators)
 
          // Scopes are not supported since they aren't standard unit files.
 
