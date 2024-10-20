@@ -62,7 +62,7 @@ class InvalidValueInspectionForExecDirectoriesOptionsTest : AbstractUnitFileTest
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Takes a list of absolute paths", info!!.description)
+    AbstractUnitFileTest.Companion.assertStringContains("a list of relative paths", info!!.description)
     TestCase.assertEquals("/tmp/myunit", info.text)
   }
 
@@ -84,7 +84,7 @@ class InvalidValueInspectionForExecDirectoriesOptionsTest : AbstractUnitFileTest
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Takes a list of absolute paths", info!!.description)
+    AbstractUnitFileTest.Companion.assertStringContains("Takes a list of relative paths", info!!.description)
     TestCase.assertEquals("/tmp/myunit /tmp/myunit2", info.text)
   }
 
