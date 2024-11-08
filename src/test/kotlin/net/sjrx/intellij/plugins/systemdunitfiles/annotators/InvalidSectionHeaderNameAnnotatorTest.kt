@@ -380,4 +380,92 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
   }
 
 
+  fun testNSpawnSectionsInNSpawnFileHasNoWarnings() {
+    /*
+     * Fixture Setup
+     */
+    //language=unit file (systemd)
+    val file = """
+    [Exec]
+    
+    [Files]
+    
+    [Network]
+    """.trimIndent()
+
+    /*
+     * Exercise SUT
+     */
+    setupFileInEditor("file.nspawn", file)
+    val highlights = myFixture.doHighlighting()
+
+    /*
+     * Verification
+     */
+    assertSize(0, highlights)
+  }
+
+  fun testNSpawnSectionsInServiceFileHasWarnings() {
+    /*
+     * Fixture Setup
+     */
+    //language=unit file (systemd)
+    val file = """
+    [Exec]
+    
+    [Files]
+    
+    [Network]
+    """.trimIndent()
+
+    /*
+     * Exercise SUT
+     */
+    setupFileInEditor("file.service", file)
+    val highlights = myFixture.doHighlighting()
+
+    /*
+     * Verification
+     */
+    assertSize(3, highlights)
+
+    val highlightTexts = highlights.map { it.description }
+
+    assertContainsElements(highlightTexts, "The section Exec is not allowed in Service files, only the following are allowed: [Unit, Install, Service]")
+    assertContainsElements(highlightTexts, "The section Files is not allowed in Service files, only the following are allowed: [Unit, Install, Service]")
+    assertContainsElements(highlightTexts, "The section Network is not allowed in Service files, only the following are allowed: [Unit, Install, Service]")
+  }
+
+  fun testServiceSectionsInNSpawnFileHasWarnings() {
+    /*
+     * Fixture Setup
+     */
+    //language=unit file (systemd)
+    val file = """
+    [Unit]
+    
+    [Install]
+    
+    [Service]
+    """.trimIndent()
+
+    /*
+     * Exercise SUT
+     */
+    setupFileInEditor("file.nspawn", file)
+    val highlights = myFixture.doHighlighting()
+
+    /*
+     * Verification
+     */
+    assertSize(3, highlights)
+
+    val highlightTexts = highlights.map { it.description }
+
+    assertContainsElements(highlightTexts, "The section Unit is not allowed in Nspawn files, only the following are allowed: [Exec, Files, Network]")
+    assertContainsElements(highlightTexts, "The section Install is not allowed in Nspawn files, only the following are allowed: [Exec, Files, Network]")
+    assertContainsElements(highlightTexts, "The section Service is not allowed in Nspawn files, only the following are allowed: [Exec, Files, Network]")
+  }
+
 }
+

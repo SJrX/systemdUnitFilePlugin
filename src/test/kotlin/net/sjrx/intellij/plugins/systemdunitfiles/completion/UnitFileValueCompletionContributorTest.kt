@@ -126,4 +126,20 @@ class UnitFileValueCompletionContributorTest : AbstractUnitFileTest() {
     // Verification
     assertContainsElements(completions, "NetworkManager.service")
   }
+
+  fun testCompletionOfBooleanOptionReturnsValuesInNspawnFile() {
+    // Fixture Setup
+    val file = """
+           [Network]
+           Private=$COMPLETION_POSITION
+           
+           """.trimIndent()
+    myFixture.configureByText("file.nspawn", file)
+
+    // Execute SUT
+    val completions = basicCompletionResultStrings
+
+    // Verification
+    assertContainsElements(completions, "on", "off", "true", "false", "yes", "no")
+  }
 }

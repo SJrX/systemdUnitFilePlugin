@@ -1,9 +1,9 @@
-Unit File Support for systemd
------------------------------
+systemd & Unit File Support
+---------------------------
 
 ## Introduction
 
-This plugin adds support for [systemd unit files](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#) to IntelliJ. 
+This plugin adds support for [systemd & unit files](https://www.freedesktop.org/software/systemd/man/systemd.unit.html#) to IntelliJ. 
 
 ## Features
  * Syntax highlighting for unit files.
@@ -28,24 +28,27 @@ This plugin adds support for [systemd unit files](https://www.freedesktop.org/so
       
 ## Usage
 To create a file simply right-click on a folder and <kbd>New</kbd> > <kbd>File</kbd>, and enter a file name ending any of:
- * `.automount`
- * `.device`
- * `.mount`
- * `.path`
- * `.service`
- * `.slice`
- * `.socket`
- * `.swap`
- * `.target` 
- * `.timer` 
+ * [Unit Files](https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html)
+   * `.automount`
+   * `.device`
+   * `.mount`
+   * `.path`
+   * `.service`
+   * `.slice`
+   * `.socket`
+   * `.swap`
+   * `.target` 
+   * `.timer`
+ * [Nspawn Container Settings](https://www.freedesktop.org/software/systemd/man/latest/systemd.nspawn.html#)
+   * `.nspawn`
  
 The file should then be associated with this plugin and the above features should work.
- 
+
 __NOTE__: `.scope` units are not configured via unit configuration files and so we don't support them. 
 
 ## Installation
 
-This plugin is avaliable to install at the [JetBrains Plugin Repository](https://plugins.jetbrains.com/plugin/11070-unit-file-support-systemd-).
+This plugin is available to install at the [JetBrains Plugin Repository](https://plugins.jetbrains.com/plugin/11070-unit-file-support-systemd-).
 
 Contributors
 -------------

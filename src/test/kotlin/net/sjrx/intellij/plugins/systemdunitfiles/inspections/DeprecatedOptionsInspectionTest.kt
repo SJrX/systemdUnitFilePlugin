@@ -5,6 +5,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 
 class DeprecatedOptionsInspectionTest : AbstractUnitFileTest() {
   fun testNonDeprecatedOptionDoesNotThrowError() {
+    // language="unit file (systemd)"
     val file = """
            [Service]
            ExecStart=/bin/bash
@@ -23,6 +24,7 @@ class DeprecatedOptionsInspectionTest : AbstractUnitFileTest() {
   }
 
   fun testUnknownOptionDoesNotThrowError() {
+    // language="unit file (systemd)"
     val file = """
            [Service]
            SomeOption=/bin/bash
@@ -41,6 +43,7 @@ class DeprecatedOptionsInspectionTest : AbstractUnitFileTest() {
   }
 
   fun testSingleExampleThrowsWarning() {
+    // language="unit file (systemd)"
     val file = """
            [Service]
            MemoryLimit=8
@@ -64,6 +67,7 @@ class DeprecatedOptionsInspectionTest : AbstractUnitFileTest() {
   }
 
   fun testAllDocumentedDeprecatedOptionsInServiceAsOfV240ThrowsWarning() {
+    // language="unit file (systemd)"
     val file = """
            [Service]
            CPUShares=52
@@ -91,6 +95,7 @@ class DeprecatedOptionsInspectionTest : AbstractUnitFileTest() {
   }
 
   fun testAllDocumentedDeprecatedOptionsInMountAsOfV240ThrowsWarning() {
+    // language="unit file (systemd)"
     val file = """
            [Mount]
            CPUShares=52
@@ -118,6 +123,7 @@ class DeprecatedOptionsInspectionTest : AbstractUnitFileTest() {
   }
 
   fun testAllDocumentedDeprecatedOptionsInSocketAsOfV240ThrowsWarning() {
+    // language="unit file (systemd)"
     val file = """
            [Socket]
            CPUShares=52
@@ -145,6 +151,7 @@ class DeprecatedOptionsInspectionTest : AbstractUnitFileTest() {
   }
 
   fun testAllDocumentedDeprecatedOptionsInSwapAsOfV240ThrowsWarning() {
+    // language="unit file (systemd)"
     val file = """
            [Swap]
            CPUShares=52
@@ -172,6 +179,7 @@ class DeprecatedOptionsInspectionTest : AbstractUnitFileTest() {
   }
 
   fun testAllDocumentedDeprecatedOptionsInSliceAsOfV240ThrowsWarning() {
+    // language="unit file (systemd)"
     val file = """
            [Slice]
            CPUShares=52
@@ -196,5 +204,30 @@ class DeprecatedOptionsInspectionTest : AbstractUnitFileTest() {
 
     // Verification
     assertSize(9, highlights)
+  }
+
+  fun testSingleExampleInNSpawnFileThrowsWarning() {
+
+    // language="unit file (systemd)"
+    val file = """
+           [Files]
+           PrivateUsersChown=true
+           """.trimIndent()
+
+    // Exercise SUT
+    setupFileInEditor("file.nspawn", file)
+    enableInspection(DeprecatedOptionsInspection::class.java)
+
+    // Verification
+    val highlights = myFixture.doHighlighting()
+
+
+    // Verification
+    assertSize(1, highlights)
+    val info = highlights[0]
+    TestCase.assertEquals("'PrivateUsersChown' in section 'Files' has been renamed to 'PrivateUsersOwnership'", info!!.description)
+    val highlightElement = myFixture.file.findElementAt(info.getStartOffset())
+    TestCase.assertNotNull(highlightElement)
+    TestCase.assertEquals("PrivateUsersChown", highlightElement!!.text)
   }
 }

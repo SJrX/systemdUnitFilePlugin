@@ -121,6 +121,19 @@ class UnitFileSectionCompletionContributorTest : AbstractUnitFileTest() {
     assertContainsElements(completions, "Install", "Unit", "Timer")
   }
 
+  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInNSpawn() {
+    // Fixture Setup
+    val file = """
+           [Files]
+           Whatevs=Foo
+           
+           [$COMPLETION_POSITION
+           """.trimIndent()
+    myFixture.configureByText("file.nspawn", file)
+    val completions = basicCompletionResultStrings
+    assertContainsElements(completions, "Exec", "Files", "Network")
+  }
+
   fun testCompletionOfNewSectionInUnknownFileTypeIsEmpty() {
     // Fixture Setup
     val file = """

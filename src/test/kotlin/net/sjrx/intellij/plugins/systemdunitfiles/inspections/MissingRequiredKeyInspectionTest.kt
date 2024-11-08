@@ -29,7 +29,7 @@ class MissingRequiredKeyInspectionTest : AbstractUnitFileTest() {
     assertSize(2, highlights)
   }
 
-  fun testServiceHasNoWarningsARequiredOptionInUnitSectionPresent() {
+  fun testServiceHasNoWarningsEnoughRequiredOptionsInUnitSectionArePresent() {
 
     // Fixture Setup
     // language="unit file (systemd)"
@@ -37,7 +37,7 @@ class MissingRequiredKeyInspectionTest : AbstractUnitFileTest() {
       # SPDX-License-Identifier: LGPL-2.1-or-later
       [Unit]
       Description=Daughter Service
-      SuccessAction=foo
+      SuccessAction=reboot
 
       [Service]
       Type=oneshot
@@ -358,4 +358,29 @@ class MissingRequiredKeyInspectionTest : AbstractUnitFileTest() {
     assertSize(0, highlights)
 
   }
+
+  fun testNSpawnFileHasNoWarningsWhenEmpty() {
+
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+      # SPDX-License-Identifier: LGPL-2.1-or-later
+      [Files]
+      
+
+      [Network]
+
+      [Exec]
+    """.trimIndent()
+
+    // Exercise SUT
+    setupFileInEditor("file.nspawn", file)
+    enableInspection(MissingRequiredKeyInspection::class.java)
+
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
 }

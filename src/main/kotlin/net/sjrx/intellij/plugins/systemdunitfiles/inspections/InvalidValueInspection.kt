@@ -10,6 +10,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileVisitor
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.fileClass
 
 class InvalidValueInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -24,7 +25,8 @@ class InvalidValueInspection : LocalInspectionTool() {
       val section = PsiTreeUtil.getParentOfType(property, UnitFileSectionGroups::class.java) ?: return
       property.valueText ?: return
       val key = property.key
-      val ovi = SemanticDataRepository.instance.getOptionValidator(section.sectionName, key)
+      val fileClass = section.containingFile.fileClass()
+      val ovi = SemanticDataRepository.instance.getOptionValidator(fileClass, section.sectionName, key)
       ovi.generateProblemDescriptors(property, holder)
     }
   }

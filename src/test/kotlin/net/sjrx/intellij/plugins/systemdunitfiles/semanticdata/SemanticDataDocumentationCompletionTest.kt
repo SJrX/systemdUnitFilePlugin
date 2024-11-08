@@ -7,19 +7,26 @@ class SemanticDataDocumentationCompletionTest : AbstractUnitFileTest() {
   fun testAllOptions() {
     val sdr = SemanticDataRepository.instance
     val doc: MutableSet<String> = TreeSet()
-    for (sectionName in sdr.sectionNamesFromDocumentation) {
-      for (keyName in sdr.getDocumentedKeywordsInSection(sectionName)) {
-        doc.add("$sectionName.$keyName")
+
+    for (fileClass in FileClass.entries) {
+      for (sectionName in sdr.getSectionNamesForFile(fileClass.fileClass)) {
+        for (keyName in sdr.getDocumentedKeywordsInSection(fileClass, sectionName)) {
+          doc.add("${fileClass.fileClass}.$sectionName.$keyName")
+        }
       }
     }
     val code: MutableSet<String> = TreeSet()
-    for (sectionName in sdr.sectionNamesFromValidators) {
-      for (keyName in sdr.getAllowedKeywordsInSectionFromValidators(sectionName)) {
-        code.add("$sectionName.$keyName")
+
+    for (fileClass in FileClass.entries) {
+      for (sectionName in sdr.getSectionNamesForFile(fileClass.fileClass)) {
+        for (keyName in sdr.getAllowedKeywordsInSectionFromValidators(fileClass, sectionName)) {
+          code.add("${fileClass.fileClass}.$sectionName.$keyName")
+        }
       }
     }
-    println(doc.size)
-    println(code.size)
+
+    println(doc.size) //0
+    println(code.size) //1131
     val codeButNotDoc: MutableSet<String> = TreeSet(code)
     val docButNotCode: MutableSet<String> = TreeSet(doc)
     codeButNotDoc.removeAll(doc)

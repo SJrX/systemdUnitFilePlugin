@@ -1,8 +1,6 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.documentation
 
 import com.intellij.lang.documentation.DocumentationProviderEx
-import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.FakePsiElement
 import junit.framework.TestCase
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 
@@ -215,8 +213,43 @@ class UnitFileDocumentationProviderTest : AbstractUnitFileTest() {
     val psiFile = setupFileInEditor("file.service", file)
 
     // Exercise SUT
-    val unknownSectionHeader = getAllSectionInFile(psiFile)[0]
-    val doc = sut.generateDoc(unknownSectionHeader, unknownSectionHeader)
+    val sectionHeader = getAllSectionInFile(psiFile)[0]
+    val doc = sut.generateDoc(sectionHeader, sectionHeader)
+
+    // Verification
+    TestCase.assertNotNull(doc)
+    TestCase.assertTrue(doc!!.length > 1)
+  }
+
+  fun testGenerateDocForKnownSectionReturnsSomeValidTextInNSpawnFile() {
+    // Fixture Setup
+    val file = """
+           [Network]
+           Private=true
+           """.trimIndent()
+    val psiFile = setupFileInEditor("file.nspawn", file)
+
+    // Exercise SUT
+    val section = getAllSectionInFile(psiFile)[0]
+    val doc = sut.generateDoc(section, section)
+
+    // Verification
+    TestCase.assertNotNull(doc)
+    TestCase.assertTrue(doc!!.length > 1)
+  }
+
+  fun testGenerateDocKnownKeySeparatorReturnsSomeValidTextInNSpawnFile() {
+    // Fixture Setup
+    val file = """
+           [Network]
+           Private=true
+           """.trimIndent()
+    val psiFile = setupFileInEditor("file.nspawn", file)
+
+    // Exercise SUT
+
+    val documentationKey = getAllKeysInFile(psiFile)[0]
+    val doc = sut.generateDoc(documentationKey, documentationKey)
 
     // Verification
     TestCase.assertNotNull(doc)

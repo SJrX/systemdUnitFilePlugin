@@ -6,28 +6,32 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.*
 class SemanticDataRepositoryTest : AbstractUnitFileTest() {
   fun testInteresting() {
     val sdr = SemanticDataRepository.instance
-    assertInstanceOf(sdr.getOptionValidator("Socket", "SendSIGKILL"), BooleanOptionValue::class.java)
-    assertInstanceOf(sdr.getOptionValidator("Unit", "Documentation"), DocumentationOptionValue::class.java)
-    assertInstanceOf(sdr.getOptionValidator("Service", "KillMode"), KillModeOptionValue::class.java)
-    assertInstanceOf(sdr.getOptionValidator("Mount", "KillMode"), KillModeOptionValue::class.java)
-    assertInstanceOf(sdr.getOptionValidator("Socket", "DirectoryMode"), ModeStringOptionValue::class.java)
-    assertInstanceOf(sdr.getOptionValidator("Unit", "XXXX"), NullOptionValue::class.java)
-    assertInstanceOf(sdr.getOptionValidator("XXXX", "Yes"), NullOptionValue::class.java)
-    assertInstanceOf(sdr.getOptionValidator("Service", "Restart"), RestartOptionValue::class.java)
-    assertInstanceOf(sdr.getOptionValidator("Service", "Type"), ServiceTypeOptionValue::class.java)
+    assertInstanceOf(sdr.getOptionValidator(FileClass.UNIT_FILE,"Socket", "SendSIGKILL"), BooleanOptionValue::class.java)
+    assertInstanceOf(sdr.getOptionValidator(FileClass.UNIT_FILE,"Unit", "Documentation"), DocumentationOptionValue::class.java)
+    assertInstanceOf(sdr.getOptionValidator(FileClass.UNIT_FILE, "Service", "KillMode"), KillModeOptionValue::class.java)
+    assertInstanceOf(sdr.getOptionValidator(FileClass.UNIT_FILE,"Mount", "KillMode"), KillModeOptionValue::class.java)
+    assertInstanceOf(sdr.getOptionValidator(FileClass.UNIT_FILE, "Socket", "DirectoryMode"), ModeStringOptionValue::class.java)
+    assertInstanceOf(sdr.getOptionValidator(FileClass.UNIT_FILE , "Unit", "XXXX"), NullOptionValue::class.java)
+    assertInstanceOf(sdr.getOptionValidator(FileClass.UNIT_FILE, "XXXX", "Yes"), NullOptionValue::class.java)
+    assertInstanceOf(sdr.getOptionValidator(FileClass.UNIT_FILE, "Service", "Restart"), RestartOptionValue::class.java)
+    assertInstanceOf(sdr.getOptionValidator(FileClass.UNIT_FILE, "Service", "Type"), ServiceTypeOptionValue::class.java)
   }
 
   fun testDeclaredUnderKeywordDiffers() {
     val sdr = SemanticDataRepository.instance
-    for (section in sdr.sectionNamesFromDocumentation) {
-      val data = sdr.getKeyValuePairsForSectionFromDocumentation(section)
-      for ((key, value) in data) {
-        val declaredUnderKeyword = value.declaredUnderKeyword
-        if (declaredUnderKeyword != null && declaredUnderKeyword != key) {
-          println("Mismatch: $section.$key: $declaredUnderKeyword")
+
+    for (fileClass in FileClass.entries) {
+      for (section in sdr.getSectionNamesForFile(fileClass.name)) {
+        val data = sdr.getKeyValuePairsForSectionFromDocumentation(fileClass, section)
+        for ((key, value) in data) {
+          val declaredUnderKeyword = value.declaredUnderKeyword
+          if (declaredUnderKeyword != null && declaredUnderKeyword != key) {
+            println("Mismatch: $section.$key: $declaredUnderKeyword")
+          }
         }
       }
     }
+
   }
 
   fun testAllRequiredOptionsExists () {
@@ -58,7 +62,7 @@ class SemanticDataRepositoryTest : AbstractUnitFileTest() {
 
       for (key in keys) {
         val sectionAndKey = key.split('.')
-        val validKeys = sdr.getAllowedKeywordsInSectionFromValidators(sectionAndKey[0])
+        val validKeys = sdr.getAllowedKeywordsInSectionFromValidators(FileClass.UNIT_FILE, sectionAndKey[0])
 
         assertContainsElements(validKeys, sectionAndKey[1])
       }

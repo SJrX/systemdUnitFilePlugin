@@ -11,6 +11,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileVisitor
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.fileClass
 
 class DeprecatedOptionsInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -26,8 +27,10 @@ class DeprecatedOptionsInspection : LocalInspectionTool() {
       val sdr = SemanticDataRepository.instance
       val sectionName = section.sectionName
       val key = property.key
-      if (sdr.isDeprecated(sectionName, key)) {
-        val text = sdr.getDeprecationReason(sectionName, key, false)
+      val fileClass = section.containingFile.fileClass()
+
+      if (sdr.isDeprecated(fileClass, sectionName, key)) {
+        val text = sdr.getDeprecationReason(fileClass, sectionName, key, false)
         holder.registerProblem(property.keyNode.psi, text!!, ProblemHighlightType.LIKE_DEPRECATED)
       }
     }
