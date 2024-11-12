@@ -88,7 +88,7 @@ dependencies {
 }
 
 val relativePath = "CHANGELOG"
-val filePath = Paths.get(project.layout.buildDirectory.toString(), relativePath)
+val filePath = Paths.get(project.layout.buildDirectory.get().asFile.path, relativePath)
 
 // Check if the file exists and read its content or use a default string
 val changeLogContents: String = if (Files.exists(filePath)) {
