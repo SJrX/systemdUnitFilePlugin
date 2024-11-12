@@ -1,0 +1,19 @@
+package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar
+
+class EOF : Combinator {
+  override fun SyntacticMatch(value: String, offset: Int): MatchResult {
+    return if (offset == value.length) {
+      MatchResult(emptyList(), offset, emptyList(), value.length)
+    } else {
+      NoMatch
+    }
+  }
+
+  override fun SemanticMatch(value: String, offset: Int): MatchResult {
+    return if (offset == value.length) {
+      MatchResult(emptyList(), offset, emptyList(), value.length)
+    } else {
+      NoMatch
+    }
+  }
+}

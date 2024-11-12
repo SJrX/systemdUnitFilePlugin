@@ -1,6 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles
 
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.psi.PsiElement
@@ -8,8 +9,11 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.testFramework.utils.module.assertContains
 import junit.framework.TestCase
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder
+import org.hamcrest.CoreMatchers.hasItem
+import org.hamcrest.MatcherAssert.assertThat
 import java.util.*
 import java.util.stream.Collectors
 
@@ -60,6 +64,18 @@ abstract class AbstractUnitFileTest : BasePlatformTestCase() {
     @JvmStatic
     protected fun assertStringContains(subject: String, value: String) {
       TestCase.assertTrue("Expected that $value contains $subject", value.contains(subject))
+    }
+
+    @JvmStatic
+    protected fun assertContainsQuickfix(info: HighlightInfo, quickfixName: String) {
+
+      var found = false
+      val quickFixes = info.quickFixActionRanges.map {
+        it ->
+        it.first.action.text
+      }
+
+      assertThat(quickFixes, hasItem(quickfixName))
     }
   }
 }

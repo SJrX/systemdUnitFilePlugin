@@ -88,6 +88,11 @@ class SemanticDataRepository private constructor() {
           validatorMap.putAll(TtySizeOptionValue.validators)
           validatorMap.putAll(ExecDirectoriesOptionValue.validators)
 
+          validatorMap.putAll(IOLimitOptionValue.validators)
+          validatorMap.putAll(ImagePolicyOptionValue.validators)
+          validatorMap.putAll(CPUWeightOptionValue.validators)
+          validatorMap.putAll(CPUSharesOptionValue.validators)
+
          // Scopes are not supported since they aren't standard unit files.
 
           sectionNameToKeyValuesFromDoc.remove(SCOPE_KEYWORD)
