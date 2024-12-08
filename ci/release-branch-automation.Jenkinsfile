@@ -89,7 +89,7 @@ pipeline {
 
                   echo \$BRANCH_NAME | sed -E "s/([0-9][0-9])([0-9]).x/intellijVersion=20\\1.\\2/" >> systemdUnitFilePlugin/gradle.properties
                   echo \$BRANCH_NAME | sed -E "s/([0-9][0-9])([0-9]).x/sinceVersion=\\1\\2.0/" >> systemdUnitFilePlugin/gradle.properties
-                  echo \$BRANCH_NAME | sed -E "s/([0-9][0-9])([0-9]).x/untilVersion=270.0/" >> systemdUnitFilePlugin/gradle.properties
+                  echo \$BRANCH_NAME | sed -E "s/([0-9][0-9])([0-9]).x/untilVersion=241.*/" >> systemdUnitFilePlugin/gradle.properties
                   echo \$BRANCH_NAME | sed -E "s/([0-9][0-9])([0-9]).x/pluginMajorVersion=\\1\\2/" >> systemdUnitFilePlugin/gradle.properties
 
                   git -C systemdUnitFilePlugin add gradle.properties
