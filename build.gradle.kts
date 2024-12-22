@@ -32,7 +32,7 @@ plugins {
   id("org.jetbrains.intellij.platform") version "2.2.1"
   id("org.jetbrains.grammarkit") version "2022.3.2.2"
   id("checkstyle")
-  id("com.avast.gradle.docker-compose") version "0.17.11"
+  id("com.avast.gradle.docker-compose") version "0.17.12"
   id("org.jetbrains.kotlin.jvm") version "2.1.0"
   id("idea")
 }
