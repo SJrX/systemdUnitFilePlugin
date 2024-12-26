@@ -14,6 +14,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeH
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileProperty
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.fileClass
+
 import java.util.stream.Collectors
 
 /**
@@ -35,9 +37,12 @@ class UnitFileKeyCompletionContributor : CompletionContributor() {
                val sectionName = section.sectionName
                val definedKeys = section.propertyList.stream().map { obj: UnitFileProperty -> obj.key }.collect(Collectors.toSet())
                val sdr = SemanticDataRepository.instance
-               for (keyword in sdr.getDocumentedKeywordsInSection(sectionName)) {
+
+               val fileClass = section.containingFile.fileClass()
+
+               for (keyword in sdr.getDocumentedKeywordsInSection(fileClass, sectionName)) {
                  if (definedKeys.contains(keyword)) continue
-                 val deprecated = sdr.isDeprecated(sectionName, keyword)
+                 val deprecated = sdr.isDeprecated(fileClass, sectionName, keyword)
                  val builder = LookupElementBuilder
                    .create(keyword)
                    .withInsertHandler(KeyInsertHandler())

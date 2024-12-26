@@ -1,419 +1,430 @@
 {
-  "Mount": {
-    "BlockIOAccounting": {
-      "reason": "moved",
-      "replacedWithKey": "IOAccounting",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="
-    },
-    "BlockIODeviceWeight": {
-      "reason": "moved",
-      "replacedWithKey": "IODeviceWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIODeviceWeight=device%20weight"
-    },
-    "BlockIOReadBandwidth": {
-      "reason": "moved",
-      "replacedWithKey": "IOReadBandwidthMax",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
-    },
-    "BlockIOWeight": {
-      "reason": "moved",
-      "replacedWithKey": "IOWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
-    },
-    "BlockIOWriteBandwidth": {
-      "reason": "moved",
-      "replacedWithKey": "IOWriteBandwidthMax",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
-    },
-    "CPUShares": {
-      "reason": "moved",
-      "replacedWithKey": "CPUWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
-    },
-    "DefaultMemoryLow": {
-      "reason": "manual",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLow=bytes",
-      "description": "<p><var>DefaultMemoryLow=</var> controls the 'memory.low' value of children. This setting has the same semantics as <var>MemoryLow=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
-    },
-    "DefaultMemoryMin": {
-      "reason": "manual",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryMin=bytes",
-      "description": "<p><var>DefaultMemoryMin=</var> controls the 'memory.min' value of children. This setting has the same semantics as <var>MemoryMin=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
-    },
-    "InaccessibleDirectories": {
-      "reason": "moved",
-      "replacedWithKey": "InaccessiblePath",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
-    },
-    "MemoryLimit": {
-      "reason": "moved",
-      "replacedWithKey": "MemoryMax",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLimit=bytes"
-    },
-    "ReadOnlyDirectories": {
-      "reason": "moved",
-      "replacedWithKey": "ReadOnlyPaths",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
-    },
-    "ReadWriteDirectories": {
-      "reason": "moved",
-      "replacedWithKey": "ReadWritePaths",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
-    },
-    "StartupBlockIOWeight": {
-      "reason": "moved",
-      "replacedWithKey": "StartupIOWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
-    },
-    "StartupCPUShares": {
-      "reason": "moved",
-      "replacedWithKey": "StartupCPUWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+  "nspawn": {
+    "Files": {
+      "PrivateUsersChown":{
+        "reason": "moved",
+        "replacedWithKey": "PrivateUsersOwnership",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/latest/systemd.nspawn.html#PrivateUsersOwnership="
+      }
     }
   },
-  "Service": {
-    "BlockIOAccounting": {
-      "reason": "moved",
-      "replacedWithKey": "IOAccounting",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="
+  "unit": {
+    "Mount": {
+      "BlockIOAccounting": {
+        "reason": "moved",
+        "replacedWithKey": "IOAccounting",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="
+      },
+      "BlockIODeviceWeight": {
+        "reason": "moved",
+        "replacedWithKey": "IODeviceWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIODeviceWeight=device%20weight"
+      },
+      "BlockIOReadBandwidth": {
+        "reason": "moved",
+        "replacedWithKey": "IOReadBandwidthMax",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+      },
+      "BlockIOWeight": {
+        "reason": "moved",
+        "replacedWithKey": "IOWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+      },
+      "BlockIOWriteBandwidth": {
+        "reason": "moved",
+        "replacedWithKey": "IOWriteBandwidthMax",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+      },
+      "CPUShares": {
+        "reason": "moved",
+        "replacedWithKey": "CPUWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+      },
+      "DefaultMemoryLow": {
+        "reason": "manual",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLow=bytes",
+        "description": "<p><var>DefaultMemoryLow=</var> controls the 'memory.low' value of children. This setting has the same semantics as <var>MemoryLow=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+      },
+      "DefaultMemoryMin": {
+        "reason": "manual",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryMin=bytes",
+        "description": "<p><var>DefaultMemoryMin=</var> controls the 'memory.min' value of children. This setting has the same semantics as <var>MemoryMin=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+      },
+      "InaccessibleDirectories": {
+        "reason": "moved",
+        "replacedWithKey": "InaccessiblePath",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+      },
+      "MemoryLimit": {
+        "reason": "moved",
+        "replacedWithKey": "MemoryMax",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLimit=bytes"
+      },
+      "ReadOnlyDirectories": {
+        "reason": "moved",
+        "replacedWithKey": "ReadOnlyPaths",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+      },
+      "ReadWriteDirectories": {
+        "reason": "moved",
+        "replacedWithKey": "ReadWritePaths",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+      },
+      "StartupBlockIOWeight": {
+        "reason": "moved",
+        "replacedWithKey": "StartupIOWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+      },
+      "StartupCPUShares": {
+        "reason": "moved",
+        "replacedWithKey": "StartupCPUWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+      }
     },
-    "BlockIODeviceWeight": {
-      "reason": "moved",
-      "replacedWithKey": "IODeviceWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIODeviceWeight=device%20weight"
+    "Service": {
+      "BlockIOAccounting": {
+        "reason": "moved",
+        "replacedWithKey": "IOAccounting",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="
+      },
+      "BlockIODeviceWeight": {
+        "reason": "moved",
+        "replacedWithKey": "IODeviceWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIODeviceWeight=device%20weight"
+      },
+      "BlockIOReadBandwidth": {
+        "reason": "moved",
+        "replacedWithKey": "IOReadBandwidthMax",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+      },
+      "BlockIOWeight": {
+        "reason": "moved",
+        "replacedWithKey": "IOWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+      },
+      "BlockIOWriteBandwidth": {
+        "reason": "moved",
+        "replacedWithKey": "IOWriteBandwidthMax",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+      },
+      "CPUShares": {
+        "reason": "moved",
+        "replacedWithKey": "CPUWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+      },
+      "DefaultMemoryLow": {
+        "reason": "manual",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLow=bytes",
+        "description": "<p><var>DefaultMemoryLow=</var> controls the 'memory.low' value of children. This setting has the same semantics as <var>MemoryLow=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+      },
+      "DefaultMemoryMin": {
+        "reason": "manual",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryMin=bytes",
+        "description": "<p><var>DefaultMemoryMin=</var> controls the 'memory.min' value of children. This setting has the same semantics as <var>MemoryMin=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+      },
+      "FailureAction": {
+        "reason": "moved",
+        "replacedWithSection": "Unit",
+        "documentationLink": "https://github.com/systemd/systemd/commit/53c35a766f"
+      },
+      "InaccessibleDirectories": {
+        "reason": "moved",
+        "replacedWithKey": "InaccessiblePath",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+      },
+      "MemoryLimit": {
+        "reason": "moved",
+        "replacedWithKey": "MemoryMax",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLimit=bytes"
+      },
+      "PermissionsStartOnly": {
+        "reason": "unsupported",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L561"
+      },
+      "ReadOnlyDirectories": {
+        "reason": "moved",
+        "replacedWithKey": "ReadOnlyPaths",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+      },
+      "ReadWriteDirectories": {
+        "reason": "moved",
+        "replacedWithKey": "ReadWritePaths",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+      },
+      "RebootArgument": {
+        "reason": "moved",
+        "replacedWithKey": "RebootArgument",
+        "replacedWithSection": "Unit",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
+      },
+      "StartLimitAction": {
+        "reason": "moved",
+        "replacedWithSection": "Unit",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
+      },
+      "StartLimitInterval": {
+        "reason": "moved",
+        "replacedWithSection": "Unit",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
+      },
+      "StartLimitBurst": {
+        "reason": "moved",
+        "replacedWithSection": "Unit",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
+      },
+      "StartupBlockIOWeight": {
+        "reason": "moved",
+        "replacedWithKey": "StartupIOWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+      },
+      "StartupCPUShares": {
+        "reason": "moved",
+        "replacedWithKey": "StartupCPUWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+      }
     },
-    "BlockIOReadBandwidth": {
-      "reason": "moved",
-      "replacedWithKey": "IOReadBandwidthMax",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+    "Slice": {
+      "BlockIOAccounting": {
+        "reason": "moved",
+        "replacedWithKey": "IOAccounting",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="
+      },
+      "BlockIODeviceWeight": {
+        "reason": "moved",
+        "replacedWithKey": "IODeviceWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIODeviceWeight=device%20weight"
+      },
+      "BlockIOReadBandwidth": {
+        "reason": "moved",
+        "replacedWithKey": "IOReadBandwidthMax",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+      },
+      "BlockIOWeight": {
+        "reason": "moved",
+        "replacedWithKey": "IOWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+      },
+      "BlockIOWriteBandwidth": {
+        "reason": "moved",
+        "replacedWithKey": "IOWriteBandwidthMax",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+      },
+      "CPUShares": {
+        "reason": "moved",
+        "replacedWithKey": "CPUWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+      },
+      "DefaultMemoryLow": {
+        "reason": "manual",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLow=bytes",
+        "description": "<p><var>DefaultMemoryLow=</var> controls the 'memory.low' value of children. This setting has the same semantics as <var>MemoryLow=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+      },
+      "DefaultMemoryMin": {
+        "reason": "manual",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryMin=bytes",
+        "description": "<p><var>DefaultMemoryMin=</var> controls the 'memory.min' value of children. This setting has the same semantics as <var>MemoryMin=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+      },
+      "MemoryLimit": {
+        "reason": "moved",
+        "replacedWithKey": "MemoryMax",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLimit=bytes"
+      },
+      "StartupBlockIOWeight": {
+        "reason": "moved",
+        "replacedWithKey": "StartupIOWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+      },
+      "StartupCPUShares": {
+        "reason": "moved",
+        "replacedWithKey": "StartupCPUWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+      }
     },
-    "BlockIOWeight": {
-      "reason": "moved",
-      "replacedWithKey": "IOWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+    "Socket": {
+      "BlockIOAccounting": {
+        "reason": "moved",
+        "replacedWithKey": "IOAccounting",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="
+      },
+      "BlockIODeviceWeight": {
+        "reason": "moved",
+        "replacedWithKey": "IODeviceWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIODeviceWeight=device%20weight"
+      },
+      "BlockIOReadBandwidth": {
+        "reason": "moved",
+        "replacedWithKey": "IOReadBandwidthMax",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+      },
+      "BlockIOWeight": {
+        "reason": "moved",
+        "replacedWithKey": "IOWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+      },
+      "BlockIOWriteBandwidth": {
+        "reason": "moved",
+        "replacedWithKey": "IOWriteBandwidthMax",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+      },
+      "CPUShares": {
+        "reason": "moved",
+        "replacedWithKey": "CPUWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+      },
+      "DefaultMemoryLow": {
+        "reason": "manual",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLow=bytes",
+        "description": "<p><var>DefaultMemoryLow=</var> controls the 'memory.low' value of children. This setting has the same semantics as <var>MemoryLow=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+      },
+      "DefaultMemoryMin": {
+        "reason": "manual",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryMin=bytes",
+        "description": "<p><var>DefaultMemoryMin=</var> controls the 'memory.min' value of children. This setting has the same semantics as <var>MemoryMin=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+      },
+      "InaccessibleDirectories": {
+        "reason": "moved",
+        "replacedWithKey": "InaccessiblePath",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+      },
+      "MemoryLimit": {
+        "reason": "moved",
+        "replacedWithKey": "MemoryMax",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLimit=bytes"
+      },
+      "ReadOnlyDirectories": {
+        "reason": "moved",
+        "replacedWithKey": "ReadOnlyPaths",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+      },
+      "ReadWriteDirectories": {
+        "reason": "moved",
+        "replacedWithKey": "ReadWritePaths",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+      },
+      "StartupBlockIOWeight": {
+        "reason": "moved",
+        "replacedWithKey": "StartupIOWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+      },
+      "StartupCPUShares": {
+        "reason": "moved",
+        "replacedWithKey": "StartupCPUWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+      }
     },
-    "BlockIOWriteBandwidth": {
-      "reason": "moved",
-      "replacedWithKey": "IOWriteBandwidthMax",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+    "Swap": {
+      "BlockIOAccounting": {
+        "reason": "moved",
+        "replacedWithKey": "IOAccounting",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="
+      },
+      "BlockIODeviceWeight": {
+        "reason": "moved",
+        "replacedWithKey": "IODeviceWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIODeviceWeight=device%20weight"
+      },
+      "BlockIOReadBandwidth": {
+        "reason": "moved",
+        "replacedWithKey": "IOReadBandwidthMax",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+      },
+      "BlockIOWeight": {
+        "reason": "moved",
+        "replacedWithKey": "IOWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+      },
+      "BlockIOWriteBandwidth": {
+        "reason": "moved",
+        "replacedWithKey": "IOWriteBandwidthMax",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
+      },
+      "CPUShares": {
+        "reason": "moved",
+        "replacedWithKey": "CPUWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+      },
+      "DefaultMemoryLow": {
+        "reason": "manual",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLow=bytes",
+        "description": "<p><var>DefaultMemoryLow=</var> controls the 'memory.low' value of children. This setting has the same semantics as <var>MemoryLow=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+      },
+      "DefaultMemoryMin": {
+        "reason": "manual",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryMin=bytes",
+        "description": "<p><var>DefaultMemoryMin=</var> controls the 'memory.min' value of children. This setting has the same semantics as <var>MemoryMin=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
+      },
+      "InaccessibleDirectories": {
+        "reason": "moved",
+        "replacedWithKey": "InaccessiblePath",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+      },
+      "MemoryLimit": {
+        "reason": "moved",
+        "replacedWithKey": "MemoryMax",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLimit=bytes"
+      },
+      "ReadOnlyDirectories": {
+        "reason": "moved",
+        "replacedWithKey": "ReadOnlyPaths",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+      },
+      "ReadWriteDirectories": {
+        "reason": "moved",
+        "replacedWithKey": "ReadWritePaths",
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
+      },
+      "StartupBlockIOWeight": {
+        "reason": "moved",
+        "replacedWithKey": "StartupIOWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
+      },
+      "StartupCPUShares": {
+        "reason": "moved",
+        "replacedWithKey": "StartupCPUWeight",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
+      }
     },
-    "CPUShares": {
-      "reason": "moved",
-      "replacedWithKey": "CPUWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
-    },
-    "DefaultMemoryLow": {
-      "reason": "manual",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLow=bytes",
-      "description": "<p><var>DefaultMemoryLow=</var> controls the 'memory.low' value of children. This setting has the same semantics as <var>MemoryLow=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
-    },
-    "DefaultMemoryMin": {
-      "reason": "manual",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryMin=bytes",
-      "description": "<p><var>DefaultMemoryMin=</var> controls the 'memory.min' value of children. This setting has the same semantics as <var>MemoryMin=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
-    },
-    "FailureAction": {
-      "reason": "moved",
-      "replacedWithSection": "Unit",
-      "documentationLink": "https://github.com/systemd/systemd/commit/53c35a766f"
-    },
-    "InaccessibleDirectories": {
-      "reason": "moved",
-      "replacedWithKey": "InaccessiblePath",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
-    },
-    "MemoryLimit": {
-      "reason": "moved",
-      "replacedWithKey": "MemoryMax",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLimit=bytes"
-    },
-    "PermissionsStartOnly": {
-      "reason": "unsupported",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L561"
-    },
-    "ReadOnlyDirectories": {
-      "reason": "moved",
-      "replacedWithKey": "ReadOnlyPaths",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
-    },
-    "ReadWriteDirectories": {
-      "reason": "moved",
-      "replacedWithKey": "ReadWritePaths",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
-    },
-    "RebootArgument": {
-      "reason": "moved",
-      "replacedWithKey": "RebootArgument",
-      "replacedWithSection": "Unit",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
-    },
-    "StartLimitAction": {
-      "reason": "moved",
-      "replacedWithSection": "Unit",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
-    },
-    "StartLimitInterval": {
-      "reason": "moved",
-      "replacedWithSection": "Unit",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
-    },
-    "StartLimitBurst": {
-      "reason": "moved",
-      "replacedWithSection": "Unit",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3443"
-    },
-    "StartupBlockIOWeight": {
-      "reason": "moved",
-      "replacedWithKey": "StartupIOWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
-    },
-    "StartupCPUShares": {
-      "reason": "moved",
-      "replacedWithKey": "StartupCPUWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
-    }
-  },
-  "Slice": {
-    "BlockIOAccounting": {
-      "reason": "moved",
-      "replacedWithKey": "IOAccounting",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="
-    },
-    "BlockIODeviceWeight": {
-      "reason": "moved",
-      "replacedWithKey": "IODeviceWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIODeviceWeight=device%20weight"
-    },
-    "BlockIOReadBandwidth": {
-      "reason": "moved",
-      "replacedWithKey": "IOReadBandwidthMax",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
-    },
-    "BlockIOWeight": {
-      "reason": "moved",
-      "replacedWithKey": "IOWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
-    },
-    "BlockIOWriteBandwidth": {
-      "reason": "moved",
-      "replacedWithKey": "IOWriteBandwidthMax",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
-    },
-    "CPUShares": {
-      "reason": "moved",
-      "replacedWithKey": "CPUWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
-    },
-    "DefaultMemoryLow": {
-      "reason": "manual",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLow=bytes",
-      "description": "<p><var>DefaultMemoryLow=</var> controls the 'memory.low' value of children. This setting has the same semantics as <var>MemoryLow=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
-    },
-    "DefaultMemoryMin": {
-      "reason": "manual",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryMin=bytes",
-      "description": "<p><var>DefaultMemoryMin=</var> controls the 'memory.min' value of children. This setting has the same semantics as <var>MemoryMin=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
-    },
-    "MemoryLimit": {
-      "reason": "moved",
-      "replacedWithKey": "MemoryMax",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLimit=bytes"
-    },
-    "StartupBlockIOWeight": {
-      "reason": "moved",
-      "replacedWithKey": "StartupIOWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
-    },
-    "StartupCPUShares": {
-      "reason": "moved",
-      "replacedWithKey": "StartupCPUWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
-    }
-  },
-  "Socket": {
-    "BlockIOAccounting": {
-      "reason": "moved",
-      "replacedWithKey": "IOAccounting",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="
-    },
-    "BlockIODeviceWeight": {
-      "reason": "moved",
-      "replacedWithKey": "IODeviceWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIODeviceWeight=device%20weight"
-    },
-    "BlockIOReadBandwidth": {
-      "reason": "moved",
-      "replacedWithKey": "IOReadBandwidthMax",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
-    },
-    "BlockIOWeight": {
-      "reason": "moved",
-      "replacedWithKey": "IOWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
-    },
-    "BlockIOWriteBandwidth": {
-      "reason": "moved",
-      "replacedWithKey": "IOWriteBandwidthMax",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
-    },
-    "CPUShares": {
-      "reason": "moved",
-      "replacedWithKey": "CPUWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
-    },
-    "DefaultMemoryLow": {
-      "reason": "manual",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLow=bytes",
-      "description": "<p><var>DefaultMemoryLow=</var> controls the 'memory.low' value of children. This setting has the same semantics as <var>MemoryLow=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
-    },
-    "DefaultMemoryMin": {
-      "reason": "manual",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryMin=bytes",
-      "description": "<p><var>DefaultMemoryMin=</var> controls the 'memory.min' value of children. This setting has the same semantics as <var>MemoryMin=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
-    },
-    "InaccessibleDirectories": {
-      "reason": "moved",
-      "replacedWithKey": "InaccessiblePath",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
-    },
-    "MemoryLimit": {
-      "reason": "moved",
-      "replacedWithKey": "MemoryMax",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLimit=bytes"
-    },
-    "ReadOnlyDirectories": {
-      "reason": "moved",
-      "replacedWithKey": "ReadOnlyPaths",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
-    },
-    "ReadWriteDirectories": {
-      "reason": "moved",
-      "replacedWithKey": "ReadWritePaths",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
-    },
-    "StartupBlockIOWeight": {
-      "reason": "moved",
-      "replacedWithKey": "StartupIOWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
-    },
-    "StartupCPUShares": {
-      "reason": "moved",
-      "replacedWithKey": "StartupCPUWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
-    }
-  },
-  "Swap": {
-    "BlockIOAccounting": {
-      "reason": "moved",
-      "replacedWithKey": "IOAccounting",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="
-    },
-    "BlockIODeviceWeight": {
-      "reason": "moved",
-      "replacedWithKey": "IODeviceWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIODeviceWeight=device%20weight"
-    },
-    "BlockIOReadBandwidth": {
-      "reason": "moved",
-      "replacedWithKey": "IOReadBandwidthMax",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
-    },
-    "BlockIOWeight": {
-      "reason": "moved",
-      "replacedWithKey": "IOWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
-    },
-    "BlockIOWriteBandwidth": {
-      "reason": "moved",
-      "replacedWithKey": "IOWriteBandwidthMax",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOReadBandwidth=device%20bytes"
-    },
-    "CPUShares": {
-      "reason": "moved",
-      "replacedWithKey": "CPUWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
-    },
-    "DefaultMemoryLow": {
-      "reason": "manual",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLow=bytes",
-      "description": "<p><var>DefaultMemoryLow=</var> controls the 'memory.low' value of children. This setting has the same semantics as <var>MemoryLow=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
-    },
-    "DefaultMemoryMin": {
-      "reason": "manual",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryMin=bytes",
-      "description": "<p><var>DefaultMemoryMin=</var> controls the 'memory.min' value of children. This setting has the same semantics as <var>MemoryMin=</var>. For details about this control attribute see <a href='https://www.kernel.org/doc/Documentation/cgroup-v2.txt'>cgroup-v2.txt</a></p>"
-    },
-    "InaccessibleDirectories": {
-      "reason": "moved",
-      "replacedWithKey": "InaccessiblePath",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
-    },
-    "MemoryLimit": {
-      "reason": "moved",
-      "replacedWithKey": "MemoryMax",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#MemoryLimit=bytes"
-    },
-    "ReadOnlyDirectories": {
-      "reason": "moved",
-      "replacedWithKey": "ReadOnlyPaths",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
-    },
-    "ReadWriteDirectories": {
-      "reason": "moved",
-      "replacedWithKey": "ReadWritePaths",
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L2799"
-    },
-    "StartupBlockIOWeight": {
-      "reason": "moved",
-      "replacedWithKey": "StartupIOWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOWeight=weight"
-    },
-    "StartupCPUShares": {
-      "reason": "moved",
-      "replacedWithKey": "StartupCPUWeight",
-      "documentationLink": "https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#CPUShares=weight"
-    }
-  },
-  "Unit": {
-    "BindTo": {
-      "reason": "moved",
-      "replacedWithKey": "BindsTo",
-      "documentationLink": "https://github.com/systemd/systemd/commit/7f2cddae09"
-    },
-    "PropagateReloadTo": {
-      "reason": "moved",
-      "replacedWithKey": "PropagateReloadsTo",
-      "documentationLink": "https://github.com/systemd/systemd/commit/7f2cddae09"
-    },
-    "PropagateReloadFrom": {
-      "reason": "moved",
-      "replacedWithKey": "ReloadPropagatedFrom",
-      "documentationLink": "https://github.com/systemd/systemd/commit/7f2cddae09"
-    },
-    "OnFailureIsolate": {
-      "reason": "moved",
-      "replacedWithKey": "OnFailureJobMode",
-      "documentationLink": "https://github.com/systemd/systemd/commit/d420282b28"
-    },
-    "RequiresOverridable": {
-      "reason": "unsupported",
-      "unsupported": true,
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3608"
-    },
-    "RequisiteOverridable": {
-      "reason": "unsupported",
-      "unsupported": true,
-      "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3608"
-    },
-    "OnSuccessJobMode": {
-      "reason": "unsupported",
-      "unsupported": true,
-      "documentationLink": "https://github.com/systemd/systemd/blob/14c811ff4a3025a3ba8b969f7228c05d31eb3796/man/org.freedesktop.systemd1.xml#L1872"
-    },
-    "StartLimitInterval": {
-      "reason": "moved",
-      "replacedWithKey": "StartLimitIntervalSec",
-      "documentationLink": "https://github.com/systemd/systemd/pull/3148/commits/f0367da7d1a61ad698a55d17b5c28ddce0dc265a"
+    "Unit": {
+      "BindTo": {
+        "reason": "moved",
+        "replacedWithKey": "BindsTo",
+        "documentationLink": "https://github.com/systemd/systemd/commit/7f2cddae09"
+      },
+      "PropagateReloadTo": {
+        "reason": "moved",
+        "replacedWithKey": "PropagateReloadsTo",
+        "documentationLink": "https://github.com/systemd/systemd/commit/7f2cddae09"
+      },
+      "PropagateReloadFrom": {
+        "reason": "moved",
+        "replacedWithKey": "ReloadPropagatedFrom",
+        "documentationLink": "https://github.com/systemd/systemd/commit/7f2cddae09"
+      },
+      "OnFailureIsolate": {
+        "reason": "moved",
+        "replacedWithKey": "OnFailureJobMode",
+        "documentationLink": "https://github.com/systemd/systemd/commit/d420282b28"
+      },
+      "RequiresOverridable": {
+        "reason": "unsupported",
+        "unsupported": true,
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3608"
+      },
+      "RequisiteOverridable": {
+        "reason": "unsupported",
+        "unsupported": true,
+        "documentationLink": "https://github.com/systemd/systemd/blob/v241/NEWS#L3608"
+      },
+      "OnSuccessJobMode": {
+        "reason": "unsupported",
+        "unsupported": true,
+        "documentationLink": "https://github.com/systemd/systemd/blob/14c811ff4a3025a3ba8b969f7228c05d31eb3796/man/org.freedesktop.systemd1.xml#L1872"
+      },
+      "StartLimitInterval": {
+        "reason": "moved",
+        "replacedWithKey": "StartLimitIntervalSec",
+        "documentationLink": "https://github.com/systemd/systemd/pull/3148/commits/f0367da7d1a61ad698a55d17b5c28ddce0dc265a"
+      }
     }
   }
 }

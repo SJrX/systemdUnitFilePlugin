@@ -55,75 +55,86 @@ class GenerateDataFromManPages extends DefaultTask {
    * Map that stores for each file name, the name of an option attribute
    */
   @Internal
-  def fileAndSectionTitleToSectionName = [
-    'systemd.unit.xml'            :
-      ['sections':
-         ['[Unit] Section Options'   : ['Unit'],
-          '[Install] Section Options': ['Install'],
-           'Conditions and Asserts' : ['Unit']
-         ]
-      ],
-    'systemd.service.xml'         :
-      ['sections':
-         ['Options': ['Service']]
-      ],
-    'systemd.timer.xml'           :
-      ['sections':
-         ['Options': ['Timer']]
-      ],
-    'systemd.automount.xml'       :
-      ['sections':
-         ['Options': ['Automount']]
-      ],
-    'systemd.mount.xml'           :
-      ['sections':
-         ['Options': ['Mount']]
-      ],
-    'systemd.path.xml'            :
-      ['sections':
-         ['Options': ['Path']]
-      ],
-    'systemd.socket.xml'          :
-      ['sections':
-         ['Options': ['Socket']]
-      ],
-    'systemd.swap.xml'            :
-      ['sections':
-         ['Options': ['Swap']]
-      ],
-    'systemd.resource-control.xml':
-      ['sections':
-         [
-           'Options'           : ['Slice', 'Service', 'Socket', 'Mount', 'Swap'],
-           'Deprecated Options': ['Slice', 'Service', 'Socket', 'Mount', 'Swap'],
-         ]
-      ],
-    'systemd.kill.xml'            :
-      ['sections':
-         ['Options': ['Service', "Socket", "Mount", "Swap"]]
-      ],
-    'systemd.exec.xml'            :
-      ['sections':
-         [
-           'Paths'                            : ['Service', 'Socket', 'Mount', 'Swap'],
-           'Credentials'                      : ['Service', 'Socket', 'Mount', 'Swap'],
-           'User/Group Identity'              : ['Service', 'Socket', 'Mount', 'Swap'],
-           'Capabilities'                     : ['Service', 'Socket', 'Mount', 'Swap'],
-           'Security'                         : ['Service', 'Socket', 'Mount', 'Swap'],
-           'Mandatory Access Control'         : ['Service', 'Socket', 'Mount', 'Swap'],
-           'Process Properties'               : ['Service', 'Socket', 'Mount', 'Swap'],
-           'Scheduling'                       : ['Service', 'Socket', 'Mount', 'Swap'],
-           'Sandboxing'                       : ['Service', 'Socket', 'Mount', 'Swap'],
-           'System Call Filtering'            : ['Service', 'Socket', 'Mount', 'Swap'],
-           'Environment'                      : ['Service', 'Socket', 'Mount', 'Swap'],
-           'Logging and Standard Input/Output': ['Service', 'Socket', 'Mount', 'Swap'],
-           'System V Compatibility'           : ['Service', 'Socket', 'Mount', 'Swap'],
-         ]
-      ]
+  def fileTypeToFileAndSectionTitleToSectionName = [
+    'unit'  : [
+      'systemd.unit.xml'            :
+        ['sections':
+           ['[Unit] Section Options'   : ['Unit'],
+            '[Install] Section Options': ['Install'],
+            'Conditions and Asserts'   : ['Unit']
+           ]
+        ],
+      'systemd.service.xml'         :
+        ['sections':
+           ['Options': ['Service']]
+        ],
+      'systemd.timer.xml'           :
+        ['sections':
+           ['Options': ['Timer']]
+        ],
+      'systemd.automount.xml'       :
+        ['sections':
+           ['Options': ['Automount']]
+        ],
+      'systemd.mount.xml'           :
+        ['sections':
+           ['Options': ['Mount']]
+        ],
+      'systemd.path.xml'            :
+        ['sections':
+           ['Options': ['Path']]
+        ],
+      'systemd.socket.xml'          :
+        ['sections':
+           ['Options': ['Socket']]
+        ],
+      'systemd.swap.xml'            :
+        ['sections':
+           ['Options': ['Swap']]
+        ],
+      'systemd.resource-control.xml':
+        ['sections':
+           [
+             'Options'           : ['Slice', 'Service', 'Socket', 'Mount', 'Swap'],
+             'Deprecated Options': ['Slice', 'Service', 'Socket', 'Mount', 'Swap'],
+           ]
+        ],
+      'systemd.kill.xml'            :
+        ['sections':
+           ['Options': ['Service', "Socket", "Mount", "Swap"]]
+        ],
+      'systemd.exec.xml'            :
+        ['sections':
+           [
+             'Paths'                            : ['Service', 'Socket', 'Mount', 'Swap'],
+             'Credentials'                      : ['Service', 'Socket', 'Mount', 'Swap'],
+             'User/Group Identity'              : ['Service', 'Socket', 'Mount', 'Swap'],
+             'Capabilities'                     : ['Service', 'Socket', 'Mount', 'Swap'],
+             'Security'                         : ['Service', 'Socket', 'Mount', 'Swap'],
+             'Mandatory Access Control'         : ['Service', 'Socket', 'Mount', 'Swap'],
+             'Process Properties'               : ['Service', 'Socket', 'Mount', 'Swap'],
+             'Scheduling'                       : ['Service', 'Socket', 'Mount', 'Swap'],
+             'Sandboxing'                       : ['Service', 'Socket', 'Mount', 'Swap'],
+             'System Call Filtering'            : ['Service', 'Socket', 'Mount', 'Swap'],
+             'Environment'                      : ['Service', 'Socket', 'Mount', 'Swap'],
+             'Logging and Standard Input/Output': ['Service', 'Socket', 'Mount', 'Swap'],
+             'System V Compatibility'           : ['Service', 'Socket', 'Mount', 'Swap'],
+           ]
+        ]],
+    'nspawn': [
+      'systemd.nspawn.xml':
+        ['sections':
+           [
+             '[Exec] Section Options'   : ['Exec'],
+             '[Files] Section Options'  : ['Files'],
+             '[Network] Section Options': ['Network'],
+           ]
+        ]]
+
   ]
 
   @Internal
-  Map<String /* Section */, Map<String /*Keyword*/, Map<String /*Attribute*/, String /*Value*/>>> sectionToKeyWordMapFromDoc = [:]
+  Map<String /* File Type */, Map<String /* Section */, Map<String /*Keyword*/, Map<String /*Attribute*/, String /*Value*/>>>> fileTypeToSectionToKeyWordMapFromDoc = [:]
 
   @Internal
   final XPath xpath
@@ -149,14 +160,22 @@ class GenerateDataFromManPages extends DefaultTask {
     logger.debug("Regenerating valid keys")
 
 
-    fileAndSectionTitleToSectionName.keySet().each { file ->
-      logger.debug("Starting $file")
-      processFile(file)
+    fileTypeToFileAndSectionTitleToSectionName.entrySet().each {
+      fileToSectionToKeyWordMapFromDoc ->   fileToSectionToKeyWordMapFromDoc.value.keySet().each {
+        file ->
+          logger.debug("Starting $file")
+          var fileType = fileToSectionToKeyWordMapFromDoc.key
+          processFile(fileType, file)
+      }
+
+
     }
+
+
 
     logger.debug("Complete")
 
-    def json = JsonOutput.toJson(this.sectionToKeyWordMapFromDoc)
+    def json = JsonOutput.toJson(this.fileTypeToSectionToKeyWordMapFromDoc)
     json = JsonOutput.prettyPrint(json)
 
     File outputData = new File(this.generatedJsonFileLocation.getAbsolutePath() + "/sectionToKeywordMapFromDoc.json")
@@ -173,12 +192,12 @@ class GenerateDataFromManPages extends DefaultTask {
    *
    * @param filename
    */
-  void processFile(String filename) {
+  void processFile(String fileType, String filename) {
     File file = new File(this.systemdSourceCodeRoot.getAbsolutePath() + "/man/$filename")
 
-    generateKeywordAndValueJsonMapForFile(file)
+    generateKeywordAndValueJsonMapForFile(fileType, file)
 
-    generateDocumentationHtmlFromManPages(file)
+    generateDocumentationHtmlFromManPages(fileType, file)
   }
 
   /**
@@ -186,7 +205,7 @@ class GenerateDataFromManPages extends DefaultTask {
    *
    * @param File file
    */
-  private void generateKeywordAndValueJsonMapForFile(File file) {
+  private void generateKeywordAndValueJsonMapForFile(String fileType, File file) {
 
     String filename = file.getName()
 
@@ -206,10 +225,19 @@ class GenerateDataFromManPages extends DefaultTask {
         "/refentry/refsect1/variablelist[not(contains(@class,'environment-variables'))]/varlistentry",
         records, XPathConstants.NODESET);
     }
+    else if (file.getAbsolutePath().endsWith("systemd.nspawn.xml")) {
+      result = (NodeList)xpath.evaluate(
+        "//variablelist[(contains(@class,'nspawn-directives'))]/varlistentry",
+        records, XPathConstants.NODESET);
+    }
     else {
       result = (NodeList)xpath.evaluate(
         "//variablelist[(contains(@class,'unit-directives'))]/varlistentry",
         records, XPathConstants.NODESET);
+    }
+
+    if (result.getLength() == 0) {
+      throw new IllegalStateException("Could not find variables under $filename")
     }
 
 
@@ -227,7 +255,7 @@ class GenerateDataFromManPages extends DefaultTask {
         try {
 
           String titleOfSection = xpath.evaluate("ancestor::refsect1/title[text()]", varListEntry)
-          List<String> sections = fileAndSectionTitleToSectionName[filename]['sections'][titleOfSection]
+          List<String> sections = fileTypeToFileAndSectionTitleToSectionName[fileType][filename]['sections'][titleOfSection]
 
           String originalSection = xpath.evaluate("term/varname[text()]", varListEntry, XPathConstants.STRING)
 
@@ -235,11 +263,12 @@ class GenerateDataFromManPages extends DefaultTask {
 
           for (String section : sections) {
             logger.debug("Found options $section in $option in ${file.getAbsolutePath()}")
-            sectionToKeyWordMapFromDoc.putIfAbsent(section, new TreeMap<>())
+            fileTypeToSectionToKeyWordMapFromDoc.putIfAbsent(fileType, new TreeMap<>())
+            fileTypeToSectionToKeyWordMapFromDoc.get(fileType).putIfAbsent(section, new TreeMap<>())
             def val = ["declaredInFile": filename]
             if (!keyValue.isEmpty()) val["values"] = keyValue
             if (keyName != originalKeyName) val["declaredUnderKeyword"] = originalKeyName
-            sectionToKeyWordMapFromDoc[section][keyName] = val
+            fileTypeToSectionToKeyWordMapFromDoc[fileType][section][keyName] = val
           }
         }
         catch (IllegalStateException e) {
@@ -272,14 +301,14 @@ class GenerateDataFromManPages extends DefaultTask {
    * @param File sourceFile - the source file to extract
    * @return
    */
-  private generateDocumentationHtmlFromManPages(File sourceFile) {
+  private generateDocumentationHtmlFromManPages(String fileType, File sourceFile) {
     DocumentBuilder builder = dbf.newDocumentBuilder()
     Document document = builder.parse(sourceFile)
     Transformer transformer = getXsltTransformer()
 
     String xsltOutput = transformDocument(document, transformer)
 
-    segmentParametersIntoFiles(sourceFile.getName(), xsltOutput)
+    segmentParametersIntoFiles(fileType, sourceFile.getName(), xsltOutput)
   }
 
   /**
@@ -339,7 +368,7 @@ class GenerateDataFromManPages extends DefaultTask {
    * @param sourceFileName - the name of the source file we pulled the data from
    * @param parameterInfoXMLAsString - A transformed XML document representing the documentation for systemd
    */
-  private void segmentParametersIntoFiles(String sourceFileName, String parameterInfoXMLAsString) {
+  private void segmentParametersIntoFiles(String fileType, String sourceFileName, String parameterInfoXMLAsString) {
     def builder = dbf.newDocumentBuilder()
 
     ByteArrayInputStream bis = new ByteArrayInputStream(parameterInfoXMLAsString.getBytes("UTF-8"))
@@ -368,11 +397,11 @@ class GenerateDataFromManPages extends DefaultTask {
 
       String name = match.group(1)
 
-      List<String> foo = fileAndSectionTitleToSectionName[sourceFileName]['sections'][sectionTitle]
+      List<String> foo = fileTypeToFileAndSectionTitleToSectionName[fileType][sourceFileName]['sections'][sectionTitle]
 
       for (String sectionName : foo) {
         File outputFile = new File(
-          this.generatedJsonFileLocation.getAbsolutePath() + "/documents/completion/" + sectionName + "/" + name + ".html")
+          this.generatedJsonFileLocation.getAbsolutePath() + "/documents/completion/" + fileType + "/" + sectionName + "/" + name + ".html")
         outputFile.getParentFile().mkdirs()
 
         Writer write = new BufferedWriter(new FileWriter(outputFile))

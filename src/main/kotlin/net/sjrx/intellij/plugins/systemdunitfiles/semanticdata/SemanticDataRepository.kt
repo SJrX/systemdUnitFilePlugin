@@ -10,21 +10,37 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiFile
 import com.intellij.util.ObjectUtils
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.*
 import org.apache.commons.io.IOUtils
 import java.io.BufferedReader
+import java.io.File
 import java.io.IOException
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.HashMap
+
+enum class FileClass(val fileClass: String, val gperfFile: String) {
+  UNIT_FILE("unit", "load-fragment-gperf.gperf"),
+  NSPAWN("nspawn", "nspawn-gperf.gperf");
+}
+
+
+fun PsiFile.fileClass() : FileClass {
+  return SemanticDataRepository.getFileClassForFilename(this.name)
+}
 
 class SemanticDataRepository private constructor() {
   private val validatorMap: Map<Validator, OptionValueInformation>
-  private val sectionToKeyAndValidatorMap: MutableMap<String, MutableMap<String, Validator>> = HashMap()
-  private val sectionNameToKeyValuesFromDoc: MutableMap<String, Map<String, KeywordData>>
-  private val undocumentedOptionInfo: Map<String, Map<String, KeywordData>>
+
+  private val fileClassToSectionToKeyAndValidatorMap: MutableMap<String, MutableMap<String, MutableMap<String, Validator>>> = HashMap()
+
+  private val fileClassToSectionNameToKeyValuesFromDoc: MutableMap<String, MutableMap<String, Map<String, KeywordData>>>
+
+  private val fileClassToUndocumentedOptionInfo: MutableMap<String, MutableMap<String, Map<String, KeywordData>>>
 
   class KeywordData {
     var declaredUnderKeyword: String? = null
@@ -42,71 +58,74 @@ class SemanticDataRepository private constructor() {
     val cache: Map<String, String> = HashMap()
     val cache2: Map<Validator, Validator> = HashMap()
 
-    sectionNameToKeyValuesFromDoc = loadSemanticDataFromJsonFile(SEMANTIC_DATA_ROOT + "sectionToKeywordMapFromDoc.json", cache)
-    undocumentedOptionInfo = loadSemanticDataFromJsonFile(SEMANTIC_DATA_ROOT + "undocumentedSectionToKeywordMap.json", cache)
-    validatorMap = HashMap()
-    val resource = this.javaClass.classLoader.getResourceAsStream(SEMANTIC_DATA_ROOT + "load-fragment-gperf.gperf")
-    if (resource != null) {
-      try {
-        BufferedReader(InputStreamReader(resource)).use { fr ->
-          var line: String?
-          while (fr.readLine().also { line = it } != null) {
-            val m = LINE_MATCHER.matcher(line)
-            if (m.find()) {
-              val section = m.group("Section")
-              val key = m.group("Key")
-              val validator = m.group("Validator")
-              val mysteryValue = m.group("MysteryColumn")
-              when (mysteryValue) {
-                LEGACY_PARAMETERS_KEY, EXPERIMENTAL_PARAMETERS_KEY -> {}
+    fileClassToSectionNameToKeyValuesFromDoc = loadSemanticDataFromJsonFile(SEMANTIC_DATA_ROOT + "sectionToKeywordMapFromDoc.json", cache)
+    fileClassToUndocumentedOptionInfo = loadSemanticDataFromJsonFile(SEMANTIC_DATA_ROOT + "undocumentedSectionToKeywordMap.json", cache)
 
 
-                else -> {
-                  val myValidator = Validator(validator, mysteryValue)
-                  sectionToKeyAndValidatorMap.computeIfAbsent(intern(cache, section)) { _: String? -> HashMap() }[intern(cache, key)] = intern(cache2, myValidator)
+    for (fileClass in FileClass.entries) {
+      val name = SEMANTIC_DATA_ROOT + fileClass.gperfFile
+      val resource = this.javaClass.classLoader.getResourceAsStream(name)
+      if (resource != null) {
+        try {
+          BufferedReader(InputStreamReader(resource)).use { fr ->
+            var line: String?
+            while (fr.readLine().also { line = it } != null) {
+              val m = LINE_MATCHER.matcher(line)
+              if (m.find()) {
+                val section = m.group("Section")
+                val key = m.group("Key")
+                val validator = m.group("Validator")
+                val mysteryValue = m.group("MysteryColumn")
+                when (mysteryValue) {
+                  LEGACY_PARAMETERS_KEY, EXPERIMENTAL_PARAMETERS_KEY -> {}
+
+
+                  else -> {
+                    val myValidator = Validator(validator, mysteryValue)
+                    fileClassToSectionToKeyAndValidatorMap.computeIfAbsent(fileClass.fileClass, { _: String? -> HashMap() }).computeIfAbsent(intern(cache, section)) { _: String? -> HashMap() }[intern(cache, key)] = intern(cache2, myValidator)
+                  }
                 }
               }
             }
           }
-
-          validatorMap.putAll(BooleanOptionValue.validators)
-          validatorMap.putAll(TriStateOptionValue.validators)
-          validatorMap.putAll(DocumentationOptionValue.validators)
-          validatorMap.putAll(ModeStringOptionValue.validators)
-          validatorMap.putAll(ExecOptionValue.validators)
-          validatorMap.putAll(ExecOutputOptionValue.validators)
-          validatorMap.putAll(UnitDependencyOptionValue.validators)
-          validatorMap.putAll(NullOptionValue.validators)
-          validatorMap.putAll(MemoryLimitOptionValue.validators)
-          validatorMap.putAll(SignalOptionValue.validators)
-          validatorMap.putAll(NamespacePathOptionValue.validators)
-          validatorMap.putAll(UnsignedIntegerOptionValue.validators)
-          validatorMap.putAll(PathOptionValue.validators)
-          validatorMap.putAll(EnumOptionValues.validators)
-          validatorMap.putAll(ConfigParseSecValidators.validators)
-          validatorMap.putAll(AllowedCpuSetOptionValue.validators)
-          validatorMap.putAll(TtySizeOptionValue.validators)
-          validatorMap.putAll(ExecDirectoriesOptionValue.validators)
-
-          validatorMap.putAll(IOLimitOptionValue.validators)
-          validatorMap.putAll(ImagePolicyOptionValue.validators)
-          validatorMap.putAll(CPUWeightOptionValue.validators)
-          validatorMap.putAll(CPUSharesOptionValue.validators)
-
-         // Scopes are not supported since they aren't standard unit files.
-
-          sectionNameToKeyValuesFromDoc.remove(SCOPE_KEYWORD)
-          sectionToKeyAndValidatorMap.remove(SCOPE_KEYWORD)
+        } catch (e: IOException) {
+          LOG.error("Unable to initialize data for systemd inspections plugin", e)
         }
-      } catch (e: IOException) {
-        LOG.error("Unable to initialize data for systemd inspections plugin", e)
+      } else {
+        LOG.error("Unable to initialize data for systemd inspections plugin, resource $name not found")
       }
-    } else {
-      LOG.error("Unable to initialize data for systemd inspections plugin, resource not found")
     }
+
+    validatorMap = HashMap()
+    validatorMap.putAll(BooleanOptionValue.validators)
+    validatorMap.putAll(TriStateOptionValue.validators)
+    validatorMap.putAll(DocumentationOptionValue.validators)
+    validatorMap.putAll(ModeStringOptionValue.validators)
+    validatorMap.putAll(ExecOptionValue.validators)
+    validatorMap.putAll(ExecOutputOptionValue.validators)
+    validatorMap.putAll(UnitDependencyOptionValue.validators)
+    validatorMap.putAll(NullOptionValue.validators)
+    validatorMap.putAll(MemoryLimitOptionValue.validators)
+    validatorMap.putAll(SignalOptionValue.validators)
+    validatorMap.putAll(NamespacePathOptionValue.validators)
+    validatorMap.putAll(UnsignedIntegerOptionValue.validators)
+    validatorMap.putAll(PathOptionValue.validators)
+    validatorMap.putAll(EnumOptionValues.validators)
+    validatorMap.putAll(ConfigParseSecValidators.validators)
+    validatorMap.putAll(AllowedCpuSetOptionValue.validators)
+    validatorMap.putAll(TtySizeOptionValue.validators)
+    validatorMap.putAll(ExecDirectoriesOptionValue.validators)
+
+    validatorMap.putAll(IOLimitOptionValue.validators)
+    validatorMap.putAll(ImagePolicyOptionValue.validators)
+    validatorMap.putAll(CPUWeightOptionValue.validators)
+    validatorMap.putAll(CPUSharesOptionValue.validators)
+    // Scopes are not supported since they aren't standard unit files.
+    fileClassToSectionNameToKeyValuesFromDoc["unit"]?.remove(SCOPE_KEYWORD)
+    fileClassToSectionToKeyAndValidatorMap["unit"]?.remove(SCOPE_KEYWORD)
   }
 
-  private fun loadSemanticDataFromJsonFile(filename: String, cache: Map<String, String>): MutableMap<String, Map<String, KeywordData>> {
+  private fun loadSemanticDataFromJsonFile(filename: String, cache: Map<String, String>): MutableMap<String, MutableMap<String, Map<String, KeywordData>>> {
     val sectionToKeywordMapFromDocJsonFile = this.javaClass.classLoader.getResource(filename)
     val factory = JsonFactoryBuilder().disable(JsonFactory.Feature.INTERN_FIELD_NAMES).build()
     if (!ApplicationManager.getApplication().isUnitTestMode) {
@@ -117,15 +136,21 @@ class SemanticDataRepository private constructor() {
     mapper.registerModule(KotlinModule.Builder().build())
 
     try {
-      val read : Map<String, Map<String, KeywordData>> = mapper.readValue(sectionToKeywordMapFromDocJsonFile)
+      val read : Map<String, Map<String, Map<String, KeywordData>>> = mapper.readValue(sectionToKeywordMapFromDocJsonFile)
 
     // intern strings in maps
-    val output: MutableMap<String, Map<String, KeywordData>> = HashMap()
+    val output: MutableMap<String, MutableMap<String, Map<String, KeywordData>>> = HashMap()
 
-    read.forEach { (section: String, m1: Map<String, KeywordData>) ->
-      val converted = HashMap<String, KeywordData>()
-      m1.forEach { (keyword: String, m2: KeywordData) -> converted[intern(cache, keyword)] = m2 }
-      output[intern(cache, section)] = converted
+    read.forEach { (fileClass: String, m0: Map<String, Map<String, KeywordData>>) ->
+      val fileClassMap = HashMap<String, Map<String, KeywordData>>()
+      output[fileClass] = fileClassMap
+
+
+      m0.forEach { (section: String, m1: Map<String, KeywordData>) ->
+        val converted = HashMap<String, KeywordData>()
+        m1.forEach { (keyword: String, m2: KeywordData) -> converted[intern(cache, keyword)] = m2 }
+        fileClassMap[intern(cache, section)] = converted
+      }
     }
     return output
 
@@ -137,13 +162,10 @@ class SemanticDataRepository private constructor() {
     }
   }
 
-  val sectionNamesFromDocumentation: Set<String>
-    /**
-     * Returns the allowed section names.
-     *
-     * @return a set of allow section names
-     */
-    get() = Collections.unmodifiableSet(sectionNameToKeyValuesFromDoc.keys)
+  fun getSectionNamesForFile(fileClass: String): Set<String> {
+    return Collections.unmodifiableSet(fileClassToSectionNameToKeyValuesFromDoc.getOrDefault(fileClass, emptyMap()).keys)
+  }
+
 
   /**
    * Returns the allowed keywords by a given section name.
@@ -151,9 +173,9 @@ class SemanticDataRepository private constructor() {
    * @param section the section name (e.g., Unit, Install, Service)
    * @return set of allowed names.
    */
-  fun getDocumentedKeywordsInSection(section: String): Set<String> {
-    val keys: MutableSet<String> = HashSet(getKeyValuePairsForSectionFromDocumentation(section).keys)
-    keys.addAll(getKeyValuePairsForSectionFromUndocumentedInformation(section).keys)
+  fun getDocumentedKeywordsInSection(fileclass: FileClass, section: String): Set<String> {
+    val keys: MutableSet<String> = HashSet(getKeyValuePairsForSectionFromDocumentation(fileclass, section).keys)
+    keys.addAll(getKeyValuePairsForSectionFromUndocumentedInformation(fileclass, section).keys)
     return Collections.unmodifiableSet(keys)
   }
 
@@ -164,12 +186,12 @@ class SemanticDataRepository private constructor() {
    * @param keyName - key name
    * @return String or null
    */
-  fun getKeywordDocumentationUrl(section: String, keyName: String): String? {
-    var data = getKeyValuePairsForSectionFromDocumentation(section)[keyName]
+  fun getKeywordDocumentationUrl(fileclass: FileClass, section: String, keyName: String): String? {
+    var data = getKeyValuePairsForSectionFromDocumentation(fileclass, section)[keyName]
     if (data != null && data.documentationLink != null) {
       return data.documentationLink
     }
-    data = getKeyValuePairsForSectionFromUndocumentedInformation(section)[keyName]
+    data = getKeyValuePairsForSectionFromUndocumentedInformation(fileclass, section)[keyName]
     return if (data != null && data.documentationLink != null) {
       data.documentationLink
     } else null
@@ -186,8 +208,8 @@ class SemanticDataRepository private constructor() {
    * @param keyName - key name
    * @return String or null
    */
-  fun getKeywordLocationInDocumentation(section: String, keyName: String): String? {
-    val data = getKeyValuePairsForSectionFromDocumentation(section)[keyName] ?: return null
+  fun getKeywordLocationInDocumentation(fileclass: FileClass, section: String, keyName: String): String? {
+    val data = getKeyValuePairsForSectionFromDocumentation(fileclass, section)[keyName] ?: return null
     return ObjectUtils.notNull(data.declaredUnderKeyword, keyName)
   }
 
@@ -202,17 +224,17 @@ class SemanticDataRepository private constructor() {
    * @param keyName - key name
    * @return String or null
    */
-  fun getKeywordFileLocationInDocumentation(section: String, keyName: String): String? {
-    val data = getKeyValuePairsForSectionFromDocumentation(section)[keyName]
+  fun getKeywordFileLocationInDocumentation(fileclass: FileClass, section: String, keyName: String): String? {
+    val data = getKeyValuePairsForSectionFromDocumentation(fileclass, section)[keyName]
     return data?.declaredInFile
   }
 
-  fun getKeyValuePairsForSectionFromDocumentation(section: String): Map<String, KeywordData> {
-    return sectionNameToKeyValuesFromDoc[section] ?: emptyMap()
+  fun getKeyValuePairsForSectionFromDocumentation(fileClass: FileClass, section: String): Map<String, KeywordData> {
+    return fileClassToSectionNameToKeyValuesFromDoc[fileClass.fileClass]?.get(section) ?: emptyMap()
   }
 
-  fun getKeyValuePairsForSectionFromUndocumentedInformation(section: String): Map<String, KeywordData> {
-    return undocumentedOptionInfo[section] ?: emptyMap()
+  fun getKeyValuePairsForSectionFromUndocumentedInformation(fileClass: FileClass, section: String): Map<String, KeywordData> {
+    return fileClassToUndocumentedOptionInfo[fileClass.fileClass]?.get(section) ?: emptyMap()
   }
 
   /**
@@ -233,6 +255,9 @@ class SemanticDataRepository private constructor() {
       "Swap" -> "https://www.freedesktop.org/software/systemd/man/systemd.swap.html"
       "Timer" -> "https://www.freedesktop.org/software/systemd/man/systemd.timer.html"
       "Unit" -> "https://www.freedesktop.org/software/systemd/man/systemd.unit.html#%5BUnit%5D%20Section%20Options"
+      "Exec" -> "https://www.freedesktop.org/software/systemd/man/latest/systemd.nspawn.html#%5BExec%5D%20Section%20Options"
+      "Files" -> "https://www.freedesktop.org/software/systemd/man/latest/systemd.nspawn.html#%5BFiles%5D%20Section%20Options"
+      "Network" -> "https://www.freedesktop.org/software/systemd/man/latest/systemd.nspawn.html#%5BNetwork%5D%20Section%20Options"
       else -> null
     }
   }
@@ -283,12 +308,15 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
  used in this section are shared with other unit types. These options
  are documented in <a href="http://man7.org/linux/man-pages/man5/systemd.exec.5.html">systemd.exec(5)</a> and <a href="http://man7.org/linux/man-pages/man5/systemd.kill.5.html">systemd.kill(5)</a>"""
 
-      "Timer" -> """ Timer files must include a [Timer] section, which carries information
+      "Timer" -> """Timer files must include a [Timer] section, which carries information
  about the timer it defines."""
 
       "Unit" -> """The unit file may include a [Unit] section, which carries generic
  information about the unit that is not dependent on the type of unit."""
 
+      "Exec" -> """The [Exec] section controls various execution parameters."""
+      "Files" -> """The [Files] section, carries various parameters configuring the filesystem of the container."""
+      "Network" -> """The [Network] section carries various parameters configuring the network connectivity of the container."""
       else -> null
     }
   }
@@ -300,11 +328,14 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
    * @param keyName     the key name to look up
    * @return either the first paragraph from the HTML description or null if no description was found
    */
-  fun getDocumentationContentForKeyInSection(sectionName: String, keyName: String): String? {
+  fun getDocumentationContentForKeyInSection(fileclass: FileClass, sectionName: String, keyName: String): String? {
+
+
+
     val htmlDocStream = this.javaClass.classLoader.getResourceAsStream(
-      SEMANTIC_DATA_ROOT + "/documents/completion/"
+      SEMANTIC_DATA_ROOT + "/documents/completion/" + fileclass.fileClass + "/"
         + sectionName + "/" + keyName + ".html"
-    ) ?: return getDeprecationReason(sectionName, keyName, true)
+    ) ?: return getDeprecationReason(fileclass, sectionName, keyName, true)
     try {
       return IOUtils.toString(htmlDocStream, StandardCharsets.UTF_8)
     } catch (e: IOException) {
@@ -320,8 +351,8 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
    * @param html whether the result should be in html
    * @return deprecation reason
    */
-  fun getDeprecationReason(sectionName: String, keyName: String, html: Boolean): String? {
-    val options = getKeyValuePairsForSectionFromUndocumentedInformation(sectionName)[keyName] ?: return null
+  fun getDeprecationReason(fileclass: FileClass, sectionName: String, keyName: String, html: Boolean): String? {
+    val options = getKeyValuePairsForSectionFromUndocumentedInformation(fileclass, sectionName)[keyName] ?: return null
     return when (options.reason) {
       "unsupported" -> {
         if (!html) String.format("'%s' in section '%s' is not officially supported", keyName, sectionName) else ("<p><var>" + keyName + "</var> in section <b>" + sectionName + "</b> is not officially supported.<p>"
@@ -371,8 +402,8 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
    * @param keyName the key name to look up.
    * @return true if we know the option is deprecated
    */
-  fun isDeprecated(sectionName: String, keyName: String): Boolean {
-    val options = getKeyValuePairsForSectionFromUndocumentedInformation(sectionName)[keyName]
+  fun isDeprecated(fileclass: FileClass, sectionName: String, keyName: String): Boolean {
+    val options = getKeyValuePairsForSectionFromUndocumentedInformation(fileclass, sectionName)[keyName]
     return options != null
   }
 
@@ -383,24 +414,27 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
    * @param keyName - the keyname to look up
    * @return the validator
    */
-  fun getOptionValidator(sectionName: String, keyName: String): OptionValueInformation {
-    return validatorMap.get(getValidatorForSectionAndKey(sectionName, keyName)) ?: NullOptionValue.INSTANCE
+  fun getOptionValidator(fileclass: FileClass, sectionName: String, keyName: String): OptionValueInformation {
+    return validatorMap.get(getValidatorForSectionAndKey(fileclass, sectionName, keyName)) ?: NullOptionValue.INSTANCE
   }
 
 
   fun getValidatorMap() : Map<Validator, OptionValueInformation> = validatorMap
 
-  val sectionNamesFromValidators: Set<String>
-    /**
-     * Return the section names from the validators.
-     *
-     * @return set
-     */
-    get() = Collections.unmodifiableSet(sectionToKeyAndValidatorMap.keys)
+
+  /**
+   * Return the section names from the validators.
+   *
+   * @return set
+   */
+  fun getSectionNamesForSectionAndKey(fileClass: FileClass): MutableSet<String> {
+    return Collections.unmodifiableSet(fileClassToSectionToKeyAndValidatorMap.getOrDefault(fileClass.fileClass, emptyMap()).keys)
+  }
 
 
-  fun getValidatorForSectionAndKey(sectionName: String, keyName: String) : Validator {
-    var validatorKey = sectionToKeyAndValidatorMap.getOrDefault(sectionName, emptyMap())[keyName]
+  fun getValidatorForSectionAndKey(fileClass: FileClass, sectionName: String, keyName: String) : Validator {
+
+    var validatorKey = fileClassToSectionToKeyAndValidatorMap.getOrDefault(fileClass.fileClass, emptyMap()).getOrDefault(sectionName, emptyMap())[keyName]
     if (sectionName.trim { it <= ' ' } == "Install") {
       if (keyName.trim { it <= ' ' } == "WantedBy" || keyName.trim { it <= ' ' } == "Also" || keyName.trim { it <= ' ' } == "RequiredBy") {
         // Override the validators for these cases since there is no validation done now, but really they should be units.
@@ -427,8 +461,8 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
    *
    * @return set
    */
-  fun getAllowedKeywordsInSectionFromValidators(sectionName: String?): Set<String> {
-    return Collections.unmodifiableSet(sectionToKeyAndValidatorMap.getOrDefault(sectionName, emptyMap()).keys)
+  fun getAllowedKeywordsInSectionFromValidators(fileClass: FileClass, sectionName: String?): Set<String> {
+    return Collections.unmodifiableSet(fileClassToSectionToKeyAndValidatorMap.getOrDefault(fileClass.fileClass, emptyMap()).getOrDefault(sectionName, emptyMap()).keys)
   }
 
   fun getAllowedSectionsInFile(fileName: String): Set<String> {
@@ -443,6 +477,7 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
       "Socket" -> setOf("Unit", "Install", "Socket")
       "Swap" ->  setOf("Unit", "Install", "Swap")
       "Timer" -> setOf("Unit", "Install", "Timer")
+      "Nspawn" -> setOf("Exec", "Files", "Network")
       else -> setOf()
     }
 
@@ -497,6 +532,17 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
     private fun <K> intern(cache: Map<K, K>, value: K): K {
       return cache[value] ?: value
     }
+
+    fun getFileClassForFilename(fileName: String): FileClass {
+      return when(File(fileName).extension) {
+        "nspawn" -> FileClass.NSPAWN
+        "service", "socket", "target", "device", "mount", "automount", "path", "swap", "timer", "slice"-> FileClass.UNIT_FILE
+
+        else -> FileClass.UNIT_FILE
+      }
+    }
+
+
   }
 }
 

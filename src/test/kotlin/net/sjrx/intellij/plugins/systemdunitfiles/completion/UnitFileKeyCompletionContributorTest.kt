@@ -145,4 +145,21 @@ class UnitFileKeyCompletionContributorTest : AbstractUnitFileTest() {
     // Verification
     assertContainsElements(completions, "DirectoryMode", "DirectoryNotEmpty", "MakeDirectory", "PathModified")
   }
+
+  fun testCompletionForNSpawnFileInFilesSectionReturnsExpectedValues() {
+    // Fixture Setup
+    val file = """
+           [Files]
+           Bi$COMPLETION_POSITION
+           Inaccessible=True
+           """.trimIndent()
+    myFixture.configureByText("file.nspawn", file)
+
+    // Exercise SUT
+    val completions = basicCompletionResultStrings
+
+    // Verification
+    assertContainsElements(completions, "Bind", "BindReadOnly", "BindUser")
+  }
+
 }

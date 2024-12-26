@@ -10,6 +10,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeH
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileProperty
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.fileClass
 import java.util.function.Supplier
 import java.util.stream.Collectors
 
@@ -44,7 +45,9 @@ class UnitFileValueCompletionContributor : CompletionContributor() {
                val sectionName = section.sectionName
                val keyName = property.key
                val sdr = SemanticDataRepository.instance
-               val validator = sdr.getOptionValidator(sectionName, keyName)
+               val fileClass = section.containingFile.fileClass()
+
+               val validator = sdr.getOptionValidator(fileClass, sectionName, keyName)
                resultSet.addAllElements(
                  validator.getAutoCompleteOptions(property.project)
                    .stream()

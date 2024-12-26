@@ -682,6 +682,44 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
     TestCase.assertEquals("BusName", highlightElement!!.text)
   }
 
+  fun testNSpawnFileTypeThrowsWarningWithKeyFromServiceFile() {
+    // Fixture Setup
+    val file = """
+           [Exec]
+           BusName=yes
+           """.trimIndent()
+    enableInspection(UnknownKeyInSectionInspection::class.java)
+    setupFileInEditor("some.nspawn", file)
+
+    // Exercise SUT
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+    val info = highlights[0]
+    TestCase.assertEquals(UnknownKeyInSectionInspection.INSPECTION_TOOL_TIP_TEXT, info!!.description)
+    TestCase.assertEquals(HighlightInfoType.WARNING, info.type)
+    val highlightElement = myFixture.file.findElementAt(info.getStartOffset())
+    TestCase.assertEquals("BusName", highlightElement!!.text)
+  }
+
+  fun testNSpawnFileTypeHasNoWarningsWithKnownKey() {
+    // Fixture Setup
+    val file = """
+           [Timer]
+           RandomizedDelaySec=50
+           """.trimIndent()
+    enableInspection(UnknownKeyInSectionInspection::class.java)
+    setupFileInEditor("some.timer", file)
+
+    // Exercise SUT
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertEmpty(highlights)
+  }
+
+
   fun testSomeNewKeysFromSystemdV240HasNoWarnings() {
     // Fixture Setup
     val file = """

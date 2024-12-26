@@ -7,6 +7,7 @@ object UnitFileIcon {
   @JvmField
   val FILE = IconLoader.getIcon("/net/sjrx/intellij/plugins/systemdunitfiles/systemd.svg", UnitFileIcon::class.java)
   val AUTOMOUNT = IconLoader.getIcon("/net/sjrx/intellij/plugins/systemdunitfiles/automount.svg", UnitFileIcon::class.java)
+  val NSPAWN = IconLoader.getIcon("/net/sjrx/intellij/plugins/systemdunitfiles/nspawn.svg", UnitFileIcon::class.java)
   val DEVICE = IconLoader.getIcon("/net/sjrx/intellij/plugins/systemdunitfiles/device.svg", UnitFileIcon::class.java)
   val MOUNT = IconLoader.getIcon("/net/sjrx/intellij/plugins/systemdunitfiles/mount.svg", UnitFileIcon::class.java)
   val PATH = IconLoader.getIcon("/net/sjrx/intellij/plugins/systemdunitfiles/path.svg", UnitFileIcon::class.java)

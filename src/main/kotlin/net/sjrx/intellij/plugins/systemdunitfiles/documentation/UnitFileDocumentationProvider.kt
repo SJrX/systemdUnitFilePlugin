@@ -11,6 +11,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeH
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.fileClass
 
 class UnitFileDocumentationProvider : AbstractDocumentationProvider() {
   override fun getQuickNavigateInfo(element: PsiElement, originalElement: PsiElement): String? {
@@ -26,7 +27,9 @@ class UnitFileDocumentationProvider : AbstractDocumentationProvider() {
       val sectionName = section.sectionName
       val keyName = element.node.text
       val sdr: SemanticDataRepository = SemanticDataRepository.instance
-      val keyComment = sdr.getDocumentationContentForKeyInSection(sectionName, keyName)
+      val fileClass = section.containingFile.fileClass()
+
+      val keyComment = sdr.getDocumentationContentForKeyInSection(fileClass, sectionName, keyName)
       if (keyComment != null) {
         return DocumentationMarkup.DEFINITION_START + keyName + DocumentationMarkup.DEFINITION_END + DocumentationMarkup.CONTENT_START + keyComment + DocumentationMarkup.CONTENT_END
       }
@@ -53,13 +56,15 @@ class UnitFileDocumentationProvider : AbstractDocumentationProvider() {
       val section = PsiTreeUtil.getParentOfType(element, UnitFileSectionType::class.java) ?: return null
       val sectionName = section.sectionName
       val keyName = element.text
+      val fileClass = section.containingFile.fileClass()
+
       val sdr: SemanticDataRepository = SemanticDataRepository.instance
-      val url = sdr.getKeywordDocumentationUrl(sectionName, keyName)
+      val url = sdr.getKeywordDocumentationUrl(fileClass, sectionName, keyName)
       if (url != null) {
         return listOf(url)
       }
-      val keyNameToPointTo = sdr.getKeywordLocationInDocumentation(sectionName, keyName)
-      val filename = sdr.getKeywordFileLocationInDocumentation(sectionName, keyName)
+      val keyNameToPointTo = sdr.getKeywordLocationInDocumentation(fileClass, sectionName, keyName)
+      val filename = sdr.getKeywordFileLocationInDocumentation(fileClass, sectionName, keyName)
       if (keyNameToPointTo != null && filename != null) {
         return listOf(
           "https://www.freedesktop.org/software/systemd/man/" + filename.replaceFirst(".xml$".toRegex(), ".html") + "#"

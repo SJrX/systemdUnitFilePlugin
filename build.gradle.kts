@@ -202,7 +202,21 @@ tasks.register<GenerateParserTask>("generateParserTask") {
 
 
 tasks.register<Copy>("generateOptionValidator") {
-  from("./systemd-build/build/load-fragment-gperf.gperf")
+  listOf(
+    "journald-gperf.gperf",
+      "link-config-gperf.gperf",
+      "load-fragment-gperf.gperf",
+      "logind-gperf.gperf",
+      "netdev-gperf.gperf",
+      "networkd-gperf.gperf",
+      "networkd-network-gperf.gperf",
+      "nspawn-gperf.gperf",
+      "resolved-dnssd-gperf.gperf",
+      "resolved-gperf.gperf",
+      "timesyncd-gperf.gperf").forEach {
+    fileName -> from("./systemd-build/build/${fileName}")
+  }
+
   into("${sourceSets["main"].output.resourcesDir?.getAbsolutePath()}/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/")
 }
 
