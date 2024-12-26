@@ -310,7 +310,7 @@ pipeline {
 
               sh("""
                   mkdir -p ./systemd-build/build
-                  cp /opt/systemd-source/systemd/load-fragment-gperf.gperf ./systemd-build/build
+                  cp /opt/systemd-source/systemd/*.gperf ./systemd-build/build
                   cp /opt/systemd-source/systemd/last_commit_date /opt/systemd-source/systemd/last_commit_hash ./systemd-build/build
                   cp -R /opt/systemd-source/systemd/man ./systemd-build/build
                 """)
