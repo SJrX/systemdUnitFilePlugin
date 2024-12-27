@@ -3,7 +3,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections
 import junit.framework.TestCase
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 
-class InvalidValidInspectionForConfigParseSecOptionValueTest : AbstractUnitFileTest() {
+class InvalidValueInspectionForConfigParseSecOptionValueTest : AbstractUnitFileTest() {
 
   fun testWeakWarningWhenStringSpecified() {
     // Fixture Setup
@@ -22,7 +22,7 @@ class InvalidValidInspectionForConfigParseSecOptionValueTest : AbstractUnitFileT
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Could not parse leading number", info!!.description)
+    assertStringContains("Could not parse leading number", info!!.description)
     TestCase.assertEquals("abc", info.text)
   }
 
@@ -43,7 +43,7 @@ class InvalidValidInspectionForConfigParseSecOptionValueTest : AbstractUnitFileT
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Negatives are not allowed", info!!.description)
+    assertStringContains("Negatives are not allowed", info!!.description)
     TestCase.assertEquals("-5", info.text)
   }
 
@@ -64,7 +64,7 @@ class InvalidValidInspectionForConfigParseSecOptionValueTest : AbstractUnitFileT
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Negatives are not allowed", info!!.description)
+    assertStringContains("Negatives are not allowed", info!!.description)
     TestCase.assertEquals("1 day -5 secs", info.text)
   }
 

@@ -5,7 +5,7 @@ import kotlin.math.max
 /**
  * This is a sequence of tokens that must match all of them.
  */
-class SequenceCombinator(vararg val tokens: Combinator) : Combinator {
+open class SequenceCombinator(vararg val tokens: Combinator) : Combinator {
 
   override fun SyntacticMatch(value: String, offset: Int): MatchResult {
     var index = offset

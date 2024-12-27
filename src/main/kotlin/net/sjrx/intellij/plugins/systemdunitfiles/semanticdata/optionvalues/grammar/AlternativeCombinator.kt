@@ -5,7 +5,7 @@ import kotlin.math.max
 /**
  * This is a sequence of tokens that must match any of them.
  */
-class AlternativeCombinator(vararg val tokens: Combinator) : Combinator {
+open class AlternativeCombinator(vararg val tokens: Combinator) : Combinator {
 
   fun match(value: String, offset: Int, f: (Combinator, String, Int) -> MatchResult): MatchResult {
 
@@ -19,8 +19,6 @@ class AlternativeCombinator(vararg val tokens: Combinator) : Combinator {
       if (match.matchResult != -1) {
         return match
       }
-
-
 
       if (match.tokens.size > longestTerminalMatch.size) {
         longestTerminalMatch = match.terminals

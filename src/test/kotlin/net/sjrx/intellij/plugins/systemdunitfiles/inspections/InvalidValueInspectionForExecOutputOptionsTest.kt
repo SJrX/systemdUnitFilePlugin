@@ -59,7 +59,7 @@ class InvalidValueInspectionForExecOutputOptionsTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Takes one of", info!!.description)
+    assertStringContains("Takes one of", info!!.description)
     TestCase.assertEquals("foo", info.text)
   }
 
@@ -81,7 +81,7 @@ class InvalidValueInspectionForExecOutputOptionsTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("name must be specified after the colon", info!!.description)
+    assertStringContains("name must be specified after the colon", info!!.description)
     TestCase.assertEquals("fd:", info.text)
   }
 
@@ -103,7 +103,7 @@ class InvalidValueInspectionForExecOutputOptionsTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("path must be specified after the colon", info!!.description)
+    assertStringContains("path must be specified after the colon", info!!.description)
     TestCase.assertEquals("file:", info.text)
   }
 

@@ -50,8 +50,6 @@ open class GrammarOptionValue(
         }
 
         holder.registerProblem(property.valueNode.psi, "${property.key}'s value does not match the expected format. Possible reasons include unrecognized characters or premature end of input.", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, tr)
-
-
         return
       }
 
@@ -96,9 +94,9 @@ open class GrammarOptionValue(
             }
           }
 
-          holder.registerProblem(property.valueNode.psi, "${property.key}'s value is correctly format but seems invalid.", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, tr, *quickFixes.toTypedArray())
+          holder.registerProblem(property.valueNode.psi, "${property.key}'s value is correctly formatted but seems invalid.", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, tr, *quickFixes.toTypedArray())
         } else {
-          holder.registerProblem(property.valueNode.psi, "${property.key}'s value is correctly format but seems invalid.", ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+          holder.registerProblem(property.valueNode.psi, "${property.key}'s value is correctly formatted but seems invalid.", ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
         }
 
 

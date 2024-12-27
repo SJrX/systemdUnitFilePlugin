@@ -3,14 +3,15 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections
 import junit.framework.TestCase
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 
-class InvalidValidInspectionForIOReadBandwidthMax : AbstractUnitFileTest() {
+class InvalidValueInspectionForCPUShares : AbstractUnitFileTest() {
 
-  fun testNoWarningWhenNumberSpecifiedWithoutUnit() {
+
+  fun testNoWarningWhenTwoSpecified() {
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
            [Service]
-           IOReadBandwidthMax=/home 2
+           CPUShares=2
            """.trimIndent()
 
 
@@ -21,15 +22,14 @@ class InvalidValidInspectionForIOReadBandwidthMax : AbstractUnitFileTest() {
 
     // Verification
     assertSize(0, highlights)
-
   }
 
-  fun testNoWarningWhenNumberSpecifiedWithUnit() {
+  fun testNoWarningWhenMaxValueSpecified() {
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
            [Service]
-           IOReadBandwidthMax=/home 2M
+           CPUShares=262144
            """.trimIndent()
 
 
@@ -40,15 +40,14 @@ class InvalidValidInspectionForIOReadBandwidthMax : AbstractUnitFileTest() {
 
     // Verification
     assertSize(0, highlights)
-
   }
 
-  fun testWeakWarningWhenNegativeIntegerSpecified() {
+  fun testWeakWarningWhenOneIsSpecified() {
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
            [Service]
-           IOReadBandwidthMax=-5
+           CPUShares=1
            """.trimIndent()
 
 
@@ -60,16 +59,16 @@ class InvalidValidInspectionForIOReadBandwidthMax : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("IOReadBandwidthMax's value does not match the expected format. Possible reasons include unrecognized characters or premature end of input.", info!!.description)
-    TestCase.assertEquals("-5", info.text)
+    assertStringContains("CPUShares's value is correctly formatted but seems invalid", info!!.description)
+    TestCase.assertEquals("1", info.text)
   }
 
-  fun testWeakWarningWhenDeviceSpecifiedWithNoValue() {
+  fun testWeakWarningWhenNegativeTenIsSpecified() {
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
            [Service]
-           IOReadBandwidthMax=/home
+           CPUShares=-10
            """.trimIndent()
 
 
@@ -81,17 +80,17 @@ class InvalidValidInspectionForIOReadBandwidthMax : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("IOReadBandwidthMax's value does not match the expected format. Possible reasons include unrecognized characters or premature end of input.", info!!.description)
-    TestCase.assertEquals("/home", info.text)
+    assertStringContains("CPUShares's value is correctly formatted but seems invalid", info!!.description)
+    TestCase.assertEquals("-10", info.text)
   }
 
 
-  fun testWeakWarningWhenPositiveIntegerSpecified() {
+  fun testWeakWarningWhenValueTooBigIsSpecified() {
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
            [Service]
-           IOReadBandwidthMax=5
+           CPUShares=262145
            """.trimIndent()
 
 
@@ -103,8 +102,8 @@ class InvalidValidInspectionForIOReadBandwidthMax : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("IOReadBandwidthMax's value does not match the expected format. Possible reasons include unrecognized characters or premature end of input.", info!!.description)
-    TestCase.assertEquals("5", info.text)
+    assertStringContains("CPUShares's value is correctly formatted but seems invalid", info!!.description)
+    TestCase.assertEquals("262145", info.text)
   }
 
 }

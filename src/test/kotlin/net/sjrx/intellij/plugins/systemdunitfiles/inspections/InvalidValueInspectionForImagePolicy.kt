@@ -3,14 +3,14 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections
 import junit.framework.TestCase
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 
-class InvalidValidInspectionForCPUWeight : AbstractUnitFileTest() {
+class InvalidValueInspectionForImagePolicy : AbstractUnitFileTest() {
 
-  fun testNoWarningWhenIdleSpecified() {
+  fun testNoWarningWhenNumberSpecifiedWithoutUnit() {
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
            [Service]
-           CPUWeight=idle
+           RootImagePolicy=root=unprotected
            """.trimIndent()
 
 
@@ -21,50 +21,15 @@ class InvalidValidInspectionForCPUWeight : AbstractUnitFileTest() {
 
     // Verification
     assertSize(0, highlights)
+
   }
 
-  fun testNoWarningWhenOneSpecified() {
+  fun testWeakWarningWhenInvalidPartitionTypeIsSpecified() {
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
            [Service]
-           CPUWeight=1
-           """.trimIndent()
-
-
-    // Execute SUT
-    setupFileInEditor("file.service", file)
-    enableInspection(InvalidValueInspection::class.java)
-    val highlights = myFixture.doHighlighting()
-
-    // Verification
-    assertSize(0, highlights)
-  }
-
-  fun testNoWarningWhenTenThousandSpecified() {
-    // Fixture Setup
-    // language="unit file (systemd)"
-    val file = """
-           [Service]
-           CPUWeight=10000
-           """.trimIndent()
-
-
-    // Execute SUT
-    setupFileInEditor("file.service", file)
-    enableInspection(InvalidValueInspection::class.java)
-    val highlights = myFixture.doHighlighting()
-
-    // Verification
-    assertSize(0, highlights)
-  }
-
-  fun testWeakWarningWhenZeroIsSpecified() {
-    // Fixture Setup
-    // language="unit file (systemd)"
-    val file = """
-           [Service]
-           CPUWeight=0
+           RootImagePolicy=opt=unprotected
            """.trimIndent()
 
 
@@ -76,16 +41,16 @@ class InvalidValidInspectionForCPUWeight : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("CPUWeight's value is correctly format but seems invalid", info!!.description)
-    TestCase.assertEquals("0", info.text)
+    assertStringContains("RootImagePolicy's value is correctly formatted but seems invalid", info!!.description)
+    TestCase.assertEquals("opt", info.text)
   }
 
-  fun testWeakWarningWhenNegativeTenIsSpecified() {
+  fun testWeakWarningWhenInvalidPolicyFlagIsSpecified() {
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
            [Service]
-           CPUWeight=-10
+           RootImagePolicy=root=unsigned
            """.trimIndent()
 
 
@@ -97,17 +62,40 @@ class InvalidValidInspectionForCPUWeight : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("CPUWeight's value is correctly format but seems invalid", info!!.description)
-    TestCase.assertEquals("-10", info.text)
+    assertStringContains("RootImagePolicy's value is correctly formatted but seems invalid", info!!.description)
+    TestCase.assertEquals("unsigned", info.text)
   }
 
-
-  fun testWeakWarningWhenNegativeHundredThousandIsSpecified() {
+  fun testWeakWarningWhenInvalidPolicyFlagIsSpecifiedInSecondaryPolicy() {
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
            [Service]
-           CPUWeight=-100000
+           RootImagePolicy=home=encrypted+used
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+
+    // Verification
+    assertSize(1, highlights)
+    val info = highlights[0]
+
+    assertStringContains("RootImagePolicy's value is correctly formatted but seems invalid", info!!.description)
+    TestCase.assertEquals("used", info.text)
+    assertContainsQuickfix(info, "Replace 'used' with 'absent'")
+  }
+
+  fun testWeakWarningWhenIncompletePolicyFlagIsSpecifiedInSecondaryPolicy() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Service]
+           RootImagePolicy=home=encrypted+absent+
            """.trimIndent()
 
 
@@ -119,8 +107,30 @@ class InvalidValidInspectionForCPUWeight : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("CPUWeight's value is correctly format but seems invalid", info!!.description)
-    TestCase.assertEquals("-100000", info.text)
+    assertStringContains("RootImagePolicy's value does not match the expected format. Possible reasons include unrecognized characters or premature end of input", info!!.description)
+    TestCase.assertEquals("home=encrypted+absent+", info.text)
+  }
+
+  fun testWeakWarningWhenInvalidPolicySetInSecondPolicy() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Service]
+           RootImagePolicy=home=encrypted:root=encrypted+used
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+    val info = highlights[0]
+    assertStringContains("RootImagePolicy's value is correctly formatted but seems invalid", info!!.description)
+    TestCase.assertEquals("used", info.text)
+    assertContainsQuickfix(info, "Replace 'used' with 'absent'")
   }
 
 }

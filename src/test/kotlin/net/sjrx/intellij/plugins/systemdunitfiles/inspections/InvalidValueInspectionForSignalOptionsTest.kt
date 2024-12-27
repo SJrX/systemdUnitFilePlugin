@@ -21,7 +21,7 @@ class InvalidValueInspectionForSignalOptionsTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("signal(7) man page", info!!.description)
+    assertStringContains("signal(7) man page", info!!.description)
     TestCase.assertEquals("SIGARRET", info.text)
   }
 
@@ -41,7 +41,7 @@ class InvalidValueInspectionForSignalOptionsTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("signal(7) man page", info!!.description)
+    assertStringContains("signal(7) man page", info!!.description)
     TestCase.assertEquals("sigkill", info.text)
   }
 
@@ -61,7 +61,7 @@ class InvalidValueInspectionForSignalOptionsTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("if using an integer", info!!.description)
+    assertStringContains("if using an integer", info!!.description)
     TestCase.assertEquals("128", info.text)
   }
 

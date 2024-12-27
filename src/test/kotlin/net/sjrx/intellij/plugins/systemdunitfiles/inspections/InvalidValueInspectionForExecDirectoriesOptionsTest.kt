@@ -62,7 +62,7 @@ class InvalidValueInspectionForExecDirectoriesOptionsTest : AbstractUnitFileTest
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("a list of relative paths", info!!.description)
+    assertStringContains("a list of relative paths", info!!.description)
     TestCase.assertEquals("/tmp/myunit", info.text)
   }
 
@@ -84,7 +84,7 @@ class InvalidValueInspectionForExecDirectoriesOptionsTest : AbstractUnitFileTest
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Takes a list of relative paths", info!!.description)
+    assertStringContains("Takes a list of relative paths", info!!.description)
     TestCase.assertEquals("/tmp/myunit /tmp/myunit2", info.text)
   }
 
@@ -106,7 +106,7 @@ class InvalidValueInspectionForExecDirectoriesOptionsTest : AbstractUnitFileTest
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Path cannot contain `..`", info!!.description)
+    assertStringContains("Path cannot contain `..`", info!!.description)
     TestCase.assertEquals("../myunit", info.text)
   }
 
@@ -128,7 +128,7 @@ class InvalidValueInspectionForExecDirectoriesOptionsTest : AbstractUnitFileTest
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Path cannot contain `..`", info!!.description)
+    assertStringContains("Path cannot contain `..`", info!!.description)
     TestCase.assertEquals("foo/bar test/tmp/ ../myunit", info.text)
   }
 }

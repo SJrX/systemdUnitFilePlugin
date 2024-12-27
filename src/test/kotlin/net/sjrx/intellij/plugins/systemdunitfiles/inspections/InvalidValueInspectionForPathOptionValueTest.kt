@@ -3,7 +3,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections
 import junit.framework.TestCase
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 
-class InvalidValidInspectionForPathOptionValueTest : AbstractUnitFileTest() {
+class InvalidValueInspectionForPathOptionValueTest : AbstractUnitFileTest() {
 
   fun testWeakWarningWhenNegativeIntegerSpecified() {
     // Fixture Setup
@@ -22,7 +22,7 @@ class InvalidValidInspectionForPathOptionValueTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("absolute path", info!!.description)
+    assertStringContains("absolute path", info!!.description)
     TestCase.assertEquals("foo", info.text)
   }
 

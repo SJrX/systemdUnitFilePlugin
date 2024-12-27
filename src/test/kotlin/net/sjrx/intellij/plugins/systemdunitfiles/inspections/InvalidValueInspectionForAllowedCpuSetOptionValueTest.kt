@@ -3,7 +3,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections
 import junit.framework.TestCase
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 
-class InvalidValidInspectionForAllowedCpuSetOptionValueTest : AbstractUnitFileTest() {
+class InvalidValueInspectionForAllowedCpuSetOptionValueTest : AbstractUnitFileTest() {
 
   fun testNoWeakWarningWhenSingleIntegerSpecified() {
     // Fixture Setup
@@ -114,7 +114,7 @@ class InvalidValidInspectionForAllowedCpuSetOptionValueTest : AbstractUnitFileTe
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Invalid syntax for CPU Range", info!!.description)
+    assertStringContains("Invalid syntax for CPU Range", info!!.description)
     TestCase.assertEquals("-1", info.text)
   }
 
@@ -135,7 +135,7 @@ class InvalidValidInspectionForAllowedCpuSetOptionValueTest : AbstractUnitFileTe
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Invalid syntax for CPU Range", info!!.description)
+    assertStringContains("Invalid syntax for CPU Range", info!!.description)
     TestCase.assertEquals("1--10", info.text)
   }
 
@@ -156,7 +156,7 @@ class InvalidValidInspectionForAllowedCpuSetOptionValueTest : AbstractUnitFileTe
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("The start 8 of the range must be less than the end 5 of the range", info!!.description)
+    assertStringContains("The start 8 of the range must be less than the end 5 of the range", info!!.description)
     TestCase.assertEquals("8-5", info.text)
   }
 
@@ -177,7 +177,7 @@ class InvalidValidInspectionForAllowedCpuSetOptionValueTest : AbstractUnitFileTe
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Invalid syntax for CPU Range", info!!.description)
+    assertStringContains("Invalid syntax for CPU Range", info!!.description)
     TestCase.assertEquals("1-2-3", info.text)
   }
 
@@ -198,7 +198,7 @@ class InvalidValidInspectionForAllowedCpuSetOptionValueTest : AbstractUnitFileTe
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Invalid syntax for CPU Range", info!!.description)
+    assertStringContains("Invalid syntax for CPU Range", info!!.description)
     TestCase.assertEquals("1-yo", info.text)
   }
 

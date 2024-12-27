@@ -3,26 +3,26 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections
 import junit.framework.TestCase
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 
-class InvalidValidInspectionForTTYSize : AbstractUnitFileTest() {
+class InvalidValueInspectionForUnsignedInteger : AbstractUnitFileTest() {
 
   fun testWeakWarningWhenNegativeIntegerSpecified() {
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
-           [Service]
-           TTYRows=-5
+           [Swap]
+           LogRateLimitBurst=-5
            """.trimIndent()
 
 
     // Execute SUT
-    setupFileInEditor("file.service", file)
+    setupFileInEditor("file.swap", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("must be an unsigned integer", info!!.description)
+    assertStringContains("must be an unsigned integer", info!!.description)
     TestCase.assertEquals("-5", info.text)
   }
 
@@ -30,20 +30,20 @@ class InvalidValidInspectionForTTYSize : AbstractUnitFileTest() {
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
-           [Service]
-           TTYRows=foo
+           [Swap]
+           LogRateLimitBurst=foo
            """.trimIndent()
 
 
     // Execute SUT
-    setupFileInEditor("file.service", file)
+    setupFileInEditor("file.swap", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("must be an unsigned integer", info!!.description)
+    assertStringContains("must be an unsigned integer", info!!.description)
     TestCase.assertEquals("foo", info.text)
   }
 
@@ -51,13 +51,13 @@ class InvalidValidInspectionForTTYSize : AbstractUnitFileTest() {
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
-           [Service]
-           TTYRows=2
+           [Swap]
+           LogRateLimitBurst=2
            """.trimIndent()
 
 
     // Execute SUT
-    setupFileInEditor("file.service", file)
+    setupFileInEditor("file.swap", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
