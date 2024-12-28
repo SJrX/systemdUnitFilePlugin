@@ -120,6 +120,8 @@ class SemanticDataRepository private constructor() {
     validatorMap.putAll(ImagePolicyOptionValue.validators)
     validatorMap.putAll(CPUWeightOptionValue.validators)
     validatorMap.putAll(CPUSharesOptionValue.validators)
+
+    validatorMap.putAll(RlimitOptionValue.validators)
     // Scopes are not supported since they aren't standard unit files.
     fileClassToSectionNameToKeyValuesFromDoc["unit"]?.remove(SCOPE_KEYWORD)
     fileClassToSectionToKeyAndValidatorMap["unit"]?.remove(SCOPE_KEYWORD)

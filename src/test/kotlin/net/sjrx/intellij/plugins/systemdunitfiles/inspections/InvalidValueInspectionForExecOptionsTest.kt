@@ -23,7 +23,7 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("an absolute path", info!!.description)
+    assertStringContains("an absolute path", info!!.description)
     TestCase.assertEquals("docker-compose", info.text)
   }
 
@@ -44,7 +44,7 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("an absolute path", info!!.description)
+    assertStringContains("an absolute path", info!!.description)
     TestCase.assertEquals("docker-compose", info.text)
   }
 
@@ -209,7 +209,7 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("an absolute path", info!!.description)
+    assertStringContains("an absolute path", info!!.description)
     TestCase.assertEquals("docker-compose", info.text)
   }
 
@@ -230,7 +230,7 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("an absolute path", info!!.description)
+    assertStringContains("an absolute path", info!!.description)
     TestCase.assertEquals("docker-compose", info.text)
   }
 
@@ -251,7 +251,7 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("an absolute path", info!!.description)
+    assertStringContains("an absolute path", info!!.description)
     TestCase.assertEquals("docker-compose", info.text)
   }
 
@@ -272,7 +272,7 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("an absolute path", info!!.description)
+    assertStringContains("an absolute path", info!!.description)
     TestCase.assertEquals("docker-compose", info.text)
   }
 
@@ -293,7 +293,7 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("an absolute path", info!!.description)
+    assertStringContains("an absolute path", info!!.description)
     TestCase.assertEquals("docker-compose", info.text)
   }
 
@@ -314,7 +314,7 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("an absolute path", info!!.description)
+    assertStringContains("an absolute path", info!!.description)
     TestCase.assertEquals("docker-compose", info.text)
   }
 
@@ -335,7 +335,7 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("an absolute path", info!!.description)
+    assertStringContains("an absolute path", info!!.description)
     TestCase.assertEquals("docker-compose", info.text)
   }
 }

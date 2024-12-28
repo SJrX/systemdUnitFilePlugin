@@ -660,4 +660,76 @@ class GrammarTest : TestCase() {
     assertEquals(NoMatch, eof.SemanticMatch(invalidFromOffset, garbage.length))
   }
 
+  fun testOptionalWhitespacePrefixMatches() {
+    /**
+     * Fixture Setup
+     */
+
+    // This combinator should match the options passed in.
+
+    val on = LiteralChoiceTerminal("on")
+
+
+    val optionalWhitespacePrefix = OptionalWhitespacePrefix(on)
+
+    val semValid = "on"
+    val semValid2 = "\t on"
+    val invalid = "off"
+
+    val garbage = "XX"
+
+    val semValidFromOffset = "${garbage}${semValid}"
+    val semValid2FromOffset = "${garbage}${semValid2}"
+    val invalidFromOffset = "${garbage}${invalid}"
+
+    /**
+     * Execute SUT & Verification
+     */
+    var match = optionalWhitespacePrefix.SyntacticMatch(semValid, 0)
+    assertEquals(semValid.length, match.matchResult)
+    assertEquals(listOf("on"), match.tokens)
+    assertEquals(listOf("LiteralChoiceTerminal"), TerminalTypes(match.terminals))
+
+    match = optionalWhitespacePrefix.SemanticMatch(semValid, 0)
+    assertEquals(semValid.length, match.matchResult)
+    assertEquals(listOf("on"), match.tokens)
+    assertEquals(listOf("LiteralChoiceTerminal"), TerminalTypes(match.terminals))
+
+    match = optionalWhitespacePrefix.SyntacticMatch(semValid2, 0)
+    assertEquals(semValid2.length, match.matchResult)
+    assertEquals(listOf("\t ", "on"), match.tokens)
+    assertEquals(listOf("WhitespaceTerminal", "LiteralChoiceTerminal"), TerminalTypes(match.terminals))
+
+    match = optionalWhitespacePrefix.SemanticMatch(semValid2, 0)
+    assertEquals(semValid2.length, match.matchResult)
+    assertEquals(listOf("\t ", "on"), match.tokens)
+    assertEquals(listOf("WhitespaceTerminal", "LiteralChoiceTerminal"), TerminalTypes(match.terminals))
+
+    assertEquals(NoMatch, optionalWhitespacePrefix.SyntacticMatch(invalid, 0))
+    assertEquals(NoMatch, optionalWhitespacePrefix.SemanticMatch(invalid, 0))
+
+    match = optionalWhitespacePrefix.SemanticMatch(semValidFromOffset, garbage.length)
+    assertEquals(semValidFromOffset.length, match.matchResult)
+    assertEquals(listOf("on"), match.tokens)
+    assertEquals(listOf("LiteralChoiceTerminal"), TerminalTypes(match.terminals))
+
+    match = optionalWhitespacePrefix.SyntacticMatch(semValidFromOffset, garbage.length)
+    assertEquals(semValidFromOffset.length, match.matchResult)
+    assertEquals(listOf("on"), match.tokens)
+    assertEquals(listOf("LiteralChoiceTerminal"), TerminalTypes(match.terminals))
+
+    match = optionalWhitespacePrefix.SemanticMatch(semValid2FromOffset, garbage.length)
+    assertEquals(semValid2FromOffset.length, match.matchResult)
+    assertEquals(listOf("\t ", "on"), match.tokens)
+    assertEquals(listOf("WhitespaceTerminal", "LiteralChoiceTerminal"), TerminalTypes(match.terminals))
+
+    match = optionalWhitespacePrefix.SyntacticMatch(semValid2FromOffset, garbage.length)
+    assertEquals(semValid2FromOffset.length, match.matchResult)
+    assertEquals(listOf("\t ", "on"), match.tokens)
+    assertEquals(listOf("WhitespaceTerminal", "LiteralChoiceTerminal"), TerminalTypes(match.terminals))
+
+    assertEquals(NoMatch, optionalWhitespacePrefix.SemanticMatch(invalidFromOffset, garbage.length))
+    assertEquals(NoMatch, optionalWhitespacePrefix.SyntacticMatch(invalidFromOffset, garbage.length))
+  }
+
 }

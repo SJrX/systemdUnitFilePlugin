@@ -55,10 +55,10 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Most Def", info!!.description)
-    AbstractUnitFileTest.Companion.assertStringContains("must be one of", info.description)
-    AbstractUnitFileTest.Companion.assertStringContains("on", info.description)
-    AbstractUnitFileTest.Companion.assertStringContains("off", info.description)
+    assertStringContains("Most Def", info!!.description)
+    assertStringContains("must be one of", info.description)
+    assertStringContains("on", info.description)
+    assertStringContains("off", info.description)
     TestCase.assertEquals(HighlightInfoType.WARNING, info.type)
     val highlightElement = myFixture.file.findElementAt(info.getStartOffset())
     TestCase.assertNotNull(highlightElement)
@@ -116,10 +116,10 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Most Def", info!!.description)
-    AbstractUnitFileTest.Companion.assertStringContains("must be one of", info.description)
-    AbstractUnitFileTest.Companion.assertStringContains("on", info.description)
-    AbstractUnitFileTest.Companion.assertStringContains("off", info.description)
+    assertStringContains("Most Def", info!!.description)
+    assertStringContains("must be one of", info.description)
+    assertStringContains("on", info.description)
+    assertStringContains("off", info.description)
     TestCase.assertEquals(HighlightInfoType.WARNING, info.type)
     val highlightElement = myFixture.file.findElementAt(info.getStartOffset())
     TestCase.assertNotNull(highlightElement)
@@ -193,8 +193,8 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("ftp://www.google.com/rules.txt", info!!.description)
-    AbstractUnitFileTest.Companion.assertStringContains("a space separated list", info.description)
+    assertStringContains("ftp://www.google.com/rules.txt", info!!.description)
+    assertStringContains("a space separated list", info.description)
     TestCase.assertEquals(HighlightInfoType.WARNING, info.type)
     val highlightElement = myFixture.file.findElementAt(info.getStartOffset())
     TestCase.assertNotNull(highlightElement)
@@ -220,12 +220,12 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("ftp://www.google.com/rules.txt", info!!.description)
-    AbstractUnitFileTest.Companion.assertStringContains("a space separated list", info.description)
+    assertStringContains("ftp://www.google.com/rules.txt", info!!.description)
+    assertStringContains("a space separated list", info.description)
     TestCase.assertEquals(HighlightInfoType.WARNING, info.type)
     val highlightElement = myFixture.file.findElementAt(info.getStartOffset())
     TestCase.assertNotNull(highlightElement)
-    AbstractUnitFileTest.Companion.assertStringContains("ftp://www.google.com/rules.txt", highlightElement!!.text)
+    assertStringContains("ftp://www.google.com/rules.txt", highlightElement!!.text)
   }
 
 
@@ -282,11 +282,11 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
     // Verification
     assertSize(6, highlights)
     for (info in highlights) {
-      AbstractUnitFileTest.Companion.assertStringContains("Value is expected to be a 3 or 4 digit octal number not:", info!!.description)
+      assertStringContains("Value is expected to be a 3 or 4 digit octal number not:", info!!.description)
       TestCase.assertEquals(HighlightInfoType.WARNING, info.type)
       val highlightElement = myFixture.file.findElementAt(info.getStartOffset())
       TestCase.assertNotNull(highlightElement)
-      AbstractUnitFileTest.Companion.assertStringContains(highlightElement!!.text.trim { it <= ' ' }, info.description)
+      assertStringContains(highlightElement!!.text.trim { it <= ' ' }, info.description)
     }
   }
 
@@ -308,7 +308,7 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Invalid unit name detected,", info!!.description)
+    assertStringContains("Invalid unit name detected,", info!!.description)
   }
 
   fun testInvalidUnitTypeInWantsTriggersWarning() {
@@ -328,7 +328,7 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Unit type foo", info!!.description)
+    assertStringContains("Unit type foo", info!!.description)
     TestCase.assertEquals("foo", info.text)
   }
 
@@ -348,19 +348,19 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
     // Verification
     assertSize(5, highlights)
     val mysqlErrorMissingType = highlights[0]
-    AbstractUnitFileTest.Companion.assertStringContains("Invalid unit name detected", mysqlErrorMissingType!!.description)
+    assertStringContains("Invalid unit name detected", mysqlErrorMissingType!!.description)
     TestCase.assertEquals("mysql", mysqlErrorMissingType.text)
     val mongoInvalidType = highlights[1]
-    AbstractUnitFileTest.Companion.assertStringContains("Unit type db", mongoInvalidType!!.description)
+    assertStringContains("Unit type db", mongoInvalidType!!.description)
     TestCase.assertEquals("db", mongoInvalidType.text)
     val neo4jInvalidType = highlights[2]
-    AbstractUnitFileTest.Companion.assertStringContains("Unit type graph", neo4jInvalidType!!.description)
+    assertStringContains("Unit type graph", neo4jInvalidType!!.description)
     TestCase.assertEquals("graph", neo4jInvalidType.text)
     val cassandraMissingType = highlights[3]
-    AbstractUnitFileTest.Companion.assertStringContains("Invalid unit name detected", cassandraMissingType!!.description)
+    assertStringContains("Invalid unit name detected", cassandraMissingType!!.description)
     TestCase.assertEquals("cassandra", cassandraMissingType.text)
     val redisInvalidType = highlights[4]
-    AbstractUnitFileTest.Companion.assertStringContains("Unit type cache", redisInvalidType!!.description)
+    assertStringContains("Unit type cache", redisInvalidType!!.description)
     TestCase.assertEquals("cache", redisInvalidType.text)
   }
 
