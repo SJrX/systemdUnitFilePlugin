@@ -24,6 +24,9 @@ ENV BUILDDATE ${BUILDDATE:-notset}
 
 RUN git pull
 
+# https://github.com/systemd/systemd/commit/8442ac9c0264ac7beb5afd6c3bf922030a6edaf3
+RUN find . -type f -name meson.build -exec sed -i 's/install_emptydir(\(.*\), install_tag : .*)/install_emptydir(\1)/g' '{}' '+'
+
 RUN meson setup build
 
 RUN /systemd-build.sh
