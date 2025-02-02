@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 echo "Git Pull" && \
+  git reset --hard HEAD &&\
   git pull && \
+  find . -type f -name meson.build -exec sed -i 's/install_emptydir(\(.*\), install_tag : .*)/install_emptydir(\1)/g' '{}' '+' && \
   echo "Run jinja2" && \
   python3 ./tools/meson-render-jinja2.py ./build/config.h ./src/core/load-fragment-gperf.gperf.in load-fragment-gperf.gperf &&  \
   echo "Copy file(s)" && \

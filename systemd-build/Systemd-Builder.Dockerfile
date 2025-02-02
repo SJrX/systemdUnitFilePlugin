@@ -14,10 +14,6 @@ WORKDIR /opt/systemd-source/systemd
 
 RUN mkdir -p /mount/
 
-ADD systemd-build.sh /
-
-CMD /systemd-build.sh
-
 # Force cache to be invalidated after this point
 ARG BUILDDATE
 ENV BUILDDATE ${BUILDDATE:-notset}
@@ -28,6 +24,10 @@ RUN git pull
 RUN find . -type f -name meson.build -exec sed -i 's/install_emptydir(\(.*\), install_tag : .*)/install_emptydir(\1)/g' '{}' '+'
 
 RUN meson setup build
+
+ADD systemd-build.sh /
+
+CMD /systemd-build.sh
 
 RUN /systemd-build.sh
 
