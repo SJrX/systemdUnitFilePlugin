@@ -115,12 +115,14 @@ class SemanticDataRepository private constructor() {
     validatorMap.putAll(AllowedCpuSetOptionValue.validators)
     validatorMap.putAll(TtySizeOptionValue.validators)
     validatorMap.putAll(ExecDirectoriesOptionValue.validators)
-
     validatorMap.putAll(IOLimitOptionValue.validators)
+    validatorMap.putAll(CGWeightOptionValue.validators)
+    validatorMap.putAll(BlockIOWeightOptionValue.validators)
+    validatorMap.putAll(BlockIOBandwidthOptionValue.validators)
     validatorMap.putAll(ImagePolicyOptionValue.validators)
     validatorMap.putAll(CPUWeightOptionValue.validators)
     validatorMap.putAll(CPUSharesOptionValue.validators)
-
+    validatorMap.putAll(CgroupSocketBindOptionValue.validators)
     validatorMap.putAll(RlimitOptionValue.validators)
     // Scopes are not supported since they aren't standard unit files.
     fileClassToSectionNameToKeyValuesFromDoc["unit"]?.remove(SCOPE_KEYWORD)
@@ -543,8 +545,6 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
         else -> FileClass.UNIT_FILE
       }
     }
-
-
   }
 }
 

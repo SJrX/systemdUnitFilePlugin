@@ -618,6 +618,101 @@ class GrammarTest : TestCase() {
     assertEquals(listOf<String>(), match.tokens)
   }
 
+  fun testZeroOrOneCombinatorMatches() {
+    /**
+     * Fixture Setup
+     */
+
+    // This combinator should match the options passed in.
+    val fizzOrBuzz = RegexTerminal("[a-z]{4}", "fizz|buzz")
+
+    val zeroOrOneCombinator = ZeroOrOne(fizzOrBuzz)
+
+    val semValid = "fizz"
+    val synValid = "bleh"
+    val semValidEmpty = ""
+    val invalid = "Hello World"
+    val garbage = "XX"
+
+    val semValidFromOffset = "${garbage}${semValid}"
+    val semValidEmptyFromOffset = "${garbage}${semValidEmpty}"
+    val synValidFromOffset = "${garbage}${synValid}"
+    val invalidFromOffset = "${garbage}${invalid}"
+
+    /**
+     * Execute SUT & Verification
+     */
+    var match = zeroOrOneCombinator.SyntacticMatch(semValid, 0)
+    assertEquals(semValid.length, match.matchResult)
+    assertEquals(listOf("fizz"), match.tokens)
+    assertEquals(listOf("RegexTerminal"), TerminalTypes(match.terminals))
+
+    match = zeroOrOneCombinator.SemanticMatch(semValid, 0)
+    assertEquals(semValid.length, match.matchResult)
+    assertEquals(listOf("fizz"), match.tokens)
+    assertEquals(listOf("RegexTerminal"), TerminalTypes(match.terminals))
+
+    match = zeroOrOneCombinator.SyntacticMatch(synValid, 0)
+    assertEquals(synValid.length, match.matchResult)
+    assertEquals(listOf("bleh"), match.tokens)
+    assertEquals(listOf("RegexTerminal"), TerminalTypes(match.terminals))
+
+    match = zeroOrOneCombinator.SemanticMatch(synValid, 0)
+    assertEquals(0, match.matchResult)
+    assertEquals(listOf<String>(), match.tokens)
+
+    match = zeroOrOneCombinator.SyntacticMatch(semValidEmpty, 0)
+    assertEquals(semValidEmpty.length, match.matchResult)
+    assertEquals(listOf<String>(), match.tokens)
+
+    match = zeroOrOneCombinator.SemanticMatch(semValidEmpty, 0)
+    assertEquals(semValidEmpty.length, match.matchResult)
+    assertEquals(listOf<String>(), match.tokens)
+
+    match = zeroOrOneCombinator.SyntacticMatch(invalid, 0)
+    assertEquals(0, match.matchResult)
+    assertEquals(listOf<String>(), match.tokens)
+
+    match = zeroOrOneCombinator.SemanticMatch(invalid, 0)
+    assertEquals(0, match.matchResult)
+    assertEquals(listOf<String>(), match.tokens)
+
+    match = zeroOrOneCombinator.SyntacticMatch(semValidFromOffset, garbage.length)
+    assertEquals(semValidFromOffset.length, match.matchResult)
+    assertEquals(listOf("fizz"), match.tokens)
+    assertEquals(listOf("RegexTerminal"), TerminalTypes(match.terminals))
+
+    match = zeroOrOneCombinator.SemanticMatch(semValidFromOffset, garbage.length)
+    assertEquals(semValidFromOffset.length, match.matchResult)
+    assertEquals(listOf("fizz"), match.tokens)
+    assertEquals(listOf("RegexTerminal"), TerminalTypes(match.terminals))
+
+    match = zeroOrOneCombinator.SyntacticMatch(synValidFromOffset, garbage.length)
+    assertEquals(synValidFromOffset.length, match.matchResult)
+    assertEquals(listOf("bleh"), match.tokens)
+    assertEquals(listOf("RegexTerminal"), TerminalTypes(match.terminals))
+
+    match = zeroOrOneCombinator.SemanticMatch(synValidFromOffset, garbage.length)
+    assertEquals(garbage.length, match.matchResult)
+    assertEquals(listOf<String>(), match.tokens)
+
+    match = zeroOrOneCombinator.SyntacticMatch(semValidEmptyFromOffset, garbage.length)
+    assertEquals(garbage.length, match.matchResult)
+    assertEquals(listOf<String>(), match.tokens)
+
+    match = zeroOrOneCombinator.SemanticMatch(semValidEmptyFromOffset, garbage.length)
+    assertEquals(garbage.length, match.matchResult)
+    assertEquals(listOf<String>(), match.tokens)
+
+    match = zeroOrOneCombinator.SyntacticMatch(invalidFromOffset, garbage.length)
+    assertEquals(garbage.length, match.matchResult)
+    assertEquals(listOf<String>(), match.tokens)
+
+    match = zeroOrOneCombinator.SemanticMatch(invalidFromOffset, garbage.length)
+    assertEquals(garbage.length, match.matchResult)
+    assertEquals(listOf<String>(), match.tokens)
+  }
+
   fun testEOFCombinatorMatches() {
     /**
      * Fixture Setup
