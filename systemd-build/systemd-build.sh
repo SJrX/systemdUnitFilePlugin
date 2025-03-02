@@ -3,6 +3,8 @@
 
 echo "Git Pull" && \
   git pull && \
+  echo "Patching config.h" && \
+  sed -i -E "s/HAVE_SECCOMP 0/HAVE_SECCOMP 1/g" ./build/config.h && \
   echo "Run jinja2" && \
   python3 ./tools/meson-render-jinja2.py ./build/config.h ./src/core/load-fragment-gperf.gperf.in load-fragment-gperf.gperf &&  \
   echo "Copy file(s)" && \
