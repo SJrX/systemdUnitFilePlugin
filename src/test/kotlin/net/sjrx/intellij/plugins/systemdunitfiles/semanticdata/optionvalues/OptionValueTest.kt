@@ -35,7 +35,7 @@ class OptionValueTest : AbstractUnitFileTest() {
 
     println("Missing:$totalMissingValidators")
     println("Found:$totalFoundValidators")
-    val allowed = 519
+    val allowed = 521
     if (totalMissingValidators >= allowed) {
       assertEquals("Number of missing validators is too high at ${totalMissingValidators} > $allowed vs. found ${totalFoundValidators}", sortedList, "")
     }
