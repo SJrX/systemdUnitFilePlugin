@@ -7,6 +7,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
   fun testValidFileHasNoErrors() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Unit]
            Description=Hello Good Sir
@@ -28,6 +29,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
   fun testUnknownKeyInUnitSectionGeneratesWarning() {
 
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Unit]
            BadKey=Hello Good Sir
@@ -51,6 +53,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testUnknownKeyInInstallSectionGeneratesWarning() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Install]
            BadKey=Hello Good Sir
@@ -74,6 +77,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testUnknownKeyInServiceSectionGeneratesWarning() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            BadKey=Hello Good Sir
@@ -97,6 +101,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testTwoUnknownKeysInSameSectionReturnError() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            BadKey=Hello Good Sir
@@ -125,6 +130,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testTwoUnknownKeysInDistinctSectionsReturnErrors() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            BadKey=Hello Good Sir
@@ -154,6 +160,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testKeyStartingWithXDashDoesNotReturnError() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            X-BadKey=Hello Good Sir
@@ -172,6 +179,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testSectionStartingWithXDashAndBadKeysDoNotCauseError() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [X-Service]
            BadKey=Hello Good Sir
@@ -190,6 +198,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testKeyFromInstallSectionThrowsWarningInUnitSection() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Unit]
            Alias=Hello Good Sir
@@ -213,6 +222,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testKeyFromUnitSectionThrowsWarningInInstallSection() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Install]
            Requires=Hello Good Sir
@@ -236,6 +246,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testKeyFromInstallSectionThrowsWarningInServiceSection() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            Alias=Hello Good Sir
@@ -259,6 +270,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testKeyFromUnitSectionThrowsWarningInServiceSection() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            Requires=Hello Good Sir
@@ -282,6 +294,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testKeyFromResourceControlManPageDoesNotThrowWarningInServiceSection() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            CPUAccounting=on
@@ -298,6 +311,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testKeyFromExecManPageDoesNotThrowWarningInServiceSection() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            DynamicUser=yes
@@ -314,6 +328,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testAutomountFileTypeHasNoWarningsWithKnownKey() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Automount]
            Where=yes
@@ -330,6 +345,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testAutomountFileTypeThrowsWarningWithKeyFromServiceFile() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Automount]
            BusName=yes
@@ -351,6 +367,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testDeviceFileTypeHasNoWarningsWithKnownKey() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Unit]
            Description=SomeUnit
@@ -367,6 +384,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testDeviceFileTypeThrowsWarningWithKeyFromServiceFile() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Unit]
            BusName=yes
@@ -388,6 +406,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testMountFileTypeHasNoWarningsWithKnownKey() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Mount]
            SloppyOptions=true
@@ -404,6 +423,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testMountFileTypeThrowsWarningWithKeyFromServiceFile() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Mount]
            BusName=yes
@@ -425,6 +445,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testPathFileTypeHasNoWarningsWithKnownKey() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Path]
            MakeDirectory=true
@@ -441,6 +462,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testPathFileTypeThrowsWarningWithKeyFromServiceFile() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Path]
            BusName=yes
@@ -462,6 +484,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testServiceFileTypeHasNoWarningsWithKnownKey() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            BusName=true
@@ -478,6 +501,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testServiceFileTypeThrowsWarningWithKeyFromPathFile() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            MakeDirectory=yes
@@ -499,6 +523,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testSliceFileTypeHasNoWarningsWithKnownKey() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Slice]
            CPUAccounting=true
@@ -515,6 +540,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testSliceFileTypeThrowsWarningWithKeyFromUnitSection() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Slice]
            Description=yes
@@ -536,6 +562,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testSocketFileTypeHasNoWarningsWithKnownKey() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Socket]
            Backlog=5
@@ -552,6 +579,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testSocketFileTypeThrowsWarningWithKeyFromServiceFile() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Socket]
            BusName=yes
@@ -573,6 +601,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testSwapFileTypeHasNoWarningsWithKnownKey() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Swap]
            Priority=5
@@ -589,6 +618,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testSwapFileTypeThrowsWarningWithKeyFromServiceFile() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Swap]
            BusName=yes
@@ -610,6 +640,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testTargetFileTypeHasNoWarningsWithKnownKey() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Unit]
            Description=SomeUnit
@@ -626,6 +657,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testTargetFileTypeThrowsWarningWithKeyFromServiceFile() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Unit]
            BusName=yes
@@ -647,6 +679,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testTimerFileTypeHasNoWarningsWithKnownKey() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Timer]
            RandomizedDelaySec=50
@@ -663,6 +696,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testTimerFileTypeThrowsWarningWithKeyFromServiceFile() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Timer]
            BusName=yes
@@ -684,6 +718,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testNSpawnFileTypeThrowsWarningWithKeyFromServiceFile() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Exec]
            BusName=yes
@@ -703,8 +738,10 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
     TestCase.assertEquals("BusName", highlightElement!!.text)
   }
 
+  // I think this test was not finished
   fun testNSpawnFileTypeHasNoWarningsWithKnownKey() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Timer]
            RandomizedDelaySec=50
@@ -719,9 +756,188 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
     assertEmpty(highlights)
   }
 
+  fun testNetDevShowsNoWarnings() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [NetDev]
+           Name=wg0
+           Kind=wireguard
+          
+           [WireGuard]
+           PrivateKey=EEGlnEPYJV//kbvvIqxKkQwOiS+UENyPncC4bF46ong=
+           ListenPort=51820
+            
+           [WireGuardPeer]
+           PublicKey=RDf+LSpeEre7YEIKaxg+wbpsNV7du+ktR99uBEtIiCA=
+           AllowedIPs=fd31:bf08:57cb::/48,192.168.26.0/24
+           Endpoint=wireguard.example.com:51820
+           """.trimIndent()
+    enableInspection(UnknownKeyInSectionInspection::class.java)
+    setupFileInEditor("some.netdev", file)
+
+    // Exercise SUT
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertEmpty(highlights)
+  }
+
+  fun testNetDevShowsWarningWithUnknownKey() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [NetDev]
+           Name=wg0
+           Kind=wireguard
+          
+           [WireGuard]
+           TLSEndpoint=tcp://64.45.45.12
+                       
+           [WireGuardPeer]
+           PublicKey=RDf+LSpeEre7YEIKaxg+wbpsNV7du+ktR99uBEtIiCA=
+           AllowedIPs=fd31:bf08:57cb::/48,192.168.26.0/24
+           Endpoint=wireguard.example.com:51820
+           """.trimIndent()
+    enableInspection(UnknownKeyInSectionInspection::class.java)
+    setupFileInEditor("some.netdev", file)
+
+    // Exercise SUT
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+    val info = highlights[0]
+    TestCase.assertEquals(UnknownKeyInSectionInspection.INSPECTION_TOOL_TIP_TEXT, info!!.description)
+    TestCase.assertEquals(HighlightInfoType.WARNING, info.type)
+    val highlightElement = myFixture.file.findElementAt(info.getStartOffset())
+    TestCase.assertEquals("TLSEndpoint", highlightElement!!.text)
+  }
+
+  fun testNetworkFileShowsNoWarnings() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    enableInspection(UnknownKeyInSectionInspection::class.java)
+    val file = """
+      # /etc/systemd/network/25-bridge-static.network
+      [Match]
+      Name=bridge0
+      
+      [Network]
+      Address=192.168.0.15/24
+      Gateway=192.168.0.1
+      DNS=192.168.0.1
+           """.trimIndent()
+    setupFileInEditor("some.network", file)
+
+    // Exercise SUT
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertEmpty(highlights)
+  }
+
+  fun testNetworkShowsWarningWithUnknownKey() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """         
+          # /etc/systemd/network/25-bridge-static.network
+          [Match]
+          NameAlias=bridge0
+          
+          [Network]
+          Address=192.168.0.15/24
+          Gateway=192.168.0.1
+          DNS=192.168.0.1
+           """.trimIndent()
+    enableInspection(UnknownKeyInSectionInspection::class.java)
+    setupFileInEditor("some.network", file)
+
+    // Exercise SUT
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+    val info = highlights[0]
+    TestCase.assertEquals(UnknownKeyInSectionInspection.INSPECTION_TOOL_TIP_TEXT, info!!.description)
+    TestCase.assertEquals(HighlightInfoType.WARNING, info.type)
+    val highlightElement = myFixture.file.findElementAt(info.getStartOffset())
+    TestCase.assertEquals("NameAlias", highlightElement!!.text)
+  }
+
+
+  fun testLinkFileShowsNoWarnings() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    enableInspection(UnknownKeyInSectionInspection::class.java)
+    val file = """
+      [Match]
+      MACAddress=12:34:56:78:9a:bc
+      Driver=brcmsmac
+      Path=pci-0000:02:00.0-*
+      Type=wlan
+      Virtualization=no
+      Host=my-laptop
+      Architecture=x86-64
+      
+      [Link]
+      Name=wireless0
+      MTUBytes=1450
+      BitsPerSecond=10M
+      WakeOnLan=magic
+      MACAddress=cb:a9:87:65:43:21
+           """.trimIndent()
+    setupFileInEditor("some.link", file)
+
+    // Exercise SUT
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertEmpty(highlights)
+  }
+
+  fun testLinkShowsWarningWithUnknownKey() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """         
+          [Match]
+          MACAddress=12:34:56:78:9a:bc
+          Driver=brcmsmac
+          Path=pci-0000:02:00.0-*
+          Type=wlan
+          Virtualization=no
+          VirtualizationKind=qemu
+          Host=my-laptop
+          Architecture=x86-64
+          
+          [Link]
+          Name=wireless0
+          MTUBytes=1450
+          BitsPerSecond=10M
+          WakeOnLan=magic
+          MACAddress=cb:a9:87:65:43:21
+           """.trimIndent()
+    enableInspection(UnknownKeyInSectionInspection::class.java)
+    setupFileInEditor("some.link", file)
+
+    // Exercise SUT
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+    val info = highlights[0]
+    TestCase.assertEquals(UnknownKeyInSectionInspection.INSPECTION_TOOL_TIP_TEXT, info!!.description)
+    TestCase.assertEquals(HighlightInfoType.WARNING, info.type)
+    val highlightElement = myFixture.file.findElementAt(info.getStartOffset())
+    TestCase.assertEquals("VirtualizationKind", highlightElement!!.text)
+  }
+
+
+
 
   fun testSomeNewKeysFromSystemdV240HasNoWarnings() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Unit]
            FailureActionExitStatus=249
@@ -742,6 +958,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testSomeNewKeysFromSystemdV246HasNoWarnings() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            CoredumpFilter=bar
@@ -759,6 +976,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
 
   fun testThatMovedKeysFromServiceToUnitInSystemd229ThrowNoWarnings() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Service]
            StartLimitBurst=24

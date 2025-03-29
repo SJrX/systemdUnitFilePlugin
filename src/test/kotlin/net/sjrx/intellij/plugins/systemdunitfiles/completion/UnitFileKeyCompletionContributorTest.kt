@@ -5,6 +5,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 class UnitFileKeyCompletionContributorTest : AbstractUnitFileTest() {
   fun testCompletionInInstallSectionReturnsExpectedValues() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Install]
            Al$COMPLETION_POSITION
@@ -21,6 +22,7 @@ class UnitFileKeyCompletionContributorTest : AbstractUnitFileTest() {
 
   fun testCompletionInInstallSectionReturnsExpectedValuesWhenAtEndOfFile() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Install]
            Al$COMPLETION_POSITION
@@ -37,6 +39,7 @@ class UnitFileKeyCompletionContributorTest : AbstractUnitFileTest() {
 
   fun testCompletionOfImpossibleToMatchKeyReturnsEmpty() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Install]
            ZzzZZZZ$COMPLETION_POSITION
@@ -52,6 +55,7 @@ class UnitFileKeyCompletionContributorTest : AbstractUnitFileTest() {
 
   fun testCompletionInUnknownSectionReturnsEmpty() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [X-Unknown]
            Al$COMPLETION_POSITION
@@ -67,6 +71,7 @@ class UnitFileKeyCompletionContributorTest : AbstractUnitFileTest() {
 
   fun testCompletionInPathSectionReturnsExpectedValuesWhenAtEndOfFile() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Path]
            Pat$COMPLETION_POSITION
@@ -83,6 +88,7 @@ class UnitFileKeyCompletionContributorTest : AbstractUnitFileTest() {
 
   fun testCompletionAfterKeyWithEmptyValue() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Swap]
            M
@@ -105,6 +111,7 @@ class UnitFileKeyCompletionContributorTest : AbstractUnitFileTest() {
 
   fun testCompletionBeforeKeyWithEmptyValue() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Swap]
            M
@@ -127,6 +134,7 @@ class UnitFileKeyCompletionContributorTest : AbstractUnitFileTest() {
 
   fun testCompletionAfterComment() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Swap]
            M
@@ -148,6 +156,7 @@ class UnitFileKeyCompletionContributorTest : AbstractUnitFileTest() {
 
   fun testCompletionForNSpawnFileInFilesSectionReturnsExpectedValues() {
     // Fixture Setup
+    // language="unit file (systemd)"
     val file = """
            [Files]
            Bi$COMPLETION_POSITION
@@ -160,6 +169,54 @@ class UnitFileKeyCompletionContributorTest : AbstractUnitFileTest() {
 
     // Verification
     assertContainsElements(completions, "Bind", "BindReadOnly", "BindUser")
+  }
+
+  fun testCompletionForLinkFileInMatchSectionReturnsExpectedValues() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Match]
+           Ke$COMPLETION_POSITION
+           """.trimIndent()
+    myFixture.configureByText("file.link", file)
+
+    // Exercise SUT
+    val completions = basicCompletionResultStrings
+
+    // Verification
+    assertContainsElements(completions, "KernelCommandLine", "KernelVersion")
+  }
+
+  fun testCompletionForNetworkFileInMatchSectionReturnsExpectedValues() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Match]
+           Ke$COMPLETION_POSITION
+           """.trimIndent()
+    myFixture.configureByText("file.network", file)
+
+    // Exercise SUT
+    val completions = basicCompletionResultStrings
+
+    // Verification
+    assertContainsElements(completions, "KernelCommandLine", "KernelVersion")
+  }
+
+  fun testCompletionForNetDevFileInMatchSectionReturnsExpectedValues() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Match]
+           Ke$COMPLETION_POSITION
+           """.trimIndent()
+    myFixture.configureByText("file.netdev", file)
+
+    // Exercise SUT
+    val completions = basicCompletionResultStrings
+
+    // Verification
+    assertContainsElements(completions, "KernelCommandLine", "KernelVersion")
   }
 
 }

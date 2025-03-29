@@ -17,4 +17,7 @@ object UnitFileIcon {
   val SWAP = IconLoader.getIcon("/net/sjrx/intellij/plugins/systemdunitfiles/swap.svg", UnitFileIcon::class.java)
   val TARGET = IconLoader.getIcon("/net/sjrx/intellij/plugins/systemdunitfiles/target.svg", UnitFileIcon::class.java)
   val TIMER = IconLoader.getIcon("/net/sjrx/intellij/plugins/systemdunitfiles/timer.svg", UnitFileIcon::class.java)
+  val LINK = IconLoader.getIcon("/net/sjrx/intellij/plugins/systemdunitfiles/link.svg", UnitFileIcon::class.java)
+  val NETDEV = IconLoader.getIcon("/net/sjrx/intellij/plugins/systemdunitfiles/netdev.svg", UnitFileIcon::class.java)
+  val NETWORK = IconLoader.getIcon("/net/sjrx/intellij/plugins/systemdunitfiles/network.svg", UnitFileIcon::class.java)
 }

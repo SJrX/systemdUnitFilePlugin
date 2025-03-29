@@ -48,6 +48,9 @@
     <fileType name="Target unit configuration for systemd" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.TargetFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="target"/>
     <fileType name="Timer unit configuration for systemd" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.TimerFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="timer"/>
     <fileType name="Nspawn container systemd container images" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.NSpawnFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="nspawn"/>
+    <fileType name="Network Device Configuration (systemd-networkd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.LinkFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="link"/>
+    <fileType name="Virtual Network Device Configuration (systemd-networkd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.NetDevFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="netdev"/>
+    <fileType name="Network Configuration (systemd-networkd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.filetypes.NetworkFileType" fieldName="INSTANCE" language="Unit File (systemd)" extensions="network"/>
 
     <lang.commenter language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.commenter.UnitFileCommenter"/>
     <lang.documentationProvider language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.documentation.UnitFileDocumentationProvider"/>
@@ -58,26 +61,25 @@
     <annotator language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.annotators.PropertyIsNotInSectionAnnotator"/>
     <annotator language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.annotators.PidFileOptionWarning"/>
     <localInspection implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.inspections.UnknownKeyInSectionInspection"
-                     groupPath="Unit files (systemd)"
+                     groupPath="Unit files (systemd)" language="Unit File (systemd)"
                      shortName="UnknownKeyInSection"     displayName="Unknown option in section"
                      groupName="Validity"                                   enabledByDefault="true" level="WARNING"/>
     <localInspection implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection"
-                     groupPath="Unit files (systemd)"
+                     groupPath="Unit files (systemd)" language="Unit File (systemd)"
                      shortName="InvalidValue" displayName="Invalid value for option"
                      groupName="Validity"     enabledByDefault="true" level="WARNING"/>
     <localInspection implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.inspections.DeprecatedOptionsInspection"
-                     groupPath="Unit files (systemd)"
+                     groupPath="Unit files (systemd)" language="Unit File (systemd)"
                      shortName="DeprecatedKey" displayName="Deprecated options"
                      groupName="Deprecation"     enabledByDefault="true" level="WARNING"/>
     <localInspection implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.inspections.ShellSyntaxInExecDirectiveInspection"
-                     groupPath="Unit files (systemd)"
+                     groupPath="Unit files (systemd)" language="Unit File (systemd)"
                      shortName="ShellSyntaxInExecDirective" displayName="Unsupported shell meta-characters"
                      groupName="Validity" enabledByDefault="true" level="WARNING"/>
     <localInspection implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.inspections.MissingRequiredKeyInspection"
-                     groupPath="Unit files (systemd)"
+                     groupPath="Unit files (systemd)" language="Unit File (systemd)"
                      shortName="MissingRequiredKey" displayName="Missing required key"
                      groupName="Validity" enabledByDefault="true" level="ERROR"/>
-
     <completion.contributor language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.completion.UnitFileKeyCompletionContributor"/>
     <completion.contributor language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.completion.UnitFileValueCompletionContributor"/>
     <completion.contributor language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.completion.UnitFileSectionCompletionContributor"/>

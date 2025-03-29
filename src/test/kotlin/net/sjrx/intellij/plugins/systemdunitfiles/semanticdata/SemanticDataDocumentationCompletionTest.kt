@@ -4,7 +4,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import java.util.*
 
 class SemanticDataDocumentationCompletionTest : AbstractUnitFileTest() {
-  fun testAllOptions() {
+  fun testAllOptionsHaveDocumentation() {
     val sdr = SemanticDataRepository.instance
     val doc: MutableSet<String> = TreeSet()
 
@@ -33,6 +33,14 @@ class SemanticDataDocumentationCompletionTest : AbstractUnitFileTest() {
     docButNotCode.removeAll(code)
 
     System.err.println("***** (Code but not Doc) *****")
+    for(secKey in codeButNotDoc) {
+
+      val arr = secKey.split(".")
+
+      val aliases = sdr.getAliasesForSectionKey(arr[0], arr[1] + "." + arr[2])
+
+      System.out.println("Test ${arr[0]} => ${arr[1]}.${arr[2]} => ${aliases}")
+    }
     assertEmpty("Expected that everything in the code was in the documentation, but we are missing the following:", codeButNotDoc)
 
 

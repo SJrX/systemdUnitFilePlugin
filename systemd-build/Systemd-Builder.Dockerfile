@@ -21,6 +21,7 @@ ENV BUILDDATE ${BUILDDATE:-notset}
 RUN git pull
 
 # https://github.com/systemd/systemd/commit/8442ac9c0264ac7beb5afd6c3bf922030a6edaf3
+# TODO I think this can be removed we had to upgrade to ubuntu 24.04 and this was something with an old version of the build tool in ubuntu 22.04
 RUN find . -type f -name meson.build -exec sed -i 's/install_emptydir(\(.*\), install_tag : .*)/install_emptydir(\1)/g' '{}' '+'
 
 RUN meson setup build
