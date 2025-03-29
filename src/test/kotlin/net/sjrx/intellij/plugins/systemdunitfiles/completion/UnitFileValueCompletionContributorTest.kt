@@ -142,4 +142,52 @@ class UnitFileValueCompletionContributorTest : AbstractUnitFileTest() {
     // Verification
     assertContainsElements(completions, "on", "off", "true", "false", "yes", "no")
   }
+
+  fun testCompletionOfBooleanOptionReturnsValuesInLinkFile() {
+    // Fixture Setup
+    val file = """
+           [Link]
+           AutoNegotiation=$COMPLETION_POSITION
+           
+           """.trimIndent()
+    myFixture.configureByText("file.link", file)
+
+    // Execute SUT
+    val completions = basicCompletionResultStrings
+
+    // Verification
+    assertContainsElements(completions, "on", "off", "true", "false", "yes", "no")
+  }
+
+  fun testCompletionOfBooleanOptionReturnsValuesInNetworkFile() {
+    // Fixture Setup
+    val file = """
+           [Link]
+           ARP=$COMPLETION_POSITION
+           
+           """.trimIndent()
+    myFixture.configureByText("file.network", file)
+
+    // Execute SUT
+    val completions = basicCompletionResultStrings
+
+    // Verification
+    assertContainsElements(completions, "on", "off", "true", "false", "yes", "no")
+  }
+
+  fun testCompletionOfBooleanOptionReturnsValuesInNetdevFile() {
+    // Fixture Setup
+    val file = """
+           [Bridge]
+           MulticastQuerier=$COMPLETION_POSITION
+           
+           """.trimIndent()
+    myFixture.configureByText("file.netdev", file)
+
+    // Execute SUT
+    val completions = basicCompletionResultStrings
+
+    // Verification
+    assertContainsElements(completions, "on", "off", "true", "false", "yes", "no")
+  }
 }

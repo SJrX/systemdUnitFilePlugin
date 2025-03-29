@@ -5,13 +5,17 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.Internal
 import org.w3c.dom.Document
+import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.w3c.dom.ls.DOMImplementationLS
+import org.w3c.dom.ls.LSParser
 import org.w3c.dom.ls.LSSerializer
+import org.xml.sax.InputSource
 
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.transform.OutputKeys
 import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
@@ -20,6 +24,7 @@ import javax.xml.transform.stream.StreamSource
 import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
+import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Matcher
 
 /**
@@ -129,8 +134,116 @@ class GenerateDataFromManPages extends DefaultTask {
              '[Files] Section Options'  : ['Files'],
              '[Network] Section Options': ['Network'],
            ]
-        ]]
+        ]],
+    //cat systemd.netdev.xml  | grep "Section Options"  | sed -e "s/<title>//g" | sed -e 's#</title>##g' | sed -E "s/\[(.+)] Section Options/'\0': ['\1'],/"
+    'netdev': [
+      'systemd.netdev.xml':
+        ['sections':
+          [
+            '[Match] Section Options': ['Match'],
+            '[NetDev] Section Options': ['NetDev'],
+            '[Bridge] Section Options': ['Bridge'],
+            '[VLAN] Section Options': ['VLAN'],
+            '[MACVLAN] Section Options': ['MACVLAN'],
+            '[MACVTAP] Section Options': ['MACVTAP'],
+            '[IPVLAN] Section Options': ['IPVLAN'],
+            '[IPVTAP] Section Options': ['IPVTAP'],
+            '[VXLAN] Section Options': ['VXLAN'],
+            '[GENEVE] Section Options': ['GENEVE'],
+            '[BareUDP] Section Options': ['BareUDP'],
+            '[L2TP] Section Options': ['L2TP'],
+            '[L2TPSession] Section Options': ['L2TPSession'],
+            '[MACsec] Section Options': ['MACsec'],
+            '[MACsecReceiveChannel] Section Options': ['MACsecReceiveChannel'],
+            '[MACsecTransmitAssociation] Section Options': ['MACsecTransmitAssociation'],
+            '[MACsecReceiveAssociation] Section Options': ['MACsecReceiveAssociation'],
+            '[Tunnel] Section Options': ['Tunnel'],
+            '[FooOverUDP] Section Options': ['FooOverUDP'],
+            '[Peer] Section Options': ['Peer'],
+            '[VXCAN] Section Options': ['VXCAN'],
+            '[Tun] Section Options': ['Tun'],
+            '[Tap] Section Options': ['Tap'],
+            '[WireGuard] Section Options': ['WireGuard'],
+            '[WireGuardPeer] Section Options': ['WireGuardPeer'],
+            '[Bond] Section Options': ['Bond'],
+            '[Xfrm] Section Options': ['Xfrm'],
+            '[VRF] Section Options': ['VRF'],
+            '[BatmanAdvanced] Section Options': ['BatmanAdvanced'],
+            '[IPoIB] Section Options': ['IPoIB'],
+            '[WLAN] Section Options': ['WLAN'],
+          ]
+        ]
+      ],
+    'network': [
+      'systemd.network.xml':
+      ['sections':
+        [
+          '[Match] Section Options' : ['Match'],
+          '[Link] Section Options' : ['Link'],
+          '[SR-IOV] Section Options' : ['SR-IOV'],
+          '[Network] Section Options' : ['Network'],
+          '[Address] Section Options' : ['Address'],
+          '[Neighbor] Section Options': ['Neighbor'],
+          '[IPv6AddressLabel] Section Options': ['IPv6AddressLabel'],
+          '[RoutingPolicyRule] Section Options': ['RoutingPolicyRule'],
+          '[NextHop] Section Options': ['NextHop'],
+          '[Route] Section Options': ['Route'],
+          '[DHCPv4] Section Options': ['DHCPv4'],
+          '[DHCPv6] Section Options': ['DHCPv6'],
+          '[DHCPPrefixDelegation] Section Options': ['DHCPPrefixDelegation'],
+          '[IPv6AcceptRA] Section Options': ['IPv6AcceptRA'],
+          '[DHCPServer] Section Options': ['DHCPServer'],
+          '[DHCPServerStaticLease] Section Options': ['DHCPServerStaticLease'],
+          '[IPv6SendRA] Section Options': ['IPv6SendRA'],
+          '[IPv6Prefix] Section Options': ['IPv6Prefix'],
+          '[IPv6RoutePrefix] Section Options': ['IPv6RoutePrefix'],
+          '[IPv6PREF64Prefix] Section Options': ['IPv6PREF64Prefix'],
+          '[Bridge] Section Options': ['Bridge'],
+          '[BridgeFDB] Section Options': ['BridgeFDB'],
+          '[LLDP] Section Options': ['LLDP'],
+          '[CAN] Section Options': ['CAN'],
+          '[IPoIB] Section Options': ['IPoIB'],
+          '[QDisc] Section Options': ['QDisc'],
+          '[NetworkEmulator] Section Options': ['NetworkEmulator'],
+          '[TokenBucketFilter] Section Options': ['TokenBucketFilter'],
+          '[PIE] Section Options': ['PIE'],
+          '[FlowQueuePIE] Section Options': ['FlowQueuePIE'],
+          '[StockchasticFairBlue] Section Options': ['StochasticFairBlue'],
+          '[StockchasticFairnessQueueing] Section Options': ['StochasticFairnessQueueing'],
+          '[BFIFO] Section Options': ['BFIFO'],
+          '[PFIFO] Section Options': ['PFIFO'],
+          '[PFIFOHeadDrop] Section Options': ['PFIFOHeadDrop'],
+          '[PFIFOFast] Section Options': ['PFIFOFast'],
+          '[CAKE] Section Options': ['CAKE'],
+          '[ControlledDelay] Section Options': ['ControlledDelay'],
+          '[DeficitRoundRobinScheduler] Section Options': ['DeficitRoundRobinScheduler'],
+          '[DeficitRoundRobinSchedulerClass] Section Options': ['DeficitRoundRobinSchedulerClass'],
+          '[EnhancedTransmissionSelection] Section Options': ['EnhancedTransmissionSelection'],
+          '[GenericRandomEarlyDetection] Section Options': ['GenericRandomEarlyDetection'],
+          '[FairQueueingControlledDelay] Section Options': ['FairQueueingControlledDelay'],
+          '[FairQueueing] Section Options': ['FairQueueing'],
+          '[TrivialLinkEqualizer] Section Options': ['TrivialLinkEqualizer'],
+          '[HierarchyTokenBucket] Section Options': ['HierarchyTokenBucket'],
+          '[HierarchyTokenBucketClass] Section Options': ['HierarchyTokenBucketClass'],
+          '[ClassfulMultiQueueing] Section Options': ['ClassfulMultiQueueing'],
+          '[BandMultiQueueing] Section Options': ['BandMultiQueueing'],
+          '[HeavyHitterFilter] Section Options': ['HeavyHitterFilter'],
+          '[QuickFairQueueing] Section Options': ['QuickFairQueueing'],
+          '[QuickFairQueueingClass] Section Options': ['QuickFairQueueingClass'],
+          '[BridgeVLAN] Section Options': ['BridgeVLAN'],
 
+        ]
+      ]
+    ],
+    'link':[
+      'systemd.link.xml':
+        ['sections': [
+          '[Match] Section Options': ['Match'],
+          '[Link] Section Options': ['Link'],
+          '[SR-IOV] Section Options': ['SR-IOV'],
+        ]
+        ],
+    ]
   ]
 
   @Internal
@@ -141,18 +254,6 @@ class GenerateDataFromManPages extends DefaultTask {
 
   @Internal
   final DocumentBuilderFactory dbf
-
-  public GenerateDataFromManPages() {
-    xpath = XPathFactory.newInstance().newXPath()
-
-    dbf = DocumentBuilderFactory.newInstance()
-    dbf.setValidating(false)
-    dbf.setExpandEntityReferences(false)
-    dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
-    dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
-    dbf.setFeature("http://xml.org/sax/features/external-general-entities", false)
-    dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false)
-  }
 
 
   @TaskAction
@@ -209,9 +310,9 @@ class GenerateDataFromManPages extends DefaultTask {
 
     String filename = file.getName()
 
-    def builder = dbf.newDocumentBuilder()
+    Document document = buildDocumentProcessingIncludes(file)
 
-    def records = builder.parse(file).documentElement
+    def records = document.documentElement
 
     /*
       We technically should be looking for variablelist element with class 'unit-directives' however some sections in
@@ -229,15 +330,26 @@ class GenerateDataFromManPages extends DefaultTask {
       result = (NodeList)xpath.evaluate(
         "//variablelist[(contains(@class,'nspawn-directives'))]/varlistentry",
         records, XPathConstants.NODESET);
-    }
-    else {
+    } else if (file.getAbsolutePath().endsWith("systemd.netdev.xml")) {
+      result = (NodeList)xpath.evaluate(
+        "//variablelist[(contains(@class,'network-directives'))]/varlistentry",
+        records, XPathConstants.NODESET);
+    } else if (file.getAbsolutePath().endsWith("systemd.network.xml")) {
+      result = (NodeList)xpath.evaluate(
+        "//variablelist[(contains(@class,'network-directives'))]/varlistentry",
+        records, XPathConstants.NODESET);
+    } else if (file.getAbsolutePath().endsWith("systemd.link.xml")) {
+      result = (NodeList)xpath.evaluate(
+        "//variablelist[(contains(@class,'network-directives'))]/varlistentry",
+        records, XPathConstants.NODESET);
+    } else {
       result = (NodeList)xpath.evaluate(
         "//variablelist[(contains(@class,'unit-directives'))]/varlistentry",
         records, XPathConstants.NODESET);
     }
 
     if (result.getLength() == 0) {
-      throw new IllegalStateException("Could not find variables under $filename")
+      throw new IllegalStateException("Could not find variables under $filename, this file type isn't handled")
     }
 
 
@@ -279,7 +391,7 @@ class GenerateDataFromManPages extends DefaultTask {
   }
 
   private static List getOptionNameAndValue(String option, String filename) {
-    Matcher match = (option =~ /(\w+)=(.*)/)
+    Matcher match = (option =~ /^([a-zA-Z0-9_-]+)=(.*)/)
 
     match.find()
     if (match.groupCount() != 2) {
@@ -293,6 +405,21 @@ class GenerateDataFromManPages extends DefaultTask {
     [name, value]
   }
 
+  public GenerateDataFromManPages() {
+    xpath = XPathFactory.newInstance().newXPath()
+
+    dbf = DocumentBuilderFactory.newInstance()
+    dbf.setXIncludeAware(true)
+    //dbf.setNamespaceAware(true)
+    dbf.setValidating(false)
+    dbf.setExpandEntityReferences(false)
+
+    dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
+    dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+    dbf.setFeature("http://xml.org/sax/features/external-general-entities", false)
+    dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false)
+  }
+
   /**
    * Generates individual HTML files for use as inline documentation
    *
@@ -302,13 +429,142 @@ class GenerateDataFromManPages extends DefaultTask {
    * @return
    */
   private generateDocumentationHtmlFromManPages(String fileType, File sourceFile) {
-    DocumentBuilder builder = dbf.newDocumentBuilder()
-    Document document = builder.parse(sourceFile)
+
+
+    Document document = buildDocumentProcessingIncludes(sourceFile)
     Transformer transformer = getXsltTransformer()
 
     String xsltOutput = transformDocument(document, transformer)
 
     segmentParametersIntoFiles(fileType, sourceFile.getName(), xsltOutput)
+  }
+
+  private Document buildDocumentProcessingIncludes(File sourceFile) {
+    DocumentBuilder builder = dbf.newDocumentBuilder()
+    String xmlContent = sourceFile.text
+
+
+    // I spent an hour with ChatGPT trying to get
+    // Xincludes to work properly (without spending 6 hours to understand them).
+    // Couldn't get it to work, due to Java not liking things like includes with no href, for local references.
+    // 💣 Step 1: Replace XInclude elements using regex
+    xmlContent = processXIncludesWithRegex(xmlContent, sourceFile.parentFile)
+
+
+    File outputDir = project.layout.buildDirectory.dir("tmp/rendered-xincludes").get().asFile
+    if (!outputDir.exists()) {
+      outputDir.mkdirs()
+    }
+
+    File outputFile = new File(outputDir, sourceFile.getName())
+    outputFile.text = xmlContent  // Save to file
+
+    Document document = builder.parse(outputFile)
+    document
+  }
+
+  private String processXIncludesWithRegex(String xmlContent, File baseDir) {
+    // 🔥 Regex to match <xi:include href="some.xml" xpointer="some-id"/> (xpointer is optional)
+    def includePattern = /<xi:include\s+href="([^"]+)"(?:\s+xpointer="([^"]+)")?\s*\/>/
+
+    return xmlContent.replaceAll(includePattern) { match, href, xpointer ->
+      File includedFile = new File(baseDir, href)
+
+      if (!includedFile.exists()) {
+        println "⚠️ WARNING: Included file '${includedFile.absolutePath}' not found!"
+        return "<!-- Failed to include: $href -->"
+      }
+
+
+      // ✅ Load XML properly instead of using regex
+      String xptr = xpointer
+      String includedContent = GenerateDataFromManPages.extractElementById(includedFile, xptr)
+
+      return includedContent ?: "<!-- Failed to find xpointer '$xpointer' in $href -->"
+
+    }
+  }
+
+  // 🔥 Static cache for storing extracted XML elements
+  private static final Map<String, Map<String, String>> fileCache = new ConcurrentHashMap<>()
+
+  static String extractElementById(File xmlFile, String elementId) {
+    // ✅ Check if the entire file has already been cached
+    String filePath = xmlFile.getAbsolutePath()
+    if (!fileCache.containsKey(filePath)) {
+      // 🚀 Populate the cache for this file
+      cacheAllElements(xmlFile)
+    }
+
+    // ✅ Retrieve element from cache
+    Map<String, String> cachedElements = fileCache.get(filePath)
+
+    if (elementId == null) {
+      elementId = DOCUMENT_CACHE_KEY
+    }
+
+    if (cachedElements.containsKey(elementId)) {
+      return cachedElements.get(elementId)
+    } else {
+      println "⚠️ WARNING: Element with id='$elementId' not found in ${xmlFile.name}"
+      return null
+    }
+  }
+
+  private static final String DOCUMENT_CACHE_KEY = "[[[ROOT_ELEMENT]]]"
+
+  private static void cacheAllElements(File xmlFile) {
+    try {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance()
+      factory.setNamespaceAware(true) // Needed for XML ID lookup
+      DocumentBuilder builder = factory.newDocumentBuilder()
+
+      Document document = builder.parse(new InputSource(xmlFile.newReader()))
+      document.getDocumentElement().normalize()
+
+      // ✅ Create a new cache for this file
+      Map<String, String> elementCache = new ConcurrentHashMap<>()
+
+      String rootDoc = nodeToString(document.documentElement)
+      elementCache.put(DOCUMENT_CACHE_KEY, rootDoc)
+      // 🚀 Find all elements with an `id` attribute and store them in cache
+      NodeList elements = document.getElementsByTagName("*")
+      for (int i = 0; i < elements.length; i++) {
+        Element element = elements.item(i)
+        if (element.hasAttribute("id")) {
+          String elementId = element.getAttribute("id")
+          String extractedXml = nodeToString(element)
+
+          String wrappedXml = "<!--xi:include='${xmlFile.name}' xpointer='${elementId}'-->" +
+                              extractedXml +
+                              "<!-- /xi:include='${xmlFile.name}' xpointer='${elementId}' -->"
+
+          elementCache.put(elementId, wrappedXml)
+        }
+      }
+
+      // ✅ Store parsed elements in the file cache
+      fileCache.put(xmlFile.getAbsolutePath(), elementCache)
+
+      println "✅ Cached ${elementCache.size()} elements from ${xmlFile.name}"
+
+    } catch (Exception e) {
+      println "❌ ERROR: Failed to parse ${xmlFile.name}: ${e.message}"
+    }
+  }
+
+  private static String nodeToString(Node node) {
+    try {
+      TransformerFactory transformerFactory = TransformerFactory.newInstance()
+      Transformer transformer = transformerFactory.newTransformer()
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes")
+      StringWriter writer = new StringWriter()
+      transformer.transform(new DOMSource(node), new StreamResult(writer))
+      return writer.toString()
+    } catch (Exception e) {
+      println "❌ ERROR: Failed to convert node to string: ${e.message}"
+      return ""
+    }
   }
 
   /**
@@ -386,7 +642,7 @@ class GenerateDataFromManPages extends DefaultTask {
 
       NodeList paragraphList = (NodeList)xpath.evaluate("description/paragraph", parameterNode, XPathConstants.NODESET)
 
-      Matcher match = (variableName =~ /(\w+)=(.*)/)
+      Matcher match = (variableName =~ /([^=]+)=(.*)/)
 
       match.find()
       if (match.groupCount() != 2) {

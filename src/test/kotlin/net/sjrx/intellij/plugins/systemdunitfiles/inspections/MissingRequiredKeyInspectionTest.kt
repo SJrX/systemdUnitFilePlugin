@@ -366,7 +366,6 @@ class MissingRequiredKeyInspectionTest : AbstractUnitFileTest() {
     val file = """
       # SPDX-License-Identifier: LGPL-2.1-or-later
       [Files]
-      
 
       [Network]
 
@@ -375,6 +374,231 @@ class MissingRequiredKeyInspectionTest : AbstractUnitFileTest() {
 
     // Exercise SUT
     setupFileInEditor("file.nspawn", file)
+    enableInspection(MissingRequiredKeyInspection::class.java)
+
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
+  fun testLinkFileHasNoWarningsWhenEmpty() {
+
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+      # SPDX-License-Identifier: LGPL-2.1-or-later
+    [Match] 
+   
+    [Link] 
+   
+    [SR-IOV] 
+    """.trimIndent()
+
+    // Exercise SUT
+    setupFileInEditor("file.link", file)
+    enableInspection(MissingRequiredKeyInspection::class.java)
+
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
+  fun testNetDevFileHasNoWarningsWhenEmpty() {
+
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+      # SPDX-License-Identifier: LGPL-2.1-or-later
+      [Match]
+      
+      [NetDev]
+       
+      [Bridge]
+       
+      [VLAN]
+       
+      [MACVLAN]
+       
+      [MACVTAP]
+       
+      [IPVLAN]
+       
+      [IPVTAP]
+      
+      [VXLAN] 
+      
+      [GENEVE]
+       
+      [BareUDP]
+       
+      [L2TP]
+       
+      [L2TPSession]
+       
+      [MACsec]
+       
+      [MACsecReceiveChannel]
+       
+      [MACsecTransmitAssociation]
+       
+      [MACsecReceiveAssociation]
+       
+      [Tunnel]
+       
+      [FooOverUDP]
+       
+      [Peer]
+       
+      [VXCAN]
+       
+      [Tun]
+       
+      [Tap]
+       
+      [WireGuard]
+       
+      [WireGuardPeer] 
+      
+      [Bond]
+       
+      [Xfrm]
+       
+      [VRF]
+       
+      [BatmanAdvanced]
+       
+      [IPoIB]
+
+      [WLAN]
+    """.trimIndent()
+
+    // Exercise SUT
+    setupFileInEditor("file.netdev", file)
+    enableInspection(MissingRequiredKeyInspection::class.java)
+
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
+  fun testNetworkFileHasNoWarningsWhenEmpty() {
+
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+      # SPDX-License-Identifier: LGPL-2.1-or-later
+      [Match]
+      
+      [Link]
+       
+      [Network]
+       
+      [Address]
+       
+      [Neighbor]
+       
+      [IPv6AddressLabel]
+       
+      [RoutingPolicyRule]
+       
+      [NextHop]
+       
+      [Route]
+       
+      [DHCPv4]
+       
+      [DHCPv6]
+       
+      [DHCPPrefixDelegation]
+       
+      [IPv6AcceptRA]
+       
+      [DHCPServer]
+       
+      [DHCPServerStaticLease]
+       
+      [IPv6SendRA]
+       
+      [IPv6Prefix]
+       
+      [IPv6RoutePrefix]
+       
+      [IPv6PREF64Prefix]
+       
+      [Bridge]
+       
+      [BridgeFDB]
+       
+      [BridgeMDB]
+       
+      [LLDP]
+       
+      [CAN]
+       
+      [IPoIB]
+       
+      [QDisc]
+       
+      [NetworkEmulator]
+       
+      [TokenBucketFilter]
+       
+      [PIE]
+       
+      [FlowQueuePIE]
+       
+      [StochasticFairBlue]
+       
+      [StochasticFairnessQueueing]
+       
+      [BFIFO]
+       
+      [PFIFO]
+       
+      [PFIFOHeadDrop]
+       
+      [PFIFOFast]
+       
+      [CAKE]
+       
+      [ControlledDelay]
+       
+      [DeficitRoundRobinScheduler]
+       
+      [DeficitRoundRobinSchedulerClass]
+       
+      [EnhancedTransmissionSelection]
+      
+      [GenericRandomEarlyDetection]
+       
+      [FairQueueingControlledDelay]
+       
+      [FairQueueing]
+       
+      [TrivialLinkEqualizer]
+       
+      [HierarchyTokenBucket]
+       
+      [HierarchyTokenBucketClass]
+       
+      [ClassfulMultiQueueing]
+       
+      [BandMultiQueueing]
+       
+      [HeavyHitterFilter]
+       
+      [QuickFairQueueing]
+       
+      [QuickFairQueueingClass]
+       
+      [BridgeVLAN]
+    """.trimIndent()
+
+    // Exercise SUT
+    setupFileInEditor("file.network", file)
     enableInspection(MissingRequiredKeyInspection::class.java)
 
     val highlights = myFixture.doHighlighting()

@@ -4,8 +4,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 
 class UnitFileSectionCompletionContributorTest : AbstractUnitFileTest() {
 
-  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInAutomount() {
-    // Fixture Setup
+  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInAutomount() { // Fixture Setup
     val file = """
            [Install]
            Whatevs=Foo
@@ -17,8 +16,7 @@ class UnitFileSectionCompletionContributorTest : AbstractUnitFileTest() {
     assertContainsElements(completions, "Install", "Unit", "Automount")
   }
 
-  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInDevice() {
-    // Fixture Setup
+  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInDevice() { // Fixture Setup
     val file = """
            [Install]
            Whatevs=Foo
@@ -30,8 +28,7 @@ class UnitFileSectionCompletionContributorTest : AbstractUnitFileTest() {
     assertContainsElements(completions, "Install", "Unit")
   }
 
-  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInTarget() {
-    // Fixture Setup
+  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInTarget() { // Fixture Setup
     val file = """
            [Install]
            Whatevs=Foo
@@ -43,8 +40,7 @@ class UnitFileSectionCompletionContributorTest : AbstractUnitFileTest() {
     assertContainsElements(completions, "Install", "Unit")
   }
 
-  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInMount() {
-    // Fixture Setup
+  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInMount() { // Fixture Setup
     val file = """
            [Install]
            Whatevs=Foo
@@ -56,8 +52,7 @@ class UnitFileSectionCompletionContributorTest : AbstractUnitFileTest() {
     assertContainsElements(completions, "Install", "Unit", "Mount")
   }
 
-  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInPath() {
-    // Fixture Setup
+  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInPath() { // Fixture Setup
     val file = """
            [Install]
            Whatevs=Foo
@@ -69,8 +64,7 @@ class UnitFileSectionCompletionContributorTest : AbstractUnitFileTest() {
     assertContainsElements(completions, "Install", "Unit", "Path")
   }
 
-  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInService() {
-    // Fixture Setup
+  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInService() { // Fixture Setup
     val file = """
            [Install]
            Whatevs=Foo
@@ -82,8 +76,7 @@ class UnitFileSectionCompletionContributorTest : AbstractUnitFileTest() {
     assertContainsElements(completions, "Install", "Unit", "Service")
   }
 
-  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInSocket() {
-    // Fixture Setup
+  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInSocket() { // Fixture Setup
     val file = """
            [Install]
            Whatevs=Foo
@@ -95,8 +88,7 @@ class UnitFileSectionCompletionContributorTest : AbstractUnitFileTest() {
     assertContainsElements(completions, "Install", "Unit", "Socket")
   }
 
-  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInSwap() {
-    // Fixture Setup
+  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInSwap() { // Fixture Setup
     val file = """
            [Install]
            Whatevs=Foo
@@ -108,8 +100,7 @@ class UnitFileSectionCompletionContributorTest : AbstractUnitFileTest() {
     assertContainsElements(completions, "Install", "Unit", "Swap")
   }
 
-  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInTimer() {
-    // Fixture Setup
+  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInTimer() { // Fixture Setup
     val file = """
            [Install]
            Whatevs=Foo
@@ -129,13 +120,124 @@ class UnitFileSectionCompletionContributorTest : AbstractUnitFileTest() {
            
            [$COMPLETION_POSITION
            """.trimIndent()
-    myFixture.configureByText("file.nspawn", file)
+    myFixture.configureByText("file.link", file)
     val completions = basicCompletionResultStrings
-    assertContainsElements(completions, "Exec", "Files", "Network")
+    assertContainsElements(completions, "Link", "Match", "SR-IOV")
   }
 
-  fun testCompletionOfNewSectionInUnknownFileTypeIsEmpty() {
-    // Fixture Setup
+  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInNetDev() { // Fixture Setup
+    val file = """
+           [Files]
+           Whatevs=Foo
+           
+           [$COMPLETION_POSITION
+           """.trimIndent()
+    myFixture.configureByText("file.netdev", file)
+    val completions = basicCompletionResultStrings
+    assertContainsElements(
+      completions,
+      "BareUDP",
+      "BatmanAdvanced",
+      "Bond",
+      "Bridge",
+      "FooOverUDP",
+      "GENEVE",
+      "IPoIB",
+      "IPVLAN",
+      "IPVTAP",
+      "L2TP",
+      "L2TPSession",
+      "MACsec",
+      "MACsecReceiveAssociation",
+      "MACsecReceiveChannel",
+      "MACsecTransmitAssociation",
+      "MACVLAN",
+      "MACVTAP",
+      "Match",
+      "NetDev",
+      "Peer",
+      "Tap",
+      "Tun",
+      "Tunnel",
+      "VLAN",
+      "VRF",
+      "VXCAN",
+      "VXLAN",
+      "WireGuard",
+      "WireGuardPeer",
+      "WLAN",
+      "Xfrm"
+    )
+  }
+
+  fun testCompletionOfNewSectionHeaderReturnsExpectedValuesInNetwork() { // Fixture Setup
+    val file = """
+           [Files]
+           Whatevs=Foo
+           
+           [$COMPLETION_POSITION
+           """.trimIndent()
+    myFixture.configureByText("file.network", file)
+    val completions = basicCompletionResultStrings
+    assertContainsElements(
+      completions,
+      "Address",
+      "BandMultiQueueing",
+      "BFIFO",
+      "Bridge",
+      "BridgeFDB",
+      "BridgeMDB",
+      "BridgeVLAN",
+      "CAKE",
+      "CAN",
+      "ClassfulMultiQueueing",
+      "ControlledDelay",
+      "DeficitRoundRobinScheduler",
+      "DeficitRoundRobinSchedulerClass",
+      "DHCPPrefixDelegation",
+      "DHCPServer",
+      "DHCPServerStaticLease",
+      "DHCPv4",
+      "DHCPv6",
+      "EnhancedTransmissionSelection",
+      "FairQueueing",
+      "FairQueueingControlledDelay",
+      "FlowQueuePIE",
+      "GenericRandomEarlyDetection",
+      "HeavyHitterFilter",
+      "HierarchyTokenBucket",
+      "HierarchyTokenBucketClass",
+      "IPoIB",
+      "IPv6AcceptRA",
+      "IPv6AddressLabel",
+      "IPv6PREF64Prefix",
+      "IPv6Prefix",
+      "IPv6RoutePrefix",
+      "IPv6SendRA",
+      "Link",
+      "LLDP",
+      "Match",
+      "Neighbor",
+      "Network",
+      "NetworkEmulator",
+      "NextHop",
+      "PFIFO",
+      "PFIFOFast",
+      "PFIFOHeadDrop",
+      "PIE",
+      "QDisc",
+      "QuickFairQueueing",
+      "QuickFairQueueingClass",
+      "Route",
+      "RoutingPolicyRule",
+      "StochasticFairBlue",
+      "StochasticFairnessQueueing",
+      "TokenBucketFilter",
+      "TrivialLinkEqualizer"
+    )
+  }
+
+  fun testCompletionOfNewSectionInUnknownFileTypeIsEmpty() { // Fixture Setup
     val file = """
            [Tester]
            Whatevs=$COMPLETION_POSITION

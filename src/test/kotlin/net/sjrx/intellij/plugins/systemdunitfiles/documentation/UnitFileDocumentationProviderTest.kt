@@ -3,6 +3,8 @@ package net.sjrx.intellij.plugins.systemdunitfiles.documentation
 import com.intellij.lang.documentation.DocumentationProviderEx
 import junit.framework.TestCase
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.FileClass
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
 
 class UnitFileDocumentationProviderTest : AbstractUnitFileTest() {
   private val sut: DocumentationProviderEx = UnitFileDocumentationProvider()
@@ -470,6 +472,50 @@ class UnitFileDocumentationProviderTest : AbstractUnitFileTest() {
         + "<a href='https://github.com/systemd/systemd/blob/v241/NEWS#L561'>"
         + "More information is available here</a></div>", doc
     )
+  }
+
+  fun testAllKnownSectionsHaveDocumentation() {
+    // Fixture Setup
+
+    val undocumentedSections = mutableSetOf<String>()
+
+    // Execute SUT
+    for ( fc in FileClass.entries) {
+      val sections = SemanticDataRepository.instance.getSectionNamesForFile(fc.fileClass)
+
+      for (sec in sections ) {
+        val text = SemanticDataRepository.instance.getDocumentationContentForSection(sec)
+
+        if (text == null) {
+          undocumentedSections += """${fc.fileClass}.${sec}"""
+        }
+      }
+    }
+
+    // Verification
+    assertEmpty(undocumentedSections)
+  }
+
+  fun testAllKnownSectionsHaveDocumentationUrls() {
+    // Fixture Setup
+
+    val missingSectionLinks = mutableSetOf<String>()
+
+    // Execute SUT
+    for ( fc in FileClass.entries) {
+      val sections = SemanticDataRepository.instance.getSectionNamesForFile(fc.fileClass)
+
+      for (sec in sections ) {
+        val text = SemanticDataRepository.instance.getUrlForSectionName(sec)
+
+        if (text == null) {
+          missingSectionLinks += """${fc.fileClass}.${sec}"""
+        }
+      }
+    }
+
+    // Verification
+    assertEmpty(missingSectionLinks)
   }
 
 }

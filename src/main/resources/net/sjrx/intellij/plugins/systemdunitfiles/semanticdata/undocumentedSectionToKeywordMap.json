@@ -8,6 +8,210 @@
       }
     }
   },
+  "netdev": {
+    "BatmanAdvanced": {
+      "GatewayBandwithDown":{
+        "reason": "moved",
+        "replacedWithKey": "GatewayBandwidthDown",
+        "documentationLink": "https://github.com/systemd/systemd/pull/19539"
+      },
+      "GatewayBandwithUp":{
+        "reason": "moved",
+        "replacedWithKey": "GatewayBandwidthUp",
+        "documentationLink": "https://github.com/systemd/systemd/pull/19539"
+      }
+    },
+    "GENEVE": {
+      "UDP6ZeroCheckSumRx": {
+        "reason": "moved",
+        "replacedWithKey": "UDP6ZeroChecksumRx",
+        "documentationLink": "https://github.com/systemd/systemd/commit/6f1a96ded4ee225b17586a3862a4f10fdf126040"
+      },
+      "UDP6ZeroCheckSumTx": {
+        "reason": "moved",
+        "replacedWithKey": "UDP6ZeroChecksumTx",
+        "documentationLink": "https://github.com/systemd/systemd/commit/6f1a96ded4ee225b17586a3862a4f10fdf126040"
+      }
+    },
+    "VXLAN": {
+      "UDP6ZeroCheckSumRx": {
+        "reason": "moved",
+        "replacedWithKey": "UDP6ZeroChecksumRx",
+        "documentationLink": "https://github.com/systemd/systemd/pull/4312/files"
+      },
+      "UDP6ZeroCheckSumTx": {
+        "reason": "moved",
+        "replacedWithKey": "UDP6ZeroChecksumTx",
+        "documentationLink": "https://github.com/systemd/systemd/pull/4312/files"
+      },
+      "UDPCheckSum": {
+        "reason": "moved",
+        "replacedWithKey": "UDPChecksum",
+        "documentationLink": "https://github.com/systemd/systemd/pull/4312/files"
+      },
+      "ARPProxy": {
+        "reason": "moved",
+        "replacedWithKey": "ReducedARPProxy",
+        "documentationLink": "https://github.com/systemd/systemd/blob/cf4deeaf1e822ade5c1fbbe2584b23a2d0988439/src/network/netdev/netdev-gperf.gperf#L134"
+      },
+      "Id": {
+        "reason": "moved",
+        "replacedWithKey": "VNI",
+        "documentationLink": "https://github.com/systemd/systemd/blob/cf4deeaf1e822ade5c1fbbe2584b23a2d0988439/src/network/netdev/netdev-gperf.gperf#L127"
+      }
+
+    },
+    "VRF": {
+      "TableId": {
+        "reason": "moved",
+        "replacedWithKey": "Table",
+        "documentationLink": "https://github.com/systemd/systemd/blob/cf4deeaf1e822ade5c1fbbe2584b23a2d0988439/src/network/netdev/netdev-gperf.gperf#L240"
+      }
+    },
+    "WireGuard":{
+      "FwMark": {
+        "reason": "moved",
+        "replacedWithKey": "FirewallMark",
+        "documentationLink": "https://github.com/systemd/systemd/blob/cf4deeaf1e822ade5c1fbbe2584b23a2d0988439/src/network/netdev/netdev-gperf.gperf#L246"
+      }
+    },
+    "L2TP": {
+      "UDP6CheckSumRx": {
+        "reason": "moved",
+        "replacedWithKey": "UDP6ChecksumRx"
+      },
+      "UDP6CheckSumTx": {
+        "reason": "moved",
+        "replacedWithKey": "UDP6ChecksumTx"
+      },
+      "UDPCheckSum": {
+        "reason": "moved",
+        "replacedWithKey": "UDPChecksum"
+      }
+    }
+  },
+  "network": {
+    "Address": {
+      "PrefixRoute": {
+        "reason": "moved",
+        "replacedWithKey": "AddPrefixRoute"
+      }
+    },
+    "DHCP": {
+      "CriticalConnection": {
+        "reason": "moved",
+        "replacedWithKey": "KeepConfiguration",
+        "replacedWithSection": "Network",
+        "documentationLink": "https://github.com/systemd/systemd/issues/13555#issuecomment-531444829"
+      }
+    },
+    "DHCPv4": {
+      "BlackList": {
+        "reason": "moved",
+        "replacedWithKey": "DenyList"
+      },
+      "CriticalConnection": {
+        "reason": "moved",
+        "replacedWithKey": "KeepConfiguration",
+        "replacedWithSection": "Network",
+        "documentationLink": "https://github.com/systemd/systemd/issues/13555#issuecomment-531444829"
+      },
+      "UseDomainName": {
+        "reason": "moved",
+        "replacedWithKey": "UseDomains"
+      }
+    },
+    "DHCPv6": {
+      "RouteMetric": {
+        "reason": "moved",
+        "replacedWithKey": "RouteMetric",
+        "replacedWithSection": "IPv6AcceptRA"
+      }
+    },
+    "IPv6AcceptRA": {
+      "DenyList": {
+        "reason": "moved",
+        "replacedWithKey": "PrefixDenyList"
+      },
+      "BlackList": {
+        "reason": "moved",
+        "replacedWithKey": "PrefixDenyList"
+      }
+    },
+    "FairQueueingControlledDelay": {
+      "MemoryLimit": {
+        "reason": "moved",
+        "replacedWithKey": "MemoryLimitBytes"
+      },
+      "Quantum": {
+        "reason": "moved",
+        "replacedWithKey": "QuantumBytes"
+      }
+    },
+    "Neighbor": {
+      "MACAddress": {
+        "reason": "moved",
+        "replacedWithKey": "LinkLayerAddress"
+      }
+    },
+    "Network": {
+      "IPv4LL":{
+        "reason": "moved",
+        "replacedWithKey": "LinkLocalAddressing"
+      },
+      "IPForward": {
+        "reason": "moved",
+        "replacedWithKey": "IPv4Forwarding"
+      },
+      "DHCPv6PrefixDelegation":{
+        "reason": "moved",
+        "replacedWithKey": "DHCPPrefixDelegation"
+      },
+      "IPv6Token":{
+        "reason": "moved",
+        "replacedWithKey": "Token",
+        "replacedWithSection": "IPv6AcceptRA"
+      },
+      "IPv6AcceptRouterAdvertisements": {
+        "reason": "moved",
+        "replacedWithKey": "IPv6AcceptRA"
+      },
+      "IPv6PrefixDelegation": {
+        "reason": "moved",
+        "replacedWithKey": "IPv6SendRA"
+      },
+      "ProxyARP": {
+        "reason": "moved",
+        "replacedWithKey": "IPv4ProxyARP"
+      }
+    },
+    "FairQueueing": {
+      "Quantum":{
+        "reason": "moved",
+        "replacedWithKey": "QuantumBytes"
+      },
+      "InitialQuantum": {
+        "reason": "moved",
+        "replacedWithKey": "InitialQuantumBytes"
+      }
+    },
+    "Route": {
+      "GatewayOnlink": {
+        "reason": "moved",
+        "replacedWithKey": "GatewayOnLink"
+      }
+    },
+    "TokenBucketFilter": {
+      "Burst": {
+        "reason": "moved",
+        "replacedWithKey": "BurstBytes"
+      },
+      "LimitSize": {
+        "reason": "moved",
+        "replacedWithKey": "LimitBytes"
+      }
+    }
+  },
   "unit": {
     "Mount": {
       "BlockIOAccounting": {

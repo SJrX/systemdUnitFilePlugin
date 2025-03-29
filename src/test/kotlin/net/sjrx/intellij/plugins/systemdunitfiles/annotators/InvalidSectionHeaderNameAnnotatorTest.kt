@@ -91,7 +91,7 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
     /*
      * Fixture Setup
      */
-    //language=unit file (systemd)
+    // language="unit file (systemd)"
     val file = """
     [Automount]
     
@@ -116,7 +116,7 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
     /*
      * Fixture Setup
      */
-    //language=unit file (systemd)
+    // language="unit file (systemd)"
     val file = """
     [Install]
     
@@ -140,7 +140,7 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
     /*
      * Fixture Setup
      */
-    //language=unit file (systemd)
+    // language="unit file (systemd)"
     val file = """
     [Mount]
     
@@ -165,7 +165,7 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
     /*
      * Fixture Setup
      */
-    //language=unit file (systemd)
+    // language="unit file (systemd)"
     val file = """
     [Path]
     
@@ -191,7 +191,7 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
     /*
      * Fixture Setup
      */
-    //language=unit file (systemd)
+    // language="unit file (systemd)"
     val file = """
     [Service]
     
@@ -217,7 +217,7 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
     /*
      * Fixture Setup
      */
-    //language=unit file (systemd)
+    // language="unit file (systemd)"
     val file = """
     [Slice]
     
@@ -242,7 +242,7 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
     /*
      * Fixture Setup
      */
-    //language=unit file (systemd)
+    // language="unit file (systemd)"
     val file = """
     [Socket]
     
@@ -267,7 +267,7 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
     /*
      * Fixture Setup
      */
-    //language=unit file (systemd)
+    // language="unit file (systemd)"
     val file = """
     [Swap]
     
@@ -292,7 +292,7 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
     /*
      * Fixture Setup
      */
-    //language=unit file (systemd)
+    // language="unit file (systemd)"
     val file = """
     [Install]
     
@@ -317,7 +317,7 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
     /*
      * Fixture Setup
      */
-    //language=unit file (systemd)
+    // language="unit file (systemd)"
     val file = """
     [Timer]
     
@@ -342,7 +342,7 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
     /*
      * Fixture Setup
      */
-    //language=unit file (systemd)
+    // language="unit file (systemd)"
     val file = """
     [Automount]
     [Mount]
@@ -384,7 +384,7 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
     /*
      * Fixture Setup
      */
-    //language=unit file (systemd)
+    // language="unit file (systemd)"
     val file = """
     [Exec]
     
@@ -409,7 +409,7 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
     /*
      * Fixture Setup
      */
-    //language=unit file (systemd)
+    // language="unit file (systemd)"
     val file = """
     [Exec]
     
@@ -440,7 +440,7 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
     /*
      * Fixture Setup
      */
-    //language=unit file (systemd)
+    // language="unit file (systemd)"
     val file = """
     [Unit]
     
@@ -466,6 +466,100 @@ class InvalidSectionHeaderNameAnnotatorTest : AbstractUnitFileTest() {
     assertContainsElements(highlightTexts, "The section Install is not allowed in Nspawn files, only the following are allowed: [Exec, Files, Network]")
     assertContainsElements(highlightTexts, "The section Service is not allowed in Nspawn files, only the following are allowed: [Exec, Files, Network]")
   }
+
+  fun testServiceSectionsInLinkFileHasWarnings() {
+    /*
+     * Fixture Setup
+     */
+    // language="unit file (systemd)"
+    val file = """
+    [Unit]
+    
+    [Install]
+    
+    [Service]
+    """.trimIndent()
+
+    /*
+     * Exercise SUT
+     */
+    setupFileInEditor("file.link", file)
+    val highlights = myFixture.doHighlighting()
+
+    /*
+     * Verification
+     */
+    assertSize(3, highlights)
+
+    val highlightTexts = highlights.map { it.description }
+
+    assertContainsElements(highlightTexts, "The section Unit is not allowed in Link files, only the following are allowed: [Link, Match, SR-IOV]")
+    assertContainsElements(highlightTexts, "The section Install is not allowed in Link files, only the following are allowed: [Link, Match, SR-IOV]")
+    assertContainsElements(highlightTexts, "The section Service is not allowed in Link files, only the following are allowed: [Link, Match, SR-IOV]")
+  }
+
+  fun testServiceSectionsInNetDevFileHasWarnings() {
+    /*
+     * Fixture Setup
+     */
+    // language="unit file (systemd)"
+    val file = """
+    [Unit]
+    
+    [Install]
+    
+    [Service]
+    """.trimIndent()
+
+    /*
+     * Exercise SUT
+     */
+    setupFileInEditor("file.netdev", file)
+    val highlights = myFixture.doHighlighting()
+
+    /*
+     * Verification
+     */
+    assertSize(3, highlights)
+
+    val highlightTexts = highlights.map { it.description }
+
+    assertContainsElements(highlightTexts, "The section Unit is not allowed in Netdev files, only the following are allowed: [BareUDP, BatmanAdvanced, Bond, Bridge, FooOverUDP, GENEVE, IPoIB, IPVLAN, IPVTAP, L2TP, L2TPSession, MACsec, MACsecReceiveAssociation, MACsecReceiveChannel, MACsecTransmitAssociation, MACVLAN, MACVTAP, Match, NetDev, Peer, Tap, Tun, Tunnel, VLAN, VRF, VXCAN, VXLAN, WireGuard, WireGuardPeer, WLAN, Xfrm]")
+    assertContainsElements(highlightTexts, "The section Install is not allowed in Netdev files, only the following are allowed: [BareUDP, BatmanAdvanced, Bond, Bridge, FooOverUDP, GENEVE, IPoIB, IPVLAN, IPVTAP, L2TP, L2TPSession, MACsec, MACsecReceiveAssociation, MACsecReceiveChannel, MACsecTransmitAssociation, MACVLAN, MACVTAP, Match, NetDev, Peer, Tap, Tun, Tunnel, VLAN, VRF, VXCAN, VXLAN, WireGuard, WireGuardPeer, WLAN, Xfrm]")
+    assertContainsElements(highlightTexts, "The section Service is not allowed in Netdev files, only the following are allowed: [BareUDP, BatmanAdvanced, Bond, Bridge, FooOverUDP, GENEVE, IPoIB, IPVLAN, IPVTAP, L2TP, L2TPSession, MACsec, MACsecReceiveAssociation, MACsecReceiveChannel, MACsecTransmitAssociation, MACVLAN, MACVTAP, Match, NetDev, Peer, Tap, Tun, Tunnel, VLAN, VRF, VXCAN, VXLAN, WireGuard, WireGuardPeer, WLAN, Xfrm]")
+  }
+
+  fun testServiceSectionsInNetworkFileHasWarnings() {
+    /*
+     * Fixture Setup
+     */
+    // language="unit file (systemd)"
+    val file = """
+    [Unit]
+    
+    [Install]
+    
+    [Service]
+    """.trimIndent()
+
+    /*
+     * Exercise SUT
+     */
+    setupFileInEditor("file.network", file)
+    val highlights = myFixture.doHighlighting()
+
+    /*
+     * Verification
+     */
+    assertSize(3, highlights)
+
+    val highlightTexts = highlights.map { it.description }
+
+    assertContainsElements(highlightTexts, "The section Unit is not allowed in Network files, only the following are allowed: [Address, BandMultiQueueing, BFIFO, Bridge, BridgeFDB, BridgeMDB, BridgeVLAN, CAKE, CAN, ClassfulMultiQueueing, ControlledDelay, DeficitRoundRobinScheduler, DeficitRoundRobinSchedulerClass, DHCPPrefixDelegation, DHCPServer, DHCPServerStaticLease, DHCPv4, DHCPv6, EnhancedTransmissionSelection, FairQueueing, FairQueueingControlledDelay, FlowQueuePIE, GenericRandomEarlyDetection, HeavyHitterFilter, HierarchyTokenBucket, HierarchyTokenBucketClass, IPoIB, IPv6AcceptRA, IPv6AddressLabel, IPv6PREF64Prefix, IPv6Prefix, IPv6RoutePrefix, IPv6SendRA, Link, LLDP, Match, Neighbor, Network, NetworkEmulator, NextHop, PFIFO, PFIFOFast, PFIFOHeadDrop, PIE, QDisc, QuickFairQueueing, QuickFairQueueingClass, Route, RoutingPolicyRule, StochasticFairBlue, StochasticFairnessQueueing, TokenBucketFilter, TrivialLinkEqualizer]")
+    assertContainsElements(highlightTexts, "The section Install is not allowed in Network files, only the following are allowed: [Address, BandMultiQueueing, BFIFO, Bridge, BridgeFDB, BridgeMDB, BridgeVLAN, CAKE, CAN, ClassfulMultiQueueing, ControlledDelay, DeficitRoundRobinScheduler, DeficitRoundRobinSchedulerClass, DHCPPrefixDelegation, DHCPServer, DHCPServerStaticLease, DHCPv4, DHCPv6, EnhancedTransmissionSelection, FairQueueing, FairQueueingControlledDelay, FlowQueuePIE, GenericRandomEarlyDetection, HeavyHitterFilter, HierarchyTokenBucket, HierarchyTokenBucketClass, IPoIB, IPv6AcceptRA, IPv6AddressLabel, IPv6PREF64Prefix, IPv6Prefix, IPv6RoutePrefix, IPv6SendRA, Link, LLDP, Match, Neighbor, Network, NetworkEmulator, NextHop, PFIFO, PFIFOFast, PFIFOHeadDrop, PIE, QDisc, QuickFairQueueing, QuickFairQueueingClass, Route, RoutingPolicyRule, StochasticFairBlue, StochasticFairnessQueueing, TokenBucketFilter, TrivialLinkEqualizer]")
+    assertContainsElements(highlightTexts, "The section Service is not allowed in Network files, only the following are allowed: [Address, BandMultiQueueing, BFIFO, Bridge, BridgeFDB, BridgeMDB, BridgeVLAN, CAKE, CAN, ClassfulMultiQueueing, ControlledDelay, DeficitRoundRobinScheduler, DeficitRoundRobinSchedulerClass, DHCPPrefixDelegation, DHCPServer, DHCPServerStaticLease, DHCPv4, DHCPv6, EnhancedTransmissionSelection, FairQueueing, FairQueueingControlledDelay, FlowQueuePIE, GenericRandomEarlyDetection, HeavyHitterFilter, HierarchyTokenBucket, HierarchyTokenBucketClass, IPoIB, IPv6AcceptRA, IPv6AddressLabel, IPv6PREF64Prefix, IPv6Prefix, IPv6RoutePrefix, IPv6SendRA, Link, LLDP, Match, Neighbor, Network, NetworkEmulator, NextHop, PFIFO, PFIFOFast, PFIFOHeadDrop, PIE, QDisc, QuickFairQueueing, QuickFairQueueingClass, Route, RoutingPolicyRule, StochasticFairBlue, StochasticFairnessQueueing, TokenBucketFilter, TrivialLinkEqualizer]")
+  }
+
 
 }
 
