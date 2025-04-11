@@ -71,7 +71,7 @@ repositories {
 
 dependencies {
   implementation("commons-io:commons-io:2.18.0")
-  implementation("com.google.guava:guava:33.4.6-jre")
+  implementation("com.google.guava:guava:33.4.7-jre")
   testImplementation("junit:junit:4.13.2")
   testImplementation("org.opentest4j:opentest4j:1.3.0")
 
