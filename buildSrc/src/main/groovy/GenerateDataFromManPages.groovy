@@ -73,7 +73,11 @@ class GenerateDataFromManPages extends DefaultTask {
         ['sections':
            ['Options': ['Service']]
         ],
-      'systemd.timer.xml'           :
+      'systemd.slice.xml':
+      ['sections':
+        ['Options': ['Slice']]
+    ],
+    'systemd.timer.xml'           :
         ['sections':
            ['Options': ['Timer']]
         ],
