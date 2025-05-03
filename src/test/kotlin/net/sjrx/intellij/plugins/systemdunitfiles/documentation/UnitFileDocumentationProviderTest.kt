@@ -78,7 +78,7 @@ class UnitFileDocumentationProviderTest : AbstractUnitFileTest() {
     // Fixture Setup
     val file = """
            [Service]
-           BlockIOAccounting=true
+           FailureAction=true
            """.trimIndent()
     val psiFile = setupFileInEditor("file.service", file)
 
@@ -87,7 +87,7 @@ class UnitFileDocumentationProviderTest : AbstractUnitFileTest() {
     val urls = sut.getUrlFor(documentationKeySeparator, documentationKeySeparator)
 
     // Verification
-    TestCase.assertEquals(listOf("https://www.freedesktop.org/software/systemd/man/systemd.resource-control.html#BlockIOAccounting="), urls)
+    TestCase.assertEquals(listOf("https://github.com/systemd/systemd/commit/53c35a766f"), urls)
   }
 
   fun testGetUrlForUnknownSectionReturnsAnEmptyListOfUrls() {
