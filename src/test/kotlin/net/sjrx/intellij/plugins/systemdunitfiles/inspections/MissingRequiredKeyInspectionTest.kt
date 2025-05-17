@@ -15,7 +15,6 @@ class MissingRequiredKeyInspectionTest : AbstractUnitFileTest() {
 
       [Service]
       Type=oneshot
-      CPUAccounting=true
 
     """.trimIndent()
 
@@ -41,7 +40,6 @@ class MissingRequiredKeyInspectionTest : AbstractUnitFileTest() {
 
       [Service]
       Type=oneshot
-      CPUAccounting=true
 
     """.trimIndent()
 
@@ -68,7 +66,6 @@ class MissingRequiredKeyInspectionTest : AbstractUnitFileTest() {
       [Service]
       Type=oneshot
       ExecStart=foo
-      CPUAccounting=true
 
     """.trimIndent()
 
@@ -97,7 +94,6 @@ class MissingRequiredKeyInspectionTest : AbstractUnitFileTest() {
       Type=oneshot
       ExecStart=foo
       ExecStop=bar
-      CPUAccounting=true
 
     """.trimIndent()
 
