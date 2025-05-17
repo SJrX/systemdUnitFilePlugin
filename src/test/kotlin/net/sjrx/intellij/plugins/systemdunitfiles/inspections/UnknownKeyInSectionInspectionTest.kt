@@ -297,7 +297,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
     // language="unit file (systemd)"
     val file = """
            [Service]
-           CPUAccounting=on
+           CPUWeight=1
            """.trimIndent()
     enableInspection(UnknownKeyInSectionInspection::class.java)
     setupFileInEditor("file.service", file)
@@ -526,7 +526,7 @@ class UnknownKeyInSectionInspectionTest : AbstractUnitFileTest() {
     // language="unit file (systemd)"
     val file = """
            [Slice]
-           CPUAccounting=true
+           CPUWeight=1
            """.trimIndent()
     enableInspection(UnknownKeyInSectionInspection::class.java)
     setupFileInEditor("some.slice", file)
