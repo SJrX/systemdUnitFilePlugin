@@ -37,4 +37,21 @@ open class AlternativeCombinator(vararg val tokens: Combinator) : Combinator {
   override fun SemanticMatch(value: String, offset: Int): MatchResult {
     return match(value, offset, Combinator::SemanticMatch)
   }
+
+  override fun toString(): String = toStringIndented(0)
+
+  override fun toStringIndented(indent: Int): String {
+    val prefix = "  ".repeat(indent)
+    val sb = StringBuilder()
+    sb.append(prefix).append("Alt(\n")
+    for (token in tokens) {
+      if (token is SequenceCombinator || token is AlternativeCombinator || token is Repeat || token is ZeroOrOne || token is ZeroOrMore || token is OneOrMore) {
+        sb.append(token.toStringIndented(indent + 1)).append("\n")
+      } else {
+        sb.append("  ".repeat(indent + 1)).append(token.toString()).append("\n")
+      }
+    }
+    sb.append(prefix).append(")")
+    return sb.toString()
+  }
 }

@@ -23,4 +23,12 @@ class  LiteralChoiceTerminal(vararg var choices: String) : TerminalCombinator {
   override fun SemanticMatch(value: String, offset: Int): MatchResult {
     return match(value, offset)
   }
+
+  override fun toString(): String {
+    return if (choices.size == 1) {
+      "Literal(\"${choices[0]}\")"
+    } else {
+      "LitChoice(" + choices.joinToString(",") { "\"$it\"" } + ")"
+    }
+  }
 }

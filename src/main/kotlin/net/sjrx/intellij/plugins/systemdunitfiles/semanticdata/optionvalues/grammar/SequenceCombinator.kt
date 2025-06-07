@@ -54,4 +54,21 @@ open class SequenceCombinator(vararg val tokens: Combinator) : Combinator {
     }
     return MatchResult(resultTokens, index, resultTerminals, maxLength)
   }
+
+  override fun toString(): String = toStringIndented(0)
+
+  override fun toStringIndented(indent: Int): String {
+    val prefix = "  ".repeat(indent)
+    val sb = StringBuilder()
+    sb.append(prefix).append("Seq(\n")
+    for (token in tokens) {
+      if (token is SequenceCombinator || token is AlternativeCombinator || token is Repeat || token is ZeroOrOne || token is ZeroOrMore || token is OneOrMore) {
+        sb.append(token.toStringIndented(indent + 1)).append("\n")
+      } else {
+        sb.append("  ".repeat(indent + 1)).append(token.toString()).append("\n")
+      }
+    }
+    sb.append(prefix).append(")")
+    return sb.toString()
+  }
 }

@@ -26,4 +26,12 @@ class WhitespaceTerminal : TerminalCombinator {
   override fun SemanticMatch(value: String, offset: Int): MatchResult {
     return match(value, offset)
   }
+
+  override fun toString(): String {
+    return "\\s+"
+  }
+
+  override fun toStringIndented(indent: Int): String {
+    return toString()
+  }
 }

@@ -39,4 +39,19 @@ class OneOrMore(val combinator : Combinator) : Combinator {
   override fun SemanticMatch(value: String, offset: Int): MatchResult {
     return match(value, offset, combinator::SemanticMatch)
   }
+
+  override fun toString(): String = toStringIndented(0)
+
+  override fun toStringIndented(indent: Int): String {
+    val prefix = "  ".repeat(indent)
+    val sb = StringBuilder()
+    sb.append(prefix).append("OneOrMore(\n")
+    if (combinator is SequenceCombinator || combinator is AlternativeCombinator || combinator is Repeat || combinator is ZeroOrOne || combinator is ZeroOrMore || combinator is OneOrMore) {
+      sb.append(combinator.toStringIndented(indent + 1)).append("\n")
+    } else {
+      sb.append("  ".repeat(indent + 1)).append(combinator.toString()).append("\n")
+    }
+    sb.append(prefix).append(")")
+    return sb.toString()
+  }
 }

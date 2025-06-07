@@ -32,4 +32,5 @@ interface Combinator {
    */
   fun SemanticMatch(value : String, offset: Int): MatchResult
 
+  fun toStringIndented(indent: Int): String
 }
