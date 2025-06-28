@@ -521,6 +521,8 @@ class GenerateDataFromManPages extends DefaultTask {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance()
       factory.setNamespaceAware(true) // Needed for XML ID lookup
+      factory.setValidating(false);
+      factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
       DocumentBuilder builder = factory.newDocumentBuilder()
 
       Document document = builder.parse(new InputSource(xmlFile.newReader()))
