@@ -1,6 +1,6 @@
 FROM ubuntu:24.04
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
 
@@ -16,7 +16,7 @@ RUN mkdir -p /mount/
 
 # Force cache to be invalidated after this point
 ARG BUILDDATE
-ENV BUILDDATE ${BUILDDATE:-notset}
+ENV BUILDDATE=${BUILDDATE:-notset}
 
 RUN git pull
 

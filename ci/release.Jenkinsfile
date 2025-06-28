@@ -30,6 +30,16 @@ def buildPodDefinition(workerPodImage, ciUtilsEnabled, kanikoEnabled) {
   yaml = """
 kind: Pod
 spec:
+  affinity:
+      nodeAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+                - key: perf
+                  operator: In
+                  values:
+                    - fast
   hostAliases:
   # Custom set env var
   - ip: "${env.JENKINS_IP_ADDRESS}"
