@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
 import java.util.regex.Pattern
 
-class AllowedCpuSetOptionValue() : OptionValueInformation  {
+class AllowedCpuSetOptionValue(val name : String) : OptionValueInformation  {
   override fun getAutoCompleteOptions(project: Project): Set<String> {
     return emptySet()
   }
@@ -47,12 +47,20 @@ class AllowedCpuSetOptionValue() : OptionValueInformation  {
   }
 
   override val validatorName: String
-    get() = VALIDATOR_NAME
+    get() = name
 
   companion object {
-    const val VALIDATOR_NAME = "config_parse_allowed_cpuset"
+    // Old validator name (before June 28th 2025)
+    const val OLD_VALIDATOR_NAME = "config_parse_allowed_cpuset"
+
+    // New validator name (after June 28th 2025)
+    const val NEW_VALIDATOR_NAME = "config_parse_unit_cpu_set"
 
     private val CPU_ELEMENT_REGEX= Pattern.compile("^[0-9]+(-[0-9]+)?$")
-    val validators = mapOf(Validator(VALIDATOR_NAME) to AllowedCpuSetOptionValue())
+    val validators = mapOf(
+      Validator(OLD_VALIDATOR_NAME) to AllowedCpuSetOptionValue(OLD_VALIDATOR_NAME),
+      Validator(NEW_VALIDATOR_NAME) to AllowedCpuSetOptionValue(NEW_VALIDATOR_NAME),
+      )
+
   }
 }
