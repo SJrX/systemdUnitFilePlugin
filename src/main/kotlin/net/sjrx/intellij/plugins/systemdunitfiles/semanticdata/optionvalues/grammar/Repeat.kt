@@ -3,9 +3,19 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gra
 import kotlin.math.max
 
 /**
- * Zero Or More Combinator
+ * Repeat Combinator
  */
-class ZeroOrOne(val combinator : Combinator) : Combinator {
+class Repeat(val combinator : Combinator, val minInclusive: Int, val maxExclusive: Int) : Combinator {
+
+  init {
+    if (minInclusive < 0) {
+      throw IllegalArgumentException("minInclusive must be >= 0")
+    }
+    if (maxExclusive < minInclusive) {
+      throw IllegalArgumentException("maxExclusive must be >= minInclusive")
+    }
+  }
+
 
   private fun match(value: String, offset: Int, f: (String, Int) -> MatchResult): MatchResult {
     var index = offset
@@ -13,23 +23,35 @@ class ZeroOrOne(val combinator : Combinator) : Combinator {
     val terminals = mutableListOf<TerminalCombinator>()
 
     var match = f(value, index)
-
+    var matches = 0
 
     if (match.matchResult == -1) {
+      if (minInclusive != 0) {
+        // This will return a match result = -1
+        return match
+      }
+
       return MatchResult(tokens, offset, terminals, match.longestMatch)
     }
 
     var maxLength = match.longestMatch
 
 
-    index = match.matchResult
-    tokens.addAll(match.tokens)
-    terminals.addAll(match.terminals)
+    while (match.matchResult != -1 && matches < maxExclusive) {
+      matches++
+      index = match.matchResult
+      tokens.addAll(match.tokens)
+      terminals.addAll(match.terminals)
 
-    match = f(value, index)
-    maxLength = max(maxLength, match.longestMatch)
+      match = f(value, index)
+      maxLength = max(maxLength, match.longestMatch)
+    }
 
-    return MatchResult(tokens, index, terminals, maxLength)
+    if (matches < minInclusive) {
+      return MatchResult(emptyList<String>(), -1, emptyList<TerminalCombinator>(), maxLength)
+    } else {
+      return MatchResult(tokens, index, terminals, maxLength)
+    }
   }
 
   override fun SyntacticMatch(value: String, offset: Int): MatchResult {
@@ -45,7 +67,7 @@ class ZeroOrOne(val combinator : Combinator) : Combinator {
   override fun toStringIndented(indent: Int): String {
     val prefix = "  ".repeat(indent)
     val sb = StringBuilder()
-    sb.append(prefix).append("ZeroOrOne(\n")
+    sb.append(prefix).append("Repeat($minInclusive,$maxExclusive\n")
     if (combinator is SequenceCombinator || combinator is AlternativeCombinator || combinator is Repeat || combinator is ZeroOrOne || combinator is ZeroOrMore || combinator is OneOrMore) {
       sb.append(combinator.toStringIndented(indent + 1)).append("\n")
     } else {

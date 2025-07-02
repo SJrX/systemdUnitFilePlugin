@@ -91,5 +91,15 @@ class FlexibleLiteralChoiceTerminal(vararg val choices: String) : TerminalCombin
     return NoMatch.copy(longestMatch = offset)
   }
 
+  override fun toString(): String {
+    return if (choices.size == 1) {
+      "Literal(\"${choices[0]}\")"
+    } else {
+      "FlexLitChoice(" + choices.joinToString(",") { "\"$it\"" } + ")"
+    }
+  }
 
+  override fun toStringIndented(indent: Int): String {
+    return toString()
+  }
 }

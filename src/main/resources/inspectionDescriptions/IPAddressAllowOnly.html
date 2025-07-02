@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<p>This inspection warns when <b>IPAddressAllow=</b> is specified without <b>IPAddressDeny=</b> in Slice, Scope, Service, or Socket sections.</p>
+<p>When <b>IPAddressAllow=</b> is used without <b>IPAddressDeny=</b>, it does not block traffic as the default action is to permit.</p>
+<p>To properly restrict traffic, both <b>IPAddressAllow=</b> and <b>IPAddressDeny=</b> should be specified.</p>
+
+<p><b>Note:</b> This warning may be safely ignored in cases where:</p>
+<ul>
+    <li>The unit is part of a slice that already has <b>IPAddressDeny=</b> configured at a higher level</li>
+    <li>The unit inherits IP access restrictions from a parent slice unit (such as <code>-.slice</code> or <code>system.slice</code>)</li>
+    <li>You are implementing a hierarchical firewall structure where <b>IPAddressDeny=any</b> is set on an upper-level slice unit, and individual services only need to specify <b>IPAddressAllow=</b> entries</li>
+</ul>
+
+<p>systemd applies IP access lists hierarchically, combining lists from parent slice units with those defined in the current unit. The access control rules are applied in this order:</p>
+<ol>
+    <li>Access is granted when the IP address matches an entry in <b>IPAddressAllow=</b></li>
+    <li>Otherwise, access is denied when the IP address matches an entry in <b>IPAddressDeny=</b></li>
+    <li>Otherwise, access is granted</li>
+</ol>
+</body>
+</html>

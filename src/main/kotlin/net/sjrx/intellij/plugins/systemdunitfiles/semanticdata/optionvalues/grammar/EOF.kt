@@ -16,4 +16,8 @@ class EOF : Combinator {
       NoMatch
     }
   }
+
+  override fun toStringIndented(indent: Int): String {
+    return "EOF"
+  }
 }

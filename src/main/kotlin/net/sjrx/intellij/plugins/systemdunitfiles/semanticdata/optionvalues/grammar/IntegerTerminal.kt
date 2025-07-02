@@ -22,4 +22,8 @@ class IntegerTerminal(private val minInclusive: Int,private val maxExclusive: In
 
     return MatchResult(listOf(matchResult.value), offset + matchResult.value.length, listOf(this), offset + matchResult.value.length)
   }
+
+  override fun toString(): String {
+    return "Int($minInclusive,$maxExclusive)"
+  }
 }

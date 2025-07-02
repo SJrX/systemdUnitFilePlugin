@@ -17,4 +17,8 @@ class RegexTerminal(syntaticMatchStr : String, semanticMatchStr: String ) : Term
 
     return MatchResult(listOf(matchResult.value), offset + matchResult.value.length, listOf(this), offset + matchResult.value.length)
   }
+
+  override fun toString(): String {
+    return "Regex(\"${semanticMatch.pattern}\")"
+  }
 }

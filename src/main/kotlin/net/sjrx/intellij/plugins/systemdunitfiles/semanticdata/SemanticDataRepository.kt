@@ -152,6 +152,8 @@ class SemanticDataRepository private constructor() {
     validatorMap.putAll(CPUSharesOptionValue.validators)
     validatorMap.putAll(CgroupSocketBindOptionValue.validators)
     validatorMap.putAll(RlimitOptionValue.validators) // Scopes are not supported since they aren't standard unit files.
+    validatorMap.putAll(NetworkAddressOptionValue.validators)
+    validatorMap.putAll(InAddrPrefixesOptionValue.validators)
     fileClassToSectionNameToKeyValuesFromDoc["unit"]?.remove(SCOPE_KEYWORD)
     fileClassToSectionToKeyAndValidatorMap["unit"]?.remove(SCOPE_KEYWORD)
   }

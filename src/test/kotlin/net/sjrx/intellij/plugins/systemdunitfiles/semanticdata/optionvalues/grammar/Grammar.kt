@@ -827,4 +827,168 @@ class GrammarTest : TestCase() {
     assertEquals(NoMatch, optionalWhitespacePrefix.SyntacticMatch(invalidFromOffset, garbage.length))
   }
 
+  fun testRepeatCombinatorMatchesNonZeroMin() {
+    /**
+     * Fixture Setup
+     */
+
+    // This combinator should match the options passed in.
+    val fizzOrBuzz = RegexTerminal("[a-z]{4}", "fizz|buzz")
+
+    val repeatCombinator = Repeat(fizzOrBuzz, 2, 4)
+
+    val semValid = "fizzbuzzfizz"
+    val synValid = "blehblehbleh"
+    //val invalid = "fizz"
+    val tooShort = "fizz"
+    val garbage = "XX"
+
+    val semValidFromOffset = "${garbage}${semValid}"
+    val synValidFromOffset = "${garbage}${synValid}"
+    val tooShortFromOffset = "${garbage}${tooShort}"
+
+    /**
+     * Execute SUT & Verification
+     */
+    var match = repeatCombinator.SyntacticMatch(semValid, 0)
+    assertEquals(semValid.length, match.matchResult)
+    assertEquals(listOf("fizz", "buzz", "fizz"), match.tokens)
+    assertEquals(listOf("RegexTerminal", "RegexTerminal", "RegexTerminal"), TerminalTypes(match.terminals))
+
+    match = repeatCombinator.SemanticMatch(semValid, 0)
+    assertEquals(semValid.length, match.matchResult)
+    assertEquals(listOf("fizz", "buzz", "fizz"), match.tokens)
+    assertEquals(listOf("RegexTerminal", "RegexTerminal", "RegexTerminal"), TerminalTypes(match.terminals))
+
+    match = repeatCombinator.SyntacticMatch(synValid, 0)
+    assertEquals(synValid.length, match.matchResult)
+    assertEquals(listOf("bleh", "bleh", "bleh"), match.tokens)
+    assertEquals(listOf("RegexTerminal", "RegexTerminal", "RegexTerminal"), TerminalTypes(match.terminals))
+
+    assertEquals(NoMatch, repeatCombinator.SemanticMatch(synValid, 0))
+
+    match = repeatCombinator.SyntacticMatch(tooShort, 0)
+    assertEquals(-1, match.matchResult)
+    assertEquals(emptyList<String>(), match.tokens)
+    assertEquals(4, match.longestMatch)
+
+    match = repeatCombinator.SemanticMatch(tooShort, 0)
+    assertEquals(-1, match.matchResult)
+    assertEquals(emptyList<String>(), match.tokens)
+    assertEquals(4, match.longestMatch)
+
+    match = repeatCombinator.SyntacticMatch(semValidFromOffset, garbage.length)
+    assertEquals(semValidFromOffset.length, match.matchResult)
+    assertEquals(listOf("fizz", "buzz", "fizz"), match.tokens)
+    assertEquals(listOf("RegexTerminal", "RegexTerminal", "RegexTerminal"), TerminalTypes(match.terminals))
+
+    match = repeatCombinator.SemanticMatch(semValidFromOffset, garbage.length)
+    assertEquals(semValidFromOffset.length, match.matchResult)
+    assertEquals(listOf("fizz", "buzz", "fizz"), match.tokens)
+    assertEquals(listOf("RegexTerminal", "RegexTerminal", "RegexTerminal"), TerminalTypes(match.terminals))
+
+    match = repeatCombinator.SyntacticMatch(synValidFromOffset, garbage.length)
+    assertEquals(synValidFromOffset.length, match.matchResult)
+    assertEquals(listOf("bleh", "bleh", "bleh"), match.tokens)
+    assertEquals(listOf("RegexTerminal", "RegexTerminal", "RegexTerminal"), TerminalTypes(match.terminals))
+
+    assertEquals(NoMatch, repeatCombinator.SemanticMatch(synValidFromOffset, garbage.length))
+
+    match = repeatCombinator.SyntacticMatch(tooShortFromOffset, garbage.length)
+    assertEquals(-1, match.matchResult)
+    assertEquals(emptyList<String>(), match.tokens)
+    assertEquals(6, match.longestMatch)
+
+    match = repeatCombinator.SemanticMatch(tooShortFromOffset, garbage.length)
+    assertEquals(-1, match.matchResult)
+    assertEquals(emptyList<String>(), match.tokens)
+    assertEquals(6, match.longestMatch)
+
+  }
+
+  fun testRepeatCombinatorMatchesZeroMinAndExtraAtEnd() {
+    /**
+     * Fixture Setup
+     */
+
+    // This combinator should match the options passed in.
+    val fizzOrBuzz = RegexTerminal("[a-z]{4}", "fizz|buzz")
+
+    val repeatCombinator = Repeat(fizzOrBuzz, 0, 2)
+
+    val semValid = "fizzbuzzfizz"
+    val synValid = "blehblehbleh"
+    //val invalid = "fizz"
+    val emptyString = ""
+    val garbage = "XX"
+
+    val semValidFromOffset = "${garbage}${semValid}"
+    val synValidFromOffset = "${garbage}${synValid}"
+    val emptyStringFromOffset = "${garbage}${emptyString}"
+
+    /**
+     * Execute SUT & Verification
+     */
+    var match = repeatCombinator.SyntacticMatch(semValid, 0)
+    assertEquals(8, match.matchResult)
+    assertEquals(listOf("fizz", "buzz"), match.tokens)
+    assertEquals(listOf("RegexTerminal", "RegexTerminal"), TerminalTypes(match.terminals))
+
+    match = repeatCombinator.SemanticMatch(semValid, 0)
+    assertEquals(8, match.matchResult)
+    assertEquals(listOf("fizz", "buzz" ), match.tokens)
+    assertEquals(listOf("RegexTerminal", "RegexTerminal"), TerminalTypes(match.terminals))
+
+    match = repeatCombinator.SyntacticMatch(synValid, 0)
+    assertEquals(8, match.matchResult)
+    assertEquals(listOf("bleh", "bleh"), match.tokens)
+    assertEquals(listOf("RegexTerminal", "RegexTerminal"), TerminalTypes(match.terminals))
+
+    match = repeatCombinator.SemanticMatch(synValid, 0)
+    assertEquals(0, match.matchResult)
+    assertEquals(emptyList<String>(), match.tokens)
+    assertEquals(0, match.longestMatch)
+
+    match = repeatCombinator.SyntacticMatch(emptyString, 0)
+    assertEquals(0, match.matchResult)
+    assertEquals(emptyList<String>(), match.tokens)
+    assertEquals(0, match.longestMatch)
+
+    match = repeatCombinator.SemanticMatch(emptyString, 0)
+    assertEquals(0, match.matchResult)
+    assertEquals(emptyList<String>(), match.tokens)
+    assertEquals(0, match.longestMatch)
+
+    match = repeatCombinator.SyntacticMatch(semValidFromOffset, garbage.length)
+    assertEquals(10, match.matchResult)
+    assertEquals(listOf("fizz", "buzz" ), match.tokens)
+    assertEquals(listOf("RegexTerminal", "RegexTerminal"), TerminalTypes(match.terminals))
+
+    match = repeatCombinator.SemanticMatch(semValidFromOffset, garbage.length)
+    assertEquals(10, match.matchResult)
+    assertEquals(listOf("fizz", "buzz"), match.tokens)
+    assertEquals(listOf("RegexTerminal", "RegexTerminal"), TerminalTypes(match.terminals))
+
+    match = repeatCombinator.SyntacticMatch(synValidFromOffset, garbage.length)
+    assertEquals(10, match.matchResult)
+    assertEquals(listOf("bleh", "bleh"), match.tokens)
+    assertEquals(listOf("RegexTerminal", "RegexTerminal"), TerminalTypes(match.terminals))
+
+    match =  repeatCombinator.SemanticMatch(synValidFromOffset, garbage.length)
+    assertEquals(2, match.matchResult)
+    assertEquals(emptyList<String>(), match.tokens)
+    assertEquals(0, match.longestMatch)
+
+    match = repeatCombinator.SyntacticMatch(emptyStringFromOffset, garbage.length)
+    assertEquals(2, match.matchResult)
+    assertEquals(emptyList<String>(), match.tokens)
+    assertEquals(0, match.longestMatch)
+
+    match = repeatCombinator.SemanticMatch(emptyStringFromOffset, garbage.length)
+    assertEquals(2, match.matchResult)
+    assertEquals(emptyList<String>(), match.tokens)
+    assertEquals(0, match.longestMatch)
+
+  }
+
 }
