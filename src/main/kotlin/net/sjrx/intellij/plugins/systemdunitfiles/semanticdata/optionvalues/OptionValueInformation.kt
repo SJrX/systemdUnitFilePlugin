@@ -2,7 +2,9 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.project.Project
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileProperty
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
 
 interface OptionValueInformation {
@@ -32,6 +34,11 @@ interface OptionValueInformation {
       holder.registerProblem(property.valueNode.psi, errorMessage, ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
     }
   }
+
+  /**
+   * highlights the value
+   */
+  fun highlight(property: UnitFileProperty, holder: AnnotationHolder) {}
 
   /**
    * Get the name of the validator that this implements.

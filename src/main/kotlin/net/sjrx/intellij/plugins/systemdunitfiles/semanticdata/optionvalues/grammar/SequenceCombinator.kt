@@ -7,11 +7,13 @@ import kotlin.math.max
  */
 open class SequenceCombinator(vararg val tokens: Combinator) : Combinator {
 
-  override fun SyntacticMatch(value: String, offset: Int): MatchResult {
+  override fun SyntacticMatch(value: String,offset: Int): MatchResult {
     var index = offset
     val resultTokens = mutableListOf<String>()
     val resultTerminals = mutableListOf<TerminalCombinator>()
     var maxLength = 0
+
+    val children = ArrayList<AstNode>()
 
     for (token in tokens) {
       val match = token.SyntacticMatch(value, index)
@@ -28,7 +30,8 @@ open class SequenceCombinator(vararg val tokens: Combinator) : Combinator {
 
 
     }
-    return MatchResult(resultTokens, index, resultTerminals, maxLength)
+
+    return MatchResult(resultTokens, index, resultTerminals, maxLength, AstNode( type="Seq", value.substring(offset, maxLength), children))
   }
 
   override fun SemanticMatch(value: String, offset: Int): MatchResult {

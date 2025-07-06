@@ -20,7 +20,10 @@ public class UnitFileColorSettings implements ColorSettingsPage {
     new AttributesDescriptor("Section", UnitFileHighlighter.SECTION),
     new AttributesDescriptor("Key", UnitFileHighlighter.KEY),
     new AttributesDescriptor("Separator", UnitFileHighlighter.SEPARATOR),
-    new AttributesDescriptor("Value", UnitFileHighlighter.VALUE),
+    new AttributesDescriptor("Text", UnitFileHighlighter.TEXT),
+    new AttributesDescriptor("Constant", UnitFileHighlighter.CONSTANT),
+    new AttributesDescriptor("Number", UnitFileHighlighter.NUMBER),
+    new AttributesDescriptor("Operator", UnitFileHighlighter.NUMBER),
   };
 
   @Nullable
@@ -38,30 +41,77 @@ public class UnitFileColorSettings implements ColorSettingsPage {
   @NotNull
   @Override
   public String getDemoText() {
-    return "#  SPDX-License-Identifier: LGPL-2.1+\n"
-           + "#\n"
-           + "#  This file is part of systemd.\n"
-           + "#\n"
-           + "#  systemd is free software; you can redistribute it and/or modify it\n"
-           + "#  under the terms of the GNU Lesser General Public License as published by\n"
-           + "#  the Free Software Foundation; either version 2.1 of the License, or\n"
-           + "#  (at your option) any later version.\n"
-           + "\n"
-           + "[Unit]\n"
-           + "Description=Reload Configuration from the Real Root\n"
-           + "DefaultDependencies=no\n"
-           + "Requires=initrd-root-fs.target\n"
-           + "After=initrd-root-fs.target\n"
-           + "OnFailure=emergency.target\n"
-           + "OnFailureJobMode=replace-irreversibly\n"
-           + "ConditionPathExists=/etc/initrd-release\n"
-           + "\n"
-           + "[Service]\n"
-           + "Type=oneshot\n"
-           + "ExecStartPre=-/usr/bin/systemctl daemon-reload\n"
-           + "; we have to retrigger initrd-fs.target after daemon-reload\n"
-           + "ExecStart=-/usr/bin/systemctl --no-block start initrd-fs.target\n"
-           + "ExecStart=/usr/bin/systemctl --no-block start initrd-cleanup.service\n";
+    // language="unit file (systemd)"
+    return """
+      # /etc/systemd/system/webapp.service
+      # Comprehensive systemd unit for a Python-based web application
+      
+      [Unit]
+      Description=Example Python Web Application
+      Documentation=https://example.com/docs/webapp
+      After=network.target postgresql.service
+      Requires=postgresql.service
+      
+      [Service]
+      Type=simple
+      
+      # Start the Python web app
+      ExecStart=/usr/bin/python3 /opt/webapp/app.py --port=8080 --env=production
+      
+      # Reload the app if it supports SIGHUP
+      ExecReload=/bin/kill -HUP $MAINPID
+      
+      # Gracefully stop the app
+      ExecStop=/bin/kill -TERM $MAINPID
+      
+      # Drop privileges
+      User=webapp
+      Group=webapp
+      
+      # Set working directory
+      WorkingDirectory=/opt/webapp
+      
+      # Environment configuration
+      Environment=APP_ENV=production
+      Environment=PORT=8080
+      EnvironmentFile=-/etc/webapp/env
+      
+      # File descriptor and memory limits
+      LimitNOFILE=65536
+      MemoryMax=1G
+      
+      # Restart logic
+      Restart=on-failure
+      RestartSec=3s
+      
+      # Security hardening
+      NoNewPrivileges=true
+      ProtectSystem=full
+      ProtectHome=yes
+      PrivateTmp=true
+      PrivateDevices=true
+      ProtectControlGroups=true
+      ProtectKernelModules=true
+      CapabilityBoundingSet=
+      RestrictRealtime=true
+      
+      # Network access control
+      IPAddressAllow=10.0.0.0/16
+      IPAddressDeny=any
+      
+      # Logging
+      StandardOutput=journal
+      StandardError=journal
+      SyslogIdentifier=webapp
+      
+      # Uncomment below if your app uses systemd notifications
+      # Type=notify
+      # WatchdogSec=60
+      
+      [Install]
+      WantedBy=multi-user.target
+      Alias=webapp.service
+      """;
   }
 
   @Nullable

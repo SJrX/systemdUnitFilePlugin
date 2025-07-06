@@ -25,6 +25,8 @@ open class AlternativeCombinator(vararg val tokens: Combinator) : Combinator {
         longestTokenMatch = match.tokens
         maxLength = max(maxLength, match.longestMatch)
       }
+
+
     }
 
     return MatchResult(longestTokenMatch, -1, longestTerminalMatch, maxLength)

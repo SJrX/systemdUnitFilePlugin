@@ -20,6 +20,7 @@ public interface UnitFileElementTypeHolder {
   IElementType KEY = new UnitFileTokenType("KEY");
   IElementType SECTION = new UnitFileTokenType("SECTION");
   IElementType SEPARATOR = new UnitFileTokenType("SEPARATOR");
+  
 
   class Factory {
     public static PsiElement createElement(ASTNode node) {

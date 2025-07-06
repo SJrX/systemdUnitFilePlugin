@@ -1,12 +1,15 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar
 
+import net.sjrx.intellij.plugins.systemdunitfiles.coloring.UnitFileHighlighter
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFile
+
 val BYTES = RegexTerminal("[0-9]+[a-zA-Z]*\\s*", "[0-9]+[KMGT]?\\s*")
 val DEVICE = RegexTerminal("\\S+\\s*", "/[^\\u0000. ]+\\s*")
 val IOPS = RegexTerminal("[0-9]+[a-zA-Z]*\\s*", "[0-9]+[KMGT]?\\s*")
 
 var IPV4_OCTET = IntegerTerminal(0, 256)
 val DOT = LiteralChoiceTerminal(".")
-var IPV4_ADDR = SequenceCombinator(IPV4_OCTET, DOT, IPV4_OCTET, DOT, IPV4_OCTET, DOT, IPV4_OCTET)
+var IPV4_ADDR = HighlightCombinator(SequenceCombinator(IPV4_OCTET, DOT, IPV4_OCTET, DOT, IPV4_OCTET, DOT, IPV4_OCTET), UnitFileHighlighter.NUMBER)
 
 val CIDR_SEPARATOR = LiteralChoiceTerminal("/")
 
@@ -39,7 +42,7 @@ val IPV6_IPV4_SUFFIX_FIVE_HEXTET_BEFORE_ZERO_COMP =  SequenceCombinator(IPV6_HEX
 
 //val IPV6_ALL_ZEROS = DOUBLE_COLON
 
-val IPV6_ADDR = AlternativeCombinator(
+val IPV6_ADDR = HighlightCombinator(AlternativeCombinator(
   IPV6_IPV4_SUFFIX_FULL,
   IPV6_IPV4_SUFFIX_ZERO_HEXTET_BEFORE_ZERO_COMP,
   IPV6_IPV4_SUFFIX_ONE_HEXTET_BEFORE_ZERO_COMP,
@@ -60,7 +63,7 @@ val IPV6_ADDR = AlternativeCombinator(
 
   // I suspect maybe that this one is redundant
   //IPV6_ALL_ZEROS,
-)
+), UnitFileHighlighter.NUMBER)
 
 val IPV6_ADDR_AND_PREFIX_LENGTH = SequenceCombinator(IPV6_ADDR, CIDR_SEPARATOR, IntegerTerminal(64, 129))
 val IPV6_ADDR_AND_OPTIONAL_PREFIX_LENGTH = SequenceCombinator(IPV6_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, IntegerTerminal(64, 129))))

@@ -22,8 +22,18 @@ public class UnitFileHighlighter extends SyntaxHighlighterBase {
     = createTextAttributesKey("UNIT_FILE_KEY", DefaultLanguageHighlighterColors.KEYWORD);
   public static final TextAttributesKey SEPARATOR
     = createTextAttributesKey("UNIT_FILE_SEPARATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN);
-  public static final TextAttributesKey VALUE
-    = createTextAttributesKey("UNIT_FILE_VALUE", DefaultLanguageHighlighterColors.STRING);
+  public static final TextAttributesKey TEXT
+    = createTextAttributesKey("UNIT_FILE_TEXT", DefaultLanguageHighlighterColors.STRING);
+  
+  public static final TextAttributesKey CONSTANT
+    = createTextAttributesKey("UNIT_FILE_CONSTANT", DefaultLanguageHighlighterColors.CONSTANT);
+  
+  public static final TextAttributesKey NUMBER
+    = createTextAttributesKey("UNIT_FILE_NUMBER", DefaultLanguageHighlighterColors.NUMBER);
+  
+  public static final TextAttributesKey OPERATOR
+    = createTextAttributesKey("UNIT_FILE_OPERATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN);
+  
   private static final TextAttributesKey COMMENT
     = createTextAttributesKey("UNIT_FILE_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT);
   private static final TextAttributesKey BAD_CHARACTER
@@ -34,10 +44,11 @@ public class UnitFileHighlighter extends SyntaxHighlighterBase {
   private static final TextAttributesKey[] SECTION_KEYS = new TextAttributesKey[]{SECTION};
   private static final TextAttributesKey[] KEY_KEYS = new TextAttributesKey[]{KEY};
   private static final TextAttributesKey[] SEPARATOR_KEYS = new TextAttributesKey[]{SEPARATOR};
-  private static final TextAttributesKey[] VALUE_KEYS = new TextAttributesKey[]{VALUE};
+  private static final TextAttributesKey[] TEXT_KEYS = new TextAttributesKey[]{TEXT};
   private static final TextAttributesKey[] COMMENT_KEYS = new TextAttributesKey[]{COMMENT};
   private static final TextAttributesKey[] EMPTY_KEYS = new TextAttributesKey[0];
   private static final TextAttributesKey[] BAD_CHAR_KEYS = new TextAttributesKey[]{BAD_CHARACTER};
+  
 
   @NotNull
   @Override
@@ -58,7 +69,7 @@ public class UnitFileHighlighter extends SyntaxHighlighterBase {
       return KEY_KEYS;
     } else if (tokenType.equals(UnitFileElementTypeHolder.CONTINUING_VALUE)
                || tokenType.equals(UnitFileElementTypeHolder.COMPLETED_VALUE)) {
-      return VALUE_KEYS;
+      return TEXT_KEYS;
     } else if (tokenType.equals(UnitFileElementTypeHolder.COMMENT)) {
       return COMMENT_KEYS;
     } else if (tokenType.equals(TokenType.BAD_CHARACTER)) {

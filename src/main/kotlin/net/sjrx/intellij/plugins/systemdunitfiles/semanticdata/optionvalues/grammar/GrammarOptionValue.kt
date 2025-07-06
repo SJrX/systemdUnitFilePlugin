@@ -3,10 +3,13 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gra
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.lang.annotation.AnnotationHolder
+import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import net.sjrx.intellij.plugins.systemdunitfiles.intentions.ReplaceInvalidLiteralChoiceQuickFix
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileProperty
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.OptionValueInformation
@@ -52,6 +55,7 @@ open class GrammarOptionValue(
         holder.registerProblem(property.valueNode.psi, "${property.key}'s value does not match the expected format. Possible reasons include unrecognized characters or premature end of input.", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, tr)
         return
       }
+
 
       val semanticMatch = combinator.SemanticMatch(value, 0)
 
@@ -101,6 +105,7 @@ open class GrammarOptionValue(
 
 
 
+
         return
       }
 
@@ -110,6 +115,26 @@ open class GrammarOptionValue(
     }
 
     return
+
+  }
+
+  override fun highlight(property: UnitFileProperty, holder: AnnotationHolder) {
+    val value = property.valueText ?: return
+
+    val syntaticMatch = combinator.SyntacticMatch(value, 0)
+
+    try {
+      if (syntaticMatch.matchResult >= 0) {
+        for (  (k,v)  in syntaticMatch.highlights) {
+
+          property
+          holder.newSilentAnnotation(HighlightSeverity.INFORMATION).range(TextRange(property.valueNode.textRange.startOffset + k.startOffset, property.valueNode.textRange.startOffset + k.endOffset)).textAttributes(v).create()
+        } //syntaticMatch.highlights
+      }
+    } catch(e : RuntimeException) {
+      LOG.error("Error while processing ${property.key} with value ${value}", e)
+    }
+
 
 
   }
