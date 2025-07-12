@@ -154,6 +154,7 @@ class SemanticDataRepository private constructor() {
     validatorMap.putAll(RlimitOptionValue.validators) // Scopes are not supported since they aren't standard unit files.
     validatorMap.putAll(NetworkAddressOptionValue.validators)
     validatorMap.putAll(InAddrPrefixesOptionValue.validators)
+    validatorMap.putAll(UIntOptionValues.validators)
     fileClassToSectionNameToKeyValuesFromDoc["unit"]?.remove(SCOPE_KEYWORD)
     fileClassToSectionToKeyAndValidatorMap["unit"]?.remove(SCOPE_KEYWORD)
   }
@@ -706,7 +707,7 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
         "Link", "Match", "SR-IOV",
       )
       "Netdev" -> setOf(
-        "BareUDP", "BatmanAdvanced", "Bond", "Bridge", "FooOverUDP", "GENEVE", "IPoIB", "IPVLAN", "IPVTAP",
+        "BareUDP", "BatmanAdvanced", "Bond", "Bridge", "FooOverUDP", "GENEVE", "HSR", "IPoIB", "IPVLAN", "IPVTAP",
         "L2TP", "L2TPSession", "MACsec", "MACsecReceiveAssociation", "MACsecReceiveChannel", "MACsecTransmitAssociation", "MACVLAN",
         "MACVTAP", "Match", "NetDev", "Peer", "Tap", "Tun", "Tunnel", "VLAN",
         "VRF", "VXCAN", "VXLAN", "WireGuard", "WireGuardPeer", "WLAN", "Xfrm", "NetDev"
