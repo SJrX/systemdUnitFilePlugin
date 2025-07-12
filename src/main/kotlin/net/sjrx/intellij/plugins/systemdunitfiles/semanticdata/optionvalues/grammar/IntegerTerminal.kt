@@ -1,6 +1,8 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar
 
-class IntegerTerminal(private val minInclusive: Int,private val maxExclusive: Int) : TerminalCombinator {
+class IntegerTerminal(private val minInclusive: Long,private val maxExclusive: Long) : TerminalCombinator {
+
+  constructor(minInclusive: Int, maxExclusive: Int) : this(minInclusive.toLong(), maxExclusive.toLong())
 
   val intRegex = "-?[0-9]+".toRegex()
 
@@ -14,13 +16,17 @@ class IntegerTerminal(private val minInclusive: Int,private val maxExclusive: In
   override fun SemanticMatch(value: String, offset: Int): MatchResult {
     val matchResult = intRegex.matchAt(value, offset) ?: return NoMatch
 
-    val intValue = matchResult.value.toInt()
+    try {
+      val intValue = matchResult.value.toLong()
 
-    if (intValue < minInclusive || intValue >= maxExclusive) {
+      if (intValue < minInclusive || intValue >= maxExclusive) {
+        return NoMatch.copy(longestMatch = offset)
+      }
+
+      return MatchResult(listOf(matchResult.value), offset + matchResult.value.length, listOf(this), offset + matchResult.value.length)
+    } catch (e: NumberFormatException) {
       return NoMatch.copy(longestMatch = offset)
     }
-
-    return MatchResult(listOf(matchResult.value), offset + matchResult.value.length, listOf(this), offset + matchResult.value.length)
   }
 
   override fun toString(): String {

@@ -4,6 +4,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.FileClass
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 class OptionValueTest : AbstractUnitFileTest() {
 
@@ -35,7 +37,14 @@ class OptionValueTest : AbstractUnitFileTest() {
 
     println("Missing:$totalMissingValidators")
     println("Found:$totalFoundValidators")
-    val allowed = 1183
+
+    val startDate = LocalDate.of(2025, 7, 12) // Today's date
+    val startingCount = 1183 // Your current undocumented options count
+    val currentDate = LocalDate.now()
+    val daysSinceStart = ChronoUnit.DAYS.between(startDate, currentDate)
+    val reductionPerDay = 4
+    val allowed = maxOf(0, startingCount - (daysSinceStart * reductionPerDay))
+
     if (totalMissingValidators >= allowed) {
       assertEquals("Number of missing validators is too high at ${totalMissingValidators} > $allowed vs. found ${totalFoundValidators}", sortedList, "")
     }
