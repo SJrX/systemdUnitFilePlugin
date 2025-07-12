@@ -125,11 +125,11 @@ open class GrammarOptionValue(
 
     try {
       if (syntaticMatch.matchResult >= 0) {
-        for (  (k,v)  in syntaticMatch.highlights) {
+        //for (  (k,v)  in syntaticMatch.highlights) {
 
           property
           holder.newSilentAnnotation(HighlightSeverity.INFORMATION).range(TextRange(property.valueNode.textRange.startOffset + k.startOffset, property.valueNode.textRange.startOffset + k.endOffset)).textAttributes(v).create()
-        } //syntaticMatch.highlights
+        //} //syntaticMatch.highlights
       }
     } catch(e : RuntimeException) {
       LOG.error("Error while processing ${property.key} with value ${value}", e)
