@@ -8,7 +8,7 @@ RUN apt-get update && apt-get -y install git build-essential tzdata meson pkg-co
 
 RUN mkdir /opt/systemd-source
 
-RUN git clone https://github.com/systemd/systemd.git /opt/systemd-source/systemd
+RUN git clone https://github.com/systemd/systemd.git /opt/systemd-source/systemd --single-branch --depth=1
 
 WORKDIR /opt/systemd-source/systemd
 

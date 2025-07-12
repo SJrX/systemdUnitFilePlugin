@@ -21,7 +21,7 @@ echo "Git Pull" && \
   cp ./src/network/networkd-network-gperf.gperf /mount/  && \
   cp ./src/network/networkd-gperf.gperf /mount/  && \
   cp -R ./man /mount/ && \
-  /usr/bin/meson --internal exe --capture /mount/man/ethtool-link-mode.xml -- /usr/bin/python3 ./src/shared/ethtool-link-mode.py --xml 'cc -E' ./src/basic/include/linux/ethtool.h && \
+  /usr/bin/meson --internal exe --capture /mount/man/ethtool-link-mode.xml -- /usr/bin/python3 ./src/shared/ethtool-link-mode.py --xml 'cc -E' ./src/include/uapi/linux/ethtool.h && \
   git log --format="%at" | sort | tail -n 1 | xargs -I{} date -d @{} +%Y-%m-%d > last_commit_date && \
   git rev-parse --short=10 HEAD > last_commit_hash && \
   cp last_commit_date last_commit_hash /mount/ && \
