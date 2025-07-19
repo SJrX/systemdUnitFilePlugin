@@ -155,6 +155,7 @@ class SemanticDataRepository private constructor() {
     validatorMap.putAll(NetworkAddressOptionValue.validators)
     validatorMap.putAll(InAddrPrefixesOptionValue.validators)
     validatorMap.putAll(UIntOptionValues.validators)
+    validatorMap.putAll(SimpleGrammarOptionValues.validators)
     fileClassToSectionNameToKeyValuesFromDoc["unit"]?.remove(SCOPE_KEYWORD)
     fileClassToSectionToKeyAndValidatorMap["unit"]?.remove(SCOPE_KEYWORD)
   }
