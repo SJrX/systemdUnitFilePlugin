@@ -22,6 +22,7 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
            TTYReset=false
            TTYReset=f
            TTYReset=off
+           CacheDirectoryQuota=
            
            """.trimIndent()
 
