@@ -74,6 +74,20 @@ class SimpleGrammarOptionValues(validatorName: String, grammar: Combinator) : Gr
                                                                                      FlexibleLiteralChoiceTerminal("~"),
                                                                                    ),
                                                                                  EOF())),
+
+      Validator("config_parse_exec_quota", "0") to SimpleGrammarOptionValues("config_parse_exec_quota",
+                                                                               SequenceCombinator(
+                                                                                 AlternativeCombinator(
+                                                                                   OptionalWhitespacePrefix(
+                                                                                     SequenceCombinator(IntegerTerminal(0, 4_294_967_296), OptionalWhitespacePrefix(FlexibleLiteralChoiceTerminal("K","M","G", "T"))
+                                                                                     )),
+                                                                                             SequenceCombinator(IntegerTerminal(0, 101), FlexibleLiteralChoiceTerminal("%")),
+                                                                                             OptionalWhitespacePrefix(IntegerTerminal(0, 4_294_967_296)),
+                                                                                             FlexibleLiteralChoiceTerminal("off"),
+                                                                                 ),
+                                                                                 EOF()
+                                                                               ))
+
     )
 
   }
