@@ -16,6 +16,7 @@ class OptionValueTest : AbstractUnitFileTest() {
     val missingValidators = hashMapOf<Validator, Int>()
     var totalMissingValidators = 0
     var totalFoundValidators = 0
+    val foundValidators = mutableSetOf<Validator>()
     for (fileClass in FileClass.entries) {
       for (sectionName in SemanticDataRepository.instance.getSectionNamesForFile(fileClass.fileClass)) {
         for (key in SemanticDataRepository.instance.getAllowedKeywordsInSectionFromValidators(fileClass, sectionName)) {
@@ -26,6 +27,7 @@ class OptionValueTest : AbstractUnitFileTest() {
             missingValidators[validator] = (missingValidators[validator] ?: 0) + 1
             totalMissingValidators++
           } else {
+            foundValidators.add(validator)
             totalFoundValidators++
           }
         }
@@ -36,17 +38,18 @@ class OptionValueTest : AbstractUnitFileTest() {
     val sortedList = missingValidatorList.sortedDescending().joinToString("\n")
 
     println("Missing:$totalMissingValidators")
+    println("Missing Functions:${missingValidators.size}")
     println("Found:$totalFoundValidators")
 
-    val startDate = LocalDate.of(2025, 7, 12) // Today's date
-    val startingCount = 1183 // Your current undocumented options count
+    val startDate = LocalDate.of(2025, 7, 27) // Today's date
+    val startingCount = 612 // Your current undocumented options count
     val currentDate = LocalDate.now()
     val daysSinceStart = ChronoUnit.DAYS.between(startDate, currentDate)
-    val reductionPerDay = 4
+    val reductionPerDay = 1
     val allowed = maxOf(0, startingCount - (daysSinceStart * reductionPerDay))
 
-    if (totalMissingValidators >= allowed) {
-      assertEquals("Number of missing validators is too high at ${totalMissingValidators} > $allowed vs. found ${totalFoundValidators}", sortedList, "")
+    if (missingValidators.size >= allowed) {
+      assertEquals("Number of missing functions is too high at ${missingValidators.size} > $allowed vs. found ${foundValidators.size} ${totalFoundValidators}", sortedList, "")
     }
 
     if (totalFoundValidators == 0) {

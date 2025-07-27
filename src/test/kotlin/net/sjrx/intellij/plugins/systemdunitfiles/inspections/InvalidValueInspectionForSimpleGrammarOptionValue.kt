@@ -129,4 +129,54 @@ class InvalidValueInspectionForSimpleGrammarOptionValue : AbstractUnitFileTest()
     assertSize(4, highlights)
   }
 
+
+  fun testNoWarningWhenValidQuotasAreSet() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file="""
+      [Service]
+      StateDirectoryQuota=1K
+      StateDirectoryQuota=1 M
+      StateDirectoryQuota=1T
+      StateDirectoryQuota=1 G
+      StateDirectoryQuota=0
+      StateDirectoryQuota=4294967295
+      StateDirecotryQuota=1%
+      StateDirecotryQuota=off
+      StateDirecotryQuota=100%
+      StateDirecotryQuota=0%
+    """.trimIndent()
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
+  fun testWarningWhenInvalidQuotasAreSet() {
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file="""
+      [Service]
+      StateDirectoryQuota=1P
+      StateDirectoryQuota=-1
+      StateDirectoryQuota=on
+      StateDirectoryQuota=allo
+      StateDirectoryQuota=4294967296
+      StateDirectoryQuota=500%
+      StateDirectoryQuota=5.52%
+    """.trimIndent()
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(7, highlights)
+  }
+
 }
