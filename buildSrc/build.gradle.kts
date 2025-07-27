@@ -9,6 +9,6 @@ repositories {
 }
 
 dependencies {
-  implementation("commons-io:commons-io:2.19.0")
+  implementation("commons-io:commons-io:2.20.0")
   testImplementation("junit:junit:4.13.2")
 }
