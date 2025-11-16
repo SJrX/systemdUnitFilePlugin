@@ -156,6 +156,7 @@ class SemanticDataRepository private constructor() {
     validatorMap.putAll(InAddrPrefixesOptionValue.validators)
     validatorMap.putAll(UIntOptionValues.validators)
     validatorMap.putAll(SimpleGrammarOptionValues.validators)
+    validatorMap.putAll(getAllAIGeneratedValidators())
     fileClassToSectionNameToKeyValuesFromDoc["unit"]?.remove(SCOPE_KEYWORD)
     fileClassToSectionToKeyAndValidatorMap["unit"]?.remove(SCOPE_KEYWORD)
   }
