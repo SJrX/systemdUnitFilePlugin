@@ -5,7 +5,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 
 
 
-class SimpleGrammarOptionValues(validatorName: String, grammar: Combinator) : GrammarOptionValue(validatorName, grammar) {
+open class SimpleGrammarOptionValues(validatorName: String, grammar: Combinator) : GrammarOptionValue(validatorName, grammar) {
 
 
   companion object {
