@@ -184,6 +184,9 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_wireguard_peer_route_priority", "0") to ConfigParseWireguardPeerRoutePriorityOptionValue() as OptionValueInformation,
     Validator("config_parse_wireguard_route_priority", "0") to ConfigParseWireguardRoutePriorityOptionValue() as OptionValueInformation,
     Validator("config_parse_wlan_iftype", "0") to ConfigParseWlanIftypeOptionValue() as OptionValueInformation,
+    Validator("config_parse_ad_actor_system", "0") to ConfigParseAdActorSystemOptionValue() as OptionValueInformation,
+      Validator("config_parse_address_section", "ADDRESS_SCOPE") to ConfigParseAddressSectionAddressScopeOptionValue() as OptionValueInformation,
+
   )
 
   return allValidators
