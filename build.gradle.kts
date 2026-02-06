@@ -33,7 +33,7 @@ plugins {
   id("org.jetbrains.grammarkit") version "2023.3.0.2"
   id("checkstyle")
   id("com.avast.gradle.docker-compose") version "0.17.20"
-  id("org.jetbrains.kotlin.jvm") version "2.3.0"
+  id("org.jetbrains.kotlin.jvm") version "2.3.10"
   id("idea")
 }
 
