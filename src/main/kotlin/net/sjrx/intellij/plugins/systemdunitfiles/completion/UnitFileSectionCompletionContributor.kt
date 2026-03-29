@@ -22,7 +22,7 @@ class UnitFileSectionCompletionContributor() : CompletionContributor() {
                                       resultSet: CompletionResultSet) {
           parameters.position.containingFile.name.substringAfterLast(".", "")
 
-          val completeSections = SemanticDataRepository.instance.getAllowedSectionsInFile(parameters.position.containingFile.name)
+          val completeSections = SemanticDataRepository.instance.getAllowedSectionsInFile(parameters.position.containingFile)
 
           resultSet.addAllElements(
             completeSections.map {

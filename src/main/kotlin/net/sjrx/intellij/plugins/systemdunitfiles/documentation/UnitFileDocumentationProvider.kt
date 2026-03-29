@@ -37,7 +37,8 @@ class UnitFileDocumentationProvider : AbstractDocumentationProvider() {
       val section = PsiTreeUtil.getParentOfType(element, UnitFileSectionType::class.java) ?: return null
       val sectionName = section.sectionName
       val sdr: SemanticDataRepository = SemanticDataRepository.instance
-      val sectionComment = sdr.getDocumentationContentForSection(sectionName)
+      val fileClass = section.containingFile.fileClass()
+      val sectionComment = sdr.getDocumentationContentForSection(fileClass, sectionName)
       if (sectionComment != null) {
         return DocumentationMarkup.DEFINITION_START + sectionName + DocumentationMarkup.DEFINITION_END + DocumentationMarkup.CONTENT_START + sectionComment + DocumentationMarkup.CONTENT_END
       }
@@ -77,7 +78,8 @@ class UnitFileDocumentationProvider : AbstractDocumentationProvider() {
       val section = PsiTreeUtil.getParentOfType(element, UnitFileSectionType::class.java) ?: return null
       val sectionName = section.sectionName
       val sdr: SemanticDataRepository = SemanticDataRepository.instance
-      val sectionUrl = sdr.getUrlForSectionName(sectionName)
+      val fileClass = section.containingFile.fileClass()
+      val sectionUrl = sdr.getUrlForSectionName(fileClass, sectionName)
       if (sectionUrl != null) {
         return listOf(sectionUrl)
       }

@@ -11,8 +11,15 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.NotNullLazyValue
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ObjectUtils
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.*
+import net.sjrx.intellij.plugins.systemdunitfiles.settings.PodmanQuadletSettings
 import org.apache.commons.io.IOUtils
 import java.io.BufferedReader
 import java.io.File
@@ -27,12 +34,57 @@ enum class FileClass(val fileClass: String, val gperfFile: String) {
   NSPAWN("nspawn", "nspawn-gperf.gperf"),
   NETDEV("netdev", "netdev-gperf.gperf"),
   NETWORK("network", "networkd-network-gperf.gperf"),
-  LINK("link", "link-config-gperf.gperf")
+  LINK("link", "link-config-gperf.gperf"),
+  PODMAN_NETWORK("podman_network", "podman-network-gperf.gperf")
 }
 
 
 fun PsiFile.fileClass(): FileClass {
+  if (name.endsWith(".network")) {
+    val settings = PodmanQuadletSettings.getInstance(project)
+    if (settings.state.enabled) {
+      // Cache the detection result so we don't re-walk the PSI tree on every call
+      // during a single highlighting pass. Invalidated when the PSI tree changes.
+      return CachedValuesManager.getCachedValue(originalFile) {
+        CachedValueProvider.Result.create(
+          detectNetworkFileClass(originalFile),
+          PsiModificationTracker.getInstance(project).forLanguage(language)
+        )
+      }
+    }
+  }
   return SemanticDataRepository.getFileClassForFilename(this.name)
+}
+
+private val PODMAN_ONLY_KEYS = setOf(
+  "Subnet", "NetworkName", "Gateway", "DisableDNS", "IPAMDriver",
+  "IPRange", "Internal", "NetworkDeleteOnStop", "Driver", "Options",
+  "ContainersConfModule", "GlobalArgs", "PodmanArgs", "ServiceName", "Label"
+)
+
+private val SYSTEMD_NETWORKD_ONLY_SECTIONS = setOf(
+  "Match", "Route", "Address", "DHCP", "DHCPv4", "DHCPv6", "DHCPServer",
+  "Bridge", "BridgeFDB", "BridgeMDB", "BridgeVLAN", "IPv6AcceptRA",
+  "IPv6SendRA", "Neighbor", "NextHop", "RoutingPolicyRule", "QDisc"
+)
+
+fun detectNetworkFileClass(file: PsiFile): FileClass {
+  val sections = PsiTreeUtil.findChildrenOfType(file, UnitFileSectionGroups::class.java)
+  for (section in sections) {
+    val sectionName = section.sectionName
+    if (sectionName in SYSTEMD_NETWORKD_ONLY_SECTIONS) {
+      return FileClass.NETWORK
+    }
+    if (sectionName == "Network") {
+      val properties = PsiTreeUtil.findChildrenOfType(section, UnitFilePropertyType::class.java)
+      for (prop in properties) {
+        if (prop.key in PODMAN_ONLY_KEYS) {
+          return FileClass.PODMAN_NETWORK
+        }
+      }
+    }
+  }
+  return FileClass.NETWORK
 }
 
 class SemanticDataRepository private constructor() {
@@ -289,6 +341,19 @@ class SemanticDataRepository private constructor() {
    * @param sectionName - the name of the section name
    * @return best URL for the section name or null if the section is unknown
    */
+  fun getUrlForSectionName(fileClass: FileClass, sectionName: String?): String? {
+    if (fileClass == FileClass.PODMAN_NETWORK) {
+      return when (sectionName) {
+        "Network" -> "https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html#network-units-network"
+        "Unit" -> "https://www.freedesktop.org/software/systemd/man/systemd.unit.html#%5BUnit%5D%20Section%20Options"
+        "Install" -> "https://www.freedesktop.org/software/systemd/man/systemd.unit.html#%5BInstall%5D%20Section%20Options"
+        "Service" -> "https://www.freedesktop.org/software/systemd/man/systemd.service.html"
+        else -> null
+      }
+    }
+    return getUrlForSectionName(sectionName)
+  }
+
   fun getUrlForSectionName(sectionName: String?): String? {
     return when (sectionName) {
       "Mount" -> "https://www.freedesktop.org/software/systemd/man/systemd.mount.html"
@@ -407,6 +472,19 @@ class SemanticDataRepository private constructor() {
    * @param sectionName the name of the section.
    * @return string
    */
+  fun getDocumentationContentForSection(fileClass: FileClass, sectionName: String?): String? {
+    if (fileClass == FileClass.PODMAN_NETWORK) {
+      return when (sectionName) {
+        "Network" -> """The [Network] section defines a Podman network. Network units are used to create named Podman networks as one-time systemd services that ensure the network exists on the host, creating it if needed."""
+        "Unit" -> getDocumentationContentForSection("Unit")
+        "Install" -> getDocumentationContentForSection("Install")
+        "Service" -> getDocumentationContentForSection("Service")
+        else -> null
+      }
+    }
+    return getDocumentationContentForSection(sectionName)
+  }
+
   fun getDocumentationContentForSection(sectionName: String?): String? {
     return when (sectionName) {
       "Mount" -> """ Mount files must include a [Mount] section, which carries information
@@ -683,6 +761,14 @@ unit types. These options are documented in <a href="http://man7.org/linux/man-p
    */
   fun getAllowedKeywordsInSectionFromValidators(fileClass: FileClass, sectionName: String?): Set<String> {
     return Collections.unmodifiableSet(fileClassToSectionToKeyAndValidatorMap.getOrDefault(fileClass.fileClass, emptyMap()).getOrDefault(sectionName, emptyMap()).keys)
+  }
+
+  fun getAllowedSectionsInFile(psiFile: PsiFile): Set<String> {
+    val fc = psiFile.fileClass()
+    if (fc == FileClass.PODMAN_NETWORK) {
+      return setOf("Unit", "Install", "Service", "Network")
+    }
+    return getAllowedSectionsInFile(psiFile.name)
   }
 
   fun getAllowedSectionsInFile(fileName: String): Set<String> {

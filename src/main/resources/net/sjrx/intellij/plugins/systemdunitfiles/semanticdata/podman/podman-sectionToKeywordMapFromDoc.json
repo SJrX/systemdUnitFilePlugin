@@ -1,0 +1,60 @@
+{
+    "podman_network": {
+        "Network": {
+            "ContainersConfModule": {
+                "description": "Load the specified containers.conf(5) module."
+            },
+            "DisableDNS": {
+                "description": "If true, disables the DNS plugin for this network. Defaults to false."
+            },
+            "DNS": {
+                "description": "Set network-scoped DNS resolver/nameserver for containers in this network."
+            },
+            "Driver": {
+                "description": "Driver to manage the network. Currently bridge, macvlan and ipvlan are supported. Defaults to bridge."
+            },
+            "Gateway": {
+                "description": "Define a gateway for the subnet. If not set, the first IP address of the subnet will be used."
+            },
+            "GlobalArgs": {
+                "description": "Additional arguments to pass between podman and the network subcommand."
+            },
+            "InterfaceName": {
+                "description": "The network interface name on the host. For bridge, this is the bridge interface; for macvlan/ipvlan, the parent device."
+            },
+            "Internal": {
+                "description": "If true, restrict external access to this network. Defaults to false."
+            },
+            "IPAMDriver": {
+                "description": "Set the IPAM driver (IP Address Management driver) for the network. Currently host-local, dhcp and none are supported."
+            },
+            "IPRange": {
+                "description": "Allocate container IP from a range. The range must be a complete subnet in CIDR notation."
+            },
+            "IPv6": {
+                "description": "Enable IPv6 (Dual Stack) networking. Defaults to false."
+            },
+            "Label": {
+                "description": "Set one or more OCI labels on the network. Can be specified multiple times."
+            },
+            "NetworkDeleteOnStop": {
+                "description": "If true, the network is deleted when the systemd service stops. Defaults to false."
+            },
+            "NetworkName": {
+                "description": "The name of the Podman network. If not specified, the default name is systemd-<filename-stem>."
+            },
+            "Options": {
+                "description": "Set driver-specific options. Can be specified multiple times."
+            },
+            "PodmanArgs": {
+                "description": "Additional arguments to pass at the end of the podman network create command."
+            },
+            "ServiceName": {
+                "description": "The name of the systemd service unit to generate. If not specified, uses the default name."
+            },
+            "Subnet": {
+                "description": "The subnet in CIDR notation. Can be specified multiple times for multiple subnets."
+            }
+        }
+    }
+}

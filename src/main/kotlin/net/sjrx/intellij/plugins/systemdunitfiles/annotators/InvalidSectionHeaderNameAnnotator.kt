@@ -4,8 +4,10 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
+import net.sjrx.intellij.plugins.systemdunitfiles.intentions.EnablePodmanQuadletSupportQuickFix
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
+import net.sjrx.intellij.plugins.systemdunitfiles.settings.shouldSuggestPodmanSupport
 import java.util.regex.Pattern
 
 class InvalidSectionHeaderNameAnnotator : Annotator {
@@ -29,7 +31,7 @@ class InvalidSectionHeaderNameAnnotator : Annotator {
 
       if (validSection) {
         val sectionName = text.substring(1, text.length - 1)
-        val allowedSections = SemanticDataRepository.instance.getAllowedSectionsInFile(element.containingFile.name)
+        val allowedSections = SemanticDataRepository.instance.getAllowedSectionsInFile(element.containingFile)
 
         val unitType = SemanticDataRepository.instance.getUnitType(element.containingFile.name)
 
@@ -38,7 +40,13 @@ class InvalidSectionHeaderNameAnnotator : Annotator {
         // Also if we don't have any sections then we can ignore the warning (this is a hack, to prevent templates in the plugin from having errors).
         if ((sectionName !in allowedSections) && !sectionName.startsWith("X-") && !allowedSections.isEmpty()) {
           val errorString = SECTION_IN_WRONG_FILE.format(sectionName, unitType, allowedSections)
-          holder.newAnnotation(HighlightSeverity.ERROR, errorString).range(element.getFirstChild()).create()
+          val annotation = holder.newAnnotation(HighlightSeverity.ERROR, errorString).range(element.getFirstChild())
+
+          if (shouldSuggestPodmanSupport(element.containingFile)) {
+            annotation.withFix(EnablePodmanQuadletSupportQuickFix())
+          }
+
+          annotation.create()
         }
       }
 
