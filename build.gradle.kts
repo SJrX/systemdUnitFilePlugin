@@ -219,6 +219,97 @@ tasks.register<Copy>("generateOptionValidator") {
   into("${sourceSets["main"].output.resourcesDir?.getAbsolutePath()}/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/")
 }
 
+tasks.register("mergePodmanDocumentation") {
+  description = "Merge podman quadlet documentation JSON into the generated sectionToKeywordMapFromDoc.json"
+  group = "generation"
+
+  val semanticDataDir = file("${sourceSets["main"].output.resourcesDir?.getAbsolutePath()}/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata")
+  val podmanJsonFile = file("./src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/podman/podman-sectionToKeywordMapFromDoc.json")
+  val targetJsonFile = file("${semanticDataDir}/sectionToKeywordMapFromDoc.json")
+
+  inputs.file(podmanJsonFile)
+
+  dependsOn("generateDataFromManPages")
+  mustRunAfter("processResources", "generateOptionValidator", "generateUnitAutoCompleteData")
+
+  doLast {
+    val slurper = groovy.json.JsonSlurper()
+    val sharedSections = listOf("Unit", "Install", "Service")
+
+    // Merge documented keywords
+    @Suppress("UNCHECKED_CAST")
+    val mainData = slurper.parse(targetJsonFile) as MutableMap<String, Any>
+    @Suppress("UNCHECKED_CAST")
+    val podmanData = slurper.parse(podmanJsonFile) as MutableMap<String, Any>
+
+    @Suppress("UNCHECKED_CAST")
+    val unitFileClassData = mainData["unit"] as? Map<String, Any>
+    @Suppress("UNCHECKED_CAST")
+    val podmanNetworkData = podmanData.getOrDefault("podman_network", mutableMapOf<String, Any>()) as MutableMap<String, Any>
+    if (unitFileClassData != null) {
+      for (section in sharedSections) {
+        val sectionData = unitFileClassData[section]
+        if (sectionData != null) {
+          podmanNetworkData[section] = sectionData
+        }
+      }
+    }
+    podmanData["podman_network"] = podmanNetworkData
+    mainData.putAll(podmanData)
+
+    val output = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(mainData))
+    targetJsonFile.writeText(output)
+
+    // Merge undocumented keywords (deprecated/moved options)
+    val undocumentedJsonFile = file("${semanticDataDir}/undocumentedSectionToKeywordMap.json")
+    @Suppress("UNCHECKED_CAST")
+    val undocData = slurper.parse(undocumentedJsonFile) as MutableMap<String, Any>
+    @Suppress("UNCHECKED_CAST")
+    val unitUndocData = undocData["unit"] as? Map<String, Any>
+    if (unitUndocData != null) {
+      val podmanUndocData = mutableMapOf<String, Any>()
+      for (section in sharedSections) {
+        val sectionData = unitUndocData[section]
+        if (sectionData != null) {
+          podmanUndocData[section] = sectionData
+        }
+      }
+      undocData["podman_network"] = podmanUndocData
+    }
+
+    val undocOutput = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(undocData))
+    undocumentedJsonFile.writeText(undocOutput)
+  }
+}
+
+tasks.register("generatePodmanNetworkGperf") {
+  description = "Generate podman-network-gperf.gperf by merging systemd unit sections with podman quadlet network keys"
+  group = "generation"
+
+  val loadFragmentFile = file("./systemd-build/build/load-fragment-gperf.gperf")
+  val podmanNetworkFile = file("./src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/podman/podman-network.gperf")
+  val outputDir = file("${sourceSets["main"].output.resourcesDir?.getAbsolutePath()}/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/")
+  val outputFile = file("${outputDir}/podman-network-gperf.gperf")
+
+  inputs.file(loadFragmentFile)
+  inputs.file(podmanNetworkFile)
+  outputs.file(outputFile)
+
+  dependsOn("generateOptionValidator")
+
+  doLast {
+    val unitSections = setOf("Unit", "Install", "Service")
+    val unitLines = loadFragmentFile.readLines().filter { line ->
+      val trimmed = line.trim()
+      trimmed.isNotEmpty() && unitSections.any { section -> trimmed.startsWith("$section.") }
+    }
+    val podmanLines = podmanNetworkFile.readLines()
+
+    outputFile.parentFile.mkdirs()
+    outputFile.writeText((unitLines + podmanLines).joinToString("\n") + "\n")
+  }
+}
+
 
 tasks {
   runIde {
@@ -231,6 +322,7 @@ tasks {
 tasks {
   classes {
     dependsOn("generateOptionValidator")
+    dependsOn("generatePodmanNetworkGperf")
   }
 }
 
@@ -268,7 +360,9 @@ if (!(project.file("./systemd-build/build/ubuntu-units.txt").exists())) {
 tasks {
   jar {
     dependsOn("generateDataFromManPages")
+    dependsOn("mergePodmanDocumentation")
     dependsOn("generateOptionValidator")
+    dependsOn("generatePodmanNetworkGperf")
     dependsOn("generateUnitAutoCompleteData")
   }
 
@@ -279,17 +373,21 @@ tasks {
 
   instrumentedJar {
     dependsOn("generateDataFromManPages")
+    dependsOn("mergePodmanDocumentation")
+    dependsOn("generatePodmanNetworkGperf")
     dependsOn("generateUnitAutoCompleteData")
   }
 
   compileTestKotlin {
     dependsOn("generateUnitAutoCompleteData")
     dependsOn("generateDataFromManPages")
+    dependsOn("mergePodmanDocumentation")
   }
 
   compileTestJava {
     dependsOn("generateUnitAutoCompleteData")
     dependsOn("generateDataFromManPages")
+    dependsOn("mergePodmanDocumentation")
   }
 }
 
