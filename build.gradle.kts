@@ -82,7 +82,6 @@ dependencies {
     create(type, version)
 
     pluginVerifier()
-    instrumentationTools()
     testFramework(TestFrameworkType.Platform)
   }
 }

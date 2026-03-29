@@ -310,7 +310,7 @@ class GenerateDataFromManPages extends DefaultTask {
    *
    * @param File file
    */
-  private void generateKeywordAndValueJsonMapForFile(String fileType, File file) {
+  protected void generateKeywordAndValueJsonMapForFile(String fileType, File file) {
 
     String filename = file.getName()
 
@@ -432,7 +432,7 @@ class GenerateDataFromManPages extends DefaultTask {
    * @param File sourceFile - the source file to extract
    * @return
    */
-  private generateDocumentationHtmlFromManPages(String fileType, File sourceFile) {
+  protected generateDocumentationHtmlFromManPages(String fileType, File sourceFile) {
 
 
     Document document = buildDocumentProcessingIncludes(sourceFile)
@@ -443,7 +443,7 @@ class GenerateDataFromManPages extends DefaultTask {
     segmentParametersIntoFiles(fileType, sourceFile.getName(), xsltOutput)
   }
 
-  private Document buildDocumentProcessingIncludes(File sourceFile) {
+  protected Document buildDocumentProcessingIncludes(File sourceFile) {
     DocumentBuilder builder = dbf.newDocumentBuilder()
     String xmlContent = sourceFile.text
 
@@ -467,7 +467,7 @@ class GenerateDataFromManPages extends DefaultTask {
     document
   }
 
-  private String processXIncludesWithRegex(String xmlContent, File baseDir) {
+  protected String processXIncludesWithRegex(String xmlContent, File baseDir) {
     // 🔥 Regex to match <xi:include href="some.xml" xpointer="some-id"/> (xpointer is optional)
     def includePattern = /<xi:include\s+href="([^"]+)"(?:\s+xpointer="([^"]+)")?\s*\/>/
 
@@ -630,7 +630,7 @@ class GenerateDataFromManPages extends DefaultTask {
    * @param sourceFileName - the name of the source file we pulled the data from
    * @param parameterInfoXMLAsString - A transformed XML document representing the documentation for systemd
    */
-  private void segmentParametersIntoFiles(String fileType, String sourceFileName, String parameterInfoXMLAsString) {
+  protected void segmentParametersIntoFiles(String fileType, String sourceFileName, String parameterInfoXMLAsString) {
     def builder = dbf.newDocumentBuilder()
 
     ByteArrayInputStream bis = new ByteArrayInputStream(parameterInfoXMLAsString.getBytes("UTF-8"))
