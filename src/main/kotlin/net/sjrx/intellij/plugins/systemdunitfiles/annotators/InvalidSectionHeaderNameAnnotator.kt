@@ -4,7 +4,7 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.psi.PsiElement
-import net.sjrx.intellij.plugins.systemdunitfiles.intentions.EnablePodmanQuadletSupportQuickFix
+import net.sjrx.intellij.plugins.systemdunitfiles.intentions.EnablePodmanQuadletSupportIntention
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
 import net.sjrx.intellij.plugins.systemdunitfiles.settings.shouldSuggestPodmanSupport
@@ -43,7 +43,7 @@ class InvalidSectionHeaderNameAnnotator : Annotator {
           val annotation = holder.newAnnotation(HighlightSeverity.ERROR, errorString).range(element.getFirstChild())
 
           if (shouldSuggestPodmanSupport(element.containingFile)) {
-            annotation.withFix(EnablePodmanQuadletSupportQuickFix())
+            annotation.withFix(EnablePodmanQuadletSupportIntention())
           }
 
           annotation.create()
