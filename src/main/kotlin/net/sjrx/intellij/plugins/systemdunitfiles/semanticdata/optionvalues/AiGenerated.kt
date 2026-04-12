@@ -123,7 +123,7 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_macvlan_broadcast_queue_threshold", "0") to ConfigParseMacvlanBroadcastQueueThresholdOptionValue() as OptionValueInformation,
     Validator("config_parse_macvlan_mode", "0") to ConfigParseMacvlanModeOptionValue() as OptionValueInformation,
     Validator("config_parse_mdi", "0") to ConfigParseMdiOptionValue() as OptionValueInformation,
-    Validator("config_parse_memory_pressure_watch", "0") to ConfigParseMemoryPressureWatchOptionValue() as OptionValueInformation,
+    Validator("config_parse_pressure_watch", "0") to ConfigParseMemoryPressureWatchOptionValue() as OptionValueInformation,
     Validator("config_parse_mtu", "AF_INET6") to ConfigParseMtuOptionValue() as OptionValueInformation,
     Validator("config_parse_multicast_router", "0") to ConfigParseMulticastRouterOptionValue() as OptionValueInformation,
     Validator("config_parse_ndisc_start_dhcp6_client", "0") to ConfigParseNdiscStartDhcp6ClientOptionValue() as OptionValueInformation,
