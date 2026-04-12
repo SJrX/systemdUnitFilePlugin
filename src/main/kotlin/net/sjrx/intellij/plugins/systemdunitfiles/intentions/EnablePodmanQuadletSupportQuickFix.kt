@@ -10,7 +10,30 @@ import com.intellij.psi.PsiFile
 import com.intellij.ui.EditorNotifications
 import net.sjrx.intellij.plugins.systemdunitfiles.settings.PodmanQuadletSettings
 
-class EnablePodmanQuadletSupportQuickFix : LocalQuickFix, IntentionAction {
+private fun enablePodmanSupport(project: Project) {
+  PodmanQuadletSettings.getInstance(project).state.enabled = true
+  EditorNotifications.getInstance(project).updateAllNotifications()
+  DaemonCodeAnalyzer.getInstance(project).restart()
+}
+
+/**
+ * LocalQuickFix for use with inspections (ProblemsHolder.registerProblem).
+ */
+class EnablePodmanQuadletSupportQuickFix : LocalQuickFix {
+
+  override fun getFamilyName(): String = "Enable Podman Quadlet support (experimental)"
+
+  override fun startInWriteAction(): Boolean = false
+
+  override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+    enablePodmanSupport(project)
+  }
+}
+
+/**
+ * IntentionAction for use with annotators (AnnotationBuilder.withFix).
+ */
+class EnablePodmanQuadletSupportIntention : IntentionAction {
 
   override fun getFamilyName(): String = "Enable Podman Quadlet support (experimental)"
 
@@ -22,15 +45,5 @@ class EnablePodmanQuadletSupportQuickFix : LocalQuickFix, IntentionAction {
 
   override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
     enablePodmanSupport(project)
-  }
-
-  override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-    enablePodmanSupport(project)
-  }
-
-  private fun enablePodmanSupport(project: Project) {
-    PodmanQuadletSettings.getInstance(project).state.enabled = true
-    EditorNotifications.getInstance(project).updateAllNotifications()
-    DaemonCodeAnalyzer.getInstance(project).restart()
   }
 }
