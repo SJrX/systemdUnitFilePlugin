@@ -19,8 +19,8 @@ class ConfigParseIfnameOptionValue : SimpleGrammarOptionValues(
     "config_parse_ifname",
     SequenceCombinator(
         RegexTerminal(
-            "(?!(?:all|default|\\.{1,2}|[0-9]+)\\Z)[^\\s:/%]{1,15}",
-            "(?!(?:all|default|\\.{1,2}|[0-9]+)\\Z)[^\\s:/%]{1,15}"
+            "(?!(?:all|default|\\.{1,2}|0[xX][0-9a-fA-F]+|[0-9]+)\\Z)[^\\s:/%]{1,15}",
+            "(?!(?:all|default|\\.{1,2}|0[xX][0-9a-fA-F]+|[0-9]+)\\Z)[^\\s:/%]{1,15}"
         ),
         EOF()
     )

@@ -36,10 +36,11 @@ class ConfigParseIfnameOptionValueTest : AbstractUnitFileTest() {
             Bridge=all
             Bridge=default
             Bridge=1234
+            Bridge=0x10
         """.trimIndent()
 
         setupFileInEditor("file.network", file)
         enableInspection(InvalidValueInspection::class.java)
-        assertSize(7, myFixture.doHighlighting())
+        assertSize(8, myFixture.doHighlighting())
     }
 }

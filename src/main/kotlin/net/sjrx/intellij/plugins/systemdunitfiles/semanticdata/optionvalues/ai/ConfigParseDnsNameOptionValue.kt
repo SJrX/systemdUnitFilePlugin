@@ -22,8 +22,8 @@ class ConfigParseDnsNameOptionValue : SimpleGrammarOptionValues(
   "config_parse_dns_name",
   SequenceCombinator(
     RegexTerminal(
-      "[^.\\\\]+(?:\\.[^.\\\\]+)*\\.?",
-      "[^.\\\\]+(?:\\.[^.\\\\]+)*\\.?"
+      "[^.\\\\\\p{Cntrl}]+(?:\\.[^.\\\\\\p{Cntrl}]+)*\\.?",
+      "[^.\\\\\\p{Cntrl}]+(?:\\.[^.\\\\\\p{Cntrl}]+)*\\.?"
     ),
     EOF()
   )
