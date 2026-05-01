@@ -5,6 +5,17 @@ val BYTES = RegexTerminal("[0-9]+[a-zA-Z]*\\s*", "[0-9]+[KMGT]?\\s*")
 val DEVICE = RegexTerminal("\\S+\\s*", "/[^\\u0000. ]+\\s*")
 val IOPS = RegexTerminal("[0-9]+[a-zA-Z]*\\s*", "[0-9]+[KMGT]?\\s*")
 
+// Time-suffix list mirrors systemd's extract_multiplier (parse_sec, parse_nsec).
+// Longer alternatives MUST come first so that `min` is tried before `m`, etc.
+private const val TIME_SUFFIX = "(?:seconds|minutes|months|second|minute|month|years|weeks|hours|usec|msec|nsec|year|week|hour|days|min|sec|day|hr|µs|μs|ns|us|ms|s|m|h|d|w|y|M)"
+private const val TIME_NUMBER = "[0-9]+(?:\\.[0-9]+)?"
+private const val TIME_ELEMENT = "$TIME_NUMBER\\s*$TIME_SUFFIX?"
+private const val TIME_COMPOUND = "$TIME_ELEMENT(?:\\s+$TIME_ELEMENT)*"
+val TIME_VALUE = AlternativeCombinator(
+  FlexibleLiteralChoiceTerminal("infinity"),
+  RegexTerminal(TIME_COMPOUND, TIME_COMPOUND)
+)
+
 var IPV4_OCTET = IntegerTerminal(0, 256)
 val DOT = LiteralChoiceTerminal(".")
 var IPV4_ADDR = SequenceCombinator(IPV4_OCTET, DOT, IPV4_OCTET, DOT, IPV4_OCTET, DOT, IPV4_OCTET)
