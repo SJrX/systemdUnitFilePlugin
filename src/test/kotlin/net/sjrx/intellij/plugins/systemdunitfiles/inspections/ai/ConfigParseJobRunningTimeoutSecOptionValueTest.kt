@@ -1,0 +1,53 @@
+package net.sjrx.intellij.plugins.systemdunitfiles.inspections.ai
+
+import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
+import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
+import org.junit.Test
+
+class ConfigParseJobRunningTimeoutSecOptionValueTest : AbstractUnitFileTest() {
+
+    @Test
+    fun testValidValues() {
+        // Fixture Setup
+        // language="unit file (systemd)"
+        val file = """
+            [Unit]
+            JobRunningTimeoutSec=10
+            JobRunningTimeoutSec=10s
+            JobRunningTimeoutSec=100ms
+            JobRunningTimeoutSec=1m
+            JobRunningTimeoutSec=1h
+            JobRunningTimeoutSec=1d
+            JobRunningTimeoutSec=infinity
+        """.trimIndent()
+
+        // Execute SUT
+        setupFileInEditor("file.service", file)
+        enableInspection(InvalidValueInspection::class.java)
+        val highlights = myFixture.doHighlighting()
+
+        // Verification
+        assertSize(0, highlights)
+    }
+
+    @Test
+    fun testInvalidValues() {
+        // Fixture Setup
+        // language="unit file (systemd)"
+        val file = """
+            [Unit]
+            JobRunningTimeoutSec=invalid
+            JobRunningTimeoutSec=10x
+            JobRunningTimeoutSec=10 s
+            JobRunningTimeoutSec=10.5.2s
+        """.trimIndent()
+
+        // Execute SUT
+        setupFileInEditor("file.service", file)
+        enableInspection(InvalidValueInspection::class.java)
+        val highlights = myFixture.doHighlighting()
+
+        // Verification
+        assertSize(4, highlights)
+    }
+}
