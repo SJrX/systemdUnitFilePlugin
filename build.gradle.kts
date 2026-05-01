@@ -29,7 +29,7 @@ fun getVersionNumber() : String {
 
 plugins {
   id("java")
-  id("org.jetbrains.intellij.platform") version "2.14.0"
+  id("org.jetbrains.intellij.platform") version "2.16.0"
   id("org.jetbrains.grammarkit") version "2023.3.0.3"
   id("checkstyle")
   id("com.avast.gradle.docker-compose") version "0.17.21"
