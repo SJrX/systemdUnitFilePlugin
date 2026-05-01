@@ -8,7 +8,6 @@ class ConfigParseCanBitrateOptionValueTest : AbstractUnitFileTest() {
 
     @Test
     fun testValidValues() {
-        // Fixture Setup
         // language="unit file (systemd)"
         val file = """
             [CAN]
@@ -18,34 +17,27 @@ class ConfigParseCanBitrateOptionValueTest : AbstractUnitFileTest() {
             BitRate=1M
             DataBitRate=2M
             DataBitRate=125000
+            BitRate=1.5M
+            DataBitRate=1G
+            BitRate=42B
         """.trimIndent()
 
-        // Execute SUT
         setupFileInEditor("file.network", file)
         enableInspection(InvalidValueInspection::class.java)
-        val highlights = myFixture.doHighlighting()
-
-        // Verification
-        assertSize(0, highlights)
+        assertSize(0, myFixture.doHighlighting())
     }
 
     @Test
     fun testInvalidValues() {
-        // Fixture Setup
         // language="unit file (systemd)"
         val file = """
             [CAN]
             BitRate=abc
-            BitRate=1.5M
             DataBitRate=foo
         """.trimIndent()
 
-        // Execute SUT
         setupFileInEditor("file.network", file)
         enableInspection(InvalidValueInspection::class.java)
-        val highlights = myFixture.doHighlighting()
-
-        // Verification
-        assertSize(3, highlights)
+        assertSize(2, myFixture.doHighlighting())
     }
 }

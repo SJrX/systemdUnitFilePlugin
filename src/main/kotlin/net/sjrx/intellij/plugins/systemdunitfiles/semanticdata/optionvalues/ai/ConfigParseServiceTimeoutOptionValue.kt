@@ -7,20 +7,11 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
  * Validator for Service.TimeoutSec, Service.TimeoutStartSec.
  * C Function: config_parse_service_timeout(0)
  *
- * Per parse_sec_fix_0 -> parse_sec: accepts a time value (with optional unit
- * suffix, possibly compound like "1min 30s") OR the literal "infinity".
- * A bare integer with no suffix (including 0) is interpreted as seconds.
+ * Calls parse_sec_fix_0 -> parse_sec, which accepts "infinity", a fractional or
+ * integer number with any of systemd's time-unit suffixes, and compound forms
+ * like "1min 30s".
  */
 class ConfigParseServiceTimeoutOptionValue : SimpleGrammarOptionValues(
     "config_parse_service_timeout",
-    SequenceCombinator(
-        AlternativeCombinator(
-            FlexibleLiteralChoiceTerminal("infinity"),
-            RegexTerminal(
-                "[0-9]+(?:year|week|hour|day|min|sec|ms|us|µs|s|m|h|d|w|y)?(?:\\s+[0-9]+(?:year|week|hour|day|min|sec|ms|us|µs|s|m|h|d|w|y)?)*",
-                "[0-9]+(?:year|week|hour|day|min|sec|ms|us|µs|s|m|h|d|w|y)?(?:\\s+[0-9]+(?:year|week|hour|day|min|sec|ms|us|µs|s|m|h|d|w|y)?)*"
-            )
-        ),
-        EOF()
-    )
+    SequenceCombinator(TIME_VALUE, EOF())
 )

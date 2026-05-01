@@ -8,7 +8,6 @@ class ConfigParseCoalesceSecOptionValueTest : AbstractUnitFileTest() {
 
     @Test
     fun testValidValues() {
-        // Fixture Setup
         // language="unit file (systemd)"
         val file = """
             [Link]
@@ -22,35 +21,29 @@ class ConfigParseCoalesceSecOptionValueTest : AbstractUnitFileTest() {
             RxCoalesceHighSec=1m
             TxCoalesceHighSec=1h
             CoalescePacketRateSampleIntervalSec=1
+            RxCoalesceSec=1.5s
+            TxCoalesceSec=1min 30sec
+            RxCoalesceSec=infinity
+            TxCoalesceSec=2hour
         """.trimIndent()
 
-        // Execute SUT
         setupFileInEditor("file.link", file)
         enableInspection(InvalidValueInspection::class.java)
-        val highlights = myFixture.doHighlighting()
-
-        // Verification
-        assertSize(0, highlights)
+        assertSize(0, myFixture.doHighlighting())
     }
 
     @Test
     fun testInvalidValues() {
-        // Fixture Setup
         // language="unit file (systemd)"
         val file = """
             [Link]
-            RxCoalesceSec=<error descr="Invalid value">-1</error>
-            TxCoalesceSec=<error descr="Invalid value">abc</error>
-            RxCoalesceIrqSec=<error descr="Invalid value">1.5s</error>
-            TxCoalesceIrqSec=<error descr="Invalid value">5z</error>
+            RxCoalesceSec=-1
+            TxCoalesceSec=abc
+            TxCoalesceIrqSec=5z
         """.trimIndent()
 
-        // Execute SUT
         setupFileInEditor("file.link", file)
         enableInspection(InvalidValueInspection::class.java)
-        val highlights = myFixture.doHighlighting()
-
-        // Verification
-        assertSize(4, highlights)
+        assertSize(3, myFixture.doHighlighting())
     }
 }

@@ -7,16 +7,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
  * Validator for ControlledDelay.TargetSec, ControlledDelay.IntervalSec, ControlledDelay.CEThresholdSec
  * C Function: config_parse_codel_usec(QDISC_KIND_CODEL)
  *
- * Parses a time value via parse_sec(), accepting an integer optionally followed
- * by a time unit suffix (ms, us, µs, s, m, h, d, w, y).
+ * Calls parse_sec, which accepts "infinity", a fractional or integer number with any
+ * of systemd's time-unit suffixes, and compound forms like "1h 30s".
  */
 class ConfigParseControlledDelayUsecOptionValue : SimpleGrammarOptionValues(
     "config_parse_codel_usec",
-    SequenceCombinator(
-        RegexTerminal(
-            "[0-9]+(?:ms|us|µs|s|m|h|d|w|y)?",
-            "[0-9]+(?:ms|us|µs|s|m|h|d|w|y)?"
-        ),
-        EOF()
-    )
+    SequenceCombinator(TIME_VALUE, EOF())
 )

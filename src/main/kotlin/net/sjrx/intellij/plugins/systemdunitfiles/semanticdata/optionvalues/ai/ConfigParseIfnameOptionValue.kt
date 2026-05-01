@@ -8,19 +8,20 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
  * Network.VRF, Network.BatmanAdvanced in .network; NetDev.Name, Peer.Name, VXCAN.Peer in
  * .netdev; Link.Name in .link; Network.Bridge in .nspawn).
  *
- * The C function delegates to ifname_valid(), which requires a Linux interface name:
+ * Delegates to ifname_valid, which requires a Linux interface name:
  *   - 1..15 characters
- *   - no whitespace, no '/'
+ *   - no whitespace, no '/', no ':', no '%' (rejected by ifname_valid_char)
  *   - cannot be "." or ".."
- *   - must be valid UTF-8 (effectively printable ASCII in practice)
- *
- * The grammar below is a reasonable approximation: 1..15 characters that are not
- * whitespace and not '/'. The "." / ".." edge cases are not modelled.
+ *   - cannot be the reserved names "all" or "default"
+ *   - cannot be a purely-numeric string (interpreted as ifindex)
  */
 class ConfigParseIfnameOptionValue : SimpleGrammarOptionValues(
     "config_parse_ifname",
     SequenceCombinator(
-        RegexTerminal("[^\\s/]{1,15}", "[^\\s/]{1,15}"),
+        RegexTerminal(
+            "(?!(?:all|default|\\.{1,2}|[0-9]+)\\Z)[^\\s:/%]{1,15}",
+            "(?!(?:all|default|\\.{1,2}|[0-9]+)\\Z)[^\\s:/%]{1,15}"
+        ),
         EOF()
     )
 )

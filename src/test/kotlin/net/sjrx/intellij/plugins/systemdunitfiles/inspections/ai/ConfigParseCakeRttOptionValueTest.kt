@@ -16,6 +16,9 @@ class ConfigParseCakeRttOptionValueTest : AbstractUnitFileTest() {
             RTTSec=100us
             RTTSec=5m
             RTTSec=200
+            RTTSec=10.5s
+            RTTSec=infinity
+            RTTSec=2hour
         """.trimIndent()
 
         setupFileInEditor("file.network", file)
@@ -29,12 +32,11 @@ class ConfigParseCakeRttOptionValueTest : AbstractUnitFileTest() {
         val file = """
             [CAKE]
             RTTSec=abc
-            RTTSec=10.5s
             RTTSec=-1
         """.trimIndent()
 
         setupFileInEditor("file.network", file)
         enableInspection(InvalidValueInspection::class.java)
-        assertSize(3, myFixture.doHighlighting())
+        assertSize(2, myFixture.doHighlighting())
     }
 }

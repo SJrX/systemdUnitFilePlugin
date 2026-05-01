@@ -8,7 +8,6 @@ class ConfigParseJobRunningTimeoutSecOptionValueTest : AbstractUnitFileTest() {
 
     @Test
     fun testValidValues() {
-        // Fixture Setup
         // language="unit file (systemd)"
         val file = """
             [Unit]
@@ -19,35 +18,29 @@ class ConfigParseJobRunningTimeoutSecOptionValueTest : AbstractUnitFileTest() {
             JobRunningTimeoutSec=1h
             JobRunningTimeoutSec=1d
             JobRunningTimeoutSec=infinity
+            JobRunningTimeoutSec=10 s
+            JobRunningTimeoutSec=1.5h
+            JobRunningTimeoutSec=1min 30s
+            JobRunningTimeoutSec=2hour
         """.trimIndent()
 
-        // Execute SUT
         setupFileInEditor("file.service", file)
         enableInspection(InvalidValueInspection::class.java)
-        val highlights = myFixture.doHighlighting()
-
-        // Verification
-        assertSize(0, highlights)
+        assertSize(0, myFixture.doHighlighting())
     }
 
     @Test
     fun testInvalidValues() {
-        // Fixture Setup
         // language="unit file (systemd)"
         val file = """
             [Unit]
             JobRunningTimeoutSec=invalid
             JobRunningTimeoutSec=10x
-            JobRunningTimeoutSec=10 s
             JobRunningTimeoutSec=10.5.2s
         """.trimIndent()
 
-        // Execute SUT
         setupFileInEditor("file.service", file)
         enableInspection(InvalidValueInspection::class.java)
-        val highlights = myFixture.doHighlighting()
-
-        // Verification
-        assertSize(4, highlights)
+        assertSize(3, myFixture.doHighlighting())
     }
 }

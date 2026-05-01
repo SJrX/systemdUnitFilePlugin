@@ -8,7 +8,6 @@ class ConfigParseTokenBucketFilterLatencyOptionValueTest : AbstractUnitFileTest(
 
     @Test
     fun testValidValues() {
-        // Fixture Setup
         // language="unit file (systemd)"
         val file = """
             [TokenBucketFilter]
@@ -18,35 +17,28 @@ class ConfigParseTokenBucketFilterLatencyOptionValueTest : AbstractUnitFileTest(
             LatencySec=1h
             LatencySec=500us
             LatencySec=42
+            LatencySec=1.5s
+            LatencySec=infinity
+            LatencySec=2hour
         """.trimIndent()
 
-        // Execute SUT
         setupFileInEditor("file.network", file)
         enableInspection(InvalidValueInspection::class.java)
-        val highlights = myFixture.doHighlighting()
-
-        // Verification
-        assertSize(0, highlights)
+        assertSize(0, myFixture.doHighlighting())
     }
 
     @Test
     fun testInvalidValues() {
-        // Fixture Setup
         // language="unit file (systemd)"
         val file = """
             [TokenBucketFilter]
-            LatencySec=<error descr="Invalid value">invalid</error>
-            LatencySec=<error descr="Invalid value">-10</error>
-            LatencySec=<error descr="Invalid value">10x</error>
-            LatencySec=<error descr="Invalid value">1.5s</error>
+            LatencySec=invalid
+            LatencySec=-10
+            LatencySec=10x
         """.trimIndent()
 
-        // Execute SUT
         setupFileInEditor("file.network", file)
         enableInspection(InvalidValueInspection::class.java)
-        val highlights = myFixture.doHighlighting()
-
-        // Verification
-        assertSize(4, highlights)
+        assertSize(3, myFixture.doHighlighting())
     }
 }

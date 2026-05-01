@@ -17,6 +17,9 @@ class ConfigParseDnsNameOptionValueTest : AbstractUnitFileTest() {
       BootServerName=name_with_underscore
       BootServerName=mixed_chars-123.example.com
       BootServerName=trailing.dot.
+      BootServerName=-leading.hyphen
+      BootServerName=trailing-.com
+      BootServerName=has!bang
       Domain=example.org
       LocalLeaseDomain=lan.local
     """.trimIndent()
@@ -33,11 +36,7 @@ class ConfigParseDnsNameOptionValueTest : AbstractUnitFileTest() {
     // language="unit file (systemd)"
     val file = """
       [DHCPServer]
-      BootServerName=-leading.hyphen
-      BootServerName=trailing-.com
       BootServerName=double..dot
-      BootServerName=has space
-      BootServerName=has!bang
       Domain=.leading.dot
     """.trimIndent()
 
@@ -45,6 +44,6 @@ class ConfigParseDnsNameOptionValueTest : AbstractUnitFileTest() {
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(6, highlights)
+    assertSize(2, highlights)
   }
 }

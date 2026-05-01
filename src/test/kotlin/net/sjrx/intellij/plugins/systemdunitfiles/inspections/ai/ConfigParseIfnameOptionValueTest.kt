@@ -16,28 +16,30 @@ class ConfigParseIfnameOptionValueTest : AbstractUnitFileTest() {
             Bridge=my-iface
             Bridge=iface_1
             Bridge=abcdefghijklmno
+            Bridge=12eth
         """.trimIndent()
 
         setupFileInEditor("file.network", file)
         enableInspection(InvalidValueInspection::class.java)
-        val highlights = myFixture.doHighlighting()
-        assertSize(0, highlights)
+        assertSize(0, myFixture.doHighlighting())
     }
 
     @Test
     fun testInvalidInterfaceNames() {
-        // Names containing '/' are rejected, and names longer than 15 characters
-        // are rejected by ifname_valid().
         // language="unit file (systemd)"
         val file = """
             [Network]
             Bridge=bad/name
             Bridge=thisnameiswaytoolong
+            Bridge=eth0:1
+            Bridge=eth%d
+            Bridge=all
+            Bridge=default
+            Bridge=1234
         """.trimIndent()
 
         setupFileInEditor("file.network", file)
         enableInspection(InvalidValueInspection::class.java)
-        val highlights = myFixture.doHighlighting()
-        assertSize(2, highlights)
+        assertSize(7, myFixture.doHighlighting())
     }
 }

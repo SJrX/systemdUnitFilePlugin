@@ -8,7 +8,6 @@ class ConfigParseCanTimeQuantaOptionValueTest : AbstractUnitFileTest() {
 
     @Test
     fun testValidValues() {
-        // Fixture Setup
         // language="unit file (systemd)"
         val file = """
             [CAN]
@@ -18,34 +17,25 @@ class ConfigParseCanTimeQuantaOptionValueTest : AbstractUnitFileTest() {
             TimeQuantaNSec=1ms
             DataTimeQuantaNSec=infinity
             DataTimeQuantaNSec=1ms 500us
+            DataTimeQuantaNSec=10.5ms
         """.trimIndent()
 
-        // Execute SUT
         setupFileInEditor("file.network", file)
         enableInspection(InvalidValueInspection::class.java)
-        val highlights = myFixture.doHighlighting()
-
-        // Verification
-        assertSize(0, highlights)
+        assertSize(0, myFixture.doHighlighting())
     }
 
     @Test
     fun testInvalidValues() {
-        // Fixture Setup
         // language="unit file (systemd)"
         val file = """
             [CAN]
             TimeQuantaNSec=invalid
             TimeQuantaNSec=-10ns
-            DataTimeQuantaNSec=10.5ms
         """.trimIndent()
 
-        // Execute SUT
         setupFileInEditor("file.network", file)
         enableInspection(InvalidValueInspection::class.java)
-        val highlights = myFixture.doHighlighting()
-
-        // Verification
-        assertSize(3, highlights)
+        assertSize(2, myFixture.doHighlighting())
     }
 }

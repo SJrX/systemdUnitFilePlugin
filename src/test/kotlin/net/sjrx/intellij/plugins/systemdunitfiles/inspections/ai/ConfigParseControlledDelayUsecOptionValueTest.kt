@@ -8,7 +8,6 @@ class ConfigParseControlledDelayUsecOptionValueTest : AbstractUnitFileTest() {
 
     @Test
     fun testValidValues() {
-        // Fixture Setup
         // language="unit file (systemd)"
         val file = """
             [ControlledDelay]
@@ -18,34 +17,27 @@ class ConfigParseControlledDelayUsecOptionValueTest : AbstractUnitFileTest() {
             TargetSec=1m
             IntervalSec=2h
             CEThresholdSec=500us
+            TargetSec=10.5s
+            IntervalSec=infinity
+            CEThresholdSec=1min 30s
         """.trimIndent()
 
-        // Execute SUT
         setupFileInEditor("file.network", file)
         enableInspection(InvalidValueInspection::class.java)
-        val highlights = myFixture.doHighlighting()
-
-        // Verification
-        assertSize(0, highlights)
+        assertSize(0, myFixture.doHighlighting())
     }
 
     @Test
     fun testInvalidValues() {
-        // Fixture Setup
         // language="unit file (systemd)"
         val file = """
             [ControlledDelay]
             TargetSec=invalid
             IntervalSec=-10s
-            CEThresholdSec=10.5s
         """.trimIndent()
 
-        // Execute SUT
         setupFileInEditor("file.network", file)
         enableInspection(InvalidValueInspection::class.java)
-        val highlights = myFixture.doHighlighting()
-
-        // Verification
-        assertSize(3, highlights)
+        assertSize(2, myFixture.doHighlighting())
     }
 }
