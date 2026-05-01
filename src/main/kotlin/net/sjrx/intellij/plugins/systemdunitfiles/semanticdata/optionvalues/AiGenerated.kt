@@ -186,6 +186,11 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_wlan_iftype", "0") to ConfigParseWlanIftypeOptionValue() as OptionValueInformation,
     Validator("config_parse_ad_actor_system", "0") to ConfigParseAdActorSystemOptionValue() as OptionValueInformation,
       Validator("config_parse_address_section", "ADDRESS_SCOPE") to ConfigParseAddressSectionAddressScopeOptionValue() as OptionValueInformation,
+    Validator("config_parse_string", "CONFIG_PARSE_STRING_SAFE") to ConfigParseStringOptionValue() as OptionValueInformation,
+    Validator("config_parse_bind_user_shell", "0") to ConfigParseBindUserShellOptionValue() as OptionValueInformation,
+    Validator("config_parse_cake_priority_queueing_preset", "QDISC_KIND_CAKE") to ConfigParseCakePriorityQueueingPresetOptionValue() as OptionValueInformation,
+    Validator("config_parse_hostname", "0") to ConfigParseHostnameOptionValue() as OptionValueInformation,
+    Validator("config_parse_device_allow", "0") to ConfigParseDeviceAllowOptionValue() as OptionValueInformation,
 
   )
 
