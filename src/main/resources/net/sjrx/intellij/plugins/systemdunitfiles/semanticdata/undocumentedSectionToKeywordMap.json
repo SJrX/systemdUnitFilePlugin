@@ -105,6 +105,23 @@
         "documentationLink": "https://github.com/systemd/systemd/issues/13555#issuecomment-531444829"
       }
     },
+    "DHCPServer": {
+      "RelayTarget": {
+        "reason": "manual",
+        "description": "<p>Deprecated as of systemd v261 in favor of the [DHCPRelay] section. If you are running v260 or earlier, continue using this key &mdash; the [DHCPRelay] section does not exist there. On v261+ the value is still parsed and gracefully translated to the new settings.",
+        "documentationLink": "https://github.com/systemd/systemd/commit/cb2bba6b040ee11da822f06b0cb23a47444671e2"
+      },
+      "RelayAgentCircuitId": {
+        "reason": "manual",
+        "description": "<p>Deprecated as of systemd v261 in favor of the [DHCPRelay] section. If you are running v260 or earlier, continue using this key &mdash; the [DHCPRelay] section does not exist there. On v261+ the value is still parsed and gracefully translated to the new settings.",
+        "documentationLink": "https://github.com/systemd/systemd/commit/cb2bba6b040ee11da822f06b0cb23a47444671e2"
+      },
+      "RelayAgentRemoteId": {
+        "reason": "manual",
+        "description": "<p>Deprecated as of systemd v261 in favor of the [DHCPRelay] section. If you are running v260 or earlier, continue using this key &mdash; the [DHCPRelay] section does not exist there. On v261+ the value is still parsed and gracefully translated to the new settings.",
+        "documentationLink": "https://github.com/systemd/systemd/commit/cb2bba6b040ee11da822f06b0cb23a47444671e2"
+      }
+    },
     "DHCPv4": {
       "BlackList": {
         "reason": "moved",

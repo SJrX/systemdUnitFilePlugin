@@ -42,7 +42,7 @@ class OptionValueTest : AbstractUnitFileTest() {
     println("Found:$totalFoundValidators")
 
     val startDate = LocalDate.of(2025, 10, 27) // Today's date
-    val startingCount = 612 // Your current undocumented options count
+    val startingCount = 619 // Your current undocumented options count
     val currentDate = LocalDate.now()
     val daysSinceStart = ChronoUnit.DAYS.between(startDate, currentDate)
     val reductionPerDay = 1

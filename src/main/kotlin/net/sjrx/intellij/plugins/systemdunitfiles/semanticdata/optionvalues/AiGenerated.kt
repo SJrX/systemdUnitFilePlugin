@@ -65,7 +65,6 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_dhcp_send_hostname", "AF_INET6") to ConfigParseDhcpSendHostnameOptionValue() as OptionValueInformation,
     Validator("config_parse_dhcp_send_hostname", "AF_INET") to ConfigParseDhcpSendHostnameOptionValue() as OptionValueInformation,
     Validator("config_parse_dhcp_server_persist_leases", "0") to ConfigParseDhcpServerPersistLeasesOptionValue() as OptionValueInformation,
-    Validator("config_parse_dhcp_server_relay_agent_suboption", "0") to ConfigParseDhcpServerRelayAgentSuboptionOptionValue() as OptionValueInformation,
     Validator("config_parse_dhcp_static_lease_address", "0") to ConfigParseDhcpStaticLeaseAddressOptionValue() as OptionValueInformation,
     Validator("config_parse_disable_controllers", "0") to ConfigParseDisableControllersOptionValue() as OptionValueInformation,
     Validator("config_parse_duplex", "0") to ConfigParseDuplexOptionValue() as OptionValueInformation,
