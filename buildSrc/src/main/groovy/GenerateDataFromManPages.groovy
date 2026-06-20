@@ -57,6 +57,13 @@ class GenerateDataFromManPages extends DefaultTask {
   File generatedJsonFileLocation
 
   /**
+   * Scratch directory for XInclude-rendered XML. Supplied at configuration time so the task
+   * does not access Task.project at execution time (deprecated and configuration-cache hostile).
+   */
+  @Internal
+  File renderedXIncludesDir
+
+  /**
    * Map that stores for each file name, the name of an option attribute
    */
   @Internal
@@ -455,7 +462,7 @@ class GenerateDataFromManPages extends DefaultTask {
     xmlContent = processXIncludesWithRegex(xmlContent, sourceFile.parentFile)
 
 
-    File outputDir = project.layout.buildDirectory.dir("tmp/rendered-xincludes").get().asFile
+    File outputDir = renderedXIncludesDir
     if (!outputDir.exists()) {
       outputDir.mkdirs()
     }

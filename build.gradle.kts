@@ -163,6 +163,7 @@ tasks.register<GenerateDataFromManPages>("generateDataFromManPages") {
   systemdSourceCodeRoot = file("./systemd-build/build/")
   generatedJsonFileLocation =
     file(sourceSets["main"].output.resourcesDir?.getAbsolutePath() + "/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata")
+  renderedXIncludesDir = project.layout.buildDirectory.dir("tmp/rendered-xincludes").get().asFile
 }
 /*
  * Lexing / Parsing and Grammar Tasks
@@ -226,6 +227,7 @@ tasks.register("mergePodmanDocumentation") {
   val semanticDataDir = file("${sourceSets["main"].output.resourcesDir?.getAbsolutePath()}/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata")
   val podmanJsonFile = file("./src/main/resources/net/sjrx/intellij/plugins/systemdunitfiles/semanticdata/podman/podman-sectionToKeywordMapFromDoc.json")
   val targetJsonFile = file("${semanticDataDir}/sectionToKeywordMapFromDoc.json")
+  val undocumentedJsonFile = file("${semanticDataDir}/undocumentedSectionToKeywordMap.json")
 
   inputs.file(podmanJsonFile)
 
@@ -261,7 +263,6 @@ tasks.register("mergePodmanDocumentation") {
     targetJsonFile.writeText(output)
 
     // Merge undocumented keywords (deprecated/moved options)
-    val undocumentedJsonFile = file("${semanticDataDir}/undocumentedSectionToKeywordMap.json")
     @Suppress("UNCHECKED_CAST")
     val undocData = slurper.parse(undocumentedJsonFile) as MutableMap<String, Any>
     @Suppress("UNCHECKED_CAST")
