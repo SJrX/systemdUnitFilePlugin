@@ -392,14 +392,6 @@ tasks {
 }
 
 
-if (hasProperty("buildScan")) {
-  extensions.findByName("buildScan")?.withGroovyBuilder {
-    setProperty("termsOfServiceUrl", "https://gradle.com/terms-of-service")
-    setProperty("termsOfServiceAgree", "yes")
-  }
-}
-
-
 tasks.register<org.jetbrains.intellij.platform.gradle.tasks.PublishPluginTask>("publishPluginStandalone") {
   token.set(System.getenv("PUBLISH_TOKEN"))
   // pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3

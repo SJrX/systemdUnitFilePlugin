@@ -355,7 +355,7 @@ pipeline {
             sh("""
               mkdir -p ./build
               ./generate-changelog  > build/CHANGELOG
-              ./gradlew --no-daemon -I ./build-cache-init.gradle.kts -I ./repo-cache-init.gradle.kts --build-cache build buildPlugin --scan
+              ./gradlew --no-daemon -I ./build-cache-init.gradle.kts -I ./repo-cache-init.gradle.kts --build-cache build buildPlugin -PbuildScan
               """)
             script {
               if (env.BRANCH_NAME ==~ /^([0-9][0-9][0-9]\.x)$/) {
@@ -378,7 +378,7 @@ pipeline {
 """
                 )
                 sh("""
-                ./gradlew --no-daemon -I ./build-cache-init.gradle.kts --build-cache publishPluginStandalone --scan
+                ./gradlew --no-daemon -I ./build-cache-init.gradle.kts --build-cache publishPluginStandalone -PbuildScan
 """)
               }
               else {
