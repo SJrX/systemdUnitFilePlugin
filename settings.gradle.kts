@@ -13,7 +13,12 @@ val buildScanOptIn = providers.gradleProperty("buildScan").isPresent
 develocity {
   buildScan {
     termsOfUseUrl = "https://gradle.com/help/legal-terms-of-use"
-    termsOfUseAgree = if (buildScanOptIn) "yes" else "no"
+    // 'termsOfUseAgree' must be exactly "yes" or left unset - the plugin rejects "no".
+    // Only agree (and publish) when opted in; otherwise leave it unset so a stray
+    // --scan degrades to a soft "terms not agreed" notice rather than a hard error.
+    if (buildScanOptIn) {
+      termsOfUseAgree = "yes"
+    }
     publishing.onlyIf { buildScanOptIn }
   }
 }
