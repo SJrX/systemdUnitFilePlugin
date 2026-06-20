@@ -10,6 +10,15 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.*
 fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
   val allValidators = mapOf(
     Validator("config_parse_6rd_prefix", "0") to ConfigParse6rdPrefixOptionValue() as OptionValueInformation,
+    Validator("config_parse_set_credential", "0") to ConfigParseSetCredentialOptionValue() as OptionValueInformation,
+    Validator("config_parse_set_credential", "1") to ConfigParseSetCredentialOptionValue() as OptionValueInformation,
+    Validator("config_parse_load_credential", "0") to ConfigParseLoadCredentialOptionValue() as OptionValueInformation,
+    Validator("config_parse_load_credential", "1") to ConfigParseLoadCredentialOptionValue() as OptionValueInformation,
+    Validator("config_parse_log_namespace", "0") to ConfigParseLogNamespaceOptionValue() as OptionValueInformation,
+    Validator("config_parse_log_extra_fields", "0") to ConfigParseLogExtraFieldsOptionValue() as OptionValueInformation,
+    Validator("config_parse_exec_selinux_context", "0") to ConfigParseExecSelinuxContextOptionValue() as OptionValueInformation,
+    Validator("config_parse_exec_smack_process_label", "0") to ConfigParseExecSmackProcessLabelOptionValue() as OptionValueInformation,
+    Validator("config_parse_unset_environ", "0") to ConfigParseUnsetEnvironOptionValue() as OptionValueInformation,
     Validator("config_parse_unit_string_printf", "0") to ConfigParseUnitStringPrintfOptionValue() as OptionValueInformation,
     Validator("config_parse_ip_filter_bpf_progs", "0") to ConfigParseIpFilterBpfProgsOptionValue() as OptionValueInformation,
     Validator("config_parse_user_group_compat", "0") to ConfigParseUserGroupCompatOptionValue() as OptionValueInformation,
