@@ -24,9 +24,13 @@ USER 1000
 
 ARG BRANCH=242.x
 
+# Warm the dependency cache. 'dependencies' resolves every configuration and 'compileKotlin'
+# pulls the IntelliJ Platform SDK onto the compile classpath, so the ~1 GiB SDK gets baked in.
+# Do NOT add compileTestKotlin here: it drags the docker-compose metadata task (composeBuild)
+# into the graph, which needs a Docker daemon that isn't available during the image build.
 RUN git clone --depth 1 -b ${BRANCH} https://github.com/SJrX/systemdUnitFilePlugin.git && \
       cd /tmp/systemdUnitFilePlugin && \
-      /tmp/systemdUnitFilePlugin/gradlew --no-daemon --build-cache dependencies compileKotlin compileTestKotlin && \
+      /tmp/systemdUnitFilePlugin/gradlew --no-daemon --build-cache dependencies compileKotlin && \
       rm -rf /tmp/systemdUnitFilePlugin/
 
 WORKDIR /
