@@ -436,7 +436,7 @@ class GenerateDataFromManPages extends DefaultTask {
 
 
     Document document = buildDocumentProcessingIncludes(sourceFile)
-    Transformer transformer = getXsltTransformer()
+    Transformer transformer = createXsltTransformer()
 
     String xsltOutput = transformDocument(document, transformer)
 
@@ -597,7 +597,7 @@ class GenerateDataFromManPages extends DefaultTask {
    *
    * @return a Transformer instance configured with the XSLT
    */
-  private Transformer getXsltTransformer() {
+  protected Transformer createXsltTransformer() {
 
     StreamSource styleSource = new StreamSource(this.getClass().getClassLoader().getResourceAsStream("transformManPages.xslt"))
 
