@@ -10,6 +10,12 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.*
 fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
   val allValidators = mapOf(
     Validator("config_parse_6rd_prefix", "0") to ConfigParse6rdPrefixOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_string_printf", "0") to ConfigParseUnitStringPrintfOptionValue() as OptionValueInformation,
+    Validator("config_parse_ip_filter_bpf_progs", "0") to ConfigParseIpFilterBpfProgsOptionValue() as OptionValueInformation,
+    Validator("config_parse_user_group_compat", "0") to ConfigParseUserGroupCompatOptionValue() as OptionValueInformation,
+    Validator("config_parse_io_device_weight", "0") to ConfigParseIoDeviceWeightOptionValue() as OptionValueInformation,
+    Validator("config_parse_io_device_latency", "0") to ConfigParseIoDeviceLatencyOptionValue() as OptionValueInformation,
+    Validator("config_parse_delegate_subgroup", "0") to ConfigParseDelegateSubgroupOptionValue() as OptionValueInformation,
     Validator("config_parse_ad_actor_sys_prio", "0") to ConfigParseAdActorSysPrioOptionValue() as OptionValueInformation,
     Validator("config_parse_ad_user_port_key", "0") to ConfigParseAdUserPortKeyOptionValue() as OptionValueInformation,
     Validator("config_parse_address_families", "0") to ConfigParseAddressFamiliesOptionValue() as OptionValueInformation,
