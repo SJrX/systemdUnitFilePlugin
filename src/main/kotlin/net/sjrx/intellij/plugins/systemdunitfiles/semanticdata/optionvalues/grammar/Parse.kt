@@ -77,13 +77,22 @@ fun Combinator.fullParses(value: String): Sequence<Parse> =
  *
  * On failure we fold the [Stuck] values back into the deepest offset reached and the union of what
  * was expected there — the "frontier", computed from the return value rather than mutated into it.
+ *
+ * The matcher is exhaustive, so a pathologically ambiguous grammar could explore a huge number of
+ * steps. Two pure guards keep this safe to run on a UI/highlighting thread without any IntelliJ
+ * dependency here: [onStep] is invoked once per explored step (the IntelliJ layer passes a callback
+ * that throws on cancellation), and [maxSteps] caps total work. If the cap is hit we fail OPEN —
+ * return [ParseOutcome.Valid] rather than flag a value we could not fully explore.
  */
-fun Combinator.validate(value: String): ParseOutcome {
+fun Combinator.validate(value: String, maxSteps: Int = 1_000_000, onStep: () -> Unit = {}): ParseOutcome {
   var firstBad: ParsedToken? = null
   var furthest = 0
   var expected = emptySet<Combinator>()
+  var steps = 0
 
   for (step in parse(value, 0)) {
+    onStep()
+    if (++steps > maxSteps) return ParseOutcome.Valid
     when (step) {
       is Parse -> {
         if (step.end == value.length) {
