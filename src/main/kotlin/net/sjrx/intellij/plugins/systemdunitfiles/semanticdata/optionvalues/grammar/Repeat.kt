@@ -62,6 +62,20 @@ class Repeat(val combinator : Combinator, val minInclusive: Int, val maxExclusiv
     return match(value, offset, combinator::SemanticMatch)
   }
 
+  override fun parse(value: String, offset: Int): Sequence<Parse> {
+    // Offer every repetition count in [minInclusive, maxExclusive] (maxExclusive is the cap on the
+    // count, mirroring the existing match() loop). Yield only once enough repetitions have happened.
+    fun extend(from: Parse, count: Int): Sequence<Parse> = sequence {
+      if (count >= minInclusive) yield(from)
+      if (count < maxExclusive) {
+        for (step in combinator.parse(value, from.end)) {
+          if (step.end > from.end) yieldAll(extend(Parse(step.end, from.tokens + step.tokens), count + 1))
+        }
+      }
+    }
+    return extend(Parse(offset, emptyList()), 0)
+  }
+
   override fun toString(): String = toStringIndented(0)
 
   override fun toStringIndented(indent: Int): String {

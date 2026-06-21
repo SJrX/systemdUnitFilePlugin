@@ -17,6 +17,9 @@ class EOF : Combinator {
     }
   }
 
+  override fun parse(value: String, offset: Int): Sequence<Parse> =
+    if (offset == value.length) sequenceOf(Parse(offset, emptyList())) else emptySequence()
+
   override fun toStringIndented(indent: Int): String {
     return "EOF"
   }

@@ -38,6 +38,10 @@ open class AlternativeCombinator(vararg val tokens: Combinator) : Combinator {
     return match(value, offset, Combinator::SemanticMatch)
   }
 
+  override fun parse(value: String, offset: Int): Sequence<Parse> =
+    // Offer every alternative's matches, so the order of options no longer affects correctness.
+    tokens.asSequence().flatMap { it.parse(value, offset) }
+
   override fun toString(): String = toStringIndented(0)
 
   override fun toStringIndented(indent: Int): String {

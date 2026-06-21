@@ -27,6 +27,13 @@ class WhitespaceTerminal : TerminalCombinator {
     return match(value, offset)
   }
 
+  override fun parse(value: String, offset: Int): Sequence<Parse> {
+    var end = offset
+    while (end < value.length && value[end].isWhitespace()) end++
+    return if (end == offset) emptySequence()
+    else sequenceOf(Parse(end, listOf(ParsedToken(offset, end, value.substring(offset, end), this, valid = true))))
+  }
+
   override fun toString(): String {
     return "\\s+"
   }
