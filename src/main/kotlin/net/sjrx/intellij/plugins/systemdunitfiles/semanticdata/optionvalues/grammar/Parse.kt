@@ -41,8 +41,11 @@ data class ParsedToken(
 /** One step a matcher can take from an offset: either it consumed input ([Parse]) or it got [Stuck]. */
 sealed interface ParseStep
 
-/** A successful match: consumed input up to [end], producing [tokens] (each with its `valid` flag). */
-data class Parse(val end: Int, val tokens: List<ParsedToken>) : ParseStep
+/**
+ * A successful match: consumed input up to [end], producing [tokens] (each with its `valid` flag).
+ * [regions] carries any coloring spans contributed by [Labeled] wrappers (empty for most parses).
+ */
+data class Parse(val end: Int, val tokens: List<ParsedToken>, val regions: List<Region> = emptyList()) : ParseStep
 
 /**
  * A dead end: matching could not proceed at [offset], where [expected] is the set of matchers the
