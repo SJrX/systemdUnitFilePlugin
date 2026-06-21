@@ -8,6 +8,16 @@ class FlexibleLiteralChoiceTerminal(vararg val choices: String) : TerminalCombin
     choices.sortBy { -it.length }
   }
 
+  private var deprecations: Map<String, String> = emptyMap()
+
+  /** Mark some choices as valid-but-deprecated (choice -> reason). Returns this for chaining. */
+  fun deprecating(deprecations: Map<String, String>): FlexibleLiteralChoiceTerminal {
+    this.deprecations = deprecations
+    return this
+  }
+
+  override fun deprecationFor(token: String): String? = deprecations[token]
+
   val syntaticMatch: Regex
 
   init {
