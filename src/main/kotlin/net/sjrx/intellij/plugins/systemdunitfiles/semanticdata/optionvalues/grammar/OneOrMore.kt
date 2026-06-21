@@ -40,15 +40,15 @@ class OneOrMore(val combinator : Combinator) : Combinator {
     return match(value, offset, combinator::SemanticMatch)
   }
 
-  override fun parse(value: String, offset: Int): Sequence<Parse> {
+  override fun parse(value: String, offset: Int, frontier: Frontier): Sequence<Parse> {
     // Same as ZeroOrMore, but the first repetition is mandatory (and must make progress).
     fun extend(from: Parse): Sequence<Parse> = sequence {
       yield(from)
-      for (step in combinator.parse(value, from.end)) {
+      for (step in combinator.parse(value, from.end, frontier)) {
         if (step.end > from.end) yieldAll(extend(Parse(step.end, from.tokens + step.tokens)))
       }
     }
-    return combinator.parse(value, offset).filter { it.end > offset }.flatMap { extend(it) }
+    return combinator.parse(value, offset, frontier).filter { it.end > offset }.flatMap { extend(it) }
   }
 
   override fun toString(): String = toStringIndented(0)

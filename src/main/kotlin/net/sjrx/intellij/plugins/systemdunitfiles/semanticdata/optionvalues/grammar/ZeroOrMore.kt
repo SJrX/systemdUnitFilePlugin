@@ -42,12 +42,12 @@ class ZeroOrMore(val combinator : Combinator) : Combinator {
     return match(value, offset, combinator::SemanticMatch)
   }
 
-  override fun parse(value: String, offset: Int): Sequence<Parse> {
+  override fun parse(value: String, offset: Int, frontier: Frontier): Sequence<Parse> {
     // Offer EVERY repetition count (0, 1, 2, ...), not just the greedy maximum. The `> from.end`
     // guard keeps an inner matcher that can match empty from looping forever.
     fun extend(from: Parse): Sequence<Parse> = sequence {
       yield(from) // stop repeating here...
-      for (step in combinator.parse(value, from.end)) {
+      for (step in combinator.parse(value, from.end, frontier)) {
         if (step.end > from.end) yieldAll(extend(Parse(step.end, from.tokens + step.tokens))) // ...or take one more
       }
     }

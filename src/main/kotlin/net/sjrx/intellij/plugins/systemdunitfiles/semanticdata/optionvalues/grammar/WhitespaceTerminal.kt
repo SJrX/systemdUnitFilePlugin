@@ -27,7 +27,8 @@ class WhitespaceTerminal : TerminalCombinator {
     return match(value, offset)
   }
 
-  override fun parse(value: String, offset: Int): Sequence<Parse> {
+  override fun parse(value: String, offset: Int, frontier: Frontier): Sequence<Parse> {
+    frontier.reached(offset, this)
     var end = offset
     while (end < value.length && value[end].isWhitespace()) end++
     return if (end == offset) emptySequence()

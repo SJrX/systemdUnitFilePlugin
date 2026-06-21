@@ -40,8 +40,12 @@ interface Combinator {
    * carries a `valid` flag for the strict (semantic) check. Because every alternative is offered
    * rather than the first greedy one committed to, matching is complete — e.g.
    * Seq(ZeroOrMore("a"), "a") on "aa" matches, because ZeroOrMore offers the shorter match too.
+   *
+   * [frontier] records the deepest offset reached and what was expected there, so that even when no
+   * path succeeds we can localize the error (and, later, drive completion). Combinators thread the
+   * same instance into their children; leaf matchers report themselves to it.
    */
-  fun parse(value: String, offset: Int): Sequence<Parse>
+  fun parse(value: String, offset: Int, frontier: Frontier = Frontier()): Sequence<Parse>
 
   fun toStringIndented(indent: Int): String
 }

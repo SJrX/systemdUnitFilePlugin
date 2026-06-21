@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gra
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.ConfigParseAddressFamiliesOptionValue
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -44,13 +45,26 @@ class ParseTest {
     assertEquals("AF_BOGUS", (semantic as ParseOutcome.SemanticError).badToken.text)
 
     // Comma breaks the shape after "AF_INET" -> syntax error (malformed, not just an unknown name).
-    val syntax = grammar.validate("AF_INET, AF_INET6")
-    assertTrue(syntax is ParseOutcome.SyntaxError)
-    // KNOWN LIMITATION: `furthest` is best-effort. This grammar ends in EOF(), so the outer
-    // Seq(..., EOF()) drops the partial "AF_INET" path when EOF fails, and furthest collapses to 0
-    // (we'd want 7). Precise localization needs the frontier/expected-set layer — the same machinery
-    // that powers completion (#343) — which is deliberately not in this step. Pinned to document it.
-    assertEquals(0, (syntax as ParseOutcome.SyntaxError).furthest)
+    // Thanks to the frontier layer we now report WHERE it got stuck (offset 7, the comma) and WHAT
+    // was expected there: another whitespace-separated family, or end-of-input.
+    val syntax = grammar.validate("AF_INET, AF_INET6") as? ParseOutcome.SyntaxError
+    assertNotNull(syntax)
+    assertEquals(7, syntax!!.furthest)
+    assertTrue(syntax.expected.any { it is WhitespaceTerminal })
+    assertTrue(syntax.expected.any { it is EOF })
+  }
+
+  @Test
+  fun testFrontierSeedsCompletionAtStart() {
+    // The frontier's "expected set" is exactly what completion (#343) needs: at the caret position,
+    // which tokens could legally come next? For the empty value at offset 0, the grammar expects
+    // "none", the "~" inversion prefix, or an address-family name.
+    val grammar = ConfigParseAddressFamiliesOptionValue().combinator
+    val outcome = grammar.validate("") as? ParseOutcome.SyntaxError
+    assertNotNull(outcome)
+    assertEquals(0, outcome!!.furthest)
+    assertTrue(outcome.expected.any { it is FlexibleLiteralChoiceTerminal }) // the AF_* names
+    assertTrue(outcome.expected.any { it is LiteralChoiceTerminal })         // "none" / "~"
   }
 
   @Test

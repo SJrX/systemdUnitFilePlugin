@@ -34,8 +34,12 @@ sealed interface ParseOutcome {
   /** A path consumed the whole value, but a token is not strictly valid (well-formed but wrong). */
   data class SemanticError(val badToken: ParsedToken) : ParseOutcome
 
-  /** No path consumed the whole value. [furthest] is how far any path got (for error localization). */
-  data class SyntaxError(val furthest: Int) : ParseOutcome
+  /**
+   * No path consumed the whole value. [furthest] is the deepest offset any path reached, and
+   * [expected] is the set of matchers the grammar was hoping to see there (for error localization,
+   * and the seed of completion).
+   */
+  data class SyntaxError(val furthest: Int, val expected: Set<Combinator>) : ParseOutcome
 }
 
 /** Every way [this] grammar can consume the entire [value]. */
@@ -46,15 +50,19 @@ fun Combinator.fullParses(value: String): Sequence<Parse> =
  * One lenient parse answers both questions the old two passes did:
  *  - syntactic ("could be this, color it"): did any path consume the whole value?
  *  - semantic ("actually valid"):           did any such path use only valid tokens?
+ *
+ * A single shared [Frontier] rides along, so a SyntaxError can report where parsing got stuck.
  */
 fun Combinator.validate(value: String): ParseOutcome {
+  val frontier = Frontier()
   var firstBad: ParsedToken? = null
-  for (p in fullParses(value)) {
+  for (p in parse(value, 0, frontier)) {
+    if (p.end != value.length) continue
     val bad = p.tokens.firstOrNull { !it.valid }
     if (bad == null) return ParseOutcome.Valid // short-circuit on the first fully-valid full parse
     if (firstBad == null) firstBad = bad
   }
   if (firstBad != null) return ParseOutcome.SemanticError(firstBad)
-  val furthest = parse(value, 0).maxOfOrNull { it.end } ?: 0
-  return ParseOutcome.SyntaxError(furthest)
+  // No full parse: exhausting the loop above has populated the frontier with the deepest reach.
+  return ParseOutcome.SyntaxError(frontier.position, frontier.expected)
 }

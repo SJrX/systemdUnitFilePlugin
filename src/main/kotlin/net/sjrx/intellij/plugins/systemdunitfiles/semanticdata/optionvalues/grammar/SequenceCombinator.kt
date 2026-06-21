@@ -55,12 +55,12 @@ open class SequenceCombinator(vararg val tokens: Combinator) : Combinator {
     return MatchResult(resultTokens, index, resultTerminals, maxLength)
   }
 
-  override fun parse(value: String, offset: Int): Sequence<Parse> {
+  override fun parse(value: String, offset: Int, frontier: Frontier): Sequence<Parse> {
     // Thread each possibility of one part into the next: the cartesian product of the parts.
     var results = sequenceOf(Parse(offset, emptyList()))
     for (token in tokens) {
       results = results.flatMap { acc ->
-        token.parse(value, acc.end).map { next -> Parse(next.end, acc.tokens + next.tokens) }
+        token.parse(value, acc.end, frontier).map { next -> Parse(next.end, acc.tokens + next.tokens) }
       }
     }
     return results

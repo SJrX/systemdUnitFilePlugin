@@ -18,7 +18,8 @@ class RegexTerminal(syntaticMatchStr : String, semanticMatchStr: String ) : Term
     return MatchResult(listOf(matchResult.value), offset + matchResult.value.length, listOf(this), offset + matchResult.value.length)
   }
 
-  override fun parse(value: String, offset: Int): Sequence<Parse> {
+  override fun parse(value: String, offset: Int, frontier: Frontier): Sequence<Parse> {
+    frontier.reached(offset, this)
     // The syntactic regex gives the lenient span; valid iff the semantic regex matches that same span.
     val syn = syntaticMatch.matchAt(value, offset) ?: return emptySequence()
     val text = syn.value

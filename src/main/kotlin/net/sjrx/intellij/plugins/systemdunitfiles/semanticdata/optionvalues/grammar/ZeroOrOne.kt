@@ -40,9 +40,9 @@ class ZeroOrOne(val combinator : Combinator) : Combinator {
     return match(value, offset, combinator::SemanticMatch)
   }
 
-  override fun parse(value: String, offset: Int): Sequence<Parse> =
+  override fun parse(value: String, offset: Int, frontier: Frontier): Sequence<Parse> =
     // Both the empty match and whatever the inner matcher offers.
-    sequenceOf(Parse(offset, emptyList())) + combinator.parse(value, offset)
+    sequenceOf(Parse(offset, emptyList())) + combinator.parse(value, offset, frontier)
 
   override fun toString(): String = toStringIndented(0)
 
