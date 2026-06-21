@@ -89,17 +89,28 @@ class UnitFileValueCompletionContributor : CompletionContributor() {
     val caret = parameters.offset
     if (caret < valueStart) return
     val pre = parameters.position.containingFile.text.substring(valueStart, caret)
+    val combinator = validator.combinator
 
-    // Largest split first => tightest (shortest) word being completed.
-    for (split in pre.length downTo 0) {
+    // Case 1 — completing a partial token. Find the token start: the longest non-empty trailing
+    // word for which the grammar expects an enumerable choice that STRICTLY extends it (i.e. there's
+    // more to type). This beats just advancing, so "h" completes to "home" rather than offering "="
+    // (the lenient terminal would otherwise treat "h" as a finished identifier).
+    for (split in 0 until pre.length) {
       ProgressManager.checkCanceled()
-      val choices = validator.combinator.nextTokenChoices(pre.substring(0, split))
-      if (choices.isEmpty()) continue
       val word = pre.substring(split)
-      if (choices.any { it.startsWith(word) }) {
+      val choices = combinator.nextTokenChoices(pre.substring(0, split))
+      if (choices.any { it.length > word.length && it.startsWith(word) }) {
         resultSet.withPrefixMatcher(word).addAllElements(choices.map { LookupElementBuilder.create(it) })
         return
       }
+    }
+
+    // Case 2 — at a fresh token boundary (e.g. empty value, or after a complete token like "~" or
+    // "root="). Offer whatever can come next, matched against an empty prefix.
+    ProgressManager.checkCanceled()
+    val choices = combinator.nextTokenChoices(pre)
+    if (choices.isNotEmpty()) {
+      resultSet.withPrefixMatcher("").addAllElements(choices.map { LookupElementBuilder.create(it) })
     }
   }
 }
