@@ -37,8 +37,10 @@ fun defaultRole(terminal: TerminalCombinator): Role? = when (terminal) {
   is IntegerTerminal -> Role.LITERAL
   is LiteralChoiceTerminal -> if (terminal.choices.allPunctuation()) Role.OPERATOR else Role.ENUM
   is FlexibleLiteralChoiceTerminal -> if (terminal.choices.allPunctuation()) Role.OPERATOR else Role.ENUM
-  is RegexTerminal -> Role.IDENTIFIER
-  else -> null // WhitespaceTerminal, and any future terminal types: uncoloured by default
+  // RegexTerminal (free-form names/strings: Description=, interface names, ...) and whitespace stay
+  // uncoloured by default — they keep the editor's normal value colour. The IDENTIFIER role is still
+  // available for grammars that opt in explicitly via Labeled (e.g. a single-token field like User=).
+  else -> null
 }
 
 private fun Array<out String>.allPunctuation(): Boolean =
