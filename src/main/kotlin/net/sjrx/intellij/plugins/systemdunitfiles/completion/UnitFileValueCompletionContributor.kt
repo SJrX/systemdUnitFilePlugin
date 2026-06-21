@@ -1,6 +1,8 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.completion
 
+import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.patterns.PlatformPatterns
@@ -12,6 +14,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileProperty
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.fileClass
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.Combinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.GrammarOptionValue
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.nextTokenChoices
 import net.sjrx.intellij.plugins.systemdunitfiles.settings.ExperimentalSettings
@@ -100,7 +103,7 @@ class UnitFileValueCompletionContributor : CompletionContributor() {
       val word = pre.substring(split)
       val choices = combinator.nextTokenChoices(pre.substring(0, split))
       if (choices.any { it.length > word.length && it.startsWith(word) }) {
-        resultSet.withPrefixMatcher(word).addAllElements(choices.map { LookupElementBuilder.create(it) })
+        resultSet.withPrefixMatcher(word).addAllElements(lookupElements(choices, combinator))
         return
       }
     }
@@ -110,7 +113,40 @@ class UnitFileValueCompletionContributor : CompletionContributor() {
     ProgressManager.checkCanceled()
     val choices = combinator.nextTokenChoices(pre)
     if (choices.isNotEmpty()) {
-      resultSet.withPrefixMatcher("").addAllElements(choices.map { LookupElementBuilder.create(it) })
+      resultSet.withPrefixMatcher("").addAllElements(lookupElements(choices, combinator))
     }
+  }
+
+  private fun lookupElements(choices: Set<String>, combinator: Combinator): List<LookupElement> {
+    val handler = chainingInsertHandler(combinator)
+    return choices.map { LookupElementBuilder.create(it).withInsertHandler(handler) }
+  }
+
+  /**
+   * After a choice is accepted, walk the grammar forward: while the only thing it can accept next is
+   * a single forced separator (punctuation, e.g. "=" after a partition designator), insert it
+   * automatically, then re-open completion. So accepting "home" yields "home=" with the policy-flag
+   * popup, rather than stopping on a separator the user must type by hand.
+   */
+  private fun chainingInsertHandler(combinator: Combinator) = InsertHandler<LookupElement> { context, _ ->
+    context.commitDocument()
+    val element = context.file.findElementAt(maxOf(0, context.tailOffset - 1)) ?: return@InsertHandler
+    val property = PsiTreeUtil.getParentOfType(element, UnitFileProperty::class.java) ?: return@InsertHandler
+    val valueStart = property.valueNode?.psi?.textRange?.startOffset ?: return@InsertHandler
+    val document = context.document
+
+    var caret = context.tailOffset
+    var guard = 0
+    while (guard++ < 8 && caret in valueStart..document.textLength) {
+      val pre = document.charsSequence.subSequence(valueStart, caret).toString()
+      val separator = combinator.nextTokenChoices(pre).singleOrNull() ?: break
+      // Only auto-insert a forced punctuation separator; never a content token the user should pick.
+      if (separator.isEmpty() || separator.any { it.isLetterOrDigit() }) break
+      document.insertString(caret, separator)
+      caret += separator.length
+    }
+    context.commitDocument()
+    context.editor.caretModel.moveToOffset(caret)
+    AutoPopupController.getInstance(context.project).scheduleAutoPopup(context.editor)
   }
 }

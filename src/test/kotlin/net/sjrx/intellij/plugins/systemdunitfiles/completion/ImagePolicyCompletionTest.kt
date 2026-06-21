@@ -45,4 +45,14 @@ class ImagePolicyCompletionTest : AbstractUnitFileTest() {
     setupFileInEditor("file.service", "[Service]\nRootImagePolicy=root=${COMPLETION_POSITION}")
     assertContainsElements(basicCompletionResultStrings, "verity", "signed", "encrypted")
   }
+
+  @Test
+  fun testAcceptingPartitionChainsTheEqualsSeparator() {
+    // Accepting a partition designator auto-inserts the forced "=" (then re-opens completion),
+    // so the user goes straight to choosing a policy flag.
+    enableNewEngine()
+    setupFileInEditor("file.service", "[Service]\nRootImagePolicy=hom${COMPLETION_POSITION}")
+    myFixture.completeBasic() // single match "home" -> auto-inserted -> handler appends "="
+    myFixture.checkResult("[Service]\nRootImagePolicy=home=${COMPLETION_POSITION}")
+  }
 }
