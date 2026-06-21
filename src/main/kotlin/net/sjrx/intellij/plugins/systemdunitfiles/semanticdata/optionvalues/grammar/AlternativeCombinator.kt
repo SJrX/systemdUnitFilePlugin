@@ -38,9 +38,10 @@ open class AlternativeCombinator(vararg val tokens: Combinator) : Combinator {
     return match(value, offset, Combinator::SemanticMatch)
   }
 
-  override fun parse(value: String, offset: Int, frontier: Frontier): Sequence<Parse> =
-    // Offer every alternative's matches, so the order of options no longer affects correctness.
-    tokens.asSequence().flatMap { it.parse(value, offset, frontier) }
+  override fun parse(value: String, offset: Int): Sequence<ParseStep> =
+    // Offer every alternative's steps (matches and dead ends), so option order no longer affects
+    // correctness, and a failing branch still contributes what it expected.
+    tokens.asSequence().flatMap { it.parse(value, offset) }
 
   override fun toString(): String = toStringIndented(0)
 

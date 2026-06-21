@@ -29,9 +29,8 @@ class IntegerTerminal(private val minInclusive: Long,private val maxExclusive: L
     }
   }
 
-  override fun parse(value: String, offset: Int, frontier: Frontier): Sequence<Parse> {
-    frontier.reached(offset, this)
-    val m = intRegex.matchAt(value, offset) ?: return emptySequence()
+  override fun parse(value: String, offset: Int): Sequence<ParseStep> {
+    val m = intRegex.matchAt(value, offset) ?: return sequenceOf(Stuck(offset, setOf(this)))
     val text = m.value
     // Lenient: any integer matches (so we can locate it); valid only if it is within range.
     val valid = text.toLongOrNull()?.let { it >= minInclusive && it < maxExclusive } ?: false

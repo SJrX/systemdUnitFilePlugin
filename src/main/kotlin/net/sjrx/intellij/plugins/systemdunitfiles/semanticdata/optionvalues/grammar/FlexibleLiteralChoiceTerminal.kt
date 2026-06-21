@@ -91,11 +91,10 @@ class FlexibleLiteralChoiceTerminal(vararg val choices: String) : TerminalCombin
     return NoMatch.copy(longestMatch = offset)
   }
 
-  override fun parse(value: String, offset: Int, frontier: Frontier): Sequence<Parse> {
-    frontier.reached(offset, this)
+  override fun parse(value: String, offset: Int): Sequence<ParseStep> {
     // Lenient shape match (so a wrong token like AF_BOGUS still matches and can be highlighted),
     // valid only if the matched text is one of the exact choices.
-    val m = syntaticMatch.matchAt(value, offset) ?: return emptySequence()
+    val m = syntaticMatch.matchAt(value, offset) ?: return sequenceOf(Stuck(offset, setOf(this)))
     val text = m.value
     val valid = choices.any { it == text }
     return sequenceOf(Parse(offset + text.length, listOf(ParsedToken(offset, offset + text.length, text, this, valid))))

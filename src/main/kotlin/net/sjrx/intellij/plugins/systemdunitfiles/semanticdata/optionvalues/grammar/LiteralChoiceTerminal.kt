@@ -24,11 +24,11 @@ class  LiteralChoiceTerminal(vararg var choices: String) : TerminalCombinator {
     return match(value, offset)
   }
 
-  override fun parse(value: String, offset: Int, frontier: Frontier): Sequence<Parse> {
-    frontier.reached(offset, this)
+  override fun parse(value: String, offset: Int): Sequence<ParseStep> {
     // Offer every choice that matches here (e.g. both ":" and "::"); each is always strictly valid.
-    return choices.asSequence()
-      .filter { value.startsWith(it, offset) }
+    val matches = choices.filter { value.startsWith(it, offset) }
+    return if (matches.isEmpty()) sequenceOf(Stuck(offset, setOf(this)))
+    else matches.asSequence()
       .map { Parse(offset + it.length, listOf(ParsedToken(offset, offset + it.length, it, this, valid = true))) }
   }
 

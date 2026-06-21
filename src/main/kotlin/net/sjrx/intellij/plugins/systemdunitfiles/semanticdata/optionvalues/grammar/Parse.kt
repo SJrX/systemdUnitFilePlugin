@@ -1,7 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar
 
 /*
- * List-of-successes matcher (GitHub #467, step 2).
+ * List-of-successes matcher (GitHub #467).
  *
  * These types support a second matching method, `Combinator.parse()`, that lives ALONGSIDE the
  * existing SyntacticMatch / SemanticMatch on every combinator. Nothing here is wired into
@@ -9,9 +9,24 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gra
  * validate it against the real grammars in tests before deciding to migrate the caller.
  *
  * Where the existing engine returns ONE greedy result and runs two near-identical passes, parse()
- * returns EVERY way a combinator can match (lazily), and folds the strict "semantic" check into a
+ * returns EVERY way a combinator can proceed (lazily), and folds the strict "semantic" check into a
  * `valid` flag on each token. So one lenient pass answers both questions, and greedy traps like
- * Seq(ZeroOrMore("a"), "a") on "aa" resolve themselves (see Combinator.parse docs).
+ * Seq(ZeroOrMore("a"), "a") on "aa" resolve themselves.
+ *
+ * FAILURE IS A VALUE, NOT AN ABSENCE
+ * ----------------------------------
+ * A matcher does not signal "no match" by returning an empty sequence. It returns a [Stuck] — a
+ * first-class value carrying the offset it got stuck at and what it was hoping to see. That single
+ * decision is why error localization needs no side-channel: when Seq(..., EOF()) can't finish, the
+ * EOF failure rides back up the return value as a Stuck(offset=7, {EOF}), so we still know we
+ * reached offset 7. (Earlier this was modelled as an empty sequence, which threw the offset away and
+ * forced a mutable "frontier" object to be threaded through parse() to recover it.)
+ *
+ * SIMPLER ALTERNATIVE (for the record): instead of returning Stuck values, you can thread a mutable
+ * accumulator ("frontier") through parse() that every leaf matcher writes its deepest reach into.
+ * That is less code and a touch lazier, but it splits the data flow across two channels — successes
+ * via the return value, failures via a pass-by-reference side effect — which is the asymmetry this
+ * design removes by making both kinds of result travel the same way.
  */
 
 /** A single terminal token, with the strict-validity verdict (the old "semantic" check) folded in. */
@@ -23,8 +38,18 @@ data class ParsedToken(
   val valid: Boolean,
 )
 
-/** One way a combinator consumed input from some offset: it ended at [end], producing [tokens]. */
-data class Parse(val end: Int, val tokens: List<ParsedToken>)
+/** One step a matcher can take from an offset: either it consumed input ([Parse]) or it got [Stuck]. */
+sealed interface ParseStep
+
+/** A successful match: consumed input up to [end], producing [tokens] (each with its `valid` flag). */
+data class Parse(val end: Int, val tokens: List<ParsedToken>) : ParseStep
+
+/**
+ * A dead end: matching could not proceed at [offset], where [expected] is the set of matchers the
+ * grammar was hoping to see. Carrying this as a value (rather than an empty result) is what lets us
+ * localize errors and, later, drive completion — both are "what was expected at this offset?".
+ */
+data class Stuck(val offset: Int, val expected: Set<Combinator>) : ParseStep
 
 /** The outcome of validating a whole value against a grammar via parse(). */
 sealed interface ParseOutcome {
@@ -36,33 +61,44 @@ sealed interface ParseOutcome {
 
   /**
    * No path consumed the whole value. [furthest] is the deepest offset any path reached, and
-   * [expected] is the set of matchers the grammar was hoping to see there (for error localization,
-   * and the seed of completion).
+   * [expected] is what the grammar was hoping to see there (for error localization / completion).
    */
   data class SyntaxError(val furthest: Int, val expected: Set<Combinator>) : ParseOutcome
 }
 
-/** Every way [this] grammar can consume the entire [value]. */
+/** Every way [this] grammar can consume the entire [value] (successful steps only). */
 fun Combinator.fullParses(value: String): Sequence<Parse> =
-  parse(value, 0).filter { it.end == value.length }
+  parse(value, 0).filterIsInstance<Parse>().filter { it.end == value.length }
 
 /**
  * One lenient parse answers both questions the old two passes did:
  *  - syntactic ("could be this, color it"): did any path consume the whole value?
  *  - semantic ("actually valid"):           did any such path use only valid tokens?
  *
- * A single shared [Frontier] rides along, so a SyntaxError can report where parsing got stuck.
+ * On failure we fold the [Stuck] values back into the deepest offset reached and the union of what
+ * was expected there — the "frontier", computed from the return value rather than mutated into it.
  */
 fun Combinator.validate(value: String): ParseOutcome {
-  val frontier = Frontier()
   var firstBad: ParsedToken? = null
-  for (p in parse(value, 0, frontier)) {
-    if (p.end != value.length) continue
-    val bad = p.tokens.firstOrNull { !it.valid }
-    if (bad == null) return ParseOutcome.Valid // short-circuit on the first fully-valid full parse
-    if (firstBad == null) firstBad = bad
+  var furthest = 0
+  var expected = emptySet<Combinator>()
+
+  for (step in parse(value, 0)) {
+    when (step) {
+      is Parse -> {
+        if (step.end == value.length) {
+          val bad = step.tokens.firstOrNull { !it.valid }
+          if (bad == null) return ParseOutcome.Valid // first fully-valid full parse wins; short-circuit
+          if (firstBad == null) firstBad = bad
+        }
+        if (step.end > furthest) { furthest = step.end; expected = emptySet() }
+      }
+      is Stuck -> when {
+        step.offset > furthest -> { furthest = step.offset; expected = step.expected }
+        step.offset == furthest -> expected = expected + step.expected
+      }
+    }
   }
-  if (firstBad != null) return ParseOutcome.SemanticError(firstBad)
-  // No full parse: exhausting the loop above has populated the frontier with the deepest reach.
-  return ParseOutcome.SyntaxError(frontier.position, frontier.expected)
+
+  return firstBad?.let { ParseOutcome.SemanticError(it) } ?: ParseOutcome.SyntaxError(furthest, expected)
 }

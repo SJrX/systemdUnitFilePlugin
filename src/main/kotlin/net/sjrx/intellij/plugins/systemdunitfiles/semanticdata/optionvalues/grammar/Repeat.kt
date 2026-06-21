@@ -62,14 +62,18 @@ class Repeat(val combinator : Combinator, val minInclusive: Int, val maxExclusiv
     return match(value, offset, combinator::SemanticMatch)
   }
 
-  override fun parse(value: String, offset: Int, frontier: Frontier): Sequence<Parse> {
+  override fun parse(value: String, offset: Int): Sequence<ParseStep> {
     // Offer every repetition count in [minInclusive, maxExclusive] (maxExclusive is the cap on the
-    // count, mirroring the existing match() loop). Yield only once enough repetitions have happened.
-    fun extend(from: Parse, count: Int): Sequence<Parse> = sequence {
+    // count, mirroring the existing match() loop). Yield only once enough repetitions have happened;
+    // a failed attempt at another repetition is carried as a Stuck.
+    fun extend(from: Parse, count: Int): Sequence<ParseStep> = sequence {
       if (count >= minInclusive) yield(from)
       if (count < maxExclusive) {
-        for (step in combinator.parse(value, from.end, frontier)) {
-          if (step.end > from.end) yieldAll(extend(Parse(step.end, from.tokens + step.tokens), count + 1))
+        for (step in combinator.parse(value, from.end)) {
+          when (step) {
+            is Parse -> if (step.end > from.end) yieldAll(extend(Parse(step.end, from.tokens + step.tokens), count + 1))
+            is Stuck -> yield(step)
+          }
         }
       }
     }
