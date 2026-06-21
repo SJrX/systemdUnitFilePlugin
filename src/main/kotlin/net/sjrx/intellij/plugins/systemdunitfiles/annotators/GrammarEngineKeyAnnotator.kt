@@ -3,9 +3,12 @@ package net.sjrx.intellij.plugins.systemdunitfiles.annotators
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
-import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.openapi.editor.markup.EffectType
+import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.psi.PsiElement
+import com.intellij.ui.JBColor
+import java.awt.Font
 import com.intellij.psi.util.PsiTreeUtil
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileProperty
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionType
@@ -40,10 +43,11 @@ class GrammarEngineKeyAnnotator : Annotator {
   }
 
   companion object {
-    // Layered on top of the normal key color; METADATA gives a distinct, theme-aware tint.
+    // Underline the key, keeping its normal color — recoloring grammar vs non-grammar keys with two
+    // different colors was too distracting, especially on light themes.
     val NEW_ENGINE_KEY: TextAttributesKey = TextAttributesKey.createTextAttributesKey(
       "SYSTEMD_UNIT_FILE_NEW_GRAMMAR_ENGINE_KEY",
-      DefaultLanguageHighlighterColors.METADATA,
+      TextAttributes(null, null, JBColor.GRAY, EffectType.LINE_UNDERSCORE, Font.PLAIN),
     )
   }
 }
