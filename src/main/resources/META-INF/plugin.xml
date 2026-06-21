@@ -83,6 +83,10 @@
                      groupPath="Unit files (systemd)" language="Unit File (systemd)"
                      shortName="MissingRequiredKey" displayName="Missing required key"
                      groupName="Validity" enabledByDefault="true" level="ERROR"/>
+    <localInspection implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.inspections.Ipv6CanonicalFormInspection"
+                     groupPath="Unit files (systemd)" language="Unit File (systemd)"
+                     shortName="Ipv6CanonicalForm" displayName="IPv6 address not in canonical form (RFC 5952)"
+                     groupName="Style" enabledByDefault="true" level="WEAK WARNING"/>
     <localInspection implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.inspections.IPAddressAllowOnlyInspection"
                      groupPath="Unit files (systemd)" language="Unit File (systemd)"
                      shortName="IPAddressAllowOnly" displayName="IPAddressAllow without IPAddressDeny"
