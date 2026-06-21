@@ -53,7 +53,7 @@ public class UnitFileColorSettings implements ColorSettingsPage {
            + "#  (at your option) any later version.\n"
            + "\n"
            + "[Unit]\n"
-           + "Description=Reload Configuration from the Real Root\n"
+           + "Description=<gId>Reload Configuration from the Real Root</gId>\n"
            + "DefaultDependencies=no\n"
            + "Requires=initrd-root-fs.target\n"
            + "After=initrd-root-fs.target\n"
