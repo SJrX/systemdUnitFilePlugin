@@ -47,6 +47,17 @@ private fun Array<out String>.allPunctuation(): Boolean =
  * region gets its terminal's [defaultRole]. Returns empty if no full parse exists — we don't colour
  * values that don't match the grammar.
  */
+/**
+ * The explicit [Labeled] spans in [value] (e.g. a whole IP address), from the first fully-valid
+ * parse — i.e. structure the grammar marked, without the per-token coloring defaults. Used by
+ * features that act on semantic spans, such as IPv6 canonicalization.
+ */
+fun Combinator.labeledRegions(value: String): List<Region> {
+  val parse = parse(value, 0).filterIsInstance<Parse>()
+    .firstOrNull { it.end == value.length && it.tokens.all { token -> token.valid } } ?: return emptyList()
+  return parse.regions
+}
+
 fun Combinator.colorize(value: String): List<Region> {
   val parse = parse(value, 0).filterIsInstance<Parse>().firstOrNull { it.end == value.length } ?: return emptyList()
 
