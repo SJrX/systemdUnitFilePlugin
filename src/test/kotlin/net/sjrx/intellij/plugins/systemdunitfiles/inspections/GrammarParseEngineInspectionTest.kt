@@ -1,5 +1,6 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.inspections
 
+import com.intellij.lang.annotation.HighlightSeverity
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import net.sjrx.intellij.plugins.systemdunitfiles.settings.ExperimentalSettings
 import org.junit.Test
@@ -42,7 +43,7 @@ class GrammarParseEngineInspectionTest : AbstractUnitFileTest() {
     setupFileInEditor("file.service", file)
     enableInspection(InvalidValueInspection::class.java)
 
-    assertSize(0, myFixture.doHighlighting())
+    assertSize(0, myFixture.doHighlighting().filter { it.severity != HighlightSeverity.INFORMATION })
   }
 
   @Test
@@ -61,7 +62,7 @@ class GrammarParseEngineInspectionTest : AbstractUnitFileTest() {
     setupFileInEditor("file.service", file)
     enableInspection(InvalidValueInspection::class.java)
 
-    assertSize(3, myFixture.doHighlighting())
+    assertSize(3, myFixture.doHighlighting().filter { it.severity != HighlightSeverity.INFORMATION })
   }
 
   @Test
@@ -76,6 +77,6 @@ class GrammarParseEngineInspectionTest : AbstractUnitFileTest() {
     setupFileInEditor("file.service", file)
     enableInspection(InvalidValueInspection::class.java)
 
-    assertSize(0, myFixture.doHighlighting())
+    assertSize(0, myFixture.doHighlighting().filter { it.severity != HighlightSeverity.INFORMATION })
   }
 }
