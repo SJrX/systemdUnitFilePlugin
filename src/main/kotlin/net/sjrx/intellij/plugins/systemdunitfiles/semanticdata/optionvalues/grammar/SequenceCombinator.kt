@@ -65,7 +65,7 @@ open class SequenceCombinator(vararg val tokens: Combinator) : Combinator {
           is Stuck -> sequenceOf(acc) // path already dead-ended; carry it forward
           is Parse -> token.parse(value, acc.end).map { step ->
             when (step) {
-              is Parse -> Parse(step.end, acc.tokens + step.tokens)
+              is Parse -> Parse(step.end, acc.tokens + step.tokens, acc.regions + step.regions)
               is Stuck -> step // this part got stuck after acc; propagate the dead end
             }
           }

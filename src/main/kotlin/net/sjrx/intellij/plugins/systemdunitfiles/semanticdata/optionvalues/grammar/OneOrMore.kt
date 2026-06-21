@@ -46,7 +46,7 @@ class OneOrMore(val combinator : Combinator) : Combinator {
       yield(from)
       for (step in combinator.parse(value, from.end)) {
         when (step) {
-          is Parse -> if (step.end > from.end) yieldAll(extend(Parse(step.end, from.tokens + step.tokens)))
+          is Parse -> if (step.end > from.end) yieldAll(extend(Parse(step.end, from.tokens + step.tokens, from.regions + step.regions)))
           is Stuck -> yield(step)
         }
       }

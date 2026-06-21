@@ -71,7 +71,7 @@ class Repeat(val combinator : Combinator, val minInclusive: Int, val maxExclusiv
       if (count < maxExclusive) {
         for (step in combinator.parse(value, from.end)) {
           when (step) {
-            is Parse -> if (step.end > from.end) yieldAll(extend(Parse(step.end, from.tokens + step.tokens), count + 1))
+            is Parse -> if (step.end > from.end) yieldAll(extend(Parse(step.end, from.tokens + step.tokens, from.regions + step.regions), count + 1))
             is Stuck -> yield(step)
           }
         }
