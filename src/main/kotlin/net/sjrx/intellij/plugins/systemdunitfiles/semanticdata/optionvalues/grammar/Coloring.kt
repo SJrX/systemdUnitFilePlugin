@@ -59,5 +59,7 @@ fun Combinator.colorize(value: String): List<Region> {
       regions.add(Region(token.start, token.end, role))
     }
   }
-  return regions.sortedBy { it.start }
+  // distinct(): nested Labeled (e.g. an IPv4 suffix inside an IPv6 address) can emit the same span
+  // twice; collapse exact duplicates.
+  return regions.distinct().sortedBy { it.start }
 }

@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
+import java.util.HashMap;
 import java.util.Map;
 
 public class UnitFileColorSettings implements ColorSettingsPage {
@@ -21,6 +22,10 @@ public class UnitFileColorSettings implements ColorSettingsPage {
     new AttributesDescriptor("Key", UnitFileHighlighter.KEY),
     new AttributesDescriptor("Separator", UnitFileHighlighter.SEPARATOR),
     new AttributesDescriptor("Value", UnitFileHighlighter.VALUE),
+    new AttributesDescriptor("Value//Enum (grammar)", UnitFileHighlighter.GRAMMAR_ENUM),
+    new AttributesDescriptor("Value//Literal (grammar)", UnitFileHighlighter.GRAMMAR_LITERAL),
+    new AttributesDescriptor("Value//Operator (grammar)", UnitFileHighlighter.GRAMMAR_OPERATOR),
+    new AttributesDescriptor("Value//Identifier (grammar)", UnitFileHighlighter.GRAMMAR_IDENTIFIER),
   };
 
   @Nullable
@@ -58,6 +63,11 @@ public class UnitFileColorSettings implements ColorSettingsPage {
            + "\n"
            + "[Service]\n"
            + "Type=oneshot\n"
+           + "RestrictAddressFamilies=<gOp>~</gOp><gEnum>AF_INET</gEnum> <gEnum>AF_INET6</gEnum>\n"
+           + "SocketBindAllow=<gEnum>ipv4</gEnum><gOp>:</gOp><gEnum>tcp</gEnum><gOp>:</gOp><gLit>8080</gLit>\n"
+           + "SocketBindDeny=<gEnum>any</gEnum>\n"
+           + "IPAddressAllow=<gLit>192.168.1.1</gLit> <gLit>::1</gLit>\n"
+           + "RootImagePolicy=<gEnum>root</gEnum><gOp>=</gOp><gEnum>verity</gEnum><gOp>+</gOp><gEnum>signed</gEnum>\n"
            + "ExecStartPre=-/usr/bin/systemctl daemon-reload\n"
            + "; we have to retrigger initrd-fs.target after daemon-reload\n"
            + "ExecStart=-/usr/bin/systemctl --no-block start initrd-fs.target\n"
@@ -67,7 +77,12 @@ public class UnitFileColorSettings implements ColorSettingsPage {
   @Nullable
   @Override
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
-    return null;
+    Map<String, TextAttributesKey> tags = new HashMap<>();
+    tags.put("gEnum", UnitFileHighlighter.GRAMMAR_ENUM);
+    tags.put("gLit", UnitFileHighlighter.GRAMMAR_LITERAL);
+    tags.put("gOp", UnitFileHighlighter.GRAMMAR_OPERATOR);
+    tags.put("gId", UnitFileHighlighter.GRAMMAR_IDENTIFIER);
+    return tags;
   }
 
   @NotNull

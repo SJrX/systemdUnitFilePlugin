@@ -18,7 +18,8 @@ val TIME_VALUE = AlternativeCombinator(
 
 var IPV4_OCTET = IntegerTerminal(0, 256)
 val DOT = LiteralChoiceTerminal(".")
-var IPV4_ADDR = SequenceCombinator(IPV4_OCTET, DOT, IPV4_OCTET, DOT, IPV4_OCTET, DOT, IPV4_OCTET)
+// Labeled so an address colours as one literal span rather than per-octet/dot (transparent to matching).
+var IPV4_ADDR = Labeled(Role.LITERAL, SequenceCombinator(IPV4_OCTET, DOT, IPV4_OCTET, DOT, IPV4_OCTET, DOT, IPV4_OCTET))
 
 val CIDR_SEPARATOR = LiteralChoiceTerminal("/")
 
@@ -51,7 +52,7 @@ val IPV6_IPV4_SUFFIX_FIVE_HEXTET_BEFORE_ZERO_COMP =  SequenceCombinator(IPV6_HEX
 
 //val IPV6_ALL_ZEROS = DOUBLE_COLON
 
-val IPV6_ADDR = AlternativeCombinator(
+val IPV6_ADDR = Labeled(Role.LITERAL, AlternativeCombinator(
   IPV6_IPV4_SUFFIX_FULL,
   IPV6_IPV4_SUFFIX_ZERO_HEXTET_BEFORE_ZERO_COMP,
   IPV6_IPV4_SUFFIX_ONE_HEXTET_BEFORE_ZERO_COMP,
@@ -72,7 +73,7 @@ val IPV6_ADDR = AlternativeCombinator(
 
   // I suspect maybe that this one is redundant
   //IPV6_ALL_ZEROS,
-)
+))
 
 val IPV6_ADDR_AND_PREFIX_LENGTH = SequenceCombinator(IPV6_ADDR, CIDR_SEPARATOR, IntegerTerminal(64, 129))
 val IPV6_ADDR_AND_OPTIONAL_PREFIX_LENGTH = SequenceCombinator(IPV6_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, IntegerTerminal(64, 129))))
