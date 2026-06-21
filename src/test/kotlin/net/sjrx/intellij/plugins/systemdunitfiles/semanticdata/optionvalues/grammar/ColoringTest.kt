@@ -36,9 +36,15 @@ class ColoringTest {
 
   @Test
   fun testLabeledPaintsACompositeSpanAsOneUnit() {
-    // Without Labeled an IPv4 address would colour per octet/dot; wrapping it makes it one LITERAL.
-    val grammar = SequenceCombinator(Labeled(Role.LITERAL, IPV4_ADDR), EOF())
-    assertEquals(listOf(Region(0, 7, Role.LITERAL)), grammar.colorize("1.2.3.4"))
+    // Without Labeled these would colour as two ENUM tokens; wrapping makes the span one LITERAL.
+    val grammar = Labeled(Role.LITERAL, SequenceCombinator(LiteralChoiceTerminal("a"), LiteralChoiceTerminal("b")))
+    assertEquals(listOf(Region(0, 2, Role.LITERAL)), grammar.colorize("ab"))
+  }
+
+  @Test
+  fun testSharedIpCombinatorIsLabeledAsOneLiteral() {
+    // IPV4_ADDR is wrapped in Labeled in Combinators.kt, so an address colours as one literal.
+    assertEquals(listOf(Region(0, 7, Role.LITERAL)), SequenceCombinator(IPV4_ADDR, EOF()).colorize("1.2.3.4"))
   }
 
   @Test
