@@ -25,7 +25,6 @@ public class UnitFileColorSettings implements ColorSettingsPage {
     new AttributesDescriptor("Value//Enum (grammar)", UnitFileHighlighter.GRAMMAR_ENUM),
     new AttributesDescriptor("Value//Literal (grammar)", UnitFileHighlighter.GRAMMAR_LITERAL),
     new AttributesDescriptor("Value//Operator (grammar)", UnitFileHighlighter.GRAMMAR_OPERATOR),
-    new AttributesDescriptor("Value//Identifier (grammar)", UnitFileHighlighter.GRAMMAR_IDENTIFIER),
   };
 
   @Nullable
@@ -53,7 +52,7 @@ public class UnitFileColorSettings implements ColorSettingsPage {
            + "#  (at your option) any later version.\n"
            + "\n"
            + "[Unit]\n"
-           + "Description=<gId>Reload Configuration from the Real Root</gId>\n"
+           + "Description=Reload Configuration from the Real Root\n"
            + "DefaultDependencies=no\n"
            + "Requires=initrd-root-fs.target\n"
            + "After=initrd-root-fs.target\n"
@@ -81,7 +80,6 @@ public class UnitFileColorSettings implements ColorSettingsPage {
     tags.put("gEnum", UnitFileHighlighter.GRAMMAR_ENUM);
     tags.put("gLit", UnitFileHighlighter.GRAMMAR_LITERAL);
     tags.put("gOp", UnitFileHighlighter.GRAMMAR_OPERATOR);
-    tags.put("gId", UnitFileHighlighter.GRAMMAR_IDENTIFIER);
     return tags;
   }
 

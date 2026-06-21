@@ -14,7 +14,7 @@ class ColoringTest {
     assertEquals(Role.ENUM, defaultRole(FlexibleLiteralChoiceTerminal("AF_INET", "AF_INET6")))
     assertEquals(Role.OPERATOR, defaultRole(LiteralChoiceTerminal(":")))
     assertEquals(Role.OPERATOR, defaultRole(LiteralChoiceTerminal("~")))
-    assertEquals(Role.IDENTIFIER, defaultRole(RegexTerminal("[a-z]+", "[a-z]+")))
+    assertEquals(null, defaultRole(RegexTerminal("[a-z]+", "[a-z]+"))) // free-form: keeps default value color
     assertEquals(null, defaultRole(WhitespaceTerminal()))
   }
 
