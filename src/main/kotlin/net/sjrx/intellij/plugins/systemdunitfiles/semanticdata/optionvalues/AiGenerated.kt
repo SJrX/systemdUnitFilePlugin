@@ -189,6 +189,8 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_restrict_network_interfaces", "0") to ConfigParseRestrictNetworkInterfacesOptionValue() as OptionValueInformation,
     Validator("config_parse_ring_buffer_or_channel", "0") to ConfigParseRingBufferOrChannelOptionValue() as OptionValueInformation,
     Validator("config_parse_route_prefix_preference", "0") to ConfigParseRoutePrefixPreferenceOptionValue() as OptionValueInformation,
+    Validator("config_parse_route_section", "ROUTE_GATEWAY") to ConfigParseRouteSectionGatewayOptionValue() as OptionValueInformation,
+    Validator("config_parse_route_section", "ROUTE_GATEWAY_NETWORK") to ConfigParseRouteSectionGatewayNetworkOptionValue() as OptionValueInformation,
     Validator("config_parse_route_section", "ROUTE_METRIC_FASTOPEN_NO_COOKIE") to ConfigParseRouteSectionOptionValue() as OptionValueInformation,
     Validator("config_parse_route_section", "ROUTE_METRIC_HOPLIMIT") to ConfigParseRouteSectionOptionValue() as OptionValueInformation,
     Validator("config_parse_route_section", "ROUTE_METRIC_INITRWND") to ConfigParseRouteSectionOptionValue() as OptionValueInformation,
