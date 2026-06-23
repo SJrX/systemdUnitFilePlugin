@@ -332,6 +332,8 @@ pipeline {
       }
     }
     stage("Build") {
+      parallel {
+        stage("Build & Publish") {
       agent {
         kubernetes {
           //cloud 'kubernetes'
@@ -390,6 +392,26 @@ pipeline {
             }
 
             archiveArtifacts artifacts: 'build/distributions/*.zip'
+            archiveArtifacts artifacts: 'build/reports/**'
+          }
+        }
+      }
+        }
+        stage("Unit Tests (new grammar engine)") {
+          agent {
+            kubernetes {
+              defaultContainer 'worker-pod'
+              // language=yaml
+              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-build-environment:$buildEnvironmentHash", false, false)
+            }
+          }
+          steps {
+            unstash 'systemd-build-build'
+            unstash 'ubuntu-units'
+            sh("""
+              mkdir -p ./build
+              ./gradlew --no-daemon -I ./build-cache-init.gradle.kts -I ./repo-cache-init.gradle.kts --build-cache test -Dsystemd.unit.grammarParseEngine=true
+              """)
             archiveArtifacts artifacts: 'build/reports/**'
           }
         }
