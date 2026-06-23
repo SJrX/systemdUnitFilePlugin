@@ -37,7 +37,7 @@ open class GrammarOptionValue(
   override fun generateProblemDescriptors(property: UnitFilePropertyType, holder: ProblemsHolder) {
     val value = property.valueText ?: return
 
-    if (ExperimentalSettings.getInstance(property.project).state.useGrammarParseEngine) {
+    if (FORCE_PARSE_ENGINE || ExperimentalSettings.getInstance(property.project).state.useGrammarParseEngine) {
       generateProblemDescriptorsViaParse(property, value, holder)
       return
     }
@@ -173,5 +173,15 @@ open class GrammarOptionValue(
 
   companion object {
     private val LOG = Logger.getInstance(SemanticDataRepository::class.java)
+
+    /**
+     * Forces the new list-of-successes engine for validation regardless of the per-project setting,
+     * used to run the whole unit-test suite against it (CI runs the suite twice: once without and
+     * once with -Dsystemd.unit.grammarParseEngine=true). Only the validation engine is forced; the
+     * cosmetic annotators stay on the user flag, so problem counts are unchanged and only exact
+     * error spans/messages can differ between engines.
+     */
+    @JvmField
+    val FORCE_PARSE_ENGINE: Boolean = java.lang.Boolean.getBoolean("systemd.unit.grammarParseEngine")
   }
 }

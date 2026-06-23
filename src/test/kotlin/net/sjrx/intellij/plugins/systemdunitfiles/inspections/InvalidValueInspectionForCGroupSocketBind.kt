@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections
 
 import junit.framework.TestCase
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.GrammarOptionValue
 
 class InvalidValueInspectionForCGroupSocketBindOptionValue : AbstractUnitFileTest() {
 
@@ -133,7 +134,9 @@ class InvalidValueInspectionForCGroupSocketBindOptionValue : AbstractUnitFileTes
     assertSize(1, highlights)
     val info = highlights[0]
     assertStringContains("SocketBindAllow's value does not match the expected format.", info!!.description)
-    TestCase.assertEquals("::tcp", info.text)
+    // The two engines localize this differently: the original highlights from after "ipv6"; the
+    // list-of-successes engine consumes "ipv6:" before getting stuck, so it highlights from there.
+    TestCase.assertEquals(if (GrammarOptionValue.FORCE_PARSE_ENGINE) ":tcp" else "::tcp", info.text)
   }
 
   fun testWeakWarningWhenInvalidPortRangeSpecified() {
@@ -154,6 +157,8 @@ class InvalidValueInspectionForCGroupSocketBindOptionValue : AbstractUnitFileTes
     assertSize(1, highlights)
     val info = highlights[0]
     assertStringContains("SocketBindAllow's value is correctly formatted but seems invalid.", info!!.description)
-    TestCase.assertEquals("-", info.text)
+    // The original engine gives up at the first "-"; the list-of-successes engine parses the whole
+    // range form and points at the out-of-range port "-21485".
+    TestCase.assertEquals(if (GrammarOptionValue.FORCE_PARSE_ENGINE) "-21485" else "-", info.text)
   }
 }

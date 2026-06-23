@@ -20,7 +20,10 @@ jobs:
       matrix:
         distribution: [ 'temurin' ]
         java: [ '21' ]
-    name: Java ${{ matrix.Java }} Build
+        # Run the unit tests against both the original validation engine and the new
+        # list-of-successes engine, in parallel.
+        grammarParseEngine: [ 'false', 'true' ]
+    name: Java ${{ matrix.java }} Build (grammar engine ${{ matrix.grammarParseEngine }})
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v7
@@ -46,10 +49,11 @@ jobs:
           mkdir -p ./build
           docker compose --project-directory ./systemd-build up --build
           ./generate-changelog  > build/CHANGELOG
-          ./gradlew test buildPlugin
+          ./gradlew test buildPlugin -Dsystemd.unit.grammarParseEngine=${{ matrix.grammarParseEngine }}
           ./gradlew --stop
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
+          check_name: "Unit Test Results (grammar engine ${{ matrix.grammarParseEngine }})"
           junit_files: build/test-results/**/*.xml

@@ -144,6 +144,10 @@ tasks {
    test {
      testLogging.showExceptions = true
      testLogging.setExceptionFormat("full")
+     // Forward the grammar-engine switch to the forked test JVM so the suite can be run twice:
+     //   ./gradlew test                                          (original validation engine)
+     //   ./gradlew test -Dsystemd.unit.grammarParseEngine=true   (new list-of-successes engine)
+     systemProperty("systemd.unit.grammarParseEngine", System.getProperty("systemd.unit.grammarParseEngine", "false"))
    }
 }
 
