@@ -32,5 +32,21 @@ interface Combinator {
    */
   fun SemanticMatch(value : String, offset: Int): MatchResult
 
+  /**
+   * List-of-successes matcher (#467). Returns EVERY way this combinator can proceed from [offset] in
+   * [value], lazily, as a stream of [ParseStep]s: a [Parse] for each way it matched, and a [Stuck]
+   * for each dead end (carrying where it got stuck and what was expected there).
+   *
+   * This lives alongside Syntactic/SemanticMatch and is a single lenient pass: each [ParsedToken]
+   * carries a `valid` flag for the strict (semantic) check. Because every alternative is offered
+   * rather than the first greedy one committed to, matching is complete — e.g.
+   * Seq(ZeroOrMore("a"), "a") on "aa" matches, because ZeroOrMore offers the shorter match too.
+   *
+   * Returning [Stuck] as a value (rather than an empty sequence) means failure information — how far
+   * we got and what we expected — travels back through the return value, so no side channel is
+   * needed to localize errors.
+   */
+  fun parse(value: String, offset: Int): Sequence<ParseStep>
+
   fun toStringIndented(indent: Int): String
 }

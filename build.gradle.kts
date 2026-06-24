@@ -144,6 +144,9 @@ tasks {
    test {
      testLogging.showExceptions = true
      testLogging.setExceptionFormat("full")
+     // Forward the experimental grammar-engine flag so CI can run the whole suite twice: once on the
+     // original engine and once with -Dsystemd.unit.grammarParseEngine=true (see GrammarOptionValue).
+     systemProperty("systemd.unit.grammarParseEngine", System.getProperty("systemd.unit.grammarParseEngine", "false"))
    }
 }
 

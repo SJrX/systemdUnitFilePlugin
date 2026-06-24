@@ -40,6 +40,25 @@ class OneOrMore(val combinator : Combinator) : Combinator {
     return match(value, offset, combinator::SemanticMatch)
   }
 
+  override fun parse(value: String, offset: Int): Sequence<ParseStep> {
+    // Same as ZeroOrMore, but the first repetition is mandatory (and must make progress).
+    fun extend(from: Parse): Sequence<ParseStep> = sequence {
+      yield(from)
+      for (step in combinator.parse(value, from.end)) {
+        when (step) {
+          is Parse -> if (step.end > from.end) yieldAll(extend(Parse(step.end, from.tokens + step.tokens)))
+          is Stuck -> yield(step)
+        }
+      }
+    }
+    return combinator.parse(value, offset).flatMap { step ->
+      when (step) {
+        is Parse -> if (step.end > offset) extend(step) else emptySequence()
+        is Stuck -> sequenceOf<ParseStep>(step) // the mandatory first repetition failed
+      }
+    }
+  }
+
   override fun toString(): String = toStringIndented(0)
 
   override fun toStringIndented(indent: Int): String {

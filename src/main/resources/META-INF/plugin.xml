@@ -89,6 +89,7 @@
     <completion.contributor language="Unit File (systemd)" implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.completion.UnitFileSectionCompletionContributor"/>
 
     <projectService serviceImplementation="net.sjrx.intellij.plugins.systemdunitfiles.settings.PodmanQuadletSettings"/>
+    <projectService serviceImplementation="net.sjrx.intellij.plugins.systemdunitfiles.settings.ExperimentalSettings"/>
     <projectConfigurable instance="net.sjrx.intellij.plugins.systemdunitfiles.settings.PodmanQuadletConfigurable"
                          id="net.sjrx.intellij.plugins.systemdunitfiles.settings.PodmanQuadletConfigurable"
                          displayName="systemd Unit Files"

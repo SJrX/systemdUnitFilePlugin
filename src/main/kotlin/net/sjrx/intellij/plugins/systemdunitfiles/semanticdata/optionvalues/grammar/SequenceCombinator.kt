@@ -55,6 +55,26 @@ open class SequenceCombinator(vararg val tokens: Combinator) : Combinator {
     return MatchResult(resultTokens, index, resultTerminals, maxLength)
   }
 
+  override fun parse(value: String, offset: Int): Sequence<ParseStep> {
+    // Thread each successful possibility of one part into the next (the cartesian product). A part
+    // that gets stuck — or a path that already got stuck — carries its dead end forward unchanged.
+    var results: Sequence<ParseStep> = sequenceOf(Parse(offset, emptyList()))
+    for (token in tokens) {
+      results = results.flatMap { acc ->
+        when (acc) {
+          is Stuck -> sequenceOf(acc) // path already dead-ended; carry it forward
+          is Parse -> token.parse(value, acc.end).map { step ->
+            when (step) {
+              is Parse -> Parse(step.end, acc.tokens + step.tokens)
+              is Stuck -> step // this part got stuck after acc; propagate the dead end
+            }
+          }
+        }
+      }
+    }
+    return results
+  }
+
   override fun toString(): String = toStringIndented(0)
 
   override fun toStringIndented(indent: Int): String {
