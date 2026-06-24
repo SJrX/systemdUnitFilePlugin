@@ -103,24 +103,40 @@ object Whitespace : Matcher {
 //  Combinators
 // ---------------------------------------------------------------------------
 
-/** All parts in order. Threads each possibility of one part into the next; carries dead ends forward. */
+/**
+ * All parts in order. Threads each possibility of one part into the next; carries dead ends forward.
+ *
+ * Same logic as a flatMap/map pipeline, but written with explicit loops via the `sequence { }`
+ * builder — which is still LAZY: the body only runs as the result is pulled, and `yield` emits one
+ * element at a time.
+ */
 class Seq(private vararg val parts: Matcher) : Matcher {
   override fun parse(value: String, offset: Int): Sequence<ParseStep> {
-    var results: Sequence<ParseStep> = sequenceOf(Parse(offset, emptyList()))
+    // Every way we've matched the parts handled SO FAR. Starts as one "seed" way: nothing consumed,
+    // still sitting at `offset`. (This is one element, not an empty sequence.)
+    var waysToHere: Sequence<ParseStep> = sequenceOf(Parse(offset, emptyList()))
+
     for (part in parts) {
-      results = results.flatMap { acc ->
-        when (acc) {
-          is Stuck -> sequenceOf(acc)
-          is Parse -> part.parse(value, acc.end).map { step ->
-            when (step) {
-              is Parse -> Parse(step.end, acc.tokens + step.tokens)
-              is Stuck -> step
-            }
+      // Snapshot the current value: the lazy block below is evaluated later, and must not see the
+      // reassignment to `waysToHere` on the next line.
+      val earlierWays = waysToHere
+
+      waysToHere = sequence {
+        for (soFar in earlierWays) {          // for each way the earlier parts matched...
+          when (soFar) {
+            is Stuck -> yield(soFar)          //   already a dead end: carry it forward unchanged
+            is Parse ->
+              for (step in part.parse(value, soFar.end)) {   // ...run THIS part where that way left off
+                when (step) {
+                  is Parse -> yield(Parse(step.end, soFar.tokens + step.tokens))  // glue tokens, advance
+                  is Stuck -> yield(step)                                          // this part dead-ended: propagate
+                }
+              }
           }
         }
       }
     }
-    return results
+    return waysToHere
   }
 }
 
@@ -153,6 +169,56 @@ class ZeroOrMore(private val inner: Matcher) : Matcher {
       }
     }
     return extend(Parse(offset, emptyList()))
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  Eager (List-based) twins — same results, no laziness, for understanding
+// ---------------------------------------------------------------------------
+//
+// These build the FULL list of ways up front: no `sequence { }`, no `yield`, just loops and lists.
+// The results are identical to Seq / ZeroOrMore — the only difference is nothing is short-circuited,
+// everything is materialized. They still return a Sequence (to plug into Matcher/validate), but the
+// work is done eagerly and `.asSequence()` just wraps the finished list.
+
+/** Eager twin of [Seq]. */
+class SeqEager(private vararg val parts: Matcher) : Matcher {
+  override fun parse(value: String, offset: Int): Sequence<ParseStep> {
+    var waysToHere: List<ParseStep> = listOf(Parse(offset, emptyList()))
+    for (part in parts) {
+      val next = mutableListOf<ParseStep>()
+      for (soFar in waysToHere) {
+        when (soFar) {
+          is Stuck -> next.add(soFar)                                  // dead end: carry it forward
+          is Parse -> for (step in part.parse(value, soFar.end)) {     // run this part where `soFar` left off
+            when (step) {
+              is Parse -> next.add(Parse(step.end, soFar.tokens + step.tokens))  // glue tokens
+              is Stuck -> next.add(step)                                          // propagate dead end
+            }
+          }
+        }
+      }
+      waysToHere = next                                                // this part's results feed the next
+    }
+    return waysToHere.asSequence()
+  }
+}
+
+/** Eager twin of [ZeroOrMore]: the recursion returns a List that is fully built before it returns. */
+class ZeroOrMoreEager(private val inner: Matcher) : Matcher {
+  override fun parse(value: String, offset: Int): Sequence<ParseStep> {
+    // extend(from) = every way to finish a zero-or-more from `from`, as a finished list.
+    fun extend(from: Parse): List<ParseStep> {
+      val ways = mutableListOf<ParseStep>(from)                        // take ZERO more: `from` itself is a way
+      for (step in inner.parse(value, from.end)) {                     // take ONE more...
+        when (step) {
+          is Parse -> if (step.end > from.end) ways.addAll(extend(Parse(step.end, from.tokens + step.tokens)))  // ...then all ways from there
+          is Stuck -> ways.add(step)
+        }
+      }
+      return ways
+    }
+    return extend(Parse(offset, emptyList())).asSequence()
   }
 }
 
@@ -251,4 +317,23 @@ fun main() {
   // ---- Demo 4: peek at the raw step stream (what you'd see in a debugger) ---------------------
   heading("4. Raw parse steps for \"AF_INET, AF_INET6\"")
   addressFamilies.parse("AF_INET, AF_INET6", 0).forEach { println("  $it") }
+
+  // ---- Demo 5: the eager List-based twins give identical results -----------------------------
+  heading("5. Eager (List-based) twins: same results, no laziness")
+  val lazyGreedy = Seq(ZeroOrMore(Lit("a")), Lit("a"))
+  val eagerGreedy = SeqEager(ZeroOrMoreEager(Lit("a")), Lit("a"))
+  for (v in listOf("a", "aa", "aaa", "", "ab")) {
+    val same = lazyGreedy.validate(v) == eagerGreedy.validate(v)
+    println("  ${v.padEnd(4).ifBlank { "\"\"".padEnd(4) }} lazy=${lazyGreedy.validate(v)}  eager=${eagerGreedy.validate(v)}  (same? $same)")
+  }
+
+  // ---- Demo 6: eager has no short-circuit, so it materializes the whole ambiguous space ------
+  // Seq(ZeroOrMore("a"), ZeroOrMore("a")) on "aaa" can split 0+3, 1+2, 2+1, 3+0 -> every full parse
+  // is produced. validate() only needs ONE; with the LAZY version it would stop at the first.
+  heading("6. Eager has no short-circuit: it builds the whole ambiguous space")
+  val fullParses = SeqEager(ZeroOrMoreEager(Lit("a")), ZeroOrMoreEager(Lit("a")))
+    .parse("aaa", 0).filterIsInstance<Parse>().filter { it.end == 3 }.toList()
+  println("  \"aaa\" has ${fullParses.size} full parses (the split 0+3, 1+2, 2+1, 3+0 between the two ZeroOrMores).")
+  println("  Their flat tokens look identical — where the split happened just isn't recorded.")
+  println("  validate() only needs ONE: the lazy engine stops at the first; the eager twin builds all ${fullParses.size}.")
 }
