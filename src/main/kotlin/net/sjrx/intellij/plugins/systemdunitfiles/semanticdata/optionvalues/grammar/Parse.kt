@@ -66,10 +66,6 @@ sealed interface ParseOutcome {
   data class SyntaxError(val furthest: Int, val expected: Set<Combinator>) : ParseOutcome
 }
 
-/** Every way [this] grammar can consume the entire [value] (successful steps only). */
-fun Combinator.fullParses(value: String): Sequence<Parse> =
-  parse(value, 0).filterIsInstance<Parse>().filter { it.end == value.length }
-
 /**
  * One lenient parse answers both questions the old two passes did:
  *  - syntactic ("could be this, color it"): did any path consume the whole value?
