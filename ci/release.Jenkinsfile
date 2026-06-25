@@ -332,6 +332,11 @@ pipeline {
       }
     }
     stage("Build") {
+      // Two independent kubernetes pods => two separate workspaces => safe to run concurrently. The
+      // second pod re-runs the whole unit-test suite with the new grammar engine forced on, so the
+      // experimental path is validated on every release build before it ships.
+      parallel {
+        stage("Build & Publish") {
       agent {
         kubernetes {
           //cloud 'kubernetes'
@@ -391,6 +396,27 @@ pipeline {
 
             archiveArtifacts artifacts: 'build/distributions/*.zip'
             archiveArtifacts artifacts: 'build/reports/**'
+          }
+        }
+      }
+        }
+        stage("Unit Tests (new grammar engine)") {
+          agent {
+            kubernetes {
+              //cloud 'kubernetes'
+              defaultContainer 'worker-pod'
+
+              // language=yaml
+              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-build-environment:$buildEnvironmentHash", false,false)
+              //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
+            }
+          }
+          steps {
+            unstash 'systemd-build-build'
+            unstash 'ubuntu-units'
+            sh("""
+              ./gradlew --no-daemon -I ./build-cache-init.gradle.kts -I ./repo-cache-init.gradle.kts --build-cache test -Dsystemd.unit.grammarParseEngine=true
+              """)
           }
         }
       }

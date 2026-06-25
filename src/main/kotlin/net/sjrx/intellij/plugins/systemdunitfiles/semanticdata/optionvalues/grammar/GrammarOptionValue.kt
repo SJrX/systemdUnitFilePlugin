@@ -4,12 +4,15 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import net.sjrx.intellij.plugins.systemdunitfiles.intentions.ReplaceInvalidLiteralChoiceQuickFix
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.OptionValueInformation
+import net.sjrx.intellij.plugins.systemdunitfiles.settings.ExperimentalSettings
 
 open class GrammarOptionValue(
   override val validatorName: String,
@@ -33,6 +36,11 @@ open class GrammarOptionValue(
    */
   override fun generateProblemDescriptors(property: UnitFilePropertyType, holder: ProblemsHolder) {
     val value = property.valueText ?: return
+
+    if (FORCE_PARSE_ENGINE || ExperimentalSettings.getInstance(property.project).state.useGrammarParseEngine) {
+      generateProblemDescriptorsViaParse(property, value, holder)
+      return
+    }
 
     val syntaticMatch = combinator.SyntacticMatch(value, 0)
 
@@ -114,7 +122,66 @@ open class GrammarOptionValue(
 
   }
 
+  /**
+   * Experimental path (#467): validate via the list-of-successes engine and map the [ParseOutcome]
+   * onto the same problem descriptors the SyntacticMatch/SemanticMatch path produces. Gated behind
+   * [ExperimentalSettings.useGrammarParseEngine] so the original engine remains the default.
+   */
+  private fun generateProblemDescriptorsViaParse(property: UnitFilePropertyType, value: String, holder: ProblemsHolder) {
+    val outcome = try {
+      combinator.validate(value) { ProgressManager.checkCanceled() }
+    } catch (e: ProcessCanceledException) {
+      throw e
+    } catch (e: RuntimeException) {
+      LOG.error("Error while processing ${property.key} with value $value", e)
+      holder.registerProblem(property.valueNode.psi, "Internal error, please report an bug to the systemd plugin. Include the Key and Value used.", ProblemHighlightType.ERROR)
+      return
+    }
+
+    when (outcome) {
+      is ParseOutcome.Valid -> return
+
+      is ParseOutcome.SyntaxError -> {
+        // Highlight from where parsing got stuck to the end (or everything if it reached the end).
+        val tr = if (outcome.furthest < value.length) {
+          TextRange(outcome.furthest, value.length)
+        } else {
+          TextRange(0, value.length)
+        }
+        holder.registerProblem(property.valueNode.psi, "${property.key}'s value does not match the expected format. Possible reasons include unrecognized characters or premature end of input.", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, tr)
+      }
+
+      is ParseOutcome.SemanticError -> {
+        // Well-formed but invalid: highlight the offending token, and offer literal replacements.
+        val bad = outcome.badToken
+        val tr = TextRange(bad.start, bad.end)
+
+        val quickFixes = mutableListOf<LocalQuickFix>()
+        val choices = when (val terminal = bad.terminal) {
+          is LiteralChoiceTerminal -> terminal.choices
+          is FlexibleLiteralChoiceTerminal -> terminal.choices
+          else -> emptyArray()
+        }
+        for (choice in choices) {
+          quickFixes.add(ReplaceInvalidLiteralChoiceQuickFix(bad.start, bad.text, choice))
+        }
+
+        holder.registerProblem(property.valueNode.psi, "${property.key}'s value is correctly formatted but seems invalid.", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, tr, *quickFixes.toTypedArray())
+      }
+    }
+  }
+
   companion object {
     private val LOG = Logger.getInstance(SemanticDataRepository::class.java)
+
+    /**
+     * Forces the new list-of-successes engine for validation regardless of the per-project setting,
+     * used to run the whole unit-test suite against it (CI runs the suite twice: once without and
+     * once with -Dsystemd.unit.grammarParseEngine=true). Only the validation engine is forced; the
+     * cosmetic annotators stay on the user flag, so problem counts are unchanged and only exact
+     * error spans/messages can differ between engines.
+     */
+    @JvmField
+    val FORCE_PARSE_ENGINE: Boolean = java.lang.Boolean.getBoolean("systemd.unit.grammarParseEngine")
   }
 }
