@@ -48,14 +48,15 @@ class GrammarParseEngineInspectionTest : AbstractUnitFileTest() {
   @Test
   fun testInvalidAddressFamiliesUnderNewEngine() {
     enableNewEngine()
-    // Three malformed lists, each ill-formed against the grammar's shape -> one highlight each:
-    // a stray comma, a name without the AF_ prefix, and a lowercase tail the AF_* regex rejects.
+    // One highlight each, exercising both ParseOutcome failure kinds now that AF names are
+    // enumerated: AF_BOGUS is well-formed but unknown (SemanticError), while the comma and the
+    // bare non-AF token are ill-formed against the grammar shape (SyntaxError).
     // language="unit file (systemd)"
     val file = """
             [Service]
+            RestrictAddressFamilies=AF_BOGUS
             RestrictAddressFamilies=AF_INET, AF_INET6
             RestrictAddressFamilies=inet
-            RestrictAddressFamilies=AF_inet
         """.trimIndent()
 
     setupFileInEditor("file.service", file)
