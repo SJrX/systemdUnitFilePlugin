@@ -97,4 +97,41 @@ class ParseTest {
     val oldEngineFullMatch = grammar.SemanticMatch("aa", 0).matchResult
     assertEquals(-1, oldEngineFullMatch)
   }
+
+  @Test
+  fun testSemanticErrorPicksTheParseThatStayedValidLongest() {
+    // Ambiguous, invalid value: "ab" parses two ways, each full, each with a different bad token.
+    //   - via the first branch:  [a]=valid, [b]=invalid   -> first bad at offset 1
+    //   - via the second branch: [ab]=invalid             -> first bad at offset 0
+    // validate() must report the bad token from the parse that stayed valid the longest (offset 1),
+    // NOT whichever the lazy stream yields first. We prove it's order-invariant by declaring the two
+    // alternatives in both orders and getting the same answer.
+    val aThenBadB = SequenceCombinator(LiteralChoiceTerminal("a"), FlexibleLiteralChoiceTerminal("x"), EOF())
+    val badAB = SequenceCombinator(FlexibleLiteralChoiceTerminal("zz"), EOF())
+
+    for (grammar in listOf(AlternativeCombinator(aThenBadB, badAB), AlternativeCombinator(badAB, aThenBadB))) {
+      val outcome = grammar.validate("ab")
+      assertTrue(outcome is ParseOutcome.SemanticError)
+      val bad = (outcome as ParseOutcome.SemanticError).badToken
+      assertEquals("b", bad.text)
+      assertEquals(1, bad.start)
+    }
+  }
+
+  @Test
+  fun testSemanticErrorTieBreaksOnDeclarationOrder() {
+    // Two enums over the same character shape: "baz" matches the shape of both but equals neither, so
+    // both full parses put their bad token at the SAME offset (0). The tie is broken by stream order
+    // = the earlier-declared alternative, so the reported token's terminal (and thus its quick-fix
+    // choices) is the first one. This pins the behaviour an author can steer by ordering.
+    val foo = SequenceCombinator(FlexibleLiteralChoiceTerminal("foo"), EOF())
+    val bar = SequenceCombinator(FlexibleLiteralChoiceTerminal("bar"), EOF())
+
+    val fooFirst = (AlternativeCombinator(foo, bar).validate("baz") as ParseOutcome.SemanticError).badToken
+    assertEquals("baz", fooFirst.text)
+    assertTrue((fooFirst.terminal as FlexibleLiteralChoiceTerminal).choices.contains("foo"))
+
+    val barFirst = (AlternativeCombinator(bar, foo).validate("baz") as ParseOutcome.SemanticError).badToken
+    assertTrue((barFirst.terminal as FlexibleLiteralChoiceTerminal).choices.contains("bar"))
+  }
 }

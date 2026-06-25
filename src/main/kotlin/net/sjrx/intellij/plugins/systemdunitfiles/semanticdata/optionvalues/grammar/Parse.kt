@@ -79,9 +79,19 @@ sealed interface ParseOutcome {
  * dependency here: [onStep] is invoked once per explored step (the IntelliJ layer passes a callback
  * that throws on cancellation), and [maxSteps] caps total work. If the cap is hit we fail OPEN —
  * return [ParseOutcome.Valid] rather than flag a value we could not fully explore.
+ *
+ * When the value is well-formed but invalid, an ambiguous grammar can yield several full parses that
+ * tokenize the same string differently, each with a different first-invalid token. We do NOT report
+ * whichever the lazy stream happens to yield first (that would depend on incidental combinator
+ * iteration order). Instead we report the invalid token from the parse that stayed valid the LONGEST
+ * — the largest start offset — mirroring how a [ParseOutcome.SyntaxError] reports the furthest offset
+ * reached. That rule is invariant under combinator iteration order. The only remaining tie is two
+ * parses whose first-invalid token starts at the very same offset (e.g. two enums over the same
+ * character shape); there the earlier one in stream order wins, i.e. the earlier-declared
+ * alternative, so a grammar author can still steer it by ordering.
  */
 fun Combinator.validate(value: String, maxSteps: Int = 1_000_000, onStep: () -> Unit = {}): ParseOutcome {
-  var firstBad: ParsedToken? = null
+  var deepestBad: ParsedToken? = null
   var furthest = 0
   var expected = emptySet<Combinator>()
   var steps = 0
@@ -93,8 +103,11 @@ fun Combinator.validate(value: String, maxSteps: Int = 1_000_000, onStep: () -> 
       is Parse -> {
         if (step.end == value.length) {
           val bad = step.tokens.firstOrNull { !it.valid }
-          if (bad == null) return ParseOutcome.Valid // first fully-valid full parse wins; short-circuit
-          if (firstBad == null) firstBad = bad
+          if (bad == null) return ParseOutcome.Valid // any fully-valid full parse wins; short-circuit
+          // Keep the bad token from the parse that stayed valid the longest; ties keep the first
+          // (earlier-declared alternative). See the function doc for why this is order-invariant.
+          val current = deepestBad
+          if (current == null || bad.start > current.start) deepestBad = bad
         }
         if (step.end > furthest) { furthest = step.end; expected = emptySet() }
       }
@@ -105,5 +118,5 @@ fun Combinator.validate(value: String, maxSteps: Int = 1_000_000, onStep: () -> 
     }
   }
 
-  return firstBad?.let { ParseOutcome.SemanticError(it) } ?: ParseOutcome.SyntaxError(furthest, expected)
+  return deepestBad?.let { ParseOutcome.SemanticError(it) } ?: ParseOutcome.SyntaxError(furthest, expected)
 }
