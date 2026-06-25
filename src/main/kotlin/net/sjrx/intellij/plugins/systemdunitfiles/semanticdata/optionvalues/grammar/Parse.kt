@@ -86,9 +86,11 @@ sealed interface ParseOutcome {
  * iteration order). Instead we report the invalid token from the parse that stayed valid the LONGEST
  * — the largest start offset — mirroring how a [ParseOutcome.SyntaxError] reports the furthest offset
  * reached. That rule is invariant under combinator iteration order. The only remaining tie is two
- * parses whose first-invalid token starts at the very same offset (e.g. two enums over the same
- * character shape); there the earlier one in stream order wins, i.e. the earlier-declared
- * alternative, so a grammar author can still steer it by ordering.
+ * parses whose first-invalid token starts at the very same offset; there the earlier one in stream
+ * order wins. For a tie produced by an [AlternativeCombinator] (e.g. two enums over the same
+ * character shape) that is the earlier-declared branch, so an author can steer it by ordering; ties
+ * from other combinators follow that combinator's own order ([LiteralChoiceTerminal] longest-first,
+ * the repetition combinators shorter-count-first).
  */
 fun Combinator.validate(value: String, maxSteps: Int = 1_000_000, onStep: () -> Unit = {}): ParseOutcome {
   var deepestBad: ParsedToken? = null
@@ -104,8 +106,8 @@ fun Combinator.validate(value: String, maxSteps: Int = 1_000_000, onStep: () -> 
         if (step.end == value.length) {
           val bad = step.tokens.firstOrNull { !it.valid }
           if (bad == null) return ParseOutcome.Valid // any fully-valid full parse wins; short-circuit
-          // Keep the bad token from the parse that stayed valid the longest; ties keep the first
-          // (earlier-declared alternative). See the function doc for why this is order-invariant.
+          // Keep the bad token from the parse that stayed valid the longest; an exact tie keeps the
+          // first in stream order. See the function doc for why this is order-invariant.
           val current = deepestBad
           if (current == null || bad.start > current.start) deepestBad = bad
         }
