@@ -98,6 +98,15 @@ class ConfigParseAddressFamiliesOptionValue : SimpleGrammarOptionValues(
             "AF_WANPIPE",
             "AF_X25",
             "AF_XDP"
+        ).deprecating(
+            // Still resolved by af_from_name (the libc macro exists) but the kernel removed the
+            // protocol, so configuring them has no effect. Reasons per address_families(7).
+            mapOf(
+                "AF_DECnet" to "AF_DECnet is obsolete: DECnet support was removed from the Linux kernel in 6.1.",
+                "AF_IRDA" to "AF_IRDA is obsolete: IrDA support was removed from the Linux kernel in 4.17.",
+                "AF_ECONET" to "AF_ECONET is obsolete: Acorn Econet support was removed from the Linux kernel in 3.5.",
+                "AF_WANPIPE" to "AF_WANPIPE is obsolete: WANPIPE support was removed from the Linux kernel in 2.6.21.",
+            )
         )
     }
 }
