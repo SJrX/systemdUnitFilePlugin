@@ -32,4 +32,11 @@ class NextTokenChoicesTest {
     // Context awareness: after a family and a separator, another family is expected.
     assertTrue(addressFamilies.nextTokenChoices("AF_INET ").contains("AF_INET6"))
   }
+
+  @Test
+  fun testNonEnumerableNextTokenOffersNothing() {
+    // Numbers/regexes/whitespace/EOF aren't enumerable, so there is nothing concrete to suggest.
+    val portGrammar = SequenceCombinator(IntegerTerminal(0, 65536), EOF())
+    assertTrue(portGrammar.nextTokenChoices("").isEmpty())
+  }
 }

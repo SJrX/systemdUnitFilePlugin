@@ -39,4 +39,14 @@ class GrammarValueCompletionTest : AbstractUnitFileTest() {
     val results = basicCompletionResultStrings
     assertContainsElements(results, "AF_INET", "AF_INET6")
   }
+
+  @Test
+  fun testFlagOffOffersNoGrammarCompletions() {
+    // Gating guarantee: with the experimental engine OFF (the default), grammar completion must not
+    // fire. A GrammarOptionValue has no legacy autocomplete options, so the same partial token that
+    // the flag-on path completes to AF_INET/AF_INET6 yields nothing grammar-derived here.
+    setupFileInEditor("file.service", "[Service]\nRestrictAddressFamilies=AF_IN${COMPLETION_POSITION}")
+
+    assertDoesntContain(basicCompletionResultStrings, "AF_INET", "AF_INET6")
+  }
 }
