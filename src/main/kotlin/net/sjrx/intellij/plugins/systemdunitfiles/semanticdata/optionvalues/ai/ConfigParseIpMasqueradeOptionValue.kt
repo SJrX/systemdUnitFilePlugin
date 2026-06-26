@@ -22,6 +22,17 @@ class ConfigParseIpMasqueradeOptionValue : SimpleGrammarOptionValues(
             "1", "yes", "y", "true", "t", "on",
             // Deprecated boolean false values (map to no)
             "0", "n", "false", "f", "off"
+        ).deprecating(
+            // systemd.network(5): the boolean forms "are now deprecated. Please use one of the
+            // values above" (ipv4/ipv6/both/no). Still accepted; the truthy forms map to ipv4.
+            buildMap {
+                for (t in listOf("1", "yes", "y", "true", "t", "on")) {
+                    put(t, "Boolean values for IPMasquerade= are deprecated; use \"ipv4\" (or \"ipv6\"/\"both\") instead.")
+                }
+                for (f in listOf("0", "n", "false", "f", "off")) {
+                    put(f, "Boolean values for IPMasquerade= are deprecated; use \"no\" instead.")
+                }
+            }
         ),
         EOF()
     )
