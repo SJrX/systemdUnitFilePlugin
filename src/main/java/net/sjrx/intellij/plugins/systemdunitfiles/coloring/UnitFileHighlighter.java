@@ -29,6 +29,14 @@ public class UnitFileHighlighter extends SyntaxHighlighterBase {
   private static final TextAttributesKey BAD_CHARACTER
     = createTextAttributesKey("UNIT_FILE_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER);
 
+  // Grammar-driven value coloring (applied by an annotator, not the lexer) — one key per Role.
+  public static final TextAttributesKey GRAMMAR_ENUM
+    = createTextAttributesKey("UNIT_FILE_GRAMMAR_ENUM", DefaultLanguageHighlighterColors.CONSTANT);
+  public static final TextAttributesKey GRAMMAR_LITERAL
+    = createTextAttributesKey("UNIT_FILE_GRAMMAR_LITERAL", DefaultLanguageHighlighterColors.NUMBER);
+  public static final TextAttributesKey GRAMMAR_OPERATOR
+    = createTextAttributesKey("UNIT_FILE_GRAMMAR_OPERATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN);
+
 
 
   private static final TextAttributesKey[] SECTION_KEYS = new TextAttributesKey[]{SECTION};
