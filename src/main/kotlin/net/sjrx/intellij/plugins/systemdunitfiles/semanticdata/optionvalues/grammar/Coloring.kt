@@ -43,11 +43,6 @@ private fun Array<out String>.allPunctuation(): Boolean =
   isNotEmpty() && all { choice -> choice.isNotEmpty() && choice.none(Char::isLetterOrDigit) }
 
 /**
- * The coloured regions for [value]. Explicit [Labeled] regions win; any token not inside a labeled
- * region gets its terminal's [defaultRole]. Returns empty if no full parse exists — we don't colour
- * values that don't match the grammar.
- */
-/**
  * The explicit [Labeled] spans in [value] (e.g. a whole IP address), from the first fully-valid
  * parse — i.e. structure the grammar marked, without the per-token coloring defaults. Used by
  * features that act on semantic spans, such as IPv6 canonicalization.
@@ -58,6 +53,11 @@ fun Combinator.labeledRegions(value: String): List<Region> {
   return parse.regions
 }
 
+/**
+ * The coloured regions for [value]. Explicit [Labeled] regions win; any token not inside a labeled
+ * region gets its terminal's [defaultRole]. Returns empty if no full parse exists — we don't colour
+ * values that don't match the grammar.
+ */
 fun Combinator.colorize(value: String): List<Region> {
   val parse = parse(value, 0).filterIsInstance<Parse>().firstOrNull { it.end == value.length } ?: return emptyList()
 
