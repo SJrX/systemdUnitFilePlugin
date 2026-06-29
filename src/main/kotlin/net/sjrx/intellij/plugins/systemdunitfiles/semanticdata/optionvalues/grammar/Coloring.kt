@@ -21,9 +21,6 @@ enum class Role {
 
   /** A punctuation separator/operator (e.g. `:`, `+`, `=`, `~`, `/`). */
   OPERATOR,
-
-  /** A free-form identifier (e.g. a regex-matched name). */
-  IDENTIFIER,
 }
 
 /** A coloured span `[start, end)` and its [role]. */
@@ -38,8 +35,7 @@ fun defaultRole(terminal: TerminalCombinator): Role? = when (terminal) {
   is LiteralChoiceTerminal -> if (terminal.choices.allPunctuation()) Role.OPERATOR else Role.ENUM
   is FlexibleLiteralChoiceTerminal -> if (terminal.choices.allPunctuation()) Role.OPERATOR else Role.ENUM
   // RegexTerminal (free-form names/strings: Description=, interface names, ...) and whitespace stay
-  // uncoloured by default — they keep the editor's normal value colour. The IDENTIFIER role is still
-  // available for grammars that opt in explicitly via Labeled (e.g. a single-token field like User=).
+  // uncoloured by default — they keep the editor's normal value colour.
   else -> null
 }
 

@@ -50,7 +50,6 @@ class GrammarValueColorAnnotator : Annotator {
       Role.ENUM -> UnitFileHighlighter.GRAMMAR_ENUM
       Role.LITERAL -> UnitFileHighlighter.GRAMMAR_LITERAL
       Role.OPERATOR -> UnitFileHighlighter.GRAMMAR_OPERATOR
-      Role.IDENTIFIER -> UnitFileHighlighter.GRAMMAR_IDENTIFIER
     }
   }
 }

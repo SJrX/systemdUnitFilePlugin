@@ -36,8 +36,6 @@ public class UnitFileHighlighter extends SyntaxHighlighterBase {
     = createTextAttributesKey("UNIT_FILE_GRAMMAR_LITERAL", DefaultLanguageHighlighterColors.NUMBER);
   public static final TextAttributesKey GRAMMAR_OPERATOR
     = createTextAttributesKey("UNIT_FILE_GRAMMAR_OPERATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN);
-  public static final TextAttributesKey GRAMMAR_IDENTIFIER
-    = createTextAttributesKey("UNIT_FILE_GRAMMAR_IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER);
 
 
 
