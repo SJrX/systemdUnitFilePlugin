@@ -48,6 +48,29 @@ class ColoringTest {
   }
 
   @Test
+  fun testLabeledCarriesSemanticTag() {
+    // The optional tag rides on the Region so a feature can recognise a span by what the grammar
+    // declared it to be, instead of re-sniffing the text. Untagged Labeled spans stay tag == null.
+    val tagged = Labeled(Role.LITERAL, LiteralChoiceTerminal("ab"), SemanticTag.IPV6)
+    assertEquals(listOf(Region(0, 2, Role.LITERAL, SemanticTag.IPV6)), tagged.labeledRegions("ab"))
+    assertEquals(listOf(Region(0, 2, Role.LITERAL, null)), Labeled(Role.LITERAL, LiteralChoiceTerminal("ab")).labeledRegions("ab"))
+  }
+
+  @Test
+  fun testIpCombinatorsDeclareTheirIdentityStructurally() {
+    // IPV6_ADDR declares itself IPv6; IPV4_ADDR is untagged. The IPv6 inspection keys off this tag,
+    // so it never has to guess whether a literal span "looks like" an IPv6 address.
+    assertEquals(
+      listOf(Region(0, 3, Role.LITERAL, SemanticTag.IPV6)),
+      SequenceCombinator(IPV6_ADDR, EOF()).labeledRegions("::1"),
+    )
+    assertEquals(
+      listOf(Region(0, 7, Role.LITERAL, null)),
+      SequenceCombinator(IPV4_ADDR, EOF()).labeledRegions("1.2.3.4"),
+    )
+  }
+
+  @Test
   fun testLabeledIsTransparentToValidation() {
     // Wrapping changes only colour: validation behaves exactly as the bare grammar.
     val bare = SequenceCombinator(IPV4_ADDR, EOF())

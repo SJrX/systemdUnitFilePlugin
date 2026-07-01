@@ -23,8 +23,12 @@ enum class Role {
   OPERATOR,
 }
 
-/** A coloured span `[start, end)` and its [role]. */
-data class Region(val start: Int, val end: Int, val role: Role)
+/**
+ * A coloured span `[start, end)` with its [role] and an optional [tag]. [tag] is the grammar's
+ * declared identity for the span (e.g. [SemanticTag.IPV6]); features that act on spans by meaning
+ * rather than colour filter on it. `null` for plain per-token coloring and untagged [Labeled] spans.
+ */
+data class Region(val start: Int, val end: Int, val role: Role, val tag: SemanticTag? = null)
 
 /**
  * The role a terminal should get when it is NOT wrapped in [Labeled]. `null` means "do not colour"
@@ -41,6 +45,17 @@ fun defaultRole(terminal: TerminalCombinator): Role? = when (terminal) {
 
 private fun Array<out String>.allPunctuation(): Boolean =
   isNotEmpty() && all { choice -> choice.isNotEmpty() && choice.none(Char::isLetterOrDigit) }
+
+/**
+ * The explicit [Labeled] spans in [value] (e.g. a whole IP address), from the first fully-valid
+ * parse — i.e. structure the grammar marked, without the per-token coloring defaults. Used by
+ * features that act on semantic spans, such as IPv6 canonicalization.
+ */
+fun Combinator.labeledRegions(value: String): List<Region> {
+  val parse = parse(value, 0).filterIsInstance<Parse>()
+    .firstOrNull { it.end == value.length && it.tokens.all { token -> token.valid } } ?: return emptyList()
+  return parse.regions
+}
 
 /**
  * The coloured regions for [value]. Explicit [Labeled] regions win; any token not inside a labeled
