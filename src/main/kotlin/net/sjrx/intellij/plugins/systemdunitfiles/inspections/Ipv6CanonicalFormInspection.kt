@@ -16,13 +16,16 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepos
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.fileClass
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.GrammarOptionValue
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.canonicalizeIpv6
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SemanticTag
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.labeledRegions
 import net.sjrx.intellij.plugins.systemdunitfiles.settings.ExperimentalSettings
 
 /**
  * Suggests rewriting an IPv6 address to its RFC 5952 canonical form (#363), behind the experimental
- * flag. It walks the grammar's labeled value spans (e.g. a whole IP address) and offers a quick-fix
- * for any that aren't already canonical.
+ * flag. It walks the grammar's labeled value spans and, for those the grammar tagged
+ * [SemanticTag.IPV6], offers a quick-fix when the address isn't already canonical. Keying off the tag
+ * (rather than re-sniffing every literal span) means it only ever touches spans the grammar declared
+ * to be IPv6 addresses.
  */
 class Ipv6CanonicalFormInspection : LocalInspectionTool() {
 
@@ -42,8 +45,9 @@ class Ipv6CanonicalFormInspection : LocalInspectionTool() {
       if (validator !is GrammarOptionValue) return
 
       for (region in validator.combinator.labeledRegions(value)) {
+        if (region.tag != SemanticTag.IPV6) continue // act only on spans the grammar declared IPv6
         val text = value.substring(region.start, region.end)
-        val canonical = canonicalizeIpv6(text) ?: continue // null = not a (pure) IPv6 address
+        val canonical = canonicalizeIpv6(text) ?: continue // e.g. an IPv4-tail form, out of scope
         if (canonical == text) continue
         holder.registerProblem(
           property.valueNode.psi,

@@ -23,8 +23,12 @@ enum class Role {
   OPERATOR,
 }
 
-/** A coloured span `[start, end)` and its [role]. */
-data class Region(val start: Int, val end: Int, val role: Role)
+/**
+ * A coloured span `[start, end)` with its [role] and an optional [tag]. [tag] is the grammar's
+ * declared identity for the span (e.g. [SemanticTag.IPV6]); features that act on spans by meaning
+ * rather than colour filter on it. `null` for plain per-token coloring and untagged [Labeled] spans.
+ */
+data class Region(val start: Int, val end: Int, val role: Role, val tag: SemanticTag? = null)
 
 /**
  * The role a terminal should get when it is NOT wrapped in [Labeled]. `null` means "do not colour"
