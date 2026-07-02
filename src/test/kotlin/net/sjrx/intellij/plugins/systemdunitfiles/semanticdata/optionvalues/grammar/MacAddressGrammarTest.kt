@@ -75,4 +75,12 @@ class MacAddressGrammarTest {
     assertEquals(true, macs.accepts("00:11:22:33:44:55 aa:bb:cc:dd:ee:ff"))
     assertEquals(false, macs.accepts("00:11:22:33:44:55 192.168.1.1")) // list of MACs, no IP literals
   }
+
+  @Test
+  fun testAddressColorsAsOneLiteralSpan() {
+    // Both combinators are wrapped in Labeled(Role.LITERAL): the whole address is a single literal
+    // span (not coloured per octet / with the separators as operators).
+    assertEquals(listOf(Region(0, 17, Role.LITERAL)), mac.colorize("00:11:22:33:44:55"))
+    assertEquals(listOf(Region(0, 17, Role.LITERAL)), hwAddr.colorize("00-11-22-33-44-55"))
+  }
 }
