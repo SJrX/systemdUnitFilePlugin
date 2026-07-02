@@ -78,9 +78,17 @@ class MacAddressGrammarTest {
 
   @Test
   fun testAddressColorsAsOneLiteralSpan() {
-    // Both combinators are wrapped in Labeled(Role.LITERAL): the whole address is a single literal
-    // span (not coloured per octet / with the separators as operators).
+    // Both combinators wrap the raw hex forms in Labeled(Role.LITERAL): the whole address is a single
+    // literal span (not coloured per octet / with the separators as operators).
     assertEquals(listOf(Region(0, 17, Role.LITERAL)), mac.colorize("00:11:22:33:44:55"))
     assertEquals(listOf(Region(0, 17, Role.LITERAL)), hwAddr.colorize("00-11-22-33-44-55"))
+  }
+
+  @Test
+  fun testIpLiteralInHardwareAddressColorsAsOneRegion() {
+    // The raw-hex wrapper is not layered over IPV4_ADDR / IPV6_ADDR (they are already Labeled), so an
+    // IP literal yields exactly one region — its own — carrying the IPv6 tag, not a doubled span.
+    assertEquals(listOf(Region(0, 11, Role.LITERAL, SemanticTag.IPV6)), hwAddr.colorize("2001:db8::1"))
+    assertEquals(listOf(Region(0, 11, Role.LITERAL)), hwAddr.colorize("192.168.1.1"))
   }
 }

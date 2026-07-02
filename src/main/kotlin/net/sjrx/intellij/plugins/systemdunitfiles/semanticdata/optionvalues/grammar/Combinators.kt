@@ -128,18 +128,26 @@ val MAC_ADDRESS = Labeled(Role.LITERAL, AlternativeCombinator(
   hwAddrGroups(HW_ADDR_WORD, DOT, 3),
 ))
 
-// A hardware address as accepted by parse_hw_addr_full with expected_len == 0 (Match=, Link=,
-// Neighbor.LinkLayerAddress=). Besides 6-byte MACs this also accepts 4-, 16- and 20-byte (Infiniband)
-// hardware addresses, and — because the parser first tries in_addr_from_string — plain IPv4 and IPv6
-// address literals. colon/hyphen use 1-byte fields (4/6/16/20 groups); dot uses 2-byte fields
-// (2/3/8/10 groups). Longest group counts come first so the classic (first-full-match) matcher never
-// stops on a shorter prefix.
-val HARDWARE_ADDRESS = Labeled(Role.LITERAL, AlternativeCombinator(
-  IPV6_ADDR,
-  IPV4_ADDR,
+// The raw hex forms of a hardware address (colon/hyphen use 1-byte fields → 4/6/16/20 groups; dot uses
+// 2-byte fields → 2/3/8/10 groups). Longest group counts come first so the classic (first-full-match)
+// matcher never stops on a shorter prefix. Wrapped once so the whole address reads as a single literal
+// span rather than per-field.
+private val RAW_HARDWARE_ADDRESS = Labeled(Role.LITERAL, AlternativeCombinator(
   hwAddrGroups(HW_ADDR_BYTE, COLON, 20), hwAddrGroups(HW_ADDR_BYTE, COLON, 16), hwAddrGroups(HW_ADDR_BYTE, COLON, 6), hwAddrGroups(HW_ADDR_BYTE, COLON, 4),
   hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 20), hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 16), hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 6), hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 4),
   hwAddrGroups(HW_ADDR_WORD, DOT, 10), hwAddrGroups(HW_ADDR_WORD, DOT, 8), hwAddrGroups(HW_ADDR_WORD, DOT, 3), hwAddrGroups(HW_ADDR_WORD, DOT, 2),
 ))
+
+// A hardware address as accepted by parse_hw_addr_full with expected_len == 0 (Match=, Link=,
+// Neighbor.LinkLayerAddress=). Besides 6-byte MACs it accepts 4-, 16- and 20-byte (Infiniband)
+// hardware addresses, and — because the parser first tries in_addr_from_string — plain IPv4 and IPv6
+// address literals. IPV4_ADDR / IPV6_ADDR are already Labeled (IPv6 also carries SemanticTag.IPV6), so
+// they sit alongside the wrapped raw forms rather than inside a second wrapper — a whole-alternation
+// Labeled would emit a redundant second literal region over an IP literal's span.
+val HARDWARE_ADDRESS = AlternativeCombinator(
+  IPV6_ADDR,
+  IPV4_ADDR,
+  RAW_HARDWARE_ADDRESS,
+)
 
 
