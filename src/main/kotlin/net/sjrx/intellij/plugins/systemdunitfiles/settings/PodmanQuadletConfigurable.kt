@@ -11,6 +11,7 @@ class PodmanQuadletConfigurable(private val project: Project) : Configurable {
 
   private var enabledCheckbox: JBCheckBox? = null
   private var grammarEngineCheckbox: JBCheckBox? = null
+  private var underlineGrammarKeysCheckbox: JBCheckBox? = null
 
   override fun getDisplayName(): String = "systemd Unit Files"
 
@@ -22,10 +23,15 @@ class PodmanQuadletConfigurable(private val project: Project) : Configurable {
       "Use the new grammar engine for value validation (experimental)",
       experimental.state.useGrammarParseEngine,
     )
+    underlineGrammarKeysCheckbox = JBCheckBox(
+      "Underline keys backed by the new grammar engine (experimental)",
+      experimental.state.underlineGrammarEngineKeys,
+    )
 
     return FormBuilder.createFormBuilder()
       .addComponent(enabledCheckbox!!)
       .addComponent(grammarEngineCheckbox!!)
+      .addComponent(underlineGrammarKeysCheckbox!!)
       .addComponentFillVertically(JPanel(), 0)
       .panel
   }
@@ -34,7 +40,8 @@ class PodmanQuadletConfigurable(private val project: Project) : Configurable {
     val settings = PodmanQuadletSettings.getInstance(project)
     val experimental = ExperimentalSettings.getInstance(project)
     return enabledCheckbox?.isSelected != settings.state.enabled ||
-      grammarEngineCheckbox?.isSelected != experimental.state.useGrammarParseEngine
+      grammarEngineCheckbox?.isSelected != experimental.state.useGrammarParseEngine ||
+      underlineGrammarKeysCheckbox?.isSelected != experimental.state.underlineGrammarEngineKeys
   }
 
   override fun apply() {
@@ -45,12 +52,16 @@ class PodmanQuadletConfigurable(private val project: Project) : Configurable {
     }
     settings.state.enabled = newEnabled
 
-    ExperimentalSettings.getInstance(project).state.useGrammarParseEngine = grammarEngineCheckbox?.isSelected ?: false
+    val experimental = ExperimentalSettings.getInstance(project)
+    experimental.state.useGrammarParseEngine = grammarEngineCheckbox?.isSelected ?: false
+    experimental.state.underlineGrammarEngineKeys = underlineGrammarKeysCheckbox?.isSelected ?: false
   }
 
   override fun reset() {
     val settings = PodmanQuadletSettings.getInstance(project)
+    val experimental = ExperimentalSettings.getInstance(project)
     enabledCheckbox?.isSelected = settings.state.enabled
-    grammarEngineCheckbox?.isSelected = ExperimentalSettings.getInstance(project).state.useGrammarParseEngine
+    grammarEngineCheckbox?.isSelected = experimental.state.useGrammarParseEngine
+    underlineGrammarKeysCheckbox?.isSelected = experimental.state.underlineGrammarEngineKeys
   }
 }
