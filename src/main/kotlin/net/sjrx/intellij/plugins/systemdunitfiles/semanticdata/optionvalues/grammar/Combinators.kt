@@ -107,3 +107,39 @@ var IPV4_ADDR_PREFIX_LIST = SequenceCombinator(IPV4_ADDR_AND_PREFIX_OR_SPECIAL, 
 var IPV6_ADDR_PREFIX_LIST = SequenceCombinator(IPV6_ADDR_AND_PREFIX_OR_SPECIAL, ZeroOrMore(SequenceCombinator(WhitespaceTerminal(), IPV6_ADDR_AND_PREFIX_OR_SPECIAL)))
 
 
+// ---------------------------------------------------------------------------------------------------
+// Hardware / MAC addresses (systemd src/basic/ether-addr-util.c). systemd's parse_hw_addr_full accepts
+// three separator styles for the raw hex form:
+//   colon / hyphen — 1-byte fields (1-2 hex digits each):   00:11:22:33:44:55  /  00-11-22-33-44-55
+//   dot            — 2-byte fields (1-4 hex digits each):    0011.2233.4455
+val HYPHEN = LiteralChoiceTerminal("-")
+private val HW_ADDR_BYTE = RegexTerminal("[0-9a-fA-F]{1,2}", "[0-9a-fA-F]{1,2}")   // one 1-byte field
+private val HW_ADDR_WORD = RegexTerminal("[0-9a-fA-F]{1,4}", "[0-9a-fA-F]{1,4}")   // one 2-byte field
+
+// [count] groups of [group] separated by [sep]:  group (sep group){count-1}.
+private fun hwAddrGroups(group: Combinator, sep: Combinator, count: Int): Combinator =
+  SequenceCombinator(group, Repeat(SequenceCombinator(sep, group), count - 1, count - 1))
+
+// A 6-byte Ethernet MAC address, i.e. systemd parse_ether_addr (expected_len == ETH_ALEN). Used by
+// SR-IOV=, BridgeFDB=, DHCPServerStaticLease=, MACsec*=, NetDev/Peer= and MACVLAN/MACVTAP source.
+val MAC_ADDRESS = Labeled(Role.LITERAL, AlternativeCombinator(
+  hwAddrGroups(HW_ADDR_BYTE, COLON, 6),
+  hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 6),
+  hwAddrGroups(HW_ADDR_WORD, DOT, 3),
+))
+
+// A hardware address as accepted by parse_hw_addr_full with expected_len == 0 (Match=, Link=,
+// Neighbor.LinkLayerAddress=). Besides 6-byte MACs this also accepts 4-, 16- and 20-byte (Infiniband)
+// hardware addresses, and — because the parser first tries in_addr_from_string — plain IPv4 and IPv6
+// address literals. colon/hyphen use 1-byte fields (4/6/16/20 groups); dot uses 2-byte fields
+// (2/3/8/10 groups). Longest group counts come first so the classic (first-full-match) matcher never
+// stops on a shorter prefix.
+val HARDWARE_ADDRESS = Labeled(Role.LITERAL, AlternativeCombinator(
+  IPV6_ADDR,
+  IPV4_ADDR,
+  hwAddrGroups(HW_ADDR_BYTE, COLON, 20), hwAddrGroups(HW_ADDR_BYTE, COLON, 16), hwAddrGroups(HW_ADDR_BYTE, COLON, 6), hwAddrGroups(HW_ADDR_BYTE, COLON, 4),
+  hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 20), hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 16), hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 6), hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 4),
+  hwAddrGroups(HW_ADDR_WORD, DOT, 10), hwAddrGroups(HW_ADDR_WORD, DOT, 8), hwAddrGroups(HW_ADDR_WORD, DOT, 3), hwAddrGroups(HW_ADDR_WORD, DOT, 2),
+))
+
+

@@ -273,6 +273,17 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_fdname", "0") to ConfigParseFdnameOptionValue() as OptionValueInformation,
     Validator("config_parse_udev_property_name", "0") to ConfigParseUdevPropertyNameOptionValue() as OptionValueInformation,
 
+    // MAC / hardware address directives (#501).
+    Validator("config_parse_hw_addrs", "0") to ConfigParseHwAddrsOptionValue() as OptionValueInformation,
+    Validator("config_parse_hw_addr", "0") to ConfigParseHwAddrOptionValue() as OptionValueInformation,
+    Validator("config_parse_neighbor_section", "NEIGHBOR_LINK_LAYER_ADDRESS") to ConfigParseNeighborLinkLayerAddressOptionValue() as OptionValueInformation,
+    Validator("config_parse_sr_iov_mac", "0") to ConfigParseSrIovMacOptionValue() as OptionValueInformation,
+    Validator("config_parse_fdb_hwaddr", "0") to ConfigParseFdbHwaddrOptionValue() as OptionValueInformation,
+    Validator("config_parse_dhcp_static_lease_hwaddr", "0") to ConfigParseDhcpStaticLeaseHwaddrOptionValue() as OptionValueInformation,
+    Validator("config_parse_netdev_hw_addr", "ETH_ALEN") to ConfigParseNetdevHwAddrOptionValue() as OptionValueInformation,
+    Validator("config_parse_macsec_hw_address", "0") to ConfigParseMacsecHwAddressOptionValue() as OptionValueInformation,
+    Validator("config_parse_ether_addrs", "0") to ConfigParseEtherAddrsOptionValue() as OptionValueInformation,
+
   )
 
   return allValidators
