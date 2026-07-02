@@ -24,6 +24,14 @@ class ExperimentalSettings : PersistentStateComponent<ExperimentalSettings.State
      * validation instead of the original SyntacticMatch/SemanticMatch path.
      */
     var useGrammarParseEngine: Boolean = false
+
+    /**
+     * Underline the KEY of every option whose value is backed by a grammar validator
+     * ([GrammarOptionValue]), a debug aid for seeing which keys the new engine covers. Independent of
+     * [useGrammarParseEngine]: the grammar validators exist in the registry regardless of which
+     * validation path is active, so this can be toggled on its own.
+     */
+    var underlineGrammarEngineKeys: Boolean = false
   }
 
   override fun getState(): State = myState
