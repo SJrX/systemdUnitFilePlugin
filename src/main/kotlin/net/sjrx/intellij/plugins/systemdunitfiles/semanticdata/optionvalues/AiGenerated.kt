@@ -219,9 +219,9 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_trigger_unit", "0") to ConfigParseTriggerUnitOptionValue() as OptionValueInformation,
     Validator("config_parse_tunnel_mode", "0") to ConfigParseTunnelModeOptionValue() as OptionValueInformation,
     Validator("config_parse_txqueuelen", "0") to ConfigParseTxqueuelenOptionValue() as OptionValueInformation,
+    // ConditionACPower= and ConditionFirstBoot= really are booleans; CONDITION_CONTROL_GROUP_CONTROLLER
+    // and CONDITION_CPU_FEATURE are not, and are handled by their own grammars below.
     Validator("config_parse_unit_condition_string", "CONDITION_AC_POWER") to ConfigParseUnitConditionStringOptionValue() as OptionValueInformation,
-    Validator("config_parse_unit_condition_string", "CONDITION_CONTROL_GROUP_CONTROLLER") to ConfigParseUnitConditionStringOptionValue() as OptionValueInformation,
-    Validator("config_parse_unit_condition_string", "CONDITION_CPU_FEATURE") to ConfigParseUnitConditionStringOptionValue() as OptionValueInformation,
     Validator("config_parse_unit_condition_string", "CONDITION_FIRST_BOOT") to ConfigParseUnitConditionStringOptionValue() as OptionValueInformation,
     Validator("config_parse_unit_env_file", "0") to ConfigParseUnitEnvFileOptionValue() as OptionValueInformation,
     Validator("config_parse_unit_mounts_for", "0") to ConfigParseUnitMountsForOptionValue() as OptionValueInformation,
@@ -283,6 +283,27 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_netdev_hw_addr", "ETH_ALEN") to ConfigParseNetdevHwAddrOptionValue() as OptionValueInformation,
     Validator("config_parse_macsec_hw_address", "0") to ConfigParseMacsecHwAddressOptionValue() as OptionValueInformation,
     Validator("config_parse_ether_addrs", "0") to ConfigParseEtherAddrsOptionValue() as OptionValueInformation,
+
+    // Condition*=/Assert*= in [Unit] (#509).
+    // Every path-valued condition parses identically, so one wildcard entry covers all twelve ltypes.
+    Validator("config_parse_unit_condition_path", "*") to ConfigParseUnitConditionPathOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_ARCHITECTURE") to ConfigParseUnitConditionArchitectureOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_VIRTUALIZATION") to ConfigParseUnitConditionVirtualizationOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_SECURITY") to ConfigParseUnitConditionSecurityOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_CAPABILITY") to ConfigParseUnitConditionCapabilityOptionValue() as OptionValueInformation,
+    // Both of these were previously mapped onto the boolean condition grammar, which flagged every
+    // legitimate value; ConditionCPUFeature= alone accounted for 110 false positives in a 6.7k-unit corpus.
+    Validator("config_parse_unit_condition_string", "CONDITION_CONTROL_GROUP_CONTROLLER") to ConfigParseUnitConditionControlGroupControllerOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_CPU_FEATURE") to ConfigParseUnitConditionCpuFeatureOptionValue() as OptionValueInformation,
+
+    // Enumerations and address forms that had no validator (#509).
+    Validator("config_parse_netdev_kind", "0") to ConfigParseNetdevKindOptionValue() as OptionValueInformation,
+    Validator("config_parse_set_status", "0") to ConfigParseSetStatusOptionValue() as OptionValueInformation,
+    Validator("config_parse_name_policy", "0") to ConfigParseNamePolicyOptionValue() as OptionValueInformation,
+    Validator("config_parse_wireguard_peer_key", "0") to ConfigParseWireguardPeerKeyOptionValue() as OptionValueInformation,
+    Validator("config_parse_tunnel_local_address", "0") to ConfigParseTunnelLocalAddressOptionValue() as OptionValueInformation,
+    Validator("config_parse_tunnel_remote_address", "0") to ConfigParseTunnelRemoteAddressOptionValue() as OptionValueInformation,
+    Validator("config_parse_address_generation_type", "0") to ConfigParseAddressGenerationTypeOptionValue() as OptionValueInformation,
 
   )
 

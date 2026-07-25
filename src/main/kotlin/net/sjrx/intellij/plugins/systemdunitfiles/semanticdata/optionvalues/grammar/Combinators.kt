@@ -151,3 +151,63 @@ val HARDWARE_ADDRESS = AlternativeCombinator(
 )
 
 
+// ---------------------------------------------------------------------------------------------------
+// Condition*= / Assert*= (systemd src/core/load-fragment.c). Both parsers strip an optional leading
+// trigger marker `|` and then an optional negation marker `!`, in that order, before handing what is
+// left to the per-condition check. Only that order is recognised: in `!|foo` the `!` negates and the
+// parameter is literally `| foo`, which no condition accepts.
+val PIPE = LiteralChoiceTerminal("|")
+val BANG = LiteralChoiceTerminal("!")
+
+// Both helpers below spell the marker combinations out as alternatives rather than wrapping each
+// marker in a ZeroOrOne. ZeroOrOne probes its inner combinator a second time to report how far input
+// could reach, so `!!/some/path` would report a longest-match one character past the `!` the grammar
+// actually consumed, and the classic engine derives its error TextRange from that number — landing it
+// past the end of the value. Alternatives keep the reported offset equal to what was consumed.
+
+/**
+ * A `Condition<Path>=`/`Assert<Path>=` value.
+ *
+ * config_parse_unit_condition_path advances with a bare `rvalue++` per marker, so no whitespace may
+ * follow either one.
+ */
+fun conditionPath(parameter: Combinator): Combinator = SequenceCombinator(
+  AlternativeCombinator(
+    SequenceCombinator(LiteralChoiceTerminal("|!"), parameter),
+    SequenceCombinator(PIPE, parameter),
+    SequenceCombinator(BANG, parameter),
+    parameter,
+  ),
+  EOF()
+)
+
+/**
+ * A `Condition<Name>=`/`Assert<Name>=` value.
+ *
+ * config_parse_unit_condition_string advances with `rvalue += 1 + strspn(rvalue + 1, WHITESPACE)`, so
+ * whitespace after a marker is skipped.
+ */
+fun conditionString(parameter: Combinator): Combinator {
+  val optionalWhitespace = ZeroOrOne(WhitespaceTerminal())
+  return SequenceCombinator(
+    AlternativeCombinator(
+      SequenceCombinator(PIPE, optionalWhitespace, BANG, optionalWhitespace, parameter),
+      SequenceCombinator(PIPE, optionalWhitespace, parameter),
+      SequenceCombinator(BANG, optionalWhitespace, parameter),
+      parameter,
+    ),
+    EOF()
+  )
+}
+
+/**
+ * The parameter of a path-valued condition: systemd resolves specifiers with unit_path_printf() and
+ * then requires the result to be absolute (path_simplify_and_warn with PATH_CHECK_ABSOLUTE). We can't
+ * expand specifiers, so a value may legitimately begin with one (`%t/foo`, `%h/.cache`) instead of a
+ * slash. Spaces are only allowed when backslash-escaped, matching the rest of the plugin's paths.
+ */
+val CONDITION_PATH = RegexTerminal(
+  """\S(?:[^\s\\]|\\[\s\S])*""",
+  """(?:/|%\S)(?:[^\s\\]|\\[\s\S])*"""
+)
+
