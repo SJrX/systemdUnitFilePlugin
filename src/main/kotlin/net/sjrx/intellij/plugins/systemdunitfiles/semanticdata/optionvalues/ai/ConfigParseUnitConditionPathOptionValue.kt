@@ -1,7 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.CONDITION_PATH
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ABSOLUTE_PATH_WITH_SPECIFIERS
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.conditionPath
 
 /**
@@ -21,5 +21,5 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 class ConfigParseUnitConditionPathOptionValue : SimpleGrammarOptionValues(
     "config_parse_unit_condition_path",
-    conditionPath(CONDITION_PATH)
+    conditionPath(ABSOLUTE_PATH_WITH_SPECIFIERS)
 )

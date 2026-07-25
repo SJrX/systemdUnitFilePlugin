@@ -201,13 +201,78 @@ fun conditionString(parameter: Combinator): Combinator {
 }
 
 /**
- * The parameter of a path-valued condition: systemd resolves specifiers with unit_path_printf() and
- * then requires the result to be absolute (path_simplify_and_warn with PATH_CHECK_ABSOLUTE). We can't
- * expand specifiers, so a value may legitimately begin with one (`%t/foo`, `%h/.cache`) instead of a
- * slash. Spaces are only allowed when backslash-escaped, matching the rest of the plugin's paths.
+ * A path systemd requires to be absolute after specifier expansion — i.e. anything it feeds through
+ * unit_path_printf() and then path_simplify_and_warn(..., PATH_CHECK_ABSOLUTE). We can't expand
+ * specifiers, so a value may legitimately begin with one (`%t/foo`, `%h/.cache`) instead of a slash.
+ * Spaces are only allowed when backslash-escaped, matching the rest of the plugin's paths.
  */
-val CONDITION_PATH = RegexTerminal(
+val ABSOLUTE_PATH_WITH_SPECIFIERS = RegexTerminal(
   """\S(?:[^\s\\]|\\[\s\S])*""",
   """(?:/|%\S)(?:[^\s\\]|\\[\s\S])*"""
 )
+
+
+// ---------------------------------------------------------------------------------------------------
+// IP addresses and prefixes, as parsed by in_addr_from_string_auto / in_addr_prefix_from_string_auto
+// (systemd src/basic/in-addr-util.c). IPv6 is tried first throughout: the keyword and IPv4 branches
+// can consume a leading fragment of an IPv6 literal, and the classic matcher never backtracks into a
+// sibling alternative once one of them has matched.
+
+/** A bare address literal of either family — in_addr_from_string_auto. */
+val IP_ADDR = AlternativeCombinator(IPV6_ADDR, IPV4_ADDR)
+
+// in_addr_prefix_from_string_auto accepts the full prefix-length range the family allows, and treats
+// the length as optional (defaulting to the full width). This is deliberately wider than
+// IPV4_ADDR_AND_OPTIONAL_PREFIX_LENGTH / IPV6_ADDR_AND_OPTIONAL_PREFIX_LENGTH above, which model the
+// narrower ranges systemd enforces for InAddrPrefixes-style settings.
+val IPV4_ADDR_AND_ANY_PREFIX = SequenceCombinator(IPV4_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, IntegerTerminal(0, 33))))
+val IPV6_ADDR_AND_ANY_PREFIX = SequenceCombinator(IPV6_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, IntegerTerminal(0, 129))))
+val IP_ADDR_AND_ANY_PREFIX = AlternativeCombinator(IPV6_ADDR_AND_ANY_PREFIX, IPV4_ADDR_AND_ANY_PREFIX)
+
+
+// ---------------------------------------------------------------------------------------------------
+// Network interface names — ifname_valid_full (systemd src/basic/socket-util.c). Valid characters are
+// printable ASCII (33…126) except `:`, `/` and `%`. A name that is entirely digits is refused so it
+// can't be confused with an interface index, as are `.`, `..`, and — because they collide with the
+// /proc/sys/net/*/conf/ directories — `all` and `default`. The length limit differs by call site.
+private const val IFNAME_CHAR = """[\x21-\x7E&&[^:/%]]"""
+
+// The lookahead rejects the reserved words only when they make up the whole name: `(?!IFNAME_CHAR)`
+// after each one means "and the name ends here", so `1a`, `alliance` and `defaults` still pass.
+private fun ifnameSemantic(maxLength: Int) =
+  """(?!(?:[0-9]+|\.\.?|all|default)(?!$IFNAME_CHAR))$IFNAME_CHAR{1,$maxLength}"""
+
+/** ifname_valid_full with no flags: at most IFNAMSIZ - 1 = 15 characters. */
+val INTERFACE_NAME = RegexTerminal("""\S+""", ifnameSemantic(15))
+
+/** ifname_valid_full with IFNAME_VALID_ALTERNATIVE: at most ALTIFNAMSIZ - 1 = 127 characters. */
+val ALTERNATIVE_INTERFACE_NAME = RegexTerminal("""\S+""", ifnameSemantic(127))
+
+
+/**
+ * An unsigned number in `[0, maxExclusive)`, spelled any of the ways systemd's `safe_atou*` family
+ * reads one.
+ *
+ * Those helpers pass base 0 down to strtoul(), so besides decimal they accept `0x` hexadecimal and
+ * leading-zero octal — systemd's own test data writes `TypeOfService=0x08`. An [IntegerTerminal]
+ * only understands decimal, so the other two bases are added alongside it.
+ *
+ * Only the decimal branch carries the numeric bounds. The hexadecimal branch is bounded by digit
+ * count instead, which is exact for the power-of-two limits these settings use, and the octal branch
+ * is not bounded at all. Both therefore err towards accepting an out-of-range value rather than
+ * flagging a legal one, on spellings essentially nobody writes.
+ */
+fun unsignedNumber(maxExclusive: Long, minInclusive: Long = 0L): Combinator {
+  val hexDigits = maxOf(1, ((maxExclusive - 1).toString(16).length))
+  return AlternativeCombinator(
+    // Hex first: on "0x08" a decimal terminal would happily match just the leading "0" and strand the rest.
+    SequenceCombinator(
+      LiteralChoiceTerminal("0x", "0X"),
+      RegexTerminal("""[0-9a-fA-F]+""", """[0-9a-fA-F]{1,$hexDigits}""")
+    ),
+    // Octal, likewise before decimal so "0377" isn't read as three hundred and seventy-seven.
+    RegexTerminal("""0[0-7]+""", """0[0-7]+"""),
+    IntegerTerminal(minInclusive, maxExclusive),
+  )
+}
 
