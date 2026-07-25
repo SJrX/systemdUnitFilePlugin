@@ -4,6 +4,14 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.conditionString
 
+/*
+ * The boolean-valued [Unit] conditions: ConditionFirstBoot=, ConditionACPower= and their Assert twins.
+ *
+ * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#ConditionFirstBoot=
+ * parser https://github.com/systemd/systemd/blob/a8e93919c3/src/core/load-fragment.c  config_parse_unit_condition_string
+ * checks https://github.com/systemd/systemd/blob/a8e93919c3/src/shared/condition.c    condition_test_first_boot, condition_test_ac_power
+ */
+
 /**
  * Validator for the `[Unit]` conditions whose parameter is a plain boolean: `ConditionFirstBoot=` and
  * `ConditionACPower=`, plus their `Assert…=` twins.

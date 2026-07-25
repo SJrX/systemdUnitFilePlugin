@@ -1,5 +1,28 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar
 
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
+
+/*
+ * Shared value grammars, each modelled on the systemd routine that actually parses that kind of value.
+ *
+ * Everything here is pinned to systemd a8e93919c3, which is the commit recorded in
+ * systemd-build/build/last_commit_hash and therefore the one the plugin's own gperf and man data are
+ * generated from. Browse it at https://github.com/systemd/systemd/blob/a8e93919c3.
+ *
+ * Two things worth knowing before adding to this file:
+ *
+ *  - Under the classic SyntacticMatch/SemanticMatch engine, AlternativeCombinator is first-full-match
+ *    with NO backtracking: once a branch matches at an offset the enclosing sequence continues from
+ *    there and never reconsiders. So order alternatives longest/most-specific first, and put a lenient
+ *    shape matcher (a FlexibleLiteralChoiceTerminal, say) after the precise ones it could shadow.
+ *
+ *  - Reach for the C source rather than the man page when they disagree. The man page documents intent
+ *    and is sometimes narrower than the parser: DuplicateAddressDetection= is documented as four family
+ *    names but config_parse_address_dad accepts booleans too, and safe_atou* silently accept hex and
+ *    octal because they pass base 0 to strtoul. The gperf files under systemd-build/build/ are the
+ *    authority for which (parser, ltype) pairs exist and which keys use them.
+ */
+
 val BOOLEAN = FlexibleLiteralChoiceTerminal("1", "yes", "y", "true", "t", "on", "0", "no", "n", "false", "f", "off")
 val BYTES = RegexTerminal("[0-9]+[a-zA-Z]*\\s*", "[0-9]+[KMGT]?\\s*")
 val DEVICE = RegexTerminal("\\S+\\s*", "/[^\\u0000. ]+\\s*")
@@ -200,15 +223,45 @@ fun conditionString(parameter: Combinator): Combinator {
   )
 }
 
-/**
- * A path systemd requires to be absolute after specifier expansion — i.e. anything it feeds through
- * unit_path_printf() and then path_simplify_and_warn(..., PATH_CHECK_ABSOLUTE). We can't expand
- * specifiers, so a value may legitimately begin with one (`%t/foo`, `%h/.cache`) instead of a slash.
- * Spaces are only allowed when backslash-escaped, matching the rest of the plugin's paths.
- */
-val ABSOLUTE_PATH_WITH_SPECIFIERS = RegexTerminal(
-  """\S(?:[^\s\\]|\\[\s\S])*""",
-  """(?:/|%\S)(?:[^\s\\]|\\[\s\S])*"""
+// ---------------------------------------------------------------------------------------------------
+// Paths that systemd requires to be absolute — anything it feeds through unit_path_printf() and then
+// path_simplify_and_warn(..., PATH_CHECK_ABSOLUTE).
+//
+// That helper (src/shared/parse-helpers.c) checks, in order: valid UTF-8, absolute, then — after
+// path_simplify() has collapsed `//`, `./` and any trailing slash — a length under PATH_MAX and
+// path_is_normalized(), which is what rejects a surviving `..` component. Nothing restricts which
+// characters a component may contain, so a path may perfectly well contain spaces.
+//
+// Whether a space *ends* the value depends on the caller, not on the path rules, which is why there
+// are two terminals below:
+//
+//   UNIT_PATH           the setting takes one path and hands the parser the whole rvalue verbatim —
+//                       no word splitting, no unquoting, no unescaping. Condition*=/Assert*= and the
+//                       [Path] watch settings work this way, so `/mnt/My Data` is a single path and a
+//                       backslash in it is an ordinary character.
+//   QUOTABLE_UNIT_PATH  the setting takes a list and splits it with extract_first_word(). That drops
+//                       backslashes and, with EXTRACT_UNQUOTE, honours '…' and "…", so a path with a
+//                       space has to be escaped or quoted to survive splitting.
+//
+// Specifiers are resolved before the absolute check, so a value may legitimately begin with one
+// (`%t/foo`, `%h/.cache`) rather than with a slash.
+
+private const val PATH_START = """(?:/|%\S)"""
+
+// Rejects a `..` component anywhere: the optional `(?:[\s\S]*/)` swallows any leading directories, so
+// the lookahead fires on `/a/../b` and `/a/..` but not on `/a/..b` or `/a/b..`.
+private const val NO_DOT_DOT = """(?!(?:[\s\S]*/)?\.\.(?:/|$))"""
+
+/** One whole-value absolute path: everything from here to the end of the value belongs to it. */
+val UNIT_PATH = RegexTerminal(
+  """[\s\S]+""",
+  """$NO_DOT_DOT$PATH_START[\s\S]*"""
+)
+
+/** One element of a whitespace-separated path list, optionally quoted or backslash-escaped. */
+val QUOTABLE_UNIT_PATH = RegexTerminal(
+  """"[^"]*"|'[^']*'|(?:[^\s\\]|\\[\s\S])+""",
+  """"$PATH_START(?:[^"\\]|\\[\s\S])*"|'$PATH_START(?:[^'\\]|\\[\s\S])*'|$PATH_START(?:[^\s\\]|\\[\s\S])*"""
 )
 
 
@@ -250,29 +303,27 @@ val ALTERNATIVE_INTERFACE_NAME = RegexTerminal("""\S+""", ifnameSemantic(127))
 
 
 /**
- * An unsigned number in `[0, maxExclusive)`, spelled any of the ways systemd's `safe_atou*` family
- * reads one.
- *
- * Those helpers pass base 0 down to strtoul(), so besides decimal they accept `0x` hexadecimal and
- * leading-zero octal — systemd's own test data writes `TypeOfService=0x08`. An [IntegerTerminal]
- * only understands decimal, so the other two bases are added alongside it.
- *
- * Only the decimal branch carries the numeric bounds. The hexadecimal branch is bounded by digit
- * count instead, which is exact for the power-of-two limits these settings use, and the octal branch
- * is not bounded at all. Both therefore err towards accepting an out-of-range value rather than
- * flagging a legal one, on spellings essentially nobody writes.
+ * An unsigned number in `[minInclusive, maxExclusive)`, spelled any of the ways systemd's `safe_atou*`
+ * family reads one — decimal, `0x` hexadecimal or leading-zero octal, since those helpers pass base 0
+ * to strtoul(). See [UnsignedNumberTerminal], which parses in the actual base so the bounds hold for
+ * every spelling.
  */
-fun unsignedNumber(maxExclusive: Long, minInclusive: Long = 0L): Combinator {
-  val hexDigits = maxOf(1, ((maxExclusive - 1).toString(16).length))
-  return AlternativeCombinator(
-    // Hex first: on "0x08" a decimal terminal would happily match just the leading "0" and strand the rest.
-    SequenceCombinator(
-      LiteralChoiceTerminal("0x", "0X"),
-      RegexTerminal("""[0-9a-fA-F]+""", """[0-9a-fA-F]{1,$hexDigits}""")
-    ),
-    // Octal, likewise before decimal so "0377" isn't read as three hundred and seventy-seven.
-    RegexTerminal("""0[0-7]+""", """0[0-7]+"""),
-    IntegerTerminal(minInclusive, maxExclusive),
-  )
-}
+fun unsignedNumber(maxExclusive: Long, minInclusive: Long = 0L): Combinator =
+  UnsignedNumberTerminal(minInclusive, maxExclusive)
 
+
+
+// ---------------------------------------------------------------------------------------------------
+// Capability names — capability_from_name (systemd src/basic/capability-list.c).
+//
+// The lookup table is gperf-generated with `--ignore-case` (src/basic/meson.build), and the reverse
+// mapping capability_to_name() renders names in lower case (src/basic/capability-to-name.awk uses
+// `tolower`), so both `CAP_SYS_ADMIN` and `cap_sys_admin` resolve. The upper-case
+// FlexibleLiteralChoiceTerminal is kept as the first alternative because it is what supplies the
+// quick-fix suggestions on a misspelled name; the regex behind it accepts any other casing.
+//
+// The name list is read back off that terminal rather than duplicated, so the two can't drift.
+val CAPABILITY_NAME = FlexibleLiteralChoiceTerminal(
+  *SimpleGrammarOptionValues.Capabilities.choices,
+  ignoreCase = true,
+)

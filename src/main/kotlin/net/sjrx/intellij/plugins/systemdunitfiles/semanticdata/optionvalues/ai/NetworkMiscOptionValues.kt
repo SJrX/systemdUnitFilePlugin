@@ -8,13 +8,26 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.HYPHEN
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.INTERFACE_NAME
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IPV4_ADDR
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IntegerTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.unsignedNumber
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.TIME_VALUE
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrMore
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
+
+/*
+ * Assorted networkd and udev settings.
+ *
+ * man     https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#Name=
+ *         https://www.freedesktop.org/software/systemd/man/latest/systemd.netdev.html#Key=
+ * parsers https://github.com/systemd/systemd/blob/a8e93919c3/src/shared/net-condition.c            config_parse_match_ifnames
+ *         https://github.com/systemd/systemd/blob/a8e93919c3/src/network/networkd-bridge-vlan.c    config_parse_bridge_vlan_id_range
+ *         https://github.com/systemd/systemd/blob/a8e93919c3/src/network/netdev/tunnel.c           config_parse_tunnel_key
+ *         https://github.com/systemd/systemd/blob/a8e93919c3/src/network/networkd-radv.c           config_parse_prefix_lifetime
+ * names   https://github.com/systemd/systemd/blob/a8e93919c3/src/basic/socket-util.c               ifname_valid_full, ifname_valid_char
+ * ranges  https://github.com/systemd/systemd/blob/a8e93919c3/src/shared/vlan-util.c                parse_vid_range (VLANID_MAX)
+ */
 
 /*
  * Assorted networkd / udev validators (#509).
@@ -44,8 +57,10 @@ class ConfigParseMatchIfnamesOptionValue : SimpleGrammarOptionValues(
     "config_parse_match_ifnames", ifnameList(INTERFACE_NAME)
 )
 
+// The `!` is consumed with a bare `p += invert`, and the extract_first_word() that follows skips
+// leading whitespace, so `Name=! eth0` is the same inverted match as `Name=!eth0`.
 private fun ifnameList(name: Combinator): Combinator = SequenceCombinator(
-    ZeroOrOne(LiteralChoiceTerminal("!")),
+    ZeroOrOne(SequenceCombinator(LiteralChoiceTerminal("!"), ZeroOrOne(WhitespaceTerminal()))),
     name,
     ZeroOrMore(SequenceCombinator(WhitespaceTerminal(), name)),
     EOF()
@@ -64,8 +79,8 @@ private fun ifnameList(name: Combinator): Combinator = SequenceCombinator(
 class ConfigParseBridgeVlanIdRangeOptionValue : SimpleGrammarOptionValues(
     "config_parse_bridge_vlan_id_range",
     SequenceCombinator(
-        IntegerTerminal(0, 4095),
-        ZeroOrOne(SequenceCombinator(HYPHEN, IntegerTerminal(0, 4095))),
+        unsignedNumber(4095),
+        ZeroOrOne(SequenceCombinator(HYPHEN, unsignedNumber(4095))),
         EOF()
     )
 )
@@ -80,7 +95,7 @@ class ConfigParseBridgeVlanIdRangeOptionValue : SimpleGrammarOptionValues(
  */
 class ConfigParseTunnelKeyOptionValue : SimpleGrammarOptionValues(
     "config_parse_tunnel_key",
-    SequenceCombinator(AlternativeCombinator(IPV4_ADDR, IntegerTerminal(0L, 4_294_967_296L)), EOF())
+    SequenceCombinator(AlternativeCombinator(IPV4_ADDR, unsignedNumber(4_294_967_296L)), EOF())
 )
 
 /**

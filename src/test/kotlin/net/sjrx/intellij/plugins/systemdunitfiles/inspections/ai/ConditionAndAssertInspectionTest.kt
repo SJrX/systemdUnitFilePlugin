@@ -4,6 +4,16 @@ import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
 import org.junit.Test
 
+/*
+ * Expectations here are derived from systemd's C parsers at a8e93919c3 (https://github.com/systemd/systemd/blob/a8e93919c3),
+ * the commit systemd-build/build/last_commit_hash pins, and NOT from what happens to appear in
+ * real-world unit files. Where a case is subtle the individual test says which routine decides it.
+ *
+ * Several of the rejection cases are lifted from systemd's own negative fixtures under
+ * test/test-network/conf/ and from KDE's syntax-highlighting test input, both of which deliberately
+ * contain malformed values.
+ */
+
 /**
  * Tests for the `[Unit] Condition…=` / `Assert…=` validators (#509).
  *
@@ -93,9 +103,21 @@ class ConditionAndAssertInspectionTest : AbstractUnitFileTest() {
   }
 
   @Test
-  fun testPathConditionsRejectLists() {
-    // The whole value is one path — it is never split on whitespace.
-    assertRejected("ConditionNeedsUpdate=/etc /var")
+  fun testPathConditionsTakeTheWholeValueAsOnePath() {
+    // The value is never split on whitespace and never unescaped, so a space is just a path
+    // character: `/etc /var` is one directory whose name contains a space, not two paths.
+    assertAccepted(
+      "ConditionNeedsUpdate=/etc /var",
+      "ConditionPathExists=/mnt/My Data/.stamp",
+      "ConditionPathExists=!/srv/My Share/spool",
+    )
+  }
+
+  @Test
+  fun testPathConditionsRejectUnnormalizedPaths() {
+    // path_simplify() collapses `.` and `//` but leaves `..`, which path_is_normalized() then refuses.
+    assertRejected("ConditionPathExists=/etc/../var")
+    assertRejected("ConditionPathExists=/etc/..")
   }
 
   // ------------------------------------------------------------------ ConditionArchitecture
@@ -188,6 +210,23 @@ class ConditionAndAssertInspectionTest : AbstractUnitFileTest() {
       "ConditionCapability=62",
       "AssertCapability=|! CAP_CHOWN",
     )
+  }
+
+  @Test
+  fun testCapabilityNamesAreCaseInsensitive() {
+    // capability_from_name() looks the name up in a gperf table built with --ignore-case, and
+    // capability_to_name() actually renders the canonical form in lower case.
+    assertAccepted(
+      "ConditionCapability=cap_sys_admin",
+      "ConditionCapability=Cap_Net_Admin",
+      "AssertCapability=!cap_chown",
+    )
+  }
+
+  @Test
+  fun testCapabilityNumberAcceptsEveryBase() {
+    assertAccepted("ConditionCapability=0x1e", "ConditionCapability=016")
+    assertRejected("ConditionCapability=0x3F")
   }
 
   @Test

@@ -7,6 +7,14 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
+/*
+ * [WireGuardPeer] PublicKey= and PresharedKey= in a .netdev file.
+ *
+ * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.netdev.html#PublicKey=
+ * parser https://github.com/systemd/systemd/blob/a8e93919c3/src/network/netdev/wireguard.c  config_parse_wireguard_peer_key
+ *                                              -> wireguard_decode_key_and_warn
+ */
+
 /**
  * Validator for `[WireGuardPeer] PublicKey=` and `PresharedKey=` (.netdev).
  *

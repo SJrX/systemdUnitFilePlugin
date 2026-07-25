@@ -4,6 +4,15 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.conditionString
 
+/*
+ * [Unit] ConditionArchitecture= / AssertArchitecture=.
+ *
+ * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#ConditionArchitecture=
+ * parser https://github.com/systemd/systemd/blob/a8e93919c3/src/core/load-fragment.c   config_parse_unit_condition_string (CONDITION_ARCHITECTURE)
+ * check  https://github.com/systemd/systemd/blob/a8e93919c3/src/shared/condition.c     condition_test_architecture_parameter
+ * values https://github.com/systemd/systemd/blob/a8e93919c3/src/basic/architecture.c   architecture_table
+ */
+
 /**
  * Validator for `[Unit] ConditionArchitecture=` / `AssertArchitecture=`.
  *

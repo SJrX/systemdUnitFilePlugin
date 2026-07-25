@@ -14,6 +14,18 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
 
 /*
+ * The [RoutingPolicyRule] section of a .network file.
+ *
+ * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#%5BRoutingPolicyRule%5D%20Section%20Options
+ * parser https://github.com/systemd/systemd/blob/a8e93919c3/src/network/networkd-routing-policy-rule.c  config_parse_routing_policy_rule
+ * keys   systemd-build/build/networkd-network-gperf.gperf
+ *
+ * config_parse_routing_policy_rule is a dispatcher: the ltype indexes a ConfigSectionParser table and
+ * each entry names the parser that actually reads the value, so this file mirrors the table entry by
+ * entry rather than giving the whole section one grammar.
+ */
+
+/*
  * Validators for the `[RoutingPolicyRule]` section of a .network file (#509).
  *
  * `config_parse_routing_policy_rule` (src/network/networkd-routing-policy-rule.c) is a dispatcher:

@@ -5,6 +5,14 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
+/*
+ * [NetDev] Kind= in a .netdev file.
+ *
+ * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.netdev.html#Kind=
+ * parser https://github.com/systemd/systemd/blob/a8e93919c3/src/network/netdev/netdev.c  config_parse_netdev_kind
+ * values https://github.com/systemd/systemd/blob/a8e93919c3/src/network/netdev/netdev.c  netdev_kind_table
+ */
+
 /**
  * Validator for `[NetDev] Kind=` (.netdev).
  *

@@ -4,6 +4,18 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.conditionString
 
+/*
+ * [Unit] ConditionCPUFeature= / AssertCPUFeature=.
+ *
+ * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#ConditionCPUFeature=
+ * parser https://github.com/systemd/systemd/blob/a8e93919c3/src/core/load-fragment.c   config_parse_unit_condition_string (CONDITION_CPU_FEATURE)
+ * check  https://github.com/systemd/systemd/blob/a8e93919c3/src/shared/condition.c     condition_test_cpufeature -> has_cpu_with_flag
+ *
+ * The flag set comes from /proc/cpuinfo at evaluation time, so there is nothing to enumerate; only the
+ * shape is checkable. This slot previously pointed at the boolean condition grammar, which rejected
+ * every real feature name.
+ */
+
 /**
  * Validator for `[Unit] ConditionCPUFeature=` / `AssertCPUFeature=`.
  *

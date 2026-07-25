@@ -5,11 +5,22 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IntegerTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.unsignedNumber
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrMore
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
+
+/*
+ * [Service] SuccessExitStatus=, RestartPreventExitStatus= and RestartForceExitStatus=.
+ *
+ * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#SuccessExitStatus=
+ * parser https://github.com/systemd/systemd/blob/a8e93919c3/src/core/load-fragment.c   config_parse_set_status
+ * names  https://github.com/systemd/systemd/blob/a8e93919c3/src/shared/exit-status.c   exit_status_mappings, exit_status_from_string
+ *        https://github.com/systemd/systemd/blob/a8e93919c3/src/basic/signal-util.c    static_signal_table, signal_from_string
+ * bases  https://github.com/systemd/systemd/blob/a8e93919c3/src/basic/parse-util.h     safe_atou8 passes base 0 to strtoul
+ */
 
 /**
  * Validator for `[Service] SuccessExitStatus=`, `RestartPreventExitStatus=` and
@@ -84,7 +95,7 @@ class ConfigParseSetStatusOptionValue : SimpleGrammarOptionValues(
         // The number goes first so the name terminal's lenient shape match (its choices contain
         // digits, e.g. USR1) can't swallow a numeric word before the range check runs.
         private val STATUS = AlternativeCombinator(
-            IntegerTerminal(0, 256),
+            unsignedNumber(256),
             REALTIME_SIGNAL,
             EXIT_STATUS_OR_SIGNAL_NAME,
         )

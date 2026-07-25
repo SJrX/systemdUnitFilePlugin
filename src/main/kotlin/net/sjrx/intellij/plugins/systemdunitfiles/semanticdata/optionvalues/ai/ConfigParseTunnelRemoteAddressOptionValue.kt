@@ -8,6 +8,13 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
+/*
+ * [Tunnel] Remote= in a .netdev file.
+ *
+ * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.netdev.html#Remote=
+ * parser https://github.com/systemd/systemd/blob/a8e93919c3/src/network/netdev/tunnel.c  config_parse_tunnel_remote_address
+ */
+
 /**
  * Validator for `[Tunnel] Remote=` (.netdev).
  *

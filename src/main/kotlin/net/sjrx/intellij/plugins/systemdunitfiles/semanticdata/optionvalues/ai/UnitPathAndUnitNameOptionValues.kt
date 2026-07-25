@@ -1,13 +1,28 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ABSOLUTE_PATH_WITH_SPECIFIERS
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.QUOTABLE_UNIT_PATH
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UNIT_PATH
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.Combinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrMore
+
+/*
+ * Unit-file settings that take absolute paths or unit names.
+ *
+ * man     https://www.freedesktop.org/software/systemd/man/latest/systemd.path.html#PathExists=
+ *         https://www.freedesktop.org/software/systemd/man/latest/systemd.socket.html#Symlinks=
+ * parsers https://github.com/systemd/systemd/blob/a8e93919c3/src/core/load-fragment.c  config_parse_path_spec, config_parse_unit_path_strv_printf,
+ *                                        config_parse_socket_service, config_parse_service_sockets
+ * words   https://github.com/systemd/systemd/blob/a8e93919c3/src/basic/extract-word.c  extract_first_word
+ *
+ * Note the split between the two path shapes: config_parse_path_spec takes the whole rvalue, while
+ * Symlinks= is a list built with extract_first_word(..., EXTRACT_UNQUOTE), which honours quotes and
+ * drops backslashes. See UNIT_PATH and QUOTABLE_UNIT_PATH.
+ */
 
 /*
  * Validators for unit-file settings that take absolute paths or unit names (#509).
@@ -23,7 +38,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 class ConfigParsePathSpecOptionValue : SimpleGrammarOptionValues(
     "config_parse_path_spec",
-    SequenceCombinator(ABSOLUTE_PATH_WITH_SPECIFIERS, EOF())
+    SequenceCombinator(UNIT_PATH, EOF())
 )
 
 /**
@@ -35,8 +50,8 @@ class ConfigParsePathSpecOptionValue : SimpleGrammarOptionValues(
 class ConfigParseUnitPathStrvPrintfOptionValue : SimpleGrammarOptionValues(
     "config_parse_unit_path_strv_printf",
     SequenceCombinator(
-        ABSOLUTE_PATH_WITH_SPECIFIERS,
-        ZeroOrMore(SequenceCombinator(WhitespaceTerminal(), ABSOLUTE_PATH_WITH_SPECIFIERS)),
+        QUOTABLE_UNIT_PATH,
+        ZeroOrMore(SequenceCombinator(WhitespaceTerminal(), QUOTABLE_UNIT_PATH)),
         EOF()
     )
 )

@@ -4,6 +4,16 @@ import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
 import org.junit.Test
 
+/*
+ * Expectations here are derived from systemd's C parsers at a8e93919c3 (https://github.com/systemd/systemd/blob/a8e93919c3),
+ * the commit systemd-build/build/last_commit_hash pins, and NOT from what happens to appear in
+ * real-world unit files. Where a case is subtle the individual test says which routine decides it.
+ *
+ * Several of the rejection cases are lifted from systemd's own negative fixtures under
+ * test/test-network/conf/ and from KDE's syntax-highlighting test input, both of which deliberately
+ * contain malformed values.
+ */
+
 /**
  * Tests for the non-condition validators added in #509: NetDev Kind=, exit-status sets, .link
  * NamePolicy=, WireGuard peer keys, tunnel endpoints and IPv6 address-generation tokens.
@@ -74,6 +84,14 @@ class NetdevAndExitStatusInspectionTest : AbstractUnitFileTest() {
       "SuccessExitStatus=SIGRTMAX",
       "SuccessExitStatus=SIGRTMAX-2",
     )
+  }
+
+  @Test
+  fun testExitStatusNumbersAcceptEveryBase() {
+    // exit_status_from_string() -> safe_atou8() -> strtoul with base 0.
+    assertAccepted("f.service", "[Service]", "SuccessExitStatus=0x10", "RestartPreventExitStatus=0377")
+    assertRejected("f.service", "[Service]\nSuccessExitStatus=0x100\n")
+    assertRejected("f.service", "[Service]\nSuccessExitStatus=0400\n")
   }
 
   @Test

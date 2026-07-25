@@ -4,6 +4,16 @@ import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
 import org.junit.Test
 
+/*
+ * Expectations here are derived from systemd's C parsers at a8e93919c3 (https://github.com/systemd/systemd/blob/a8e93919c3),
+ * the commit systemd-build/build/last_commit_hash pins, and NOT from what happens to appear in
+ * real-world unit files. Where a case is subtle the individual test says which routine decides it.
+ *
+ * Several of the rejection cases are lifted from systemd's own negative fixtures under
+ * test/test-network/conf/ and from KDE's syntax-highlighting test input, both of which deliberately
+ * contain malformed values.
+ */
+
 /**
  * Tests for the `[RoutingPolicyRule]`, `[Route]`, `[Address]` and `[NextHop]` validators added in
  * #509, plus the assorted networkd settings that came with them.
@@ -149,10 +159,14 @@ class NetworkSectionInspectionTest : AbstractUnitFileTest() {
       "DuplicateAddressDetection=ipv4",
       "DuplicateAddressDetection=both",
       "DuplicateAddressDetection=none",
+      // config_parse_address_dad tries parse_boolean() first and accepts it with a warning, so these
+      // are legal (if confusing) rather than invalid.
+      "DuplicateAddressDetection=yes",
+      "DuplicateAddressDetection=no",
+      "DuplicateAddressDetection=0",
       "RouteMetric=128",
     )
     assertRejected("f.network", "[Address]\nAddPrefixRoute=bogus\n")
-    assertRejected("f.network", "[Address]\nDuplicateAddressDetection=yes\n")
     assertRejected("f.network", "[Address]\nRouteMetric=hoge\n")
   }
 
@@ -226,6 +240,44 @@ class NetworkSectionInspectionTest : AbstractUnitFileTest() {
   }
 
   @Test
+  fun testMatchIfnamesAllowsSpaceAfterTheInversionMarker() {
+    // `invert = *p == '!'; p += invert;` and then extract_first_word, which skips leading whitespace.
+    assertAccepted("f.network", "[Match]", "Name=! eth0", "Name=!  veth-peer host0")
+    assertAccepted("f.link", "[Match]", "OriginalName=! enp0s1")
+  }
+
+  @Test
+  fun testPeerFollowsTheCParserNotTheStricterAddressGrammar() {
+    // config_parse_in_addr_prefix retries without a prefix and allows the whole 0…128 range.
+    assertAccepted(
+      "f.network",
+      "[Address]",
+      "Peer=2001:db8::2",
+      "Peer=fd00::2/56",
+      "Peer=10.0.0.2",
+      "Peer=10.0.0.2/4",
+    )
+  }
+
+  @Test
+  fun testNumbersAcceptEveryBaseAndStillRangeCheck() {
+    // safe_atou* run strtoul with base 0, so hex and octal are legal spellings...
+    assertAccepted(
+      "f.netdev",
+      "[Tunnel]",
+      "Key=0x11223344",
+      "InputKey=0755",
+    )
+    assertAccepted("f.network", "[BridgeVLAN]", "VLAN=0x10", "EgressUntagged=0777")
+    // ...and the range check has to survive the change of base.
+    assertRejected("f.network", "[RoutingPolicyRule]\nTypeOfService=0x1FF\n")
+    assertRejected("f.network", "[RoutingPolicyRule]\nTypeOfService=0400\n")
+    assertRejected("f.network", "[RoutingPolicyRule]\nGoTo=00\n")
+    assertRejected("f.network", "[BridgeVLAN]\nVLAN=0xFFF\n")
+    assertRejected("f.network", "[NextHop]\nGroup=5:0401\n")
+  }
+
+  @Test
   fun testMtuBounds() {
     assertAccepted("f.netdev", "[NetDev]", "MTUBytes=1480", "MTUBytes=9000", "MTUBytes=16")
     assertAccepted("f.network", "[Network]", "IPv6MTUBytes=1500")
@@ -234,5 +286,10 @@ class NetworkSectionInspectionTest : AbstractUnitFileTest() {
     assertRejected("f.network", "[Network]\nIPv6MTUBytes=1000\n")
     assertRejected("f.network", "[DHCPv4]\nRouteMTUBytes=32\n")
     assertRejected("f.netdev", "[NetDev]\nMTUBytes=huge\n")
+    // parse_size() bounds the value, not the spelling: 1K is 1024 bytes, under IPV6_MIN_MTU.
+    assertAccepted("f.network", "[Network]", "IPv6MTUBytes=2K")
+    assertRejected("f.network", "[Network]\nIPv6MTUBytes=1K\n")
+    assertRejected("f.network", "[DHCPv4]\nRouteMTUBytes=8B\n")
+    assertRejected("f.netdev", "[NetDev]\nMTUBytes=8E\n")
   }
 }

@@ -10,6 +10,18 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
 
+/*
+ * The IPv6 address-generation tokens: [Network] IPv6Token=, [IPv6AcceptRA] Token= and
+ * [DHCPPrefixDelegation] / [DHCPv6PrefixDelegation] Token=.
+ *
+ * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#IPv6Token=
+ * parser https://github.com/systemd/systemd/blob/a8e93919c3/src/network/networkd-address-generation.c  config_parse_address_generation_type
+ * secret https://github.com/systemd/systemd/blob/a8e93919c3/src/libsystemd/sd-id128/id128-util.c       id128_from_string_nonzero
+ *
+ * systemd's own test/test-network/conf/25-ipv6-prefix-veth-token-prefixstable.network doubles as the
+ * negative-case list for this setting.
+ */
+
 /**
  * Validator for the IPv6 address-generation tokens: `[Network] IPv6Token=`, `[IPv6AcceptRA] Token=`
  * and `[DHCPPrefixDelegation] Token=` / `[DHCPv6PrefixDelegation] Token=` (.network).

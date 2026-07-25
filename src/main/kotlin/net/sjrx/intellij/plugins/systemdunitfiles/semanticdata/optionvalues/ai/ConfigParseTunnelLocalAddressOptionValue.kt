@@ -8,6 +8,14 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IPV6_ADDR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
+/*
+ * [Tunnel] Local= in a .netdev file.
+ *
+ * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.netdev.html#Local=
+ * parser https://github.com/systemd/systemd/blob/a8e93919c3/src/network/netdev/tunnel.c       config_parse_tunnel_local_address
+ * values https://github.com/systemd/systemd/blob/a8e93919c3/src/network/netdev/netdev-util.c  netdev_local_address_type_table
+ */
+
 /**
  * Validator for `[Tunnel] Local=` (.netdev).
  *

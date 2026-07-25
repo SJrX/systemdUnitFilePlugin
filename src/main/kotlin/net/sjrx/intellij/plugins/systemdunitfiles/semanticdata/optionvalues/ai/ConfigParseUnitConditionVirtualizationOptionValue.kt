@@ -4,6 +4,18 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.conditionString
 
+/*
+ * [Unit] ConditionVirtualization= / AssertVirtualization=.
+ *
+ * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#ConditionVirtualization=
+ * parser https://github.com/systemd/systemd/blob/a8e93919c3/src/core/load-fragment.c   config_parse_unit_condition_string (CONDITION_VIRTUALIZATION)
+ * check  https://github.com/systemd/systemd/blob/a8e93919c3/src/shared/condition.c     condition_test_virtualization
+ * values https://github.com/systemd/systemd/blob/a8e93919c3/src/basic/virt.c           virtualization_table
+ *
+ * The check tries, in order: the literal "private-users", parse_boolean(), the categories "vm" and
+ * "container", and finally an exact id from the table — so all four groups are one choice set here.
+ */
+
 /**
  * Validator for `[Unit] ConditionVirtualization=` / `AssertVirtualization=`.
  *

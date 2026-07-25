@@ -7,6 +7,17 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrMore
 
+/*
+ * [Link] NamePolicy= in a .link file.
+ *
+ * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.link.html#NamePolicy=
+ * parser https://github.com/systemd/systemd/blob/a8e93919c3/src/udev/net/link-config.c        config_parse_name_policy (DEFINE_CONFIG_PARSE_ENUMV)
+ * values https://github.com/systemd/systemd/blob/a8e93919c3/src/shared/netif-naming-scheme.c  name_policy_table
+ *
+ * Distinct from AlternativeNamesPolicy=, which resolves against alternative_names_policy_table in the
+ * same file and so offers neither "kernel" nor "keep".
+ */
+
 /**
  * Validator for `[Link] NamePolicy=` (.link).
  *

@@ -7,6 +7,15 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrMore
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.conditionString
 
+/*
+ * [Unit] ConditionControlGroupController= / AssertControlGroupController=.
+ *
+ * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#ConditionControlGroupController=
+ * parser https://github.com/systemd/systemd/blob/a8e93919c3/src/core/load-fragment.c  config_parse_unit_condition_string (CONDITION_CONTROL_GROUP_CONTROLLER)
+ * check  https://github.com/systemd/systemd/blob/a8e93919c3/src/shared/condition.c    condition_test_control_group_controller
+ * values https://github.com/systemd/systemd/blob/a8e93919c3/src/basic/cgroup-util.c   cgroup_controller_table, cg_mask_from_string
+ */
+
 /**
  * Validator for `[Unit] ConditionControlGroupController=` / `AssertControlGroupController=`.
  *

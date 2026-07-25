@@ -12,6 +12,18 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.unsignedNumber
 
 /*
+ * The remaining [Address] and [NextHop] table slots of a .network file.
+ *
+ * man     https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#%5BAddress%5D%20Section%20Options
+ * parsers https://github.com/systemd/systemd/blob/a8e93919c3/src/network/networkd-address.c  config_parse_address_dad, config_parse_uint32_flag
+ *         https://github.com/systemd/systemd/blob/a8e93919c3/src/network/networkd-nexthop.c  config_parse_nexthop_family, config_parse_nexthop_group
+ *
+ * These slots previously shared one grammar per section — a uint32 for every [Address] entry and a
+ * boolean for every [NextHop] entry — which flagged legitimate values such as AddPrefixRoute=no,
+ * DuplicateAddressDetection=ipv4, Id=20 and Family=ipv4.
+ */
+
+/*
  * The remaining `[Address]` and `[NextHop]` table slots (#509).
  *
  * These previously shared one grammar per section — a uint32 for every `[Address]` slot and a boolean
@@ -35,12 +47,41 @@ class ConfigParseAddressSectionFlagOptionValue : SimpleGrammarOptionValues(
 )
 
 /**
- * `[Address] DuplicateAddressDetection=` — table entry config_parse_address_dad, resolved through
- * duplicate_address_detection_address_family_table (src/network/networkd-util.c).
+ * `[Address] DuplicateAddressDetection=` — table entry config_parse_address_dad.
+ *
+ * The man page documents only the four family names, but the parser tries parse_boolean() *first* and
+ * accepts a boolean with nothing worse than a warning:
+ *
+ * ```c
+ * r = parse_boolean(rvalue);
+ * if (r >= 0) {
+ *         log_syntax(unit, LOG_WARNING, filename, line, 0,
+ *                    "For historical reasons, %s=%s means %s=%s. "
+ *                    "Please use 'both', 'ipv4', 'ipv6' or 'none' instead.", …);
+ * ```
+ *
+ * So the booleans are accepted here too, but marked deprecated so the editor repeats systemd's advice
+ * instead of reporting an error on a line networkd honours. This is a case where the C source and the
+ * man page disagree and the source wins.
  */
 class ConfigParseAddressSectionDadOptionValue : SimpleGrammarOptionValues(
-    ADDRESS, SequenceCombinator(FlexibleLiteralChoiceTerminal("none", "both", "ipv4", "ipv6"), EOF())
-)
+    ADDRESS, SequenceCombinator(DAD, EOF())
+) {
+    private companion object {
+        private const val HISTORICAL =
+            "For historical reasons a boolean here means the opposite of what it looks like: " +
+            "yes means none and no means both. Please use 'both', 'ipv4', 'ipv6' or 'none' instead."
+
+        val DAD = FlexibleLiteralChoiceTerminal(
+            "none", "both", "ipv4", "ipv6",
+            // parse_boolean() spellings, all deprecated.
+            "1", "yes", "y", "true", "t", "on", "0", "no", "n", "false", "f", "off",
+        ).deprecating(
+            listOf("1", "yes", "y", "true", "t", "on", "0", "no", "n", "false", "f", "off")
+                .associateWith { HISTORICAL }
+        )
+    }
+}
 
 /** `[NextHop] Id=` — table entry config_parse_uint32. */
 class ConfigParseNextHopIdOptionValue : SimpleGrammarOptionValues(
