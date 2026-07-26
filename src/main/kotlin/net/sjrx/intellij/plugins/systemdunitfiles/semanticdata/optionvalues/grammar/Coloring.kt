@@ -36,6 +36,8 @@ data class Region(val start: Int, val end: Int, val role: Role, val tag: Semanti
  */
 fun defaultRole(terminal: TerminalCombinator): Role? = when (terminal) {
   is IntegerTerminal -> Role.LITERAL
+  is UnsignedNumberTerminal -> Role.LITERAL
+  is ByteSizeTerminal -> Role.LITERAL
   is LiteralChoiceTerminal -> if (terminal.choices.allPunctuation()) Role.OPERATOR else Role.ENUM
   is FlexibleLiteralChoiceTerminal -> if (terminal.choices.allPunctuation()) Role.OPERATOR else Role.ENUM
   // RegexTerminal (free-form names/strings: Description=, interface names, ...) and whitespace stay

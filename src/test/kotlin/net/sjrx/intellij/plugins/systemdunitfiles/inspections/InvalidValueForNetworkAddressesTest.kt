@@ -10,6 +10,10 @@ class InvalidValueForNetworkAddressesTest : AbstractUnitFileTest() {
     val file="""
       [Network]
       Address=244.178.44.111/32
+      # in_addr_prefix_from_string only rejects a prefix wider than the address, so the whole 0..32
+      # range is legal -- systemd's own 25-veth-peer.network uses Address=2600::1/0.
+      Address=244.25.2.1/7
+      Address=10.0.0.1/0
     """.trimIndent()
 
     // Execute SUT
@@ -34,8 +38,6 @@ class InvalidValueForNetworkAddressesTest : AbstractUnitFileTest() {
       Address=1.2.3.4.5/8
       # Invalid Prefix Length
       Address=244.25.2.1/33
-      # Invalid Prefix Length
-      Address=244.25.2.1/7
     """.trimIndent()
 
     // Execute SUT
@@ -44,7 +46,7 @@ class InvalidValueForNetworkAddressesTest : AbstractUnitFileTest() {
     val highlights = myFixture.doHighlighting()
 
     // Verification
-    assertSize(5, highlights)
+    assertSize(4, highlights)
 
   }
 
@@ -73,6 +75,7 @@ class InvalidValueForNetworkAddressesTest : AbstractUnitFileTest() {
       Address=::1/127
       Address=2001:db8::/65
       Address=ff02::1/128
+      Address=2600::1/0
       # Honestly I don't know what matches this
       Address=2001:0db8:85a3:0000:0000:8a2e:192.168.0.1/96
     """.trimIndent()

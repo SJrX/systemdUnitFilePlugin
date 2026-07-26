@@ -1,5 +1,28 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar
 
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
+
+/*
+ * Shared value grammars, each modelled on the systemd routine that actually parses that kind of value.
+ *
+ * Everything here is pinned to systemd a8e93919c3, which is the commit recorded in
+ * systemd-build/build/last_commit_hash and therefore the one the plugin's own gperf and man data are
+ * generated from. Browse it at https://github.com/systemd/systemd/blob/a8e93919c3.
+ *
+ * Two things worth knowing before adding to this file:
+ *
+ *  - Under the classic SyntacticMatch/SemanticMatch engine, AlternativeCombinator is first-full-match
+ *    with NO backtracking: once a branch matches at an offset the enclosing sequence continues from
+ *    there and never reconsiders. So order alternatives longest/most-specific first, and put a lenient
+ *    shape matcher (a FlexibleLiteralChoiceTerminal, say) after the precise ones it could shadow.
+ *
+ *  - Reach for the C source rather than the man page when they disagree. The man page documents intent
+ *    and is sometimes narrower than the parser: DuplicateAddressDetection= is documented as four family
+ *    names but config_parse_address_dad accepts booleans too, and safe_atou* silently accept hex and
+ *    octal because they pass base 0 to strtoul. The gperf files under systemd-build/build/ are the
+ *    authority for which (parser, ltype) pairs exist and which keys use them.
+ */
+
 val BOOLEAN = FlexibleLiteralChoiceTerminal("1", "yes", "y", "true", "t", "on", "0", "no", "n", "false", "f", "off")
 val BYTES = RegexTerminal("[0-9]+[a-zA-Z]*\\s*", "[0-9]+[KMGT]?\\s*")
 val DEVICE = RegexTerminal("\\S+\\s*", "/[^\\u0000. ]+\\s*")
@@ -151,3 +174,156 @@ val HARDWARE_ADDRESS = AlternativeCombinator(
 )
 
 
+// ---------------------------------------------------------------------------------------------------
+// Condition*= / Assert*= (systemd src/core/load-fragment.c). Both parsers strip an optional leading
+// trigger marker `|` and then an optional negation marker `!`, in that order, before handing what is
+// left to the per-condition check. Only that order is recognised: in `!|foo` the `!` negates and the
+// parameter is literally `| foo`, which no condition accepts.
+val PIPE = LiteralChoiceTerminal("|")
+val BANG = LiteralChoiceTerminal("!")
+
+// Both helpers below spell the marker combinations out as alternatives rather than wrapping each
+// marker in a ZeroOrOne. ZeroOrOne probes its inner combinator a second time to report how far input
+// could reach, so `!!/some/path` would report a longest-match one character past the `!` the grammar
+// actually consumed, and the classic engine derives its error TextRange from that number — landing it
+// past the end of the value. Alternatives keep the reported offset equal to what was consumed.
+
+/**
+ * A `Condition<Path>=`/`Assert<Path>=` value.
+ *
+ * config_parse_unit_condition_path advances with a bare `rvalue++` per marker, so no whitespace may
+ * follow either one.
+ */
+fun conditionPath(parameter: Combinator): Combinator = SequenceCombinator(
+  AlternativeCombinator(
+    SequenceCombinator(LiteralChoiceTerminal("|!"), parameter),
+    SequenceCombinator(PIPE, parameter),
+    SequenceCombinator(BANG, parameter),
+    parameter,
+  ),
+  EOF()
+)
+
+/**
+ * A `Condition<Name>=`/`Assert<Name>=` value.
+ *
+ * config_parse_unit_condition_string advances with `rvalue += 1 + strspn(rvalue + 1, WHITESPACE)`, so
+ * whitespace after a marker is skipped.
+ */
+fun conditionString(parameter: Combinator): Combinator {
+  val optionalWhitespace = ZeroOrOne(WhitespaceTerminal())
+  return SequenceCombinator(
+    AlternativeCombinator(
+      SequenceCombinator(PIPE, optionalWhitespace, BANG, optionalWhitespace, parameter),
+      SequenceCombinator(PIPE, optionalWhitespace, parameter),
+      SequenceCombinator(BANG, optionalWhitespace, parameter),
+      parameter,
+    ),
+    EOF()
+  )
+}
+
+// ---------------------------------------------------------------------------------------------------
+// Paths that systemd requires to be absolute — anything it feeds through unit_path_printf() and then
+// path_simplify_and_warn(..., PATH_CHECK_ABSOLUTE).
+//
+// That helper (src/shared/parse-helpers.c) checks, in order: valid UTF-8, absolute, then — after
+// path_simplify() has collapsed `//`, `./` and any trailing slash — a length under PATH_MAX and
+// path_is_normalized(), which is what rejects a surviving `..` component. Nothing restricts which
+// characters a component may contain, so a path may perfectly well contain spaces.
+//
+// Whether a space *ends* the value depends on the caller, not on the path rules, which is why there
+// are two terminals below:
+//
+//   UNIT_PATH           the setting takes one path and hands the parser the whole rvalue verbatim —
+//                       no word splitting, no unquoting, no unescaping. Condition*=/Assert*= and the
+//                       [Path] watch settings work this way, so `/mnt/My Data` is a single path and a
+//                       backslash in it is an ordinary character.
+//   QUOTABLE_UNIT_PATH  the setting takes a list and splits it with extract_first_word(). That drops
+//                       backslashes and, with EXTRACT_UNQUOTE, honours '…' and "…", so a path with a
+//                       space has to be escaped or quoted to survive splitting.
+//
+// Specifiers are resolved before the absolute check, so a value may legitimately begin with one
+// (`%t/foo`, `%h/.cache`) rather than with a slash.
+
+private const val PATH_START = """(?:/|%\S)"""
+
+// Rejects a `..` component anywhere: the optional `(?:[\s\S]*/)` swallows any leading directories, so
+// the lookahead fires on `/a/../b` and `/a/..` but not on `/a/..b` or `/a/b..`.
+private const val NO_DOT_DOT = """(?!(?:[\s\S]*/)?\.\.(?:/|$))"""
+
+/** One whole-value absolute path: everything from here to the end of the value belongs to it. */
+val UNIT_PATH = RegexTerminal(
+  """[\s\S]+""",
+  """$NO_DOT_DOT$PATH_START[\s\S]*"""
+)
+
+/** One element of a whitespace-separated path list, optionally quoted or backslash-escaped. */
+val QUOTABLE_UNIT_PATH = RegexTerminal(
+  """"[^"]*"|'[^']*'|(?:[^\s\\]|\\[\s\S])+""",
+  """"$PATH_START(?:[^"\\]|\\[\s\S])*"|'$PATH_START(?:[^'\\]|\\[\s\S])*'|$PATH_START(?:[^\s\\]|\\[\s\S])*"""
+)
+
+
+// ---------------------------------------------------------------------------------------------------
+// IP addresses and prefixes, as parsed by in_addr_from_string_auto / in_addr_prefix_from_string_auto
+// (systemd src/basic/in-addr-util.c). IPv6 is tried first throughout: the keyword and IPv4 branches
+// can consume a leading fragment of an IPv6 literal, and the classic matcher never backtracks into a
+// sibling alternative once one of them has matched.
+
+/** A bare address literal of either family — in_addr_from_string_auto. */
+val IP_ADDR = AlternativeCombinator(IPV6_ADDR, IPV4_ADDR)
+
+// in_addr_prefix_from_string_auto accepts the full prefix-length range the family allows, and treats
+// the length as optional (defaulting to the full width). This is deliberately wider than
+// IPV4_ADDR_AND_OPTIONAL_PREFIX_LENGTH / IPV6_ADDR_AND_OPTIONAL_PREFIX_LENGTH above, which model the
+// narrower ranges systemd enforces for InAddrPrefixes-style settings.
+val IPV4_ADDR_AND_ANY_PREFIX = SequenceCombinator(IPV4_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, IntegerTerminal(0, 33))))
+val IPV6_ADDR_AND_ANY_PREFIX = SequenceCombinator(IPV6_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, IntegerTerminal(0, 129))))
+val IP_ADDR_AND_ANY_PREFIX = AlternativeCombinator(IPV6_ADDR_AND_ANY_PREFIX, IPV4_ADDR_AND_ANY_PREFIX)
+
+
+// ---------------------------------------------------------------------------------------------------
+// Network interface names — ifname_valid_full (systemd src/basic/socket-util.c). Valid characters are
+// printable ASCII (33…126) except `:`, `/` and `%`. A name that is entirely digits is refused so it
+// can't be confused with an interface index, as are `.`, `..`, and — because they collide with the
+// /proc/sys/net/*/conf/ directories — `all` and `default`. The length limit differs by call site.
+private const val IFNAME_CHAR = """[\x21-\x7E&&[^:/%]]"""
+
+// The lookahead rejects the reserved words only when they make up the whole name: `(?!IFNAME_CHAR)`
+// after each one means "and the name ends here", so `1a`, `alliance` and `defaults` still pass.
+private fun ifnameSemantic(maxLength: Int) =
+  """(?!(?:[0-9]+|\.\.?|all|default)(?!$IFNAME_CHAR))$IFNAME_CHAR{1,$maxLength}"""
+
+/** ifname_valid_full with no flags: at most IFNAMSIZ - 1 = 15 characters. */
+val INTERFACE_NAME = RegexTerminal("""\S+""", ifnameSemantic(15))
+
+/** ifname_valid_full with IFNAME_VALID_ALTERNATIVE: at most ALTIFNAMSIZ - 1 = 127 characters. */
+val ALTERNATIVE_INTERFACE_NAME = RegexTerminal("""\S+""", ifnameSemantic(127))
+
+
+/**
+ * An unsigned number in `[minInclusive, maxExclusive)`, spelled any of the ways systemd's `safe_atou*`
+ * family reads one — decimal, `0x` hexadecimal or leading-zero octal, since those helpers pass base 0
+ * to strtoul(). See [UnsignedNumberTerminal], which parses in the actual base so the bounds hold for
+ * every spelling.
+ */
+fun unsignedNumber(maxExclusive: Long, minInclusive: Long = 0L): Combinator =
+  UnsignedNumberTerminal(minInclusive, maxExclusive)
+
+
+
+// ---------------------------------------------------------------------------------------------------
+// Capability names — capability_from_name (systemd src/basic/capability-list.c).
+//
+// The lookup table is gperf-generated with `--ignore-case` (src/basic/meson.build), and the reverse
+// mapping capability_to_name() renders names in lower case (src/basic/capability-to-name.awk uses
+// `tolower`), so both `CAP_SYS_ADMIN` and `cap_sys_admin` resolve. The upper-case
+// FlexibleLiteralChoiceTerminal is kept as the first alternative because it is what supplies the
+// quick-fix suggestions on a misspelled name; the regex behind it accepts any other casing.
+//
+// The name list is read back off that terminal rather than duplicated, so the two can't drift.
+val CAPABILITY_NAME = FlexibleLiteralChoiceTerminal(
+  *SimpleGrammarOptionValues.Capabilities.choices,
+  ignoreCase = true,
+)
