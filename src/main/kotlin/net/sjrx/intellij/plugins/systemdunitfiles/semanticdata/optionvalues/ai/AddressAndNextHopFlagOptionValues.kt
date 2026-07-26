@@ -1,7 +1,9 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.deprecatedBoolean
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
@@ -72,13 +74,11 @@ class ConfigParseAddressSectionDadOptionValue : SimpleGrammarOptionValues(
             "For historical reasons a boolean here means the opposite of what it looks like: " +
             "yes means none and no means both. Please use 'both', 'ipv4', 'ipv6' or 'none' instead."
 
-        val DAD = FlexibleLiteralChoiceTerminal(
-            "none", "both", "ipv4", "ipv6",
-            // parse_boolean() spellings, all deprecated.
-            "1", "yes", "y", "true", "t", "on", "0", "no", "n", "false", "f", "off",
-        ).deprecating(
-            listOf("1", "yes", "y", "true", "t", "on", "0", "no", "n", "false", "f", "off")
-                .associateWith { HISTORICAL }
+        // The family names come first: a boolean terminal matches a prefix of the value, so it would
+        // otherwise take the leading "no" out of "none" and strand "ne".
+        val DAD = AlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("none", "both", "ipv4", "ipv6"),
+            deprecatedBoolean(HISTORICAL),
         )
     }
 }

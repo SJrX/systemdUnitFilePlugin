@@ -167,6 +167,9 @@ class NetworkSectionInspectionTest : AbstractUnitFileTest() {
       "RouteMetric=128",
     )
     assertRejected("f.network", "[Address]\nAddPrefixRoute=bogus\n")
+    // Same prefix hazard as ConditionVirtualization: the deprecated boolean must not eat the "no"
+    // out of "none".
+    assertAccepted("f.network", "[Address]", "DuplicateAddressDetection=none", "DuplicateAddressDetection=n")
     assertRejected("f.network", "[Address]\nRouteMetric=hoge\n")
   }
 

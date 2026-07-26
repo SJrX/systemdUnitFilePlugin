@@ -23,7 +23,50 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
  *    authority for which (parser, ltype) pairs exist and which keys use them.
  */
 
-val BOOLEAN = FlexibleLiteralChoiceTerminal("1", "yes", "y", "true", "t", "on", "0", "no", "n", "false", "f", "off")
+/**
+ * The spellings parse_boolean() accepts (src/basic/parse-util.c). Kept as an array so a caller that
+ * needs its *own* boolean terminal can build one without reusing [BOOLEAN] — see [deprecatedBoolean].
+ */
+val BOOLEAN_SPELLINGS = arrayOf("1", "yes", "y", "true", "t", "on", "0", "no", "n", "false", "f", "off")
+
+/**
+ * A boolean, as parse_boolean() reads it.
+ *
+ * Prefer composing this as its own alternative over inlining the twelve spellings into a larger choice
+ * set. A setting that takes "a boolean or one of these names" is two distinct things to systemd, and
+ * keeping them separate means a later pass — a formatter normalising `yes`/`Yes`, say, or completion
+ * offering only the sensible half — can tell which is which from the grammar instead of re-sniffing
+ * the text.
+ *
+ * Watch the ordering when you do: this terminal matches a *prefix* of the value, so on
+ * `ConditionVirtualization=none` it would happily match the leading `no` and strand `ne`. Under the
+ * classic engine AlternativeCombinator commits to the first branch that matches and never backtracks,
+ * so the names have to come first.
+ *
+ * Do NOT call [FlexibleLiteralChoiceTerminal.deprecating] on this instance — it mutates in place and
+ * this one is shared across every validator.
+ */
+val BOOLEAN = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS)
+
+/**
+ * Only the *false* half of [BOOLEAN_SPELLINGS].
+ *
+ * A few settings reach parse_boolean() but act on the result only when it is false, letting a true-ish
+ * spelling fall through to a later branch that then rejects it — config_parse_preferred_src is the
+ * example: `PreferredSource=no` forbids a DHCP-supplied source, while `PreferredSource=yes` is simply
+ * not an address.
+ */
+val BOOLEAN_FALSE = FlexibleLiteralChoiceTerminal("0", "no", "n", "false", "f", "off")
+
+/**
+ * A fresh boolean terminal with every spelling marked deprecated for [reason].
+ *
+ * For settings that still accept a boolean for backwards compatibility but tell you not to use one.
+ * Returns a new instance each call, because `deprecating()` mutates the terminal it is called on and
+ * the shared [BOOLEAN] must not be poisoned.
+ */
+fun deprecatedBoolean(reason: String): FlexibleLiteralChoiceTerminal =
+  FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS).deprecating(BOOLEAN_SPELLINGS.associateWith { reason })
 val BYTES = RegexTerminal("[0-9]+[a-zA-Z]*\\s*", "[0-9]+[KMGT]?\\s*")
 val DEVICE = RegexTerminal("\\S+\\s*", "/[^\\u0000. ]+\\s*")
 val IOPS = RegexTerminal("[0-9]+[a-zA-Z]*\\s*", "[0-9]+[KMGT]?\\s*")

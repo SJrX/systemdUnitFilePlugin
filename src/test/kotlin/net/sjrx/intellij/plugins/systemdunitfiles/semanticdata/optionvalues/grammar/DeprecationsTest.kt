@@ -1,7 +1,10 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.ConfigParseAddressFamiliesOptionValue
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.ConfigParseAddressSectionDadOptionValue
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.ConfigParseIpMasqueradeOptionValue
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.ConfigParseUnitConditionStringOptionValue
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -42,5 +45,34 @@ class DeprecationsTest {
     assertTrue(ipMasquerade.deprecatedTokens("off").single().message.contains("no"))
     assertTrue(ipMasquerade.deprecatedTokens("ipv4").isEmpty())
     assertTrue(ipMasquerade.deprecatedTokens("both").isEmpty())
+  }
+
+  @Test
+  fun testDuplicateAddressDetectionBooleansAreDeprecatedButAccepted() {
+    // config_parse_address_dad tries parse_boolean() first and accepts the result with a
+    // "For historical reasons" warning, so these are valid values that deserve a nudge, not errors.
+    val dad = ConfigParseAddressSectionDadOptionValue().combinator
+    for (spelling in listOf("yes", "no", "1", "0", "off")) {
+      val deprecated = dad.deprecatedTokens(spelling)
+      assertEquals(spelling, 1, deprecated.size)
+      assertTrue(spelling, deprecated.single().message.contains("historical reasons"))
+    }
+    // The four family names are the spelling systemd asks for, so they carry no note...
+    for (name in listOf("none", "both", "ipv4", "ipv6")) {
+      assertTrue(name, dad.deprecatedTokens(name).isEmpty())
+    }
+  }
+
+  @Test
+  fun testDeprecatingOneBooleanTerminalDoesNotPoisonTheSharedOne() {
+    // deprecatedBoolean() has to hand back a FRESH terminal: FlexibleLiteralChoiceTerminal.deprecating
+    // mutates in place, so reusing the shared BOOLEAN would attach DuplicateAddressDetection='s note to
+    // every boolean-valued setting in the plugin.
+    assertTrue(BOOLEAN.deprecationFor("yes") == null)
+    val firstBoot = ConfigParseUnitConditionStringOptionValue().combinator
+    assertTrue(firstBoot.deprecatedTokens("yes").isEmpty())
+    assertTrue(firstBoot.deprecatedTokens("|! no").isEmpty())
+    // ...and the two really are separate instances, not the same object reached twice.
+    assertFalse(deprecatedBoolean("a") === deprecatedBoolean("b"))
   }
 }

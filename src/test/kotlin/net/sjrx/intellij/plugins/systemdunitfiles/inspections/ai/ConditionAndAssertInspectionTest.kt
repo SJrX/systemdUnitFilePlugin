@@ -137,6 +137,24 @@ class ConditionAndAssertInspectionTest : AbstractUnitFileTest() {
   }
 
   @Test
+  fun testArchitectureMatchesTheLongestNameNotThePrefix() {
+    // Several table entries are prefixes of others (ppc64 / ppc64-le, arm64 / arm64-be, mips / mips64).
+    // FlexibleLiteralChoiceTerminal sorts its choices longest-first in its init block, so the order the
+    // names are written in below is cosmetic and the classic engine can't stop on a short prefix.
+    assertAccepted(
+      "ConditionArchitecture=ppc64",
+      "ConditionArchitecture=ppc64-le",
+      "ConditionArchitecture=arm64",
+      "ConditionArchitecture=arm64-be",
+      "ConditionArchitecture=mips",
+      "ConditionArchitecture=mips64",
+      "ConditionArchitecture=mips64-le",
+      "ConditionArchitecture=arc",
+      "ConditionArchitecture=arc-be",
+    )
+  }
+
+  @Test
   fun testArchitectureRejectsUnknownAndLists() {
     assertRejected("ConditionArchitecture=x86_64")   // the table spells it with a hyphen
     assertRejected("ConditionArchitecture=invalid")
@@ -160,6 +178,21 @@ class ConditionAndAssertInspectionTest : AbstractUnitFileTest() {
       "ConditionVirtualization=systemd-nspawn",
       "ConditionVirtualization=lxc-libvirt",
       "ConditionVirtualization=|vmware",
+    )
+  }
+
+  @Test
+  fun testVirtualizationBooleanDoesNotShadowTheNames() {
+    // BOOLEAN is its own alternative here, and it matches a prefix -- so it must be tried after the
+    // names, or "none" would be read as the boolean "no" followed by a stray "ne".
+    assertAccepted(
+      "ConditionVirtualization=none",
+      "ConditionVirtualization=no",
+      "ConditionVirtualization=n",
+      "ConditionVirtualization=off",
+      "ConditionVirtualization=openvz",
+      "ConditionVirtualization=t",
+      "ConditionVirtualization=1",
     )
   }
 
@@ -259,6 +292,19 @@ class ConditionAndAssertInspectionTest : AbstractUnitFileTest() {
   }
 
   @Test
+  fun testControlGroupControllerListsMatchTheLongestControllerName() {
+    // cg_mask_from_string splits on whitespace, and "cpu" is a prefix of both "cpuacct" and "cpuset".
+    // The longest-first sort inside the terminal is what stops the first word of `cpuacct io` being
+    // read as "cpu" and the rest being reported as garbage.
+    assertAccepted(
+      "ConditionControlGroupController=cpuacct io",
+      "ConditionControlGroupController=cpuset cpu",
+      "ConditionControlGroupController=cpu cpuacct cpuset io blkio memory devices pids",
+      "ConditionControlGroupController=bpf-firewall bpf-devices",
+    )
+  }
+
+  @Test
   fun testControlGroupControllerRejectsUnknownNames() {
     assertRejected("ConditionControlGroupController=invalid")
   }
@@ -287,12 +333,26 @@ class ConditionAndAssertInspectionTest : AbstractUnitFileTest() {
   // ------------------------------------------------------------------ boolean conditions
 
   @Test
-  fun testBooleanConditionsStillWork() {
+  fun testBooleanConditionsTakeEverySpellingWithTheMarkers() {
+    // "Takes a boolean argument" -- systemd.unit(5), for both of these. The grammar is the shared
+    // conditionString(BOOLEAN), i.e. [|] [!] <boolean>, which is what this validator has always
+    // accepted; only the spelling of the marker prefix changed, to avoid an error range running past
+    // the end of the value on inputs like `!!yes`.
     assertAccepted(
       "ConditionFirstBoot=yes",
-      "ConditionACPower=true",
+      "ConditionFirstBoot=no",
+      "ConditionFirstBoot=1",
+      "ConditionFirstBoot=0",
+      "ConditionFirstBoot=t",
+      "ConditionFirstBoot=off",
       "AssertFirstBoot=|false",
+      "AssertFirstBoot=!true",
+      "AssertFirstBoot=|! true",
+      "ConditionACPower=true",
+      "AssertACPower=|yes",
     )
     assertRejected("ConditionFirstBoot=sometimes")
+    assertRejected("ConditionACPower=maybe")
+    assertRejected("ConditionFirstBoot=yes no")
   }
 }
