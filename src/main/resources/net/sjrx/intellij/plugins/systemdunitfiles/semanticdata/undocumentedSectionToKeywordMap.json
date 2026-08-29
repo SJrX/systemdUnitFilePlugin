@@ -200,6 +200,11 @@
       "ProxyARP": {
         "reason": "moved",
         "replacedWithKey": "IPv4ProxyARP"
+      },
+      "IPv6ProxyNDPAddress": {
+        "reason": "moved",
+        "replacedWithKey": "ProxyNeighbor",
+        "documentationLink": "https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#ProxyNeighbor="
       }
     },
     "FairQueueing": {
