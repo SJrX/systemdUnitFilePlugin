@@ -1,6 +1,8 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.conditionString
 
@@ -24,17 +26,20 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * `private-users`, any boolean parse_boolean() understands, the categories `vm` and `container`, and
  * finally any id in virtualization_table (src/basic/virt.c).
  *
- * The names are folded into one terminal rather than an alternation so that the whole value is one
- * token — that keeps error localization and completion pointing at the value itself.
+ * The boolean is kept as its own [BOOLEAN] alternative rather than folded into the name list: to
+ * systemd these really are two different branches, and a later formatting or completion pass can only
+ * tell "this span is a boolean" from "this span is a virtualization id" if the grammar says so.
+ *
+ * [BOOLEAN] has to come second. It matches a prefix of the value, so on `none` — a real entry in
+ * virtualization_table — it would otherwise match the leading `no` and strand `ne`, and under the
+ * classic engine AlternativeCombinator never backtracks out of a branch that matched.
  */
 class ConfigParseUnitConditionVirtualizationOptionValue : SimpleGrammarOptionValues(
     "config_parse_unit_condition_string",
-    conditionString(VIRTUALIZATION)
+    conditionString(AlternativeCombinator(VIRTUALIZATION, BOOLEAN))
 ) {
     companion object {
         private val VIRTUALIZATION = FlexibleLiteralChoiceTerminal(
-            // parse_boolean()
-            "1", "yes", "y", "true", "t", "on", "0", "no", "n", "false", "f", "off",
             // categories, plus the userns special case
             "vm", "container", "private-users",
             // virtualization_table — VMs

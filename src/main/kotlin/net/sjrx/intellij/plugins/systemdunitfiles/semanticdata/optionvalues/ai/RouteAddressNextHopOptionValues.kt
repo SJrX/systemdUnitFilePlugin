@@ -3,6 +3,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN_FALSE
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IPV4_ADDR
@@ -56,7 +57,7 @@ class ConfigParseRoutePreferredSourceOptionValue : SimpleGrammarOptionValues(
     SequenceCombinator(
         AlternativeCombinator(
             IP_ADDR,
-            FlexibleLiteralChoiceTerminal("0", "no", "n", "false", "f", "off"),
+            BOOLEAN_FALSE,
         ),
         EOF()
     )
