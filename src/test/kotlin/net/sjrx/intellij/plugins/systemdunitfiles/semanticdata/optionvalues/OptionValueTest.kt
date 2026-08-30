@@ -50,6 +50,9 @@ class OptionValueTest : AbstractUnitFileTest() {
 
     if (missingValidators.size >= allowed) {
       assertEquals("Number of missing validators is too high at ${missingValidators.size} > $allowed vs. found ${foundValidators.size} ${totalFoundValidators}", sortedList, "")
+    } else {
+        println("Missing Validators:")
+        println(sortedList)
     }
 
     if (totalFoundValidators == 0) {
