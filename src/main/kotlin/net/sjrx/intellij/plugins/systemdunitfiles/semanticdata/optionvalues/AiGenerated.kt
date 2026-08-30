@@ -342,6 +342,17 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_unit_condition_string", "CONDITION_MEMORY_PRESSURE") to ConfigParseUnitConditionPressureOptionValue() as OptionValueInformation,
     Validator("config_parse_unit_condition_string", "CONDITION_CPU_PRESSURE") to ConfigParseUnitConditionPressureOptionValue() as OptionValueInformation,
     Validator("config_parse_unit_condition_string", "CONDITION_IO_PRESSURE") to ConfigParseUnitConditionPressureOptionValue() as OptionValueInformation,
+    // The .network/.netdev/.link [Match] conditions (config_parse_net_condition). Same runtime checks as
+    // the [Unit] conditions above (condition_test_net dispatches to the same functions), reusing the
+    // shared parameter grammars; only the marker prefix differs (netCondition = `!` only).
+    Validator("config_parse_net_condition", "CONDITION_HOST") to ConfigParseNetConditionHostOptionValue() as OptionValueInformation,
+    Validator("config_parse_net_condition", "CONDITION_VIRTUALIZATION") to ConfigParseNetConditionVirtualizationOptionValue() as OptionValueInformation,
+    Validator("config_parse_net_condition", "CONDITION_KERNEL_COMMAND_LINE") to ConfigParseNetConditionKernelCommandLineOptionValue() as OptionValueInformation,
+    Validator("config_parse_net_condition", "CONDITION_VERSION") to ConfigParseNetConditionVersionOptionValue() as OptionValueInformation,
+    Validator("config_parse_net_condition", "CONDITION_CREDENTIAL") to ConfigParseNetConditionCredentialOptionValue() as OptionValueInformation,
+    Validator("config_parse_net_condition", "CONDITION_ARCHITECTURE") to ConfigParseNetConditionArchitectureOptionValue() as OptionValueInformation,
+    Validator("config_parse_net_condition", "CONDITION_FIRMWARE") to ConfigParseNetConditionFirmwareOptionValue() as OptionValueInformation,
+    Validator("config_parse_net_condition", "CONDITION_MACHINE_TAG") to ConfigParseNetConditionMachineTagOptionValue() as OptionValueInformation,
 
     // Enumerations and address forms that had no validator (#509).
     Validator("config_parse_netdev_kind", "0") to ConfigParseNetdevKindOptionValue() as OptionValueInformation,
