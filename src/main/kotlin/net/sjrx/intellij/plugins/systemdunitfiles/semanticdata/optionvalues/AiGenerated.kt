@@ -320,6 +320,28 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     // legitimate value; ConditionCPUFeature= alone accounted for 110 false positives in a 6.7k-unit corpus.
     Validator("config_parse_unit_condition_string", "CONDITION_CONTROL_GROUP_CONTROLLER") to ConfigParseUnitConditionControlGroupControllerOptionValue() as OptionValueInformation,
     Validator("config_parse_unit_condition_string", "CONDITION_CPU_FEATURE") to ConfigParseUnitConditionCpuFeatureOptionValue() as OptionValueInformation,
+    // Structured [Unit] Condition*=/Assert*= parameters, each modelled on its condition_test_* runtime check.
+    Validator("config_parse_unit_condition_string", "CONDITION_CPUS") to ConfigParseUnitConditionCpusOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_MEMORY") to ConfigParseUnitConditionMemoryOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_CREDENTIAL") to ConfigParseUnitConditionCredentialOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_KERNEL_MODULE_LOADED") to ConfigParseUnitConditionKernelModuleLoadedOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_USER") to ConfigParseUnitConditionUserOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_GROUP") to ConfigParseUnitConditionGroupOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_FIRMWARE") to ConfigParseUnitConditionFirmwareOptionValue() as OptionValueInformation,
+    // Conditions whose parameter systemd stores verbatim (fnmatch globs, kernel-cmdline/env words, version
+    // globs): config parsing imposes no shape, so these accept any non-empty value by design.
+    Validator("config_parse_unit_condition_string", "CONDITION_HOST") to ConfigParseUnitConditionHostOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_MACHINE_TAG") to ConfigParseUnitConditionMachineTagOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_KERNEL_COMMAND_LINE") to ConfigParseUnitConditionKernelCommandLineOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_ENVIRONMENT") to ConfigParseUnitConditionEnvironmentOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_VERSION") to ConfigParseUnitConditionVersionOptionValue() as OptionValueInformation,
+    // Structured Condition*= parameters with their own leaf grammars (batch 2).
+    Validator("config_parse_unit_condition_string", "CONDITION_FRACTION") to ConfigParseUnitConditionFractionOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_OS_RELEASE") to ConfigParseUnitConditionOsReleaseOptionValue() as OptionValueInformation,
+    // The three pressure conditions all dispatch to condition_test_psi, so they share one grammar.
+    Validator("config_parse_unit_condition_string", "CONDITION_MEMORY_PRESSURE") to ConfigParseUnitConditionPressureOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_CPU_PRESSURE") to ConfigParseUnitConditionPressureOptionValue() as OptionValueInformation,
+    Validator("config_parse_unit_condition_string", "CONDITION_IO_PRESSURE") to ConfigParseUnitConditionPressureOptionValue() as OptionValueInformation,
 
     // Enumerations and address forms that had no validator (#509).
     Validator("config_parse_netdev_kind", "0") to ConfigParseNetdevKindOptionValue() as OptionValueInformation,
