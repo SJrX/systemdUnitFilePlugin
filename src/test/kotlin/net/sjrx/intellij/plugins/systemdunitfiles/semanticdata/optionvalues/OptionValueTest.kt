@@ -43,10 +43,19 @@ class OptionValueTest : AbstractUnitFileTest() {
     val reductionPerDay = 1
     val allowed = maxOf(0, startingCount - (daysSinceStart * reductionPerDay))
 
+    // The allowance shrinks by reductionPerDay each day; the test fails once it reaches the current
+    // missing count. Solving allowed <= missing for the date gives the day this count stops passing.
+    val failDate = startDate.plusDays(((startingCount - missingValidators.size) / reductionPerDay).toLong())
+
     println("Missing Keywords:$totalMissingValidators")
     println("Missing Validators:${missingValidators.size}")
     println("Allowed Missing Validation: $allowed")
     println("Found:$totalFoundValidators")
+    if (missingValidators.size >= allowed) {
+      println("Burndown: test started failing on $failDate (at the current missing count)")
+    } else {
+      println("Burndown: test will start to fail on $failDate unless the count keeps dropping")
+    }
 
     if (missingValidators.size >= allowed) {
       assertEquals("Number of missing validators is too high at ${missingValidators.size} > $allowed vs. found ${foundValidators.size} ${totalFoundValidators}", sortedList, "")
