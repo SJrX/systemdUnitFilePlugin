@@ -353,6 +353,13 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_net_condition", "CONDITION_ARCHITECTURE") to ConfigParseNetConditionArchitectureOptionValue() as OptionValueInformation,
     Validator("config_parse_net_condition", "CONDITION_FIRMWARE") to ConfigParseNetConditionFirmwareOptionValue() as OptionValueInformation,
     Validator("config_parse_net_condition", "CONDITION_MACHINE_TAG") to ConfigParseNetConditionMachineTagOptionValue() as OptionValueInformation,
+    // Traffic-control Handle=/Parent=/ClassId= (.network [QDisc]/[*Class]). The QDISC_KIND_*/TCLASS_KIND_*
+    // ltype only selects which struct is allocated, not how the value parses, so each registers once under
+    // the `*` wildcard and covers every kind.
+    Validator("config_parse_qdisc_handle", "*") to ConfigParseQdiscHandleOptionValue() as OptionValueInformation,
+    Validator("config_parse_qdisc_parent", "*") to ConfigParseQdiscParentOptionValue() as OptionValueInformation,
+    Validator("config_parse_tclass_parent", "*") to ConfigParseTclassParentOptionValue() as OptionValueInformation,
+    Validator("config_parse_tclass_classid", "*") to ConfigParseTclassClassidOptionValue() as OptionValueInformation,
 
     // Enumerations and address forms that had no validator (#509).
     Validator("config_parse_netdev_kind", "0") to ConfigParseNetdevKindOptionValue() as OptionValueInformation,

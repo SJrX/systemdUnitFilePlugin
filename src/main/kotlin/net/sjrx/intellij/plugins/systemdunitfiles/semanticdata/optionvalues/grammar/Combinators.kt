@@ -504,3 +504,21 @@ fun netCondition(parameter: Combinator): Combinator = SequenceCombinator(
   ),
   EOF()
 )
+
+
+// ---------------------------------------------------------------------------------------------------
+// Traffic-control handles — the [QDisc]/[*Class] Handle=, Parent= and ClassId= values in .network files
+// (systemd src/network/tc/qdisc.c, src/network/tc/tclass.c, src/network/tc/tc-util.c).
+//
+// Every number here is read with safe_atou16_full(..., base 16): always hexadecimal (so `Handle=20` is
+// 0x20, not 20), fitting a uint16. strtoul(base 16) also tolerates an optional `0x` and leading zeros —
+// real files write bare hex like `3a` or `0002`. The value is bounded to <= 0xffff by capping the
+// significant hex digits at four.
+val TC_HANDLE_NUMBER = RegexTerminal("(?:0[xX])?[0-9a-fA-F]+", "(?:0[xX])?0*[0-9a-fA-F]{1,4}")
+
+/**
+ * A tc handle `major:minor` — parse_handle (src/network/tc/tc-util.c), which splits once on `:` and
+ * reads each side as a [TC_HANDLE_NUMBER]. Both sides are mandatory. Used verbatim for `ClassId=` and as
+ * the numeric branch of `Parent=`.
+ */
+val TC_HANDLE = SequenceCombinator(TC_HANDLE_NUMBER, COLON, TC_HANDLE_NUMBER)
