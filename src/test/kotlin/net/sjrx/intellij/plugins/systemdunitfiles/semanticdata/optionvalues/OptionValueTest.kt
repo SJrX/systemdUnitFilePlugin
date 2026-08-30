@@ -34,12 +34,7 @@ class OptionValueTest : AbstractUnitFileTest() {
       }
     }
     val missingValidatorList = missingValidators.map { "${String.format("%05d", it.value)}, ${it.key}" }
-
     val sortedList = missingValidatorList.sortedDescending().joinToString("\n")
-
-    println("Missing:$totalMissingValidators")
-    println("Missing Functions:${missingValidators.size}")
-    println("Found:$totalFoundValidators")
 
     val startDate = LocalDate.of(2025, 10, 27) // Today's date
     val startingCount = 619 // Your current undocumented options count
@@ -48,8 +43,13 @@ class OptionValueTest : AbstractUnitFileTest() {
     val reductionPerDay = 1
     val allowed = maxOf(0, startingCount - (daysSinceStart * reductionPerDay))
 
+    println("Missing Keywords:$totalMissingValidators")
+    println("Missing Validators:${missingValidators.size}")
+    println("Allowed Missing Validation: $allowed")
+    println("Found:$totalFoundValidators")
+
     if (missingValidators.size >= allowed) {
-      assertEquals("Number of missing functions is too high at ${missingValidators.size} > $allowed vs. found ${foundValidators.size} ${totalFoundValidators}", sortedList, "")
+      assertEquals("Number of missing validators is too high at ${missingValidators.size} > $allowed vs. found ${foundValidators.size} ${totalFoundValidators}", sortedList, "")
     }
 
     if (totalFoundValidators == 0) {
