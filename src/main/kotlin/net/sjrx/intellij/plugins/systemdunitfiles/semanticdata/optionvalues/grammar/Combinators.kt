@@ -370,3 +370,66 @@ val CAPABILITY_NAME = FlexibleLiteralChoiceTerminal(
   *SimpleGrammarOptionValues.Capabilities.choices,
   ignoreCase = true,
 )
+
+
+// ---------------------------------------------------------------------------------------------------
+// Comparison operators — parse_compare_operator (systemd src/shared/compare-operator.c).
+//
+// This is the set that helper recognises when called with *no* flags, i.e. neither COMPARE_ALLOW_FNMATCH,
+// COMPARE_EQUAL_BY_STRING nor COMPARE_ALLOW_TEXTUAL. The fnmatch (`$=`, `!$=`) and textual (`lt`, `ge`, …)
+// spellings need their flag to be set, and the string-vs-order `=`/`!=` distinction needs
+// COMPARE_EQUAL_BY_STRING, so with no flags `=` and `!=` fall through to the ordinary equal/unequal
+// operators. That is exactly how config_parse's numeric conditions call it — ConditionMemory= and
+// ConditionCPUs= both pass 0 (src/shared/condition.c, condition_test_memory / condition_test_cpus).
+//
+// LiteralChoiceTerminal sorts its choices longest-first, so `<=` is tried before `<` automatically.
+val ORDER_COMPARE_OPERATOR = LiteralChoiceTerminal("<>", "<=", ">=", "==", "!=", "<", ">", "=")
+
+/**
+ * A value optionally prefixed by an [ORDER_COMPARE_OPERATOR], as the numeric `Condition…=` settings read
+ * it: `parse_compare_operator()` is tried first and, if no operator is present, the check defaults to
+ * `>=` (condition_test_memory / condition_test_cpus). The operator does not consume trailing whitespace,
+ * but `parse_size()` / `safe_atou()` are lenient about a leading space, so an optional gap is allowed
+ * between the two rather than risk flagging a spelling systemd accepts.
+ */
+fun comparisonPrefixed(value: Combinator): Combinator = SequenceCombinator(
+  ZeroOrOne(SequenceCombinator(ORDER_COMPARE_OPERATOR, ZeroOrOne(WhitespaceTerminal()))),
+  value,
+)
+
+/**
+ * Any non-empty value, for a `Condition…=` whose parameter systemd stores verbatim and only interprets
+ * when the unit is tested, never at config-parse time.
+ *
+ * config_parse_unit_condition_string does no per-condition validation — it strips the `|`/`!` markers,
+ * resolves specifiers, and stores the rest. For conditions like ConditionHost= (an fnmatch glob or a
+ * machine/boot-ID), ConditionKernelCommandLine= and ConditionEnvironment= (a bare word or `word=value`),
+ * ConditionMachineTag= (an fnmatch glob) and ConditionKernelVersion= (whose bare, operator-less form is
+ * treated as a glob), any non-empty string is legitimate. Matching anything narrower here would flag
+ * values systemd happily accepts, so the honest model is "not empty". The empty value is handled upstream
+ * as a list reset and never reaches the grammar.
+ */
+val ANY_CONDITION_ARGUMENT = RegexTerminal(".+", ".+")
+
+
+// ---------------------------------------------------------------------------------------------------
+// Percentages — parse_permyriad (systemd src/basic/percent-util.c). An integer with an optional
+// fractional part and a unit symbol: "%" allows up to two decimal places, "‰" up to one, "‱" none.
+// parse_permyriad caps the value at 100% (10000 permyriad); that ceiling is deliberately NOT enforced
+// here — bounding the decimal forms in a regex would wrongly reject legal leading-zero spellings like
+// `050%`, and over-flagging is worse than the occasional missed `150%`. Only the shape is checked.
+val PERMYRIAD_PERCENTAGE = RegexTerminal(
+  "[0-9]+(?:\\.[0-9]+)?[%‰‱]",
+  "[0-9]+(?:\\.[0-9]{1,2})?%|[0-9]+(?:\\.[0-9])?‰|[0-9]+‱",
+)
+
+// Comparison operators as parse_compare_operator recognises them with COMPARE_ALLOW_FNMATCH |
+// COMPARE_EQUAL_BY_STRING (src/shared/compare-operator.c) — the flags condition_test_osrelease and the
+// SMBIOS/version comparisons pass. Adds the fnmatch `$=` / `!$=` forms to the ordinary ordering
+// operators; the textual `lt`/`le`/… spellings still need COMPARE_ALLOW_TEXTUAL and so are absent.
+// LiteralChoiceTerminal sorts its choices longest-first, so `!$=` is tried before `!=` automatically.
+val FNMATCH_COMPARE_OPERATOR = LiteralChoiceTerminal("!$=", "$=", "<>", "<=", ">=", "==", "!=", "<", ">", "=")
+
+// An environment-variable name — env_name_is_valid (systemd src/basic/env-util.c): a letter or
+// underscore followed by letters, digits and underscores. Used by ConditionOSRelease= keys.
+val ENV_NAME = RegexTerminal("[A-Za-z_][A-Za-z0-9_]*", "[A-Za-z_][A-Za-z0-9_]*")
