@@ -1,7 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.CONDITION_CREDENTIAL
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.conditionString
 
 /*
@@ -29,7 +29,5 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 class ConfigParseUnitConditionCredentialOptionValue : SimpleGrammarOptionValues(
     "config_parse_unit_condition_string",
-    conditionString(
-        RegexTerminal(".+", "(?!\\.\\.?\$)[\\x20-\\x7E&&[^/:]]{1,255}")
-    )
+    conditionString(CONDITION_CREDENTIAL)
 )

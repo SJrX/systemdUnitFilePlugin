@@ -1,11 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.CONDITION_FIRMWARE
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.conditionString
 
 /*
@@ -35,19 +31,5 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 class ConfigParseUnitConditionFirmwareOptionValue : SimpleGrammarOptionValues(
     "config_parse_unit_condition_string",
-    conditionString(
-        AlternativeCombinator(
-            SequenceCombinator(
-                LiteralChoiceTerminal("device-tree-compatible("),
-                RegexTerminal("[^)]+", "[^)]+"),
-                LiteralChoiceTerminal(")"),
-            ),
-            SequenceCombinator(
-                LiteralChoiceTerminal("smbios-field("),
-                RegexTerminal("[^)]+", "[^)]+"),
-                LiteralChoiceTerminal(")"),
-            ),
-            FlexibleLiteralChoiceTerminal("device-tree", "uefi"),
-        )
-    )
+    conditionString(CONDITION_FIRMWARE)
 )

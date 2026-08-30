@@ -433,3 +433,74 @@ val FNMATCH_COMPARE_OPERATOR = LiteralChoiceTerminal("!$=", "$=", "<>", "<=", ">
 // An environment-variable name — env_name_is_valid (systemd src/basic/env-util.c): a letter or
 // underscore followed by letters, digits and underscores. Used by ConditionOSRelease= keys.
 val ENV_NAME = RegexTerminal("[A-Za-z_][A-Za-z0-9_]*", "[A-Za-z_][A-Za-z0-9_]*")
+
+
+// ---------------------------------------------------------------------------------------------------
+// Shared Condition/Assert/[Match] parameter grammars.
+//
+// The same condition_test_* leaf check (systemd src/shared/condition.c) validates a given condition
+// type whether it was written as a [Unit] Condition*=/Assert*= (config_parse_unit_condition_string) or
+// as a [Match] key in .network/.netdev/.link (config_parse_net_condition) — condition_test_net and
+// condition_test dispatch the same eight shared types to identical functions. Only the marker prefix
+// differs, which is why the value grammars live here and the two entry points ([conditionString],
+// [netCondition]) wrap them differently.
+
+/**
+ * A `native`-or-architecture-name parameter — condition_test_architecture_parameter, backed by
+ * architecture_from_string (src/basic/architecture.c).
+ */
+val CONDITION_ARCHITECTURE = FlexibleLiteralChoiceTerminal(
+  "native",
+  "alpha", "arc", "arc-be", "arm", "arm-be", "arm64", "arm64-be", "cris", "ia64", "loongarch64",
+  "m68k", "mips", "mips-le", "mips64", "mips64-le", "nios2", "parisc", "parisc64", "ppc", "ppc-le",
+  "ppc64", "ppc64-le", "riscv32", "riscv64", "s390", "s390x", "sh", "sh64", "sparc", "sparc64",
+  "tilegx", "x86", "x86-64",
+)
+
+/**
+ * A virtualization parameter — condition_test_virtualization. Accepts, in order: `private-users`, a
+ * boolean, the categories `vm`/`container`, or any id in virtualization_table (src/basic/virt.c).
+ * [BOOLEAN] must follow the names so it cannot strand the `no` inside `none`.
+ */
+val CONDITION_VIRTUALIZATION = AlternativeCombinator(
+  FlexibleLiteralChoiceTerminal(
+    "vm", "container", "private-users",
+    "none", "kvm", "amazon", "qemu", "bochs", "xen", "uml", "vmware", "oracle", "microsoft", "zvm",
+    "parallels", "bhyve", "qnx", "acrn", "powervm", "apple", "sre", "google", "vm-other",
+    "systemd-nspawn", "lxc-libvirt", "lxc", "openvz", "docker", "podman", "rkt", "wsl", "proot",
+    "pouch", "container-other",
+  ),
+  BOOLEAN,
+)
+
+/**
+ * A credential name — credential_name_valid (src/shared/creds-util.c) = filename_is_valid &&
+ * fdname_is_valid: one to 255 printable-ASCII characters, none of them `/` or `:`, and not `.`/`..`.
+ */
+val CONDITION_CREDENTIAL = RegexTerminal(".+", "(?!\\.\\.?\$)[\\x20-\\x7E&&[^/:]]{1,255}")
+
+/**
+ * A firmware parameter — condition_test_firmware. One of `uefi`, `device-tree`, or the parenthesised
+ * `device-tree-compatible(DTC)` / `smbios-field(FIELD OP VALUE)` forms (argument modelled loosely; the
+ * parser closes on the last `)`).
+ */
+val CONDITION_FIRMWARE = AlternativeCombinator(
+  SequenceCombinator(LiteralChoiceTerminal("device-tree-compatible("), RegexTerminal("[^)]+", "[^)]+"), LiteralChoiceTerminal(")")),
+  SequenceCombinator(LiteralChoiceTerminal("smbios-field("), RegexTerminal("[^)]+", "[^)]+"), LiteralChoiceTerminal(")")),
+  FlexibleLiteralChoiceTerminal("device-tree", "uefi"),
+)
+
+/**
+ * A `[Match]` condition value for config_parse_net_condition (.network/.netdev/.link, src/shared/
+ * net-condition.c). That parser strips a single optional leading `!` (negate) — no `|` trigger and no
+ * whitespace skip after it — then hands the rest to the same condition_test_* check as the [Unit]
+ * conditions. Spelled as alternatives (rather than a ZeroOrOne over `!`) for the same reason as
+ * [conditionPath]: it keeps the reported match offset equal to what was consumed.
+ */
+fun netCondition(parameter: Combinator): Combinator = SequenceCombinator(
+  AlternativeCombinator(
+    SequenceCombinator(BANG, parameter),
+    parameter,
+  ),
+  EOF()
+)
