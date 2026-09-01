@@ -101,7 +101,6 @@ tasks {
   patchPluginXml {
       changeNotes.set(changeLogContents)
       sinceBuild.set(properties("sinceVersion"))
-      untilBuild.set(properties("untilVersion"))
   }
 }
 
