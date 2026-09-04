@@ -51,8 +51,15 @@ class ExecOptionValue : OptionValueInformation {
     get() = VALIDATOR_NAME
 
   companion object {
-    // Used to check whether or not there is a problem.
-    private val ABSOLUTE_PATH_REGEX = Pattern.compile("^\\s*(?:[+@:!-]|!!)*\\s*[\\/]")
+    // Specifiers that systemd's unit_path_printf() expands to an absolute filesystem path. A command whose first
+    // token begins with one of these (e.g. ExecStart=%h/bin/foo) resolves to an absolute path, so it must not be
+    // flagged by the "use an absolute path" recommendation below. Text/name specifiers (%i, %n, %H, ...) are
+    // deliberately excluded: they do not guarantee an absolute path. See src/core/unit-printf.c in systemd.
+    private const val ABSOLUTE_PATH_SPECIFIERS = "hsCdDELStTVyYf"
+
+    // Used to check whether or not there is a problem. A value is considered absolute when, after the optional exec
+    // prefixes (+ @ : ! -), it starts with '/' or with a specifier that expands to an absolute path.
+    private val ABSOLUTE_PATH_REGEX = Pattern.compile("^\\s*(?:[+@:!-]|!!)*\\s*(?:[\\/]|%[$ABSOLUTE_PATH_SPECIFIERS])")
 
     // Used to determine what to highlight (we want to avoid highlighting valid prefixes).
     private val RELATIVE_PATH_REGEX = Pattern.compile("^\\s*(?:[+@:!-]+)?([^\\/\\s]\\S*)\\s*")
