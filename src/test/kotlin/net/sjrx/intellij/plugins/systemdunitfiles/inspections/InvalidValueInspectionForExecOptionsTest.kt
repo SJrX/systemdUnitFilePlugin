@@ -418,4 +418,74 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
     assertStringContains("an absolute path", info!!.description)
     TestCase.assertEquals("%n/path/to/executable", info.text)
   }
+
+  fun testNoWarningForAnyAbsolutePathSpecifier() {
+    // Every specifier that systemd's unit_path_printf() expands to an absolute path must suppress the warning.
+    // These are the full whitelist from ExecOptionValue.ABSOLUTE_PATH_SPECIFIERS (h s C d D E L S t T V y Y f);
+    // keep the two in sync.
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Service]
+           ExecStart=%h/path/to/executable
+           ExecStart=%s/path/to/executable
+           ExecStart=%C/path/to/executable
+           ExecStart=%d/path/to/executable
+           ExecStart=%D/path/to/executable
+           ExecStart=%E/path/to/executable
+           ExecStart=%L/path/to/executable
+           ExecStart=%S/path/to/executable
+           ExecStart=%t/path/to/executable
+           ExecStart=%T/path/to/executable
+           ExecStart=%V/path/to/executable
+           ExecStart=%y/path/to/executable
+           ExecStart=%Y/path/to/executable
+           ExecStart=%f/path/to/executable
+
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(0, highlights)
+  }
+
+  fun testWeakWarningForNonAbsolutePathSpecifiers() {
+    // Specifiers that expand to arbitrary text (names, host/OS facts, user/group) are NOT absolute paths, so the
+    // recommendation must still fire once per line. None of these appears in ExecOptionValue.ABSOLUTE_PATH_SPECIFIERS.
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+           [Service]
+           ExecStart=%i/path/to/executable
+           ExecStart=%I/path/to/executable
+           ExecStart=%n/path/to/executable
+           ExecStart=%N/path/to/executable
+           ExecStart=%p/path/to/executable
+           ExecStart=%P/path/to/executable
+           ExecStart=%H/path/to/executable
+           ExecStart=%l/path/to/executable
+           ExecStart=%m/path/to/executable
+           ExecStart=%M/path/to/executable
+           ExecStart=%u/path/to/executable
+           ExecStart=%U/path/to/executable
+           ExecStart=%a/path/to/executable
+           ExecStart=%b/path/to/executable
+           ExecStart=%v/path/to/executable
+
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(15, highlights)
+  }
 }
