@@ -13,7 +13,7 @@ class EmergencyActionOptionValue : AbstractEnumOptionValue(validOptions, VALIDAT
   }
 }
 
-class KillModeOptionValue : AbstractEnumOptionValue(validOptions, VALIDATOR_NAME) {
+class KillModeOptionValue : AbstractGrammarEnumOptionValue(validOptions, VALIDATOR_NAME) {
 
   companion object {
     private val validOptions: Set<String> = ImmutableSet.of("control-group", "process", "mixed", "none")
