@@ -303,6 +303,24 @@ class InvalidValueInspectionForKillModeOptionValue : AbstractUnitFileTest() {
     TestCase.assertNotNull(highlightElement)
     TestCase.assertEquals("sigkill", highlightElement!!.text)
   }
+
+  fun testKillModeInvalidValueOffersReplacementQuickFix() {
+    // Fixture Setup
+    val file = """
+           [Service]
+           KillMode=sigkill
+
+           """.trimIndent()
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+
+    // Exercise SUT
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+    assertContainsQuickfix(highlights[0]!!, "Replace 'sigkill' with 'process'")
+  }
 }
 
 class InvalidValueInspectionForRestartOptionValueTest : AbstractUnitFileTest() {

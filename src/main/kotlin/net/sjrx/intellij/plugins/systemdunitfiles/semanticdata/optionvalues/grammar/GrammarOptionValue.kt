@@ -29,6 +29,15 @@ open class GrammarOptionValue(
   }
 
   /**
+   * Message for a value that is well-formed but not actually valid (the "semantic" error, e.g. a
+   * value of the right shape that is not one of the allowed choices). Both matching engines call
+   * this, so an override applies regardless of the parse-engine flag. Subclasses that know their
+   * allowed values (e.g. enum validators) override it to name them; the default stays generic.
+   */
+  open fun invalidValueMessage(key: String, badValue: String): String =
+    "$key's value is correctly formatted but seems invalid."
+
+  /**
    * Generates problem descriptors based on the value.
    *
    * @param property - the Psi Element we are examining.
@@ -102,9 +111,9 @@ open class GrammarOptionValue(
             }
           }
 
-          holder.registerProblem(property.valueNode.psi, "${property.key}'s value is correctly formatted but seems invalid.", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, tr, *quickFixes.toTypedArray())
+          holder.registerProblem(property.valueNode.psi, invalidValueMessage(property.key, problemToken), ProblemHighlightType.GENERIC_ERROR_OR_WARNING, tr, *quickFixes.toTypedArray())
         } else {
-          holder.registerProblem(property.valueNode.psi, "${property.key}'s value is correctly formatted but seems invalid.", ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+          holder.registerProblem(property.valueNode.psi, invalidValueMessage(property.key, value), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
         }
 
 
@@ -166,7 +175,7 @@ open class GrammarOptionValue(
           quickFixes.add(ReplaceInvalidLiteralChoiceQuickFix(bad.start, bad.text, choice))
         }
 
-        holder.registerProblem(property.valueNode.psi, "${property.key}'s value is correctly formatted but seems invalid.", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, tr, *quickFixes.toTypedArray())
+        holder.registerProblem(property.valueNode.psi, invalidValueMessage(property.key, bad.text), ProblemHighlightType.GENERIC_ERROR_OR_WARNING, tr, *quickFixes.toTypedArray())
       }
     }
   }
