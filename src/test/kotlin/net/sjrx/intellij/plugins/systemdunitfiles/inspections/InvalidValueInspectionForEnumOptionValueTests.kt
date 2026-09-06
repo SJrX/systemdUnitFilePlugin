@@ -246,6 +246,27 @@ class InvalidValueInspectionForManagedOOMModeOptionsTest : AbstractUnitFileTest(
     // Verification
     assertSize(1, highlights)
   }
+
+  fun testValueStartingWithValidChoiceButWithTrailingCharactersIsFlagged() {
+    // Fixture Setup
+    // 'autox' starts with the valid choice 'auto' but has a trailing char, so it exercises the
+    // syntactic format-error branch (not the semantic-choice branch); this pins it is still flagged.
+    // language="unit file (systemd)"
+    val file = """
+           [Swap]
+           ManagedOOMSwap=autox
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.swap", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+    assertStringContains("does not match the expected format", highlights[0]!!.description)
+  }
 }
 
 class InvalidValueInspectionForKillModeOptionValue : AbstractUnitFileTest() {
@@ -632,6 +653,27 @@ class InvalidValueInspectionForPersonalityOptionValue : AbstractUnitFileTest() {
 
     // Verification
     assertSize(1, highlights)
+  }
+
+  fun testInvalidValueOffersReplacementQuickFixForCollidingArchitectures() {
+    // Fixture Setup
+    // Personality has the heaviest prefix-collision set (arm/arm64/arm64-be, mips/mips64/..., etc.);
+    // this pins that an invalid value still offers a well-formed replacement to a full-length choice.
+    // language="unit file (systemd)"
+    val file = """
+           [Service]
+           Personality=amd64
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+    assertContainsQuickfix(highlights[0]!!, "Replace 'amd64' with 'arm64'")
   }
 }
 
@@ -1129,6 +1171,27 @@ class InvalidValueInspectionForSocketTimestampingOptionValue : AbstractUnitFileT
 
     // Verification
     assertSize(1, highlights)
+  }
+
+  fun testInvalidValueOffersReplacementQuickFixForUnicodeMicrosecondChoice() {
+    // Fixture Setup
+    // The 'µs' (U+00B5) spelling is non-ASCII, so it cannot appear in the ASCII syntactic regex and
+    // is reachable only via the exact-startsWith path; this pins that it survives into the fix list.
+    // language="unit file (systemd)"
+    val file = """
+           [Socket]
+           Timestamping=ms
+           """.trimIndent()
+
+
+    // Execute SUT
+    setupFileInEditor("file.socket", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+    assertContainsQuickfix(highlights[0]!!, "Replace 'ms' with 'µs'")
   }
 }
 
