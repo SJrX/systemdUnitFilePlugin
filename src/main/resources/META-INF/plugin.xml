@@ -102,6 +102,7 @@
                          displayName="systemd Unit Files"
                          parentId="tools"/>
     <editorNotificationProvider implementation="net.sjrx.intellij.plugins.systemdunitfiles.settings.PodmanNetworkEditorNotificationProvider"/>
+    <editorNotificationProvider implementation="net.sjrx.intellij.plugins.systemdunitfiles.settings.NewGrammarEngineEditorNotificationProvider"/>
   </extensions>
 
   <actions>

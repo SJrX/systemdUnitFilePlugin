@@ -22,12 +22,26 @@ class ExperimentalSettings : PersistentStateComponent<ExperimentalSettings.State
     /**
      * Use the new list-of-successes grammar engine (Combinator.parse / validate) for value
      * validation instead of the original SyntacticMatch/SemanticMatch path.
+     *
+     * Release 1 of the rollout (GitHub #467) flips this default to `true` so every project that has
+     * not explicitly opted out lands on the new engine. The old engine remains reachable as an escape
+     * hatch: the settings checkbox, or the "Switch back to legacy validation" action on
+     * [NewGrammarEngineEditorNotificationProvider]. Once the bake period is over the old engine and
+     * this flag are removed and the new engine becomes unconditional.
      */
-    var useGrammarParseEngine: Boolean = false
+    var useGrammarParseEngine: Boolean = true
+
+    /**
+     * Set once the user has dismissed (or acted on) the "you are now on the new grammar engine"
+     * banner shown by [NewGrammarEngineEditorNotificationProvider], so it does not reappear on every
+     * unit file they open. Independent of [useGrammarParseEngine]: a user can dismiss the banner while
+     * staying on the new engine.
+     */
+    var newEngineBannerDismissed: Boolean = false
 
     /**
      * Underline the KEY of every option whose value is backed by a grammar validator
-     * ([GrammarOptionValue]), a debug aid for seeing which keys the new engine covers. Independent of
+     * ([net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.Combinator]), a debug aid for seeing which keys the new engine covers. Independent of
      * [useGrammarParseEngine]: the grammar validators exist in the registry regardless of which
      * validation path is active, so this can be toggled on its own.
      */

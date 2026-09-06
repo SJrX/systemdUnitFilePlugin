@@ -2,22 +2,34 @@ package net.sjrx.intellij.plugins.systemdunitfiles
 
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
-import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import com.intellij.testFramework.utils.module.assertContains
-import junit.framework.TestCase
 import net.sjrx.intellij.plugins.systemdunitfiles.generated.UnitFileElementTypeHolder
+import net.sjrx.intellij.plugins.systemdunitfiles.settings.ExperimentalSettings
 import org.hamcrest.CoreMatchers.hasItem
 import org.hamcrest.MatcherAssert.assertThat
-import java.util.*
 import java.util.stream.Collectors
 
 abstract class AbstractUnitFileTest : BasePlatformTestCase() {
+
+  override fun setUp() {
+    super.setUp()
+    // Pin the grammar-engine flag to false (its historical default) so the shipped production default
+    // — flipped to true in #467 — does not leak into tests. This keeps the CI matrix meaningful:
+    //   * -Dsystemd.unit.grammarParseEngine=false  -> flag false + FORCE_PARSE_ENGINE false: the OLD
+    //     validation engine is exercised (still reachable in production via "Switch back"), so it stays
+    //     covered even though it is no longer the default.
+    //   * -Dsystemd.unit.grammarParseEngine=true   -> FORCE_PARSE_ENGINE forces the NEW validation
+    //     engine regardless of the flag.
+    // Tests that need the new engine's flag-gated features (grammar coloring, completion, IPv6
+    // inspection) set useGrammarParseEngine = true explicitly, overriding this.
+    ExperimentalSettings.getInstance(project).state.useGrammarParseEngine = false
+  }
+
   protected fun enableInspection(cls: Class<out LocalInspectionTool?>?) {
     myFixture.enableInspections(cls)
   }
@@ -63,15 +75,12 @@ abstract class AbstractUnitFileTest : BasePlatformTestCase() {
 
     @JvmStatic
     protected fun assertStringContains(subject: String, value: String) {
-      TestCase.assertTrue("Expected that $value contains $subject", value.contains(subject))
+      assertTrue("Expected that $value contains $subject", value.contains(subject))
     }
 
     @JvmStatic
     protected fun assertContainsQuickfix(info: HighlightInfo, quickfixName: String) {
-
-      var found = false
       val quickFixes = info.quickFixActionRanges.map {
-        it ->
         it.first.action.text
       }
 
