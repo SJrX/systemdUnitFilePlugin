@@ -404,5 +404,5 @@ tasks.register<org.jetbrains.intellij.platform.gradle.tasks.PublishPluginTask>("
   host.set("https://plugins.jetbrains.com")
 
   // Set the distribution file in gradle build to the archive file of the buildPlugin task
-  archiveFile.set(project.file("build/distributions/${project.name}-${project.version}.zip"))
+  archiveFiles.from(project.file("build/distributions/${project.name}-${project.version}.zip"))
 }
