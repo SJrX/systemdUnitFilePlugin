@@ -64,7 +64,7 @@ spec:
   if (kanikoEnabled) {
     yaml += """
   - name: kaniko
-    image: gcr.io/kaniko-project/executor:v1.22.0-debug
+    image: ghcr.io/osscontainertools/kaniko:v1.28.5-debug
     imagePullPolicy: Always
     command:
     - sleep
