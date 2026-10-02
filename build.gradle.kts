@@ -17,7 +17,8 @@ fun getVersionNumber() : String {
   val build = System.getenv("BUILD_NUMBER") ?: 3
 
 
-  val branchName = System.getenv("BRANCH_NAME")  ?: "undefined"
+  // Branch names like "fix/foo" would otherwise put a path separator into the distribution zip's file name
+  val branchName = (System.getenv("BRANCH_NAME")  ?: "undefined").replace(Regex("[^A-Za-z0-9._-]"), "-")
 
   if (branchName.matches(Regex("""[0-9]{3}\.x"""))) {
     return "${major}.${minor}.${build}"
