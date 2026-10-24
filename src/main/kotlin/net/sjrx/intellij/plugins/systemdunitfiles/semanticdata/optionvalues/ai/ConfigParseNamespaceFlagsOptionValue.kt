@@ -1,11 +1,11 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.PreferValidAlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrMore
@@ -42,7 +42,9 @@ private val NAMESPACE_LIST = SequenceCombinator(
 class ConfigParseNamespaceFlagsOptionValue : SimpleGrammarOptionValues(
   "config_parse_namespace_flags",
   SequenceCombinator(
-    AlternativeCombinator(
+    // PreferValid: NAMESPACE_TYPE's lenient lower-case shape would otherwise take the `t` out of a
+    // mixed-case boolean like `tRUE` (parse_boolean ignores case) and strand the rest.
+    PreferValidAlternativeCombinator(
       NAMESPACE_LIST,
       BOOLEAN
     ),

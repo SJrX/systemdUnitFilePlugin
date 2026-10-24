@@ -1,28 +1,21 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.*
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 
 /**
- * Validator for Swap.ProtectHome
- * C Function: config_parse_protect_home(0)
- * Used by Options: Swap.ProtectHome
- * 
- * Validates values for ProtectHome= option which accepts:
- * - Boolean values (yes, no, true, false, on, off, 1, 0, y, n, t, f)
- * - Special values: read-only, tmpfs
+ * Validator for ProtectHome= (Service/Socket/Mount/Swap)
+ * C Function: config_parse_protect_home(0), src/core/load-fragment.c
+ *
+ * DEFINE_STRING_TABLE_LOOKUP_WITH_BOOLEAN over protect_home_table
+ * (no, yes, read-only, tmpfs) in src/core/namespace.c.
+ * string_table_lookup_from_string_with_boolean tries parse_boolean() (case-insensitive) first,
+ * then a case-sensitive lookup in the table, so only the boolean half ignores case.
  */
 class ConfigParseProtectHomeOptionValue : SimpleGrammarOptionValues(
     "config_parse_protect_home",
     SequenceCombinator(
-        FlexibleLiteralChoiceTerminal(
-            // Boolean values
-            "1", "yes", "y", "true", "t", "on",
-            "0", "no", "n", "false", "f", "off",
-            // Special values
-            "read-only", "tmpfs"
-        ),
+        namesOrBoolean("no", "yes", "read-only", "tmpfs"),
         EOF()
     )
 )

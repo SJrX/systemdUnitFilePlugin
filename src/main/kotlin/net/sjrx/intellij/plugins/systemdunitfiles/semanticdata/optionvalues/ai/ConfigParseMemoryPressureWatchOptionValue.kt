@@ -1,20 +1,21 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.*
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 
 /**
  * Validator for Swap.MemoryPressureWatch
- * C Function: config_parse_pressure_watch(0)
- * Used by Options: Swap.MemoryPressureWatch
+ * C Function: config_parse_pressure_watch(0), src/core/load-fragment.c
  *
- * Accepts boolean values (yes/no/1/0/true/false/on/off/y/n/t/f) or special values (auto/skip).
+ * cgroup_pressure_watch_from_string: DEFINE_STRING_TABLE_LOOKUP_WITH_BOOLEAN over
+ * cgroup_pressure_watch_table (no, yes, auto, skip) in src/core/cgroup.c.
+ * string_table_lookup_from_string_with_boolean tries parse_boolean() (case-insensitive) first,
+ * then a case-sensitive lookup in the table, so only the boolean half ignores case.
  */
 class ConfigParseMemoryPressureWatchOptionValue : SimpleGrammarOptionValues(
     "config_parse_pressure_watch",
     SequenceCombinator(
-        FlexibleLiteralChoiceTerminal("yes", "no", "1", "0", "true", "false", "on", "off", "y", "n", "t", "f", "auto", "skip"),
+        namesOrBoolean("no", "yes", "auto", "skip"),
         EOF()
     )
 )

@@ -15,6 +15,12 @@ class ConfigParseTimezoneModeOptionValueTest : AbstractUnitFileTest() {
             Timezone=off
             Timezone=copy
             Timezone=bind
+            Timezone=symlink
+            Timezone=delete
+            Timezone=auto
+            Timezone=on
+            Timezone=TRUE
+            Timezone=No
         """.trimIndent()
 
         // Execute SUT
@@ -33,9 +39,9 @@ class ConfigParseTimezoneModeOptionValueTest : AbstractUnitFileTest() {
         val file = """
             [Exec]
             Timezone=invalid
-            Timezone=on
+            Timezone=Copy
             Timezone=unbind
-            Timezone=auto
+            Timezone=yess
         """.trimIndent()
 
         // Execute SUT

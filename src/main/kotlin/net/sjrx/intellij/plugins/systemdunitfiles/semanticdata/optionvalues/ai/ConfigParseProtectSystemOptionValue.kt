@@ -1,24 +1,21 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.*
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 
 /**
- * Validator for Swap.ProtectSystem
- * C Function: config_parse_protect_system(0)
- * Used by Options: Swap.ProtectSystem
- * 
- * Accepts boolean values or the special values "full" or "strict".
+ * Validator for ProtectSystem= (Service/Socket/Mount/Swap)
+ * C Function: config_parse_protect_system(0), src/core/load-fragment.c
+ *
+ * DEFINE_STRING_TABLE_LOOKUP_WITH_BOOLEAN over protect_system_table
+ * (no, yes, full, strict) in src/core/namespace.c.
+ * string_table_lookup_from_string_with_boolean tries parse_boolean() (case-insensitive) first,
+ * then a case-sensitive lookup in the table, so only the boolean half ignores case.
  */
 class ConfigParseProtectSystemOptionValue : SimpleGrammarOptionValues(
     "config_parse_protect_system",
     SequenceCombinator(
-        FlexibleLiteralChoiceTerminal(
-            "1", "yes", "y", "true", "t", "on",
-            "0", "no", "n", "false", "f", "off",
-            "full", "strict"
-        ),
+        namesOrBoolean("no", "yes", "full", "strict"),
         EOF()
     )
 )

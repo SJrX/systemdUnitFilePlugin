@@ -1,11 +1,9 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.namesOrBoolean
 
 /**
  * Validator for Network.DNSSEC (.network) and Resolve.DNSSEC (.conf via resolved.conf).
@@ -18,10 +16,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 class ConfigParseDnssecModeOptionValue : SimpleGrammarOptionValues(
   "config_parse_dnssec_mode",
   SequenceCombinator(
-    AlternativeCombinator(
-      FlexibleLiteralChoiceTerminal("allow-downgrade"),
-      BOOLEAN
-    ),
+    // dnssec_mode_table: the names are case-sensitive, the boolean half (parse_boolean) is not.
+    namesOrBoolean("no", "allow-downgrade", "yes"),
     EOF()
   )
 )

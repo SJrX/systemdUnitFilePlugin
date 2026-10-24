@@ -15,6 +15,11 @@ class ConfigParseExecPreserveModeOptionValueTest : AbstractUnitFileTest() {
             RuntimeDirectoryPreserve=no
             RuntimeDirectoryPreserve=restart
             RuntimeDirectoryPreserve=yes
+            RuntimeDirectoryPreserve=on-success
+            RuntimeDirectoryPreserve=true
+            RuntimeDirectoryPreserve=false
+            RuntimeDirectoryPreserve=Yes
+            RuntimeDirectoryPreserve=OFF
         """.trimIndent()
 
         // Execute SUT
@@ -33,8 +38,8 @@ class ConfigParseExecPreserveModeOptionValueTest : AbstractUnitFileTest() {
         val file = """
             [Swap]
             RuntimeDirectoryPreserve=invalid
-            RuntimeDirectoryPreserve=true
-            RuntimeDirectoryPreserve=false
+            RuntimeDirectoryPreserve=Restart
+            RuntimeDirectoryPreserve=yess
             RuntimeDirectoryPreserve=always
         """.trimIndent()
 
