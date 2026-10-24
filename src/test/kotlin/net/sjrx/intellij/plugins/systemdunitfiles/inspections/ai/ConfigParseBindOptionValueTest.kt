@@ -40,7 +40,7 @@ class ConfigParseBindOptionValueTest : AbstractUnitFileTest() {
     @Test
     fun testInvalidValues() {
         // A lone path must be absolute; empty or relative destination; `+` must be followed by an absolute path.
-        // These are rejected by bind_mount_parse() itself.
+        // These are rejected by bind_mount_parse() itself (sd-check: "Invalid bind mount specification").
         // language="unit file (systemd)"
         val file = """
             [Files]
@@ -49,32 +49,38 @@ class ConfigParseBindOptionValueTest : AbstractUnitFileTest() {
             Bind=/a:relative
             Bind=+relative:/b
             Bind=+:/b
+            Bind=/a:relative:rbind
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(5, highlights)
+        assertSize(6, highlights)
     }
 
     @Test
     fun testOptionsRejectedOnlyAtContainerStart() {
-        // Deliberately stricter than the settings parser: bind_mount_parse() stores the option string verbatim, so
-        // fuzz-nspawn-settings accepts these, but parse_mount_bind_options() fails the container start with
-        // "Invalid bind mount option" (`ro` is not an option, read-only is BindReadOnly=; `rbind:x` is one word).
+        // Accepted: bind_mount_parse() stores the option string verbatim, so the settings parser (sd-check /
+        // fuzz-nspawn-settings at 0f0682b773) accepts all of these. parse_mount_bind_options() fails the container
+        // start with "Invalid bind mount option" (`ro` is not an option, read-only is BindReadOnly=; `rbind:x` is one
+        // word), but that is not a parse error. Issue #565 tracks a separate warning for them.
         // language="unit file (systemd)"
         val file = """
             [Files]
             Bind=/a:/b:bogus
             Bind=/a:/b:rbind:x
             BindReadOnly=/a:/b:ro
+            Bind=/a:/b:rbind,bogus
+            Bind=/a:/b::
+            Bind=/a:/b:has space
+            Bind=+/a:/b:x:y:z
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(3, highlights)
+        assertSize(0, highlights)
     }
 }
