@@ -17,6 +17,10 @@ class ConfigParseCodelU32OptionValueTest : AbstractUnitFileTest() {
             PacketLimit=100
             PacketLimit=1000
             PacketLimit=4294967294
+            # safe_atou32 takes the whole uint32 range and base prefixes (sd-check accepts both; 4294967295 was
+            # asserted invalid before #568).
+            PacketLimit=4294967295
+            PacketLimit=0x10
         """.trimIndent()
 
         // Execute SUT
@@ -35,7 +39,6 @@ class ConfigParseCodelU32OptionValueTest : AbstractUnitFileTest() {
         val file = """
             [ControlledDelay]
             PacketLimit=-1
-            PacketLimit=4294967295
             PacketLimit=5000000000
             PacketLimit=abc
             PacketLimit=12.5
@@ -47,7 +50,7 @@ class ConfigParseCodelU32OptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(5, highlights)
+        assertSize(4, highlights)
     }
 
     @Test
@@ -75,7 +78,7 @@ class ConfigParseCodelU32OptionValueTest : AbstractUnitFileTest() {
         // language="unit file (systemd)"
         val file = """
             [ControlledDelay]
-            PacketLimit=4294967295
+            PacketLimit=4294967296
         """.trimIndent()
 
         // Execute SUT

@@ -10,7 +10,6 @@ class InvalidValueInspectionForSimpleGrammarOptionValue : AbstractUnitFileTest()
     // language="unit file (systemd)"
     val file="""
       [FooOverUDP]
-      Port=0
       Port=1
       Port=32768
       Port=65535
@@ -33,7 +32,9 @@ class InvalidValueInspectionForSimpleGrammarOptionValue : AbstractUnitFileTest()
       Port=-1
       Port=a
       Port=65536
-
+      # parse_ip_port() refuses 0 (sd-check: "Failed to parse Port=0, ignoring: Invalid argument"); this
+      # was asserted valid before #568.
+      Port=0
     """.trimIndent()
 
     // Execute SUT
@@ -42,7 +43,7 @@ class InvalidValueInspectionForSimpleGrammarOptionValue : AbstractUnitFileTest()
     val highlights = myFixture.doHighlighting()
 
     // Verification
-    assertSize(3, highlights)
+    assertSize(4, highlights)
   }
 
   fun testNoWarningWhenValidCoalescedUint32Specified() {

@@ -36,7 +36,6 @@ class ConfigParse6rdPrefixOptionValueTest : AbstractUnitFileTest() {
         val file = """
             [Tunnel]
             IPv6RapidDeploymentPrefix=2001:db8::/0
-            IPv6RapidDeploymentPrefix=2001:db8::
             IPv6RapidDeploymentPrefix=192.168.1.0/24
             IPv6RapidDeploymentPrefix=not-an-address/32
             IPv6RapidDeploymentPrefix=2001:db8::/129
@@ -48,16 +47,18 @@ class ConfigParse6rdPrefixOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(5, highlights)
+        assertSize(4, highlights)
     }
 
     @Test
     fun testMissingPrefixLength() {
-        // Fixture Setup - IPv6 address without prefix length should be invalid
+        // Fixture Setup - without a prefix length in_addr_prefix_from_string uses 128, so sd-check accepts
+        // these (#568; this test asserted the opposite before).
         // language="unit file (systemd)"
         val file = """
             [Tunnel]
             IPv6RapidDeploymentPrefix=2001:db8::1
+            IPv6RapidDeploymentPrefix=2001:db8::
         """.trimIndent()
 
         // Execute SUT
@@ -66,7 +67,7 @@ class ConfigParse6rdPrefixOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(1, highlights)
+        assertSize(0, highlights)
     }
 
     @Test

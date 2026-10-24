@@ -17,8 +17,6 @@ class ConfigParseCakeRttOptionValueTest : AbstractUnitFileTest() {
             RTTSec=5m
             RTTSec=200
             RTTSec=10.5s
-            RTTSec=infinity
-            RTTSec=2hour
         """.trimIndent()
 
         setupFileInEditor("file.network", file)
@@ -33,10 +31,14 @@ class ConfigParseCakeRttOptionValueTest : AbstractUnitFileTest() {
             [CAKE]
             RTTSec=abc
             RTTSec=-1
+            # config_parse_cake_rtt refuses anything above UINT32_MAX microseconds (sd-check: "Invalid
+            # 'RTTSec='"); these two were asserted valid before #568.
+            RTTSec=infinity
+            RTTSec=2hour
         """.trimIndent()
 
         setupFileInEditor("file.network", file)
         enableInspection(InvalidValueInspection::class.java)
-        assertSize(2, myFixture.doHighlighting())
+        assertSize(4, myFixture.doHighlighting())
     }
 }

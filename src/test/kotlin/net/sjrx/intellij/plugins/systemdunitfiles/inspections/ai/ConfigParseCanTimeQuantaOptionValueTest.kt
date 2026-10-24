@@ -15,7 +15,6 @@ class ConfigParseCanTimeQuantaOptionValueTest : AbstractUnitFileTest() {
             TimeQuantaNSec=500ns
             TimeQuantaNSec=1us
             TimeQuantaNSec=1ms
-            DataTimeQuantaNSec=infinity
             DataTimeQuantaNSec=1ms 500us
             DataTimeQuantaNSec=10.5ms
         """.trimIndent()
@@ -32,10 +31,13 @@ class ConfigParseCanTimeQuantaOptionValueTest : AbstractUnitFileTest() {
             [CAN]
             TimeQuantaNSec=invalid
             TimeQuantaNSec=-10ns
+            # config_parse_can_time_quanta requires 1…UINT32_MAX ns (sd-check: "Time quanta out of permitted
+            # range"); infinity was asserted valid before #568.
+            DataTimeQuantaNSec=infinity
         """.trimIndent()
 
         setupFileInEditor("file.network", file)
         enableInspection(InvalidValueInspection::class.java)
-        assertSize(2, myFixture.doHighlighting())
+        assertSize(3, myFixture.doHighlighting())
     }
 }

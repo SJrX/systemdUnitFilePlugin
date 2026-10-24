@@ -76,6 +76,11 @@ class InvalidValueForNetworkAddressesTest : AbstractUnitFileTest() {
       Address=2001:db8::/65
       Address=ff02::1/128
       Address=2600::1/0
+      # A missing prefix length is only advice ("specified without prefix length. Assuming the prefix
+      # length is 128"), not a parse error, so it is accepted (#568). Was asserted invalid before.
+      Address=2001:db8::1
+      # The prefix length is read with safe_atou8, so base prefixes work.
+      Address=2001:db8::1/0x40
       # Honestly I don't know what matches this
       Address=2001:0db8:85a3:0000:0000:8a2e:192.168.0.1/96
     """.trimIndent()
@@ -106,8 +111,6 @@ class InvalidValueForNetworkAddressesTest : AbstractUnitFileTest() {
     Address=2001:db8::1/129
     # Prefix too small (<0)
     Address=2001:db8::1/-1
-    # Missing prefix
-    Address=2001:db8::1
     # Empty address
     Address=/64
     # Trailing colon
@@ -134,7 +137,7 @@ class InvalidValueForNetworkAddressesTest : AbstractUnitFileTest() {
     val highlights = myFixture.doHighlighting()
 
     // Verification
-    assertSize(16, highlights)
+    assertSize(15, highlights)
 
   }
 

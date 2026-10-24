@@ -28,9 +28,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * The IPPROTO_* names the generated gperf table knows, lower-cased. The table is generated from
  * systemd's own vendored uapi headers (the override <netinet/in.h> includes <linux/in.h> and
  * <linux/in6.h>, not glibc's), so it is fixed per systemd commit. `smc` (256) and `mptcp` (262) are left
- * out because config_parse_ip_protocol refuses anything above 255.
+ * out because config_parse_ip_protocol refuses anything above 255. Also used by the relaxed
+ * [ConfigParseIpProtocolOptionValue] (FooOverUDP Protocol=).
  */
-private val IP_PROTOCOL_NAMES = arrayOf(
+internal val IP_PROTOCOL_NAMES = arrayOf(
     "ip", "hopopts", "icmp", "igmp", "ipip", "tcp", "egp", "pup", "udp", "idp", "tp", "dccp", "ipv6",
     "routing", "fragment", "rsvp", "gre", "esp", "ah", "icmpv6", "none", "dstopts", "mtp", "beetph",
     "encap", "pim", "comp", "l2tp", "mh", "sctp", "udplite", "mpls", "ethernet", "aggfrag", "raw",

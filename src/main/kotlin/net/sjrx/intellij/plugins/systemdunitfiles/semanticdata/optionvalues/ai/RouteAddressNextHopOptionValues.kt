@@ -90,8 +90,8 @@ class ConfigParseRouteScopeOptionValue : SimpleGrammarOptionValues(
  * in_addr_prefix_from_string_auto and only logs a hint, so a bare address is accepted too; the prefix,
  * when present, may be anything the family allows.
  *
- * `Address=` is the same table entry but keeps the older, stricter [NetworkAddressOptionValue] because
- * that behaviour is pinned by existing tests — see the note there.
+ * `Address=` is the same table entry and has its own [NetworkAddressOptionValue], which also accepts a
+ * bare address but reads the prefix length with safe_atou8.
  */
 class ConfigParseAddressSectionPeerOptionValue : SimpleGrammarOptionValues(
     ADDRESS, SequenceCombinator(IP_ADDR_AND_ANY_PREFIX, EOF())
