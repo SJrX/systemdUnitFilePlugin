@@ -25,6 +25,9 @@ class ConfigParsePrivateBpfOptionValueTest : AbstractUnitFileTest() {
             PrivateBPF=f
             PrivateBPF=Yes
             PrivateBPF=TRUE
+            PrivateBPF=oFf
+            PrivateBPF=fAlSe
+            PrivateBPF=Y
         """.trimIndent()
 
         setupFileInEditor("file.service", file)
@@ -69,10 +72,12 @@ class ConfigParsePrivateBpfOptionValueTest : AbstractUnitFileTest() {
             PrivateBPF=2
             PrivateBPF=private
             PrivateBPF=yes no
+            PrivateBPF=Auto
+            PrivateBPF=Private
         """.trimIndent()
 
         setupFileInEditor("file.service", file)
         enableInspection(InvalidValueInspection::class.java)
-        assertSize(4, myFixture.doHighlighting())
+        assertSize(6, myFixture.doHighlighting())
     }
 }
