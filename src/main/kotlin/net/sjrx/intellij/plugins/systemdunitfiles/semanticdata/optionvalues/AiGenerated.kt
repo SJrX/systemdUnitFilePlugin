@@ -413,6 +413,17 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_socket_service", "0") to ConfigParseSocketServiceOptionValue() as OptionValueInformation,
     Validator("config_parse_service_sockets", "0") to ConfigParseServiceSocketsOptionValue() as OptionValueInformation,
 
+    // Batch 2026-10: seccomp-bpf-cgroup
+    Validator("config_parse_syscall_filter", "0") to ConfigParseSyscallFilterOptionValue() as OptionValueInformation,
+    Validator("config_parse_syscall_log", "0") to ConfigParseSyscallLogOptionValue() as OptionValueInformation,
+    Validator("config_parse_restrict_filesystems", "0") to ConfigParseRestrictFilesystemsOptionValue() as OptionValueInformation,
+    Validator("config_parse_private_bpf", "0") to ConfigParsePrivateBpfOptionValue() as OptionValueInformation,
+    Validator("config_parse_bpf_delegate_commands", "0") to ConfigParseBpfDelegateCommandsOptionValue() as OptionValueInformation,
+    Validator("config_parse_bpf_delegate_maps", "0") to ConfigParseBpfDelegateMapsOptionValue() as OptionValueInformation,
+    Validator("config_parse_bpf_delegate_programs", "0") to ConfigParseBpfDelegateProgramsOptionValue() as OptionValueInformation,
+    Validator("config_parse_bpf_delegate_attachments", "0") to ConfigParseBpfDelegateAttachmentsOptionValue() as OptionValueInformation,
+    // END Batch 2026-10: seccomp-bpf-cgroup
+
   )
 
   return allValidators
