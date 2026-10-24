@@ -55,7 +55,7 @@ private val OPEN_FILE_OPTIONS = SequenceCombinator(
  * Validator for `[Service] OpenFile=` (config_parse_open_file, the only key using it).
  *
  * `PATH[:FD-NAME[:OPTIONS]]`, split on the first two colons with C escapes decoded (so a literal colon
- * in the path is written `\x3a`) and nothing allowed after a third field:
+ * in the path is written `\x3a`) and nothing allowed after a third field except one trailing `:`:
  *
  *  - PATH must be absolute;
  *  - FD-NAME, if given, is printable ASCII without `:` (at most 255 characters); an empty one defaults
@@ -76,7 +76,9 @@ class ConfigParseOpenFileOptionValue : SimpleGrammarOptionValues(
       SequenceCombinator(
         COLON,
         ZeroOrOne(OPEN_FILE_FDNAME),
-        ZeroOrOne(SequenceCombinator(COLON, OPEN_FILE_OPTIONS)),
+        // The third extract (EXTRACT_DONT_COALESCE_SEPARATORS) consumes the colon that ends it, so one
+        // trailing `:` after the options leaves nothing behind and passes the isempty(v) check.
+        ZeroOrOne(SequenceCombinator(COLON, OPEN_FILE_OPTIONS, ZeroOrOne(COLON))),
       )
     ),
     EOF(),

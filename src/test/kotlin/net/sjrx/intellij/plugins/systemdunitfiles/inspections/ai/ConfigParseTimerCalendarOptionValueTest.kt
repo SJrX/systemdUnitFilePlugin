@@ -124,6 +124,33 @@ class ConfigParseTimerCalendarOptionValueTest : AbstractUnitFileTest() {
   }
 
   @Test
+  fun testValidTimezoneAndEpochSpellings() {
+    // Extra spaces before the zone survive only after a weekday list or a bare date (both skip a run of
+    // spaces); @EPOCH is read by strtoul, so whitespace and '+' may follow the '@'. CET/-03 stand for the
+    // host's tzname abbreviations, posix/ and Etc/ zones are real files under /usr/share/zoneinfo.
+    // language="unit file (systemd)"
+    val file = """
+      [Timer]
+      OnCalendar=Mon  UTC
+      OnCalendar=2024-01-01  UTC
+      OnCalendar=Mon 2024-01-01   Europe/Berlin
+      OnCalendar=@+5
+      OnCalendar=@ 5
+      OnCalendar=daily CET
+      OnCalendar=12:00 -03
+      OnCalendar=Mon 12:00 posix/Europe/Berlin
+      OnCalendar=daily Etc/GMT+5
+      OnCalendar=Mon,Fri UTC
+    """.trimIndent()
+
+    setupFileInEditor("file.timer", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    assertSize(0, highlights)
+  }
+
+  @Test
   fun testInvalidValues() {
     // Rejections from TEST(calendar_spec_from_string) whose cause is a shape or a single-field bound,
     // plus a few typos seen in the wild.
@@ -155,12 +182,20 @@ class ConfigParseTimerCalendarOptionValueTest : AbstractUnitFileTest() {
       OnCalendar=*-13-01
       OnCalendar=1969-01-01
       OnCalendar=%e
+      OnCalendar=Mon Fri
+      OnCalendar=Mon, Tue
+      OnCalendar=*-*-* 12:00 Mon
+      OnCalendar=*-*-* 10:00 everyday
+      OnCalendar=*-*-* 10:00 daily
+      OnCalendar=daily  UTC
+      OnCalendar=12:00  Europe/Berlin
+      OnCalendar=@5  UTC
     """.trimIndent()
 
     setupFileInEditor("file.timer", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(25, highlights)
+    assertSize(33, highlights)
   }
 }

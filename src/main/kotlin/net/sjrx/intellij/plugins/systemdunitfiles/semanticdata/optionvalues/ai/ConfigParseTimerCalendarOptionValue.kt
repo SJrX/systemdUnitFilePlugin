@@ -1,6 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.CALENDAR_SPEC
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.withUnitSpecifiers
 
@@ -20,6 +21,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/calendarspec.c#L125   fix_year
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/calendarspec.c#L169   chain_valid
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/calendarspec.c#L212   calendar_spec_valid
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/calendarspec.c#L887-L933   timezone suffix: " UTC" (any case), tzname[0..1], or last word if timezone_is_valid
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/calendarspec.c#L480-L498   parse_one_number (@EPOCH: bare strtoul, so "@ +5" is fine)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/time-util.c#L1596   verify_timezone
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/src/test/test-calendarspec.c#L117   calendar_spec_one (accepted spellings)
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/src/test/test-calendarspec.c#L231   calendar_spec_from_string (rejected spellings)
@@ -33,7 +36,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  *
  *     [WEEKDAYS] [[YEAR-]MONTH-DAY | [YEAR-]MONTH~DAY | @EPOCH] [HOUR:MINUTE[:SECOND]]
  *
- * optionally followed by a timezone (` UTC`, the local zone abbreviation or an IANA zone name). Each
+ * optionally followed by a timezone after exactly one space (` UTC`, the local zone abbreviation or an
+ * IANA zone name; extra spaces are only tolerated after a weekday list or a bare date, which skip
+ * them). A weekday or keyword in the timezone position (`*-*-* 12:00 Mon`, `Mon Fri`) is refused, as
+ * systemd refuses it; see [BatchUnitCoreGrammar.CalendarTimezoneTerminal] for what counts as a zone. Each
  * date/time field is `*` or a comma list of `value[..value][/repeat]`; seconds may carry fractions.
  * See [CALENDAR_SPEC] for exactly which per-field bounds are checked and which cross-field checks
  * (reversed ranges, overshooting repetitions, descending weekday ranges, zone existence) are left to

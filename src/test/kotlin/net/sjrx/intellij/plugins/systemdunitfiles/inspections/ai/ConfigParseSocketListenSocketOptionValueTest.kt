@@ -37,6 +37,7 @@ class ConfigParseSocketListenSocketOptionValueTest : AbstractUnitFileTest() {
       ListenStream=vsock:host:22
       ListenStream=vsock:-1:22
       ListenStream=vsock-stream:any:22
+      ListenStream=vsock:-0:5
       ListenDatagram=69
       ListenDatagram=[::]:53
       ListenDatagram=127.0.0.1:1153
@@ -91,7 +92,8 @@ class ConfigParseSocketListenSocketOptionValueTest : AbstractUnitFileTest() {
 
   @Test
   fun testUnixSocketPathLength() {
-    // sockaddr_un_set_path: 107 bytes is the longest path that fits with its NUL terminator.
+    // sockaddr_un_set_path: 107 bytes is the longest path that fits with its NUL terminator. The limit
+    // applies after patch_var_run() has rewritten /var/run/ to /run/, so /var/run/ paths get 4 more.
     val ok = "/" + "a".repeat(106)
     val tooLong = "/" + "a".repeat(107)
     val file = """
@@ -99,13 +101,15 @@ class ConfigParseSocketListenSocketOptionValueTest : AbstractUnitFileTest() {
       ListenStream=$ok
       ListenStream=@${"a".repeat(106)}
       ListenStream=$tooLong
+      ListenStream=/var/run/${"a".repeat(102)}
+      ListenStream=/var/run/${"a".repeat(103)}
     """.trimIndent()
 
     setupFileInEditor("file.socket", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(1, highlights)
+    assertSize(2, highlights)
   }
 
   @Test
@@ -143,17 +147,19 @@ class ConfigParseSocketListenSocketOptionValueTest : AbstractUnitFileTest() {
       ListenNetlink=rdma 4
       ListenNetlink=16
       ListenNetlink=generic 0x10
+      ListenNetlink=route -0
       ListenNetlink=junk
       ListenNetlink=route ten
       ListenNetlink=route 1 2
       ListenNetlink=/run/foo.sock
+      ListenNetlink=route -1
     """.trimIndent()
 
     setupFileInEditor("file.socket", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(4, highlights)
+    assertSize(5, highlights)
   }
 
   @Test

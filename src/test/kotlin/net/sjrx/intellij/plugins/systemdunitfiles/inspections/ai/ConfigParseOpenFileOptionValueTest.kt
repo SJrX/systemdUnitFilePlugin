@@ -24,6 +24,8 @@ class ConfigParseOpenFileOptionValueTest : AbstractUnitFileTest() {
       OpenFile=/run/with space/file:my name
       OpenFile=/run/x:
       OpenFile=/run/x::
+      OpenFile=/etc/foo:fd:read-only:
+      OpenFile=/run/x:fd::
       OpenFile=/run/x::,read-only,,graceful,
       OpenFile=/run/%i
       OpenFile=/run/../x
@@ -48,12 +50,13 @@ class ConfigParseOpenFileOptionValueTest : AbstractUnitFileTest() {
       OpenFile=relative
       OpenFile=/run/x:name:read-only append
       OpenFile=/run/x\q:name
+      OpenFile=/run/x:name:read-only::
     """.trimIndent()
 
     setupFileInEditor("file.service", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(6, highlights)
+    assertSize(7, highlights)
   }
 }

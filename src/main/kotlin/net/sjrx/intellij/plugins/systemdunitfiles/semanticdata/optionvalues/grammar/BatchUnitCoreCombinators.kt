@@ -63,6 +63,17 @@ object BatchUnitCoreGrammar {
 
 
   // ---------------------------------------------------------------------------------------------------
+  // Booleans.
+
+  /**
+   * A boolean as parse_boolean() (src/basic/parse-util.c) really reads it: STRCASE_IN_SET, so `Yes`,
+   * `TRUE` and `oN` are all fine. The shared [BOOLEAN] in Combinators.kt is case-sensitive; this is the
+   * batch-local case-insensitive one (see RECOMMENDATIONS.md about promoting it).
+   */
+  val BOOLEAN_ANY_CASE = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreCase = true)
+
+
+  // ---------------------------------------------------------------------------------------------------
   // Time spans — parse_time(…, USEC_PER_SEC) a.k.a. parse_sec (src/basic/time-util.c).
   //
   //  - Leading/trailing whitespace is skipped. `infinity` stands alone (only whitespace may follow).
@@ -118,9 +129,8 @@ object BatchUnitCoreGrammar {
   //
   // What is deliberately left lenient: cross-field checks (reversed ranges like `12..1`, a repetition
   // that overshoots the field like `20/4` hours, descending weekday ranges like `Fri..Mon`), rounding
-  // of second fractions, and the timezone, which systemd only accepts if it names a file under
-  // /usr/share/zoneinfo or the host's local zone abbreviation — any word shaped like a zone name is
-  // accepted here.
+  // of second fractions, and whether a timezone actually exists on the machine (see
+  // [CalendarTimezoneTerminal] for what is accepted in its place).
 
   private val CAL_SPACES = RegexTerminal(" +", " +")
   private val CAL_STAR = LiteralChoiceTerminal("*")
@@ -213,13 +223,14 @@ object BatchUnitCoreGrammar {
   )
 
   // `@SECONDS` since the epoch; the resulting year must still pass the 1970..2199 check, i.e. the value
-  // must be below 2200-01-01T00:00:00Z.
-  private val CAL_EPOCH = SequenceCombinator(LiteralChoiceTerminal("@"), DecimalNumberTerminal(0L, 7_258_118_400L))
-
-  private val CAL_DATE_AND_TIME = AlternativeCombinator(
-    CAL_EPOCH,
-    SequenceCombinator(CAL_DATE, ZeroOrOne(SequenceCombinator(CAL_SPACES, CAL_TIME))),
-    CAL_TIME,
+  // must be below 2200-01-01T00:00:00Z. parse_one_number() is a bare strtoul(…, 10), so leading
+  // whitespace and a `+` are fine (`@ +5`). A `-` is wrapped modulo 2^64 by strtoul and lands before
+  // 1970, so is refused — except `@-0`, which is 0; that one spelling is not modelled.
+  private val CAL_EPOCH = SequenceCombinator(
+    LiteralChoiceTerminal("@"),
+    ZeroOrOne(WhitespaceTerminal()),
+    ZeroOrOne(LiteralChoiceTerminal("+")),
+    DecimalNumberTerminal(0L, 7_258_118_400L),
   )
 
   /** parse_weekdays' table; startswith_no_case, so any casing. */
@@ -241,11 +252,6 @@ object BatchUnitCoreGrammar {
     ZeroOrOne(CAL_COMMA),
   )
 
-  private val CAL_BODY = AlternativeCombinator(
-    SequenceCombinator(CAL_WEEKDAYS, ZeroOrOne(SequenceCombinator(CAL_SPACES, CAL_DATE_AND_TIME))),
-    CAL_DATE_AND_TIME,
-  )
-
   /** The shorthand keywords, matched with strcaseeq. `anually` is a kept-for-compatibility misspelling. */
   val CALENDAR_KEYWORD = FlexibleLiteralChoiceTerminal(
     "minutely", "hourly", "daily", "monthly", "weekly", "yearly", "annually", "anually", "quarterly",
@@ -254,21 +260,107 @@ object BatchUnitCoreGrammar {
   )
 
   /**
-   * A timezone suffix: ` UTC` (any case), the host's local zone abbreviation, or an IANA zone name
-   * (verify_timezone's character set: letters, digits, `-_+/`, no empty components). Whether the zone
-   * actually exists depends on the machine, so only the shape is checked; a leading letter keeps a date
-   * or time from being mistaken for one.
+   * The timezone that may end a calendar event, as calendar_spec_from_string_full() recognises one.
+   *
+   * In C the suffix is tried three ways, each after exactly one space: ` UTC` in any case
+   * (endswith_no_case); the host's own zone abbreviations tzname[0]/tzname[1] in any case (`CET`,
+   * `CEST`, or numeric ones like `-03` for zones without a letter abbreviation); and otherwise the last
+   * space-separated word, if timezone_is_valid() finds a TZif file of that name under
+   * /usr/share/zoneinfo. Anything else is left in the expression, which then fails to parse.
+   *
+   * Which zones exist depends on the machine, so this accepts: `UTC` in any case; any zone ID the JDK
+   * knows (also under the `posix/` and `right/` trees); any `Area/Location` shape whose area is one of
+   * the tzdata regions (newer zones than the JDK's); a 2..6 letter word that is not a weekday or
+   * calendar keyword (a plausible host abbreviation); and `+NN`/`-NN`/`+NNNN`. What it refuses is the
+   * common mistake: a weekday or keyword written where systemd expects the date/time to have ended
+   * (`*-*-* 12:00 Mon`, `Mon Fri`), or a long word that is no zone (`everyday`).
    */
-  private val CAL_TIMEZONE = RegexTerminal(
-    """[A-Za-z][A-Za-z0-9_+\-]*(?:/[A-Za-z0-9_+\-]+)*""",
-    """[A-Za-z][A-Za-z0-9_+\-]*(?:/[A-Za-z0-9_+\-]+)*"""
-  )
-  private val CAL_OPTIONAL_TIMEZONE = ZeroOrOne(SequenceCombinator(CAL_SPACES, CAL_TIMEZONE))
+  class CalendarTimezoneTerminal : TerminalCombinator {
 
-  /** A complete calendar event expression, ending at [EOF]. */
+    private fun span(value: String, offset: Int): String? = SHAPE.matchAt(value, offset)?.value
+
+    override fun SyntacticMatch(value: String, offset: Int): MatchResult {
+      val text = span(value, offset) ?: return NoMatch
+      return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
+    }
+
+    override fun SemanticMatch(value: String, offset: Int): MatchResult {
+      val text = span(value, offset) ?: return NoMatch
+      if (!isPlausibleZone(text)) return NoMatch.copy(longestMatch = offset)
+      return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
+    }
+
+    override fun parse(value: String, offset: Int): Sequence<ParseStep> {
+      val text = span(value, offset) ?: return sequenceOf(Stuck(offset, setOf(this)))
+      return sequenceOf(Parse(offset + text.length, listOf(ParsedToken(offset, offset + text.length, text, this, isPlausibleZone(text)))))
+    }
+
+    override fun toString(): String = "CalendarTimezone"
+
+    companion object {
+      // verify_timezone's character set; the leading character excludes digits so a time is never read as a zone.
+      private val SHAPE = Regex("""[A-Za-z+\-][A-Za-z0-9_+\-]*(?:/[A-Za-z0-9_+\-]+)*""")
+
+      private val KNOWN_ZONE_IDS: Set<String> by lazy {
+        // "Factory" is a tzdata zone file the JDK does not ship (checked against a host's /usr/share/zoneinfo).
+        java.util.TimeZone.getAvailableIDs().toSet() + java.time.ZoneId.getAvailableZoneIds() + "Factory"
+      }
+
+      private val TZDATA_AREAS = setOf(
+        "Africa", "America", "Antarctica", "Arctic", "Asia", "Atlantic", "Australia", "Brazil", "Canada",
+        "Chile", "Etc", "Europe", "Indian", "Mexico", "Pacific", "US",
+      )
+
+      private val ABBREVIATION = Regex("[A-Za-z]{2,6}")
+      private val NUMERIC_ABBREVIATION = Regex("[+-][0-9]{2}(?:[0-9]{2})?")
+
+      private val NOT_A_ZONE: Set<String> = (
+        listOf("monday", "mon", "tuesday", "tue", "wednesday", "wed", "thursday", "thu", "friday", "fri",
+          "saturday", "sat", "sunday", "sun") +
+          listOf("minutely", "hourly", "daily", "monthly", "weekly", "yearly", "annually", "anually",
+            "quarterly", "biannually", "semiannually")
+        ).toSet()
+
+      fun isPlausibleZone(text: String): Boolean {
+        if (text.equals("UTC", ignoreCase = true)) return true
+        val bare = text.removePrefix("posix/").removePrefix("right/")
+        if (bare in KNOWN_ZONE_IDS) return true
+        if (bare.contains('/') && bare.substringBefore('/') in TZDATA_AREAS && !bare.endsWith("/")) return true
+        if (ABBREVIATION.matches(text)) return text.lowercase() !in NOT_A_ZONE
+        return NUMERIC_ABBREVIATION.matches(text)
+      }
+    }
+  }
+
+  private val CAL_TIMEZONE = CalendarTimezoneTerminal()
+
+  // The zone is split off at exactly one space (endswith " UTC", or the last space for a zone name), so
+  // any extra spaces stay in the expression. parse_weekdays() and parse_date() skip a run of trailing
+  // spaces, so after a weekday list or a bare date they are harmless; after a keyword, a time or an
+  // `@epoch` they are left over and the value is refused.
+  private val CAL_ONE_SPACE = LiteralChoiceTerminal(" ")
+  private val CAL_TIMEZONE_AFTER_ONE_SPACE = ZeroOrOne(SequenceCombinator(CAL_ONE_SPACE, CAL_TIMEZONE))
+  private val CAL_TIMEZONE_AFTER_SPACES = ZeroOrOne(SequenceCombinator(CAL_SPACES, CAL_TIMEZONE))
+
+  // `[WEEKDAYS ]` before each body is spelled out as two branches rather than a ZeroOrOne prefix: the
+  // classic engine's ZeroOrOne re-applies its operand after a match to compute longestMatch, so on
+  // `Mon Fri` it would read `Fri` as a second weekday prefix, report the whole value as matched and send
+  // GrammarOptionValue's error localisation past its last token.
+  private fun withOptionalWeekdays(vararg body: Combinator): List<Combinator> = listOf(
+    SequenceCombinator(CAL_WEEKDAYS, CAL_SPACES, *body),
+    SequenceCombinator(*body),
+  )
+
+  /** A complete calendar event expression, ending at [EOF]. Every branch is EOF-terminated. */
   val CALENDAR_SPEC = AlternativeCombinator(
-    SequenceCombinator(CALENDAR_KEYWORD, CAL_OPTIONAL_TIMEZONE, EOF()),
-    SequenceCombinator(CAL_BODY, CAL_OPTIONAL_TIMEZONE, EOF()),
+    *(
+      listOf<Combinator>(SequenceCombinator(CALENDAR_KEYWORD, CAL_TIMEZONE_AFTER_ONE_SPACE, EOF())) +
+        withOptionalWeekdays(CAL_EPOCH, CAL_TIMEZONE_AFTER_ONE_SPACE, EOF()) +
+        withOptionalWeekdays(CAL_DATE, CAL_SPACES, CAL_TIME, CAL_TIMEZONE_AFTER_ONE_SPACE, EOF()) +
+        withOptionalWeekdays(CAL_DATE, CAL_TIMEZONE_AFTER_SPACES, EOF()) +
+        withOptionalWeekdays(CAL_TIME, CAL_TIMEZONE_AFTER_ONE_SPACE, EOF()) +
+        SequenceCombinator(CAL_WEEKDAYS, CAL_TIMEZONE_AFTER_SPACES, EOF())
+      ).toTypedArray()
   )
 
 
@@ -276,7 +368,8 @@ object BatchUnitCoreGrammar {
   // Numbers as the safe_ato* family reads them (src/basic/parse-util.c): leading whitespace is skipped,
   // mangle_base() turns a `0b`/`0o` prefix into base 2/8, and otherwise strtoul()/strtoll() run with base
   // 0, so `0x` is hexadecimal and a leading `0` is octal. The unsigned helpers accept a leading `+` and
-  // refuse `-` (even `-0`); the signed ones accept both signs. `0b`/`0o` are only recognised unsigned.
+  // refuse `-` with ERANGE — but only when the parsed value is non-zero (`l != 0 && s[0] == '-'`), so
+  // `-0` and `-0x0` are a valid 0. The signed ones accept both signs. `0b`/`0o` are only recognised unsigned.
 
   /**
    * An integer spelled any way the safe_atou and safe_atoi helpers accept, range-checked on the value it denotes.
@@ -309,7 +402,7 @@ object BatchUnitCoreGrammar {
         s.length > 1 && s.startsWith("0") -> s.drop(1).toBigIntegerOrNull(8)
         else -> s.toBigIntegerOrNull(10)
       } ?: return null
-      if (negative && !signed) return null // safe_atou* refuse any '-', even "-0"
+      if (negative && !signed && magnitude.signum() != 0) return null // safe_atou*: ERANGE unless the value is 0
       return if (negative) magnitude.negate() else magnitude
     }
 

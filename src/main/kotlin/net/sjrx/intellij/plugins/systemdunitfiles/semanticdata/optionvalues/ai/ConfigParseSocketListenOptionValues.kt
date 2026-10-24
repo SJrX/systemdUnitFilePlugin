@@ -36,6 +36,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/specifier.c#L33-L105   specifier_printf (unknown %X is an error, %% is a literal %)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/parse-helpers.c#L34   path_simplify_and_warn (file ltypes: absolute, no "..", not below /dev /sys /proc unless SPECIAL)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/mountpoint-util.c#L721   path_below_api_vfs
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L574-L601   patch_var_run (/var/run/ -> /run/ before the length check)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/socket-netlink.c#L24-L96   socket_address_parse
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/socket-util.c#L1668   socket_address_parse_unix
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/socket-util.c#L1352   sockaddr_un_set_path (2..107 bytes)
@@ -63,9 +64,13 @@ private val PERCENT_START_SPECIFIER = """%[$UNIT_SPECIFIER_LETTERS]"""
 // AF_UNIX: '/' (file system) or '@' (abstract namespace), then anything. sockaddr_un_set_path insists on
 // 2..107 bytes including the leading character. The length is only checked when no specifier is present,
 // because a specifier's expansion length is unknown; a specifier may also stand at the start (%t/foo).
+// config_parse_socket_listen runs patch_var_run() before parsing, which rewrites a /var/run/ prefix
+// (path_startswith, so repeated slashes count as one) to /run/; the length limit applies to the result,
+// so after /var/run/ up to 102 characters may follow. Length is counted in UTF-16 units, not bytes, so
+// non-ASCII paths are checked leniently.
 private val UNIX_SOCKET_ADDRESS = RegexTerminal(
   """[/@%][\s\S]*""",
-  """(?:(?=[^%]*$)[/@][\s\S]{1,106}|(?=[\s\S]*%)(?:[/@]|$PERCENT_START_SPECIFIER)$UNIT_TEXT_CHAR*)$"""
+  """(?:(?=[^%]*$)(?:/+var/+run/+[\s\S]{0,102}|[/@][\s\S]{1,106})|(?=[\s\S]*%)(?:[/@]|$PERCENT_START_SPECIFIER)$UNIT_TEXT_CHAR*)$"""
 )
 
 private val IP_PORT = safeAtou(1, 65535)

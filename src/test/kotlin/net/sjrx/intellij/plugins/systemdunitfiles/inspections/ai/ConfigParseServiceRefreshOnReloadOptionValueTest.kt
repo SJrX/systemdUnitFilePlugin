@@ -8,13 +8,17 @@ class ConfigParseServiceRefreshOnReloadOptionValueTest : AbstractUnitFileTest() 
 
   @Test
   fun testValidValues() {
-    // Booleans, resource lists, the ~ inversion (a bare ~ is an empty inverted list), and an empty reset.
+    // Booleans (parse_boolean is case-insensitive), resource lists, the ~ inversion (a bare ~ is an empty inverted list), and an empty reset.
     // language="unit file (systemd)"
     val file = """
       [Service]
       RefreshOnReload=yes
       RefreshOnReload=false
       RefreshOnReload=1
+      RefreshOnReload=Yes
+      RefreshOnReload=TRUE
+      RefreshOnReload=oN
+      RefreshOnReload=OFF
       RefreshOnReload=extensions
       RefreshOnReload=credentials
       RefreshOnReload=extensions credentials
