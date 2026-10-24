@@ -5,8 +5,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UINT32_LIMIT
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtou
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETDEV_LINK_UINT32_LIMIT
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.netdevLinkSafeAtou
 
 /*
  * [Link] IRQAffinityNUMA= in a .link file.
@@ -28,7 +28,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 class ConfigParseIrqAffinityNumaOptionValue : SimpleGrammarOptionValues(
     "config_parse_irq_affinity_numa",
     SequenceCombinator(
-        AlternativeCombinator(FlexibleLiteralChoiceTerminal("local"), safeAtou(UINT32_LIMIT - 2)),
+        AlternativeCombinator(FlexibleLiteralChoiceTerminal("local"), netdevLinkSafeAtou(NETDEV_LINK_UINT32_LIMIT - 2)),
         EOF()
     )
 )

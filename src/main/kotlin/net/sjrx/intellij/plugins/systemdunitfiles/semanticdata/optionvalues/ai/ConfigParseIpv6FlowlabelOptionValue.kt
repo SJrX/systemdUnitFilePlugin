@@ -5,7 +5,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtou
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.netdevLinkSafeAtou
 
 /*
  * [Tunnel] IPv6FlowLabel= in a .netdev file.
@@ -26,7 +26,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 class ConfigParseIpv6FlowlabelOptionValue : SimpleGrammarOptionValues(
     "config_parse_ipv6_flowlabel",
     SequenceCombinator(
-        AlternativeCombinator(FlexibleLiteralChoiceTerminal("inherit"), safeAtou(0x100000L)),
+        AlternativeCombinator(FlexibleLiteralChoiceTerminal("inherit"), netdevLinkSafeAtou(0x100000L)),
         EOF()
     )
 )

@@ -5,7 +5,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtou
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.netdevLinkSafeAtou
 
 /*
  * [Bridge] DefaultPVID= in a .netdev file.
@@ -33,7 +33,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 class ConfigParseDefaultPortVlanidOptionValue : SimpleGrammarOptionValues(
     "config_parse_default_port_vlanid",
     SequenceCombinator(
-        AlternativeCombinator(FlexibleLiteralChoiceTerminal("none"), safeAtou(4095L)),
+        AlternativeCombinator(FlexibleLiteralChoiceTerminal("none"), netdevLinkSafeAtou(4095L)),
         EOF()
     )
 )

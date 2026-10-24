@@ -12,7 +12,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UINT16_LIMIT
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtou
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.netdevLinkSafeAtou
 
 /*
  * [WireGuardPeer] Endpoint= in a .netdev file.
@@ -28,7 +28,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 
 // parse_ip_port: a safe_atou16 number (base 0), not zero.
-private val ENDPOINT_PORT = safeAtou(UINT16_LIMIT, 1)
+private val ENDPOINT_PORT = netdevLinkSafeAtou(UINT16_LIMIT, 1)
 
 // The hostname fallback: everything up to the LAST colon (strrchr), checked with dns_name_is_valid():
 // dot-separated labels of at most 63 characters, each character printable (>= ' ', not DEL) or one of

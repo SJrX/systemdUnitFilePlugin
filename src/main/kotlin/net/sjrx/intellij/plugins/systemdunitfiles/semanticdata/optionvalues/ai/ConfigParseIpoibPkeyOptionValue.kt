@@ -5,7 +5,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UINT16_LIMIT
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtou
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.netdevLinkSafeAtou
 
 /*
  * [IPoIB] PartitionKey= in a .netdev file.
@@ -26,7 +26,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 class ConfigParseIpoibPkeyOptionValue : SimpleGrammarOptionValues(
     "config_parse_ipoib_pkey",
     SequenceCombinator(
-        AlternativeCombinator(safeAtou(0x8000L, 1), safeAtou(UINT16_LIMIT, 0x8001L)),
+        AlternativeCombinator(netdevLinkSafeAtou(0x8000L, 1), netdevLinkSafeAtou(UINT16_LIMIT, 0x8001L)),
         EOF()
     )
 )

@@ -38,7 +38,7 @@ import java.math.BigInteger
  * @param allowMinus false for a position where a `-` cannot reach safe_atou at all — the lower bound
  *   of a parse_range(), which is cut at the first `-`, so `-0` there is an empty word and EINVAL.
  */
-class SafeAtouTerminal(
+class NetdevLinkSafeAtouTerminal(
   private val minInclusive: Long,
   private val maxExclusive: Long,
   private val allowMinus: Boolean = true,
@@ -102,18 +102,18 @@ class SafeAtouTerminal(
 }
 
 /**
- * A [SafeAtouTerminal] over `[minInclusive, maxExclusive)`, coloured as a literal. The [Labeled] wrapper
+ * A [NetdevLinkSafeAtouTerminal] over `[minInclusive, maxExclusive)`, coloured as a literal. The [Labeled] wrapper
  * is only there because [defaultRole] does not know this terminal class yet (it is transparent to
  * matching); once the terminal is promoted next to [UnsignedNumberTerminal] it can go.
  */
-fun safeAtou(maxExclusive: Long, minInclusive: Long = 0L, allowMinus: Boolean = true): Combinator =
-  Labeled(Role.LITERAL, SafeAtouTerminal(minInclusive, maxExclusive, allowMinus))
+fun netdevLinkSafeAtou(maxExclusive: Long, minInclusive: Long = 0L, allowMinus: Boolean = true): Combinator =
+  Labeled(Role.LITERAL, NetdevLinkSafeAtouTerminal(minInclusive, maxExclusive, allowMinus))
 
 /** Exclusive upper bound of a uint16_t. */
 const val UINT16_LIMIT = 65_536L
 
 /** Exclusive upper bound of a uint32_t / unsigned. */
-const val UINT32_LIMIT = 4_294_967_296L
+const val NETDEV_LINK_UINT32_LIMIT = 4_294_967_296L
 
 /**
  * `N` or `N-M` as parse_range() (src/basic/parse-util.c) reads it, each bound a safe_atou() number in
@@ -126,10 +126,10 @@ const val UINT32_LIMIT = 4_294_967_296L
  * checks that callers make afterwards compare parsed numbers and are not modelled.
  */
 fun parseRange(maxExclusive: Long, minInclusive: Long = 0L, spaceAfterDash: Boolean = false): Combinator = SequenceCombinator(
-  safeAtou(maxExclusive, minInclusive, allowMinus = false),
+  netdevLinkSafeAtou(maxExclusive, minInclusive, allowMinus = false),
   ZeroOrOne(
-    if (spaceAfterDash) SequenceCombinator(HYPHEN, ZeroOrOne(WhitespaceTerminal()), safeAtou(maxExclusive, minInclusive))
-    else SequenceCombinator(HYPHEN, safeAtou(maxExclusive, minInclusive))
+    if (spaceAfterDash) SequenceCombinator(HYPHEN, ZeroOrOne(WhitespaceTerminal()), netdevLinkSafeAtou(maxExclusive, minInclusive))
+    else SequenceCombinator(HYPHEN, netdevLinkSafeAtou(maxExclusive, minInclusive))
   ),
 )
 
@@ -142,10 +142,10 @@ fun parseRangeAccepts(word: String, minInclusive: Long, maxExclusive: Long): Boo
   val dash = word.indexOf('-')
   val lower = if (dash < 0) word else word.substring(0, dash)
   if (lower.isEmpty()) return false
-  if (!SafeAtouTerminal.inRange(SafeAtouTerminal.safeAtouValue(lower), minInclusive, maxExclusive)) return false
+  if (!NetdevLinkSafeAtouTerminal.inRange(NetdevLinkSafeAtouTerminal.safeAtouValue(lower), minInclusive, maxExclusive)) return false
   if (dash < 0) return true
   val upper = word.substring(dash + 1)
-  return upper.isNotEmpty() && SafeAtouTerminal.inRange(SafeAtouTerminal.safeAtouValue(upper), minInclusive, maxExclusive)
+  return upper.isNotEmpty() && NetdevLinkSafeAtouTerminal.inRange(NetdevLinkSafeAtouTerminal.safeAtouValue(upper), minInclusive, maxExclusive)
 }
 
 /**
@@ -495,7 +495,7 @@ private val ROUTE_TABLE_NAME = RegexTerminal("""[^\s:]+""", """(?![0-9]+$)[^\s:]
  */
 val ROUTE_TABLE: Combinator = AlternativeCombinator(
   SequenceCombinator(FlexibleLiteralChoiceTerminal("default", "main", "local"), EOF()),
-  SequenceCombinator(safeAtou(UINT32_LIMIT, 1), EOF()),
+  SequenceCombinator(netdevLinkSafeAtou(NETDEV_LINK_UINT32_LIMIT, 1), EOF()),
   SequenceCombinator(ROUTE_TABLE_NAME, EOF()),
 )
 
@@ -510,6 +510,6 @@ val ROUTE_TABLE: Combinator = AlternativeCombinator(
  * IPv6 is tried first so the IPv4 branch never strands part of an IPv6 literal.
  */
 val IP_ADDR_AND_SAFE_PREFIX: Combinator = AlternativeCombinator(
-  SequenceCombinator(IPV6_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, safeAtou(129)))),
-  SequenceCombinator(IPV4_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, safeAtou(33)))),
+  SequenceCombinator(IPV6_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, netdevLinkSafeAtou(129)))),
+  SequenceCombinator(IPV4_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, netdevLinkSafeAtou(33)))),
 )
