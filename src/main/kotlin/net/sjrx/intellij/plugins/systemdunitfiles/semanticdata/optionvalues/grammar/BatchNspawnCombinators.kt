@@ -35,7 +35,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gra
  *
  * Unlike [UnsignedNumberTerminal] this also understands the `0b`/`0o` prefixes and signs.
  */
-class SafeAtoNumberTerminal(
+class NspawnSafeAtoNumberTerminal(
   private val minInclusive: Long,
   private val maxExclusive: Long,
 ) : TerminalCombinator {
@@ -88,9 +88,9 @@ private fun safeAtoValueOf(text: String): Long? {
 private fun isPositiveIfindex(text: String): Boolean =
   SAFE_ATO_SHAPE.matchEntire(text) != null && safeAtoValueOf(text)?.let { it in 1..Int.MAX_VALUE.toLong() } == true
 
-/** A [SafeAtoNumberTerminal] coloured as a literal, like the other number terminals. */
+/** A [NspawnSafeAtoNumberTerminal] coloured as a literal, like the other number terminals. */
 fun safeAtoNumber(minInclusive: Long, maxExclusive: Long): Combinator =
-  Labeled(Role.LITERAL, SafeAtoNumberTerminal(minInclusive, maxExclusive))
+  Labeled(Role.LITERAL, NspawnSafeAtoNumberTerminal(minInclusive, maxExclusive))
 
 
 // ---------------------------------------------------------------------------------------------------
