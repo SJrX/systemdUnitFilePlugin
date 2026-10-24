@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.CUNESCAPE_UNQUOTE_WORD
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_DHCP_MISC_NONEMPTY_UNQUOTE_WORD
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.wordList
@@ -24,10 +25,11 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * and may use C escapes ([CUNESCAPE_UNQUOTE_WORD]). An unknown escape, a trailing backslash or an
  * unterminated quote fails the assignment.
  *
- * Each class must also be 1…255 bytes long once unquoted/unescaped (an empty `""` or an over-long one is
- * dropped with a warning); those length checks are not modelled (lenient).
+ * Each class must also be 1…255 bytes long once unquoted/unescaped. An empty one (`""`, `''`) is
+ * dropped with a warning and flagged ([NETWORK_DHCP_MISC_NONEMPTY_UNQUOTE_WORD]); the upper bound is not
+ * modelled (lenient).
  */
 class ConfigParseDhcp4UserClassOptionValue : SimpleGrammarOptionValues(
     "config_parse_dhcp4_user_class",
-    SequenceCombinator(wordList(CUNESCAPE_UNQUOTE_WORD), EOF())
+    SequenceCombinator(wordList(NETWORK_DHCP_MISC_NONEMPTY_UNQUOTE_WORD), EOF())
 )

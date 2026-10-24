@@ -8,13 +8,15 @@ class ConfigParseDhcpServerIpv6OnlyPreferredOptionValueTest : AbstractUnitFileTe
 
   @Test
   fun testValidValues() {
-    // systemd refuses values under 300s outside its test mode; that magnitude check isn't modelled,
-    // so systemd's own test value of 20s is accepted.
+    // Anything >= MIN_V6ONLY_WAIT_USEC (300s) is accepted by systemd's parser (sd-check, 0f0682b773).
     // language="unit file (systemd)"
     val file = """
       [DHCPServer]
-      IPv6OnlyPreferredSec=20s
       IPv6OnlyPreferredSec=5min
+      IPv6OnlyPreferredSec=5m
+      IPv6OnlyPreferredSec=4min 60s
+      IPv6OnlyPreferredSec=300000000us
+      IPv6OnlyPreferredSec=1M
       IPv6OnlyPreferredSec=300
       IPv6OnlyPreferredSec=1h 5min
       IPv6OnlyPreferredSec=1h30min
@@ -49,5 +51,28 @@ class ConfigParseDhcpServerIpv6OnlyPreferredOptionValueTest : AbstractUnitFileTe
     val highlights = myFixture.doHighlighting()
 
     assertSize(6, highlights)
+  }
+
+  @Test
+  fun testBelowMinimumIsInvalid() {
+    // systemd: "Invalid [DHCPServer] IPv6OnlyPreferredSec=, ignoring assignment" for every value below
+    // 300s outside its test mode (sd-check, 0f0682b773). 20s is systemd's own test-suite value.
+    // language="unit file (systemd)"
+    val file = """
+      [DHCPServer]
+      IPv6OnlyPreferredSec=20s
+      IPv6OnlyPreferredSec=0
+      IPv6OnlyPreferredSec=299
+      IPv6OnlyPreferredSec=299.999999s
+      IPv6OnlyPreferredSec=4min
+      IPv6OnlyPreferredSec=299999999us
+      IPv6OnlyPreferredSec=0.0833333h
+    """.trimIndent()
+
+    setupFileInEditor("file.network", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    assertSize(7, highlights)
   }
 }

@@ -1,7 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.CUNESCAPE_UNQUOTE_WORD
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_DHCP_MISC_NONEMPTY_UNQUOTE_WORD
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.wordList
@@ -18,9 +18,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 
 /**
  * Validator for `[DHCPv6] UserClass=` and `[DHCPv6] VendorClass=`: the same quoted/escaped word list as
- * [ConfigParseDhcp4UserClassOptionValue], with a 1…65535-byte length limit per entry (not modelled).
+ * [ConfigParseDhcp4UserClassOptionValue], with a 1…65535-byte length limit per entry: empty
+ * entries are flagged, the upper bound is not modelled.
  */
 class ConfigParseDhcp6UserOrVendorClassOptionValue : SimpleGrammarOptionValues(
     "config_parse_dhcp6_user_or_vendor_class",
-    SequenceCombinator(wordList(CUNESCAPE_UNQUOTE_WORD), EOF())
+    SequenceCombinator(wordList(NETWORK_DHCP_MISC_NONEMPTY_UNQUOTE_WORD), EOF())
 )

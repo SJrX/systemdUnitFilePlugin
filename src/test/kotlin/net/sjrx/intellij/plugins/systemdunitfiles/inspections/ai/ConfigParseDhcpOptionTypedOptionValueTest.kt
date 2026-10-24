@@ -35,6 +35,9 @@ class ConfigParseDhcpOptionTypedOptionValueTest : AbstractUnitFileTest() {
 
   @Test
   fun testInvalidValues() {
+    // An unknown TYPE (`bytes`, `int8`, `text`) makes systemd drop the WHOLE .network file ("Failed to parse
+    // file: Invalid argument"): DHCPOptionDataType has no negative enumerator, so the C's `type < 0` check
+    // never fires and the switch's `default: return -EINVAL` does (sd-check, 0f0682b773).
     // language="unit file (systemd)"
     val file = """
       [DHCPServer]

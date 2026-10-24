@@ -16,6 +16,7 @@ class ConfigParseDhcp4UserClassOptionValueTest : AbstractUnitFileTest() {
       UserClass="with space" 'single quoted'
       UserClass=esc\x41ped tab\tbed
       UserClass=mid"dle quo"te
+      UserClass="a"
       UserClass=
     """.trimIndent()
 
@@ -34,12 +35,17 @@ class ConfigParseDhcp4UserClassOptionValueTest : AbstractUnitFileTest() {
       UserClass="unterminated
       UserClass=bad\qescape
       UserClass=bad\ escaped-space
+      UserClass=""
+      UserClass=''
+      UserClass=a ""
+      UserClass="" b
+      UserClass=""''
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(3, highlights)
+    assertSize(8, highlights)
   }
 }

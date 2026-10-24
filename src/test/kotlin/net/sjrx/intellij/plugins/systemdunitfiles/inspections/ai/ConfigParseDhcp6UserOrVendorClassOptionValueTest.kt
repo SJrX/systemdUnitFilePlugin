@@ -31,12 +31,14 @@ class ConfigParseDhcp6UserOrVendorClassOptionValueTest : AbstractUnitFileTest() 
       [DHCPv6]
       UserClass='unterminated
       VendorClass=bad\zescape
+      UserClass=""
+      VendorClass=""
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(2, highlights)
+    assertSize(4, highlights)
   }
 }

@@ -172,6 +172,21 @@ val CUNESCAPE_UNQUOTE_WORD = RegexTerminal(
   """(?:[^\s"'\\]|$C_ESCAPE_REGEX|"(?:[^"\\]|$C_ESCAPE_REGEX)*"|'(?:[^'\\]|$C_ESCAPE_REGEX)*')+(?=\s|\z)""",
 )
 
+/**
+ * [CUNESCAPE_UNQUOTE_WORD] minus the words that unquote to the empty string (`""`, `''`, `""''`):
+ * config_parse_dhcp4_user_class and config_parse_dhcp6_user_or_vendor_class drop those with "The length of
+ * the … entry '' is not in the range 1…255/65535, ignoring" (checked with systemd's parser at 0f0682b773).
+ * The upper length bound is not modelled (lenient).
+ *
+ * leaf https://github.com/systemd/systemd/blob/0f0682b773/src/network/networkd-dhcp-common.c#L687-L692  len == 0 check (DHCPv4)
+ * leaf https://github.com/systemd/systemd/blob/0f0682b773/src/network/networkd-dhcp-common.c#L732-L737  len == 0 check (DHCPv6)
+ */
+val NETWORK_DHCP_MISC_NONEMPTY_UNQUOTE_WORD: Combinator = NetworkDhcpMiscCheckedSpan(CUNESCAPE_UNQUOTE_WORD, "NonEmptyWord") {
+  !NETWORK_DHCP_MISC_EMPTY_QUOTES.matches(it)
+}
+
+private val NETWORK_DHCP_MISC_EMPTY_QUOTES = Regex("""(?:""|'')+""")
+
 /** A whitespace-separated list of [word]s (the value arrives stripped, so no leading/trailing space). */
 fun wordList(word: Combinator): Combinator = SequenceCombinator(
   word,
@@ -252,14 +267,23 @@ private const val DNS_PLAIN = """[^\s.\\\p{Cntrl}]"""
  * One non-LDH DNS label inside a whitespace-separated word.
  *
  * The words are cut by extract_first_word(…, NULL, 0), which strips one level of backslash (a raw `\x`
- * becomes `x`), and the result then goes through dns_label_unescape, which treats a further `\` as the
- * start of a `\\`, `\.` or `\DDD` escape. Modelling both layers exactly isn't worth it, so any
- * backslash-plus-character is accepted as label content (lenient). A label of 64 or more plain characters
- * is refused: that is over DNS_LABEL_MAX whatever follows.
+ * becomes `x`), and the result then goes through dns_label_unescape, which treats a remaining `\` as the
+ * start of a `\\`, `\.` or `\DDD` (000…255) escape. So in the raw text:
+ *  - `\x` for any `x` other than a backslash is just `x` (accepted as label content);
+ *  - a doubled backslash `\\` survives as `\` and must start a valid dns_label_unescape escape: it must
+ *    be followed by `\\` or `\.` (an escaped backslash/dot), by three digits no greater than 255, or by
+ *    the `.` separator (raw `foo\\.bar` is `foo\.bar`, one label with a literal dot — accepted either
+ *    way). `foo\\bar`, `foo\\256` and a trailing `foo\\` are refused, as systemd refuses them.
+ *
+ * Still lenient: a raw `\.` is treated as label content although extract_first_word turns it into a
+ * separator, so `a\..b` and `\.a` (empty labels once unescaped) are accepted. A label of 64 or more
+ * plain characters is refused: that is over DNS_LABEL_MAX whatever follows.
+ *
+ * leaf https://github.com/systemd/systemd/blob/0f0682b773/src/shared/dns-domain.c#L60-L100  dns_label_unescape escapes
  */
 val DNS_WORD_LABEL = RegexTerminal(
   """(?:[^\s.\\]|\\[\s\S])+""",
-  """(?!$DNS_PLAIN{64})(?:$DNS_PLAIN|\\[\s\S])+(?=[\s.]|\z)""",
+  """(?!$DNS_PLAIN{64})(?:$DNS_PLAIN|\\[^\\]|\\\\(?:\\[\\.]|[01][0-9]{2}|2[0-4][0-9]|25[0-5]|(?=\.)))+(?=[\s.]|\z)""",
 )
 
 /**
@@ -272,6 +296,18 @@ val DNS_NAME_WORD = AlternativeCombinator(
   SequenceCombinator(DNS_WORD_LABEL, ZeroOrMore(SequenceCombinator(DOT, DNS_WORD_LABEL)), ZeroOrOne(DOT)),
   DOT,
 )
+
+/**
+ * is_localhost(): `localhost`, `localhost.localdomain` and any name ending in `.localhost` or
+ * `.localhost.localdomain`, case-insensitively, with or without a trailing dot. [name] is a raw
+ * [DNS_NAME_WORD]; single-backslash escapes are dropped first, as extract_first_word drops them.
+ *
+ * leaf https://github.com/systemd/systemd/blob/0f0682b773/src/basic/hostname-util.c#L145-L161  is_localhost
+ */
+fun networkDhcpMiscIsLocalhost(name: String): Boolean {
+  val n = name.replace(Regex("""\\(.)"""), "$1").lowercase().removeSuffix(".")
+  return n == "localhost" || n == "localhost.localdomain" || n.endsWith(".localhost") || n.endsWith(".localhost.localdomain")
+}
 
 /** An LDH label: letters, digits and inner hyphens, 1…63 characters (dns_label_unescape with DNS_LABEL_LDH). */
 val LDH_DNS_LABEL = RegexTerminal(
@@ -387,6 +423,72 @@ val PARSE_SEC_TIMESPAN = AlternativeCombinator(
   LiteralChoiceTerminal("infinity"),
   SequenceCombinator(PARSE_SEC_ELEMENT, ZeroOrMore(SequenceCombinator(ZeroOrOne(WhitespaceTerminal()), PARSE_SEC_ELEMENT))),
 )
+
+private val NETWORK_DHCP_MISC_PARSE_SEC_MULTIPLIERS: Map<String, Long> = mapOf(
+  "seconds" to 1_000_000L, "second" to 1_000_000L, "sec" to 1_000_000L, "s" to 1_000_000L,
+  "minutes" to 60_000_000L, "minute" to 60_000_000L, "min" to 60_000_000L, "m" to 60_000_000L,
+  "months" to 2_629_800_000_000L, "month" to 2_629_800_000_000L, "M" to 2_629_800_000_000L,
+  "msec" to 1_000L, "ms" to 1_000L,
+  "hours" to 3_600_000_000L, "hour" to 3_600_000_000L, "hr" to 3_600_000_000L, "h" to 3_600_000_000L,
+  "days" to 86_400_000_000L, "day" to 86_400_000_000L, "d" to 86_400_000_000L,
+  "weeks" to 604_800_000_000L, "week" to 604_800_000_000L, "w" to 604_800_000_000L,
+  "years" to 31_557_600_000_000L, "year" to 31_557_600_000_000L, "y" to 31_557_600_000_000L,
+  "usec" to 1L, "us" to 1L, "\u03bcs" to 1L, "\u00b5s" to 1L,
+)
+
+private val NETWORK_DHCP_MISC_PARSE_SEC_STEP =
+  Regex("""[ \t\n\r]*\+?([0-9]*(?:\.[0-9]*)?)[ \t\n\r]*($PARSE_SEC_UNIT_REGEX)?""")
+
+/**
+ * The duration, in microseconds, that parse_sec() computes for a [PARSE_SEC_TIMESPAN]-shaped [text]
+ * (the elements summed, the default unit seconds, `infinity` as [Long.MAX_VALUE]), or null if [text]
+ * isn't of that shape. Fractions are evaluated exactly rather than digit-by-digit as the C does; the two
+ * differ by less than a microsecond per element.
+ */
+fun networkDhcpMiscParseSecUsec(text: String): Long? {
+  if (text == "infinity") return Long.MAX_VALUE
+  var total = java.math.BigDecimal.ZERO
+  var i = 0
+  while (i < text.length) {
+    val m = NETWORK_DHCP_MISC_PARSE_SEC_STEP.matchAt(text, i) ?: return null
+    val number = m.groupValues[1]
+    if (m.value.isEmpty() || number.isEmpty() || number == ".") return null
+    val multiplier = m.groups[2]?.value?.let { NETWORK_DHCP_MISC_PARSE_SEC_MULTIPLIERS[it] ?: return null } ?: 1_000_000L
+    total += java.math.BigDecimal(if (number.startsWith(".")) "0$number" else number.trimEnd('.')) * java.math.BigDecimal(multiplier)
+    i = m.range.last + 1
+  }
+  return total.toBigInteger().min(java.math.BigInteger.valueOf(Long.MAX_VALUE)).toLong()
+}
+
+/**
+ * Wraps [inner] and additionally requires the whole span it matched to satisfy [valid] — for rules
+ * that are a computation over a structured value (a minimum duration, an excluded address range, a
+ * reserved name) rather than part of its shape. Matching, colouring and completion are [inner]'s; when
+ * [valid] fails, the first token of the span is reported as the semantic error (both engines).
+ */
+class NetworkDhcpMiscCheckedSpan(
+  private val inner: Combinator,
+  private val name: String,
+  private val valid: (String) -> Boolean,
+) : Combinator {
+
+  override fun SyntacticMatch(value: String, offset: Int): MatchResult = inner.SyntacticMatch(value, offset)
+
+  override fun SemanticMatch(value: String, offset: Int): MatchResult {
+    val m = inner.SemanticMatch(value, offset)
+    if (m.matchResult == -1 || valid(value.substring(offset, m.matchResult))) return m
+    return NoMatch.copy(longestMatch = offset)
+  }
+
+  override fun parse(value: String, offset: Int): Sequence<ParseStep> = inner.parse(value, offset).map { step ->
+    if (step !is Parse || step.tokens.isEmpty() || valid(value.substring(offset, step.end))) step
+    else step.copy(tokens = listOf(step.tokens[0].copy(valid = false)) + step.tokens.drop(1))
+  }
+
+  override fun toString(): String = "$name(${inner})"
+
+  override fun toStringIndented(indent: Int): String = "  ".repeat(indent) + "$name(\n" + inner.toStringIndented(indent + 1) + "\n" + "  ".repeat(indent) + ")"
+}
 
 // ---------------------------------------------------------------------------------------------------
 // Parsers whose accepted syntax depends on the key or section (they test `lvalue` / `section`).

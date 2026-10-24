@@ -15,6 +15,9 @@ class ConfigParseDnssecNegativeTrustAnchorsOptionValueTest : AbstractUnitFileTes
       DNSSECNegativeTrustAnchors=test local. corp.example
       DNSSECNegativeTrustAnchors=.
       DNSSECNegativeTrustAnchors=_tcp.example
+      DNSSECNegativeTrustAnchors=foo\.bar
+      DNSSECNegativeTrustAnchors=foo\\\.bar
+      DNSSECNegativeTrustAnchors=localhost
       DNSSECNegativeTrustAnchors=
     """.trimIndent()
 
@@ -33,12 +36,13 @@ class ConfigParseDnssecNegativeTrustAnchorsOptionValueTest : AbstractUnitFileTes
       DNSSECNegativeTrustAnchors=a..b
       DNSSECNegativeTrustAnchors=good.example ..
       DNSSECNegativeTrustAnchors=~example.com..
+      DNSSECNegativeTrustAnchors=foo\\bar
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(3, highlights)
+    assertSize(4, highlights)
   }
 }

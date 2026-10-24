@@ -21,6 +21,12 @@ class ConfigParseDomainsOptionValueTest : AbstractUnitFileTest() {
       Domains=~*
       Domains=example.com.
       Domains=_srv.example.com
+      Domains=foo\.bar
+      Domains=foo\\\\bar
+      Domains=foo\\.bar
+      Domains=foo\\\.bar
+      Domains=foo\\065bar
+      Domains=localhost.example.com
       Domains=
     """.trimIndent()
 
@@ -40,12 +46,20 @@ class ConfigParseDomainsOptionValueTest : AbstractUnitFileTest() {
       Domains=.example.com
       Domains=example.com..
       Domains=ok.example xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.com
+      Domains=localhost
+      Domains=foo.localhost
+      Domains=~localhost
+      Domains=Foo.LocalHost.
+      Domains=localhost.localdomain
+      Domains=x.localhost.localdomain
+      Domains=foo\\bar
+      Domains=foo\\256bar
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(4, highlights)
+    assertSize(12, highlights)
   }
 }

@@ -16,6 +16,14 @@ class ConfigParseNtpOptionValueTest : AbstractUnitFileTest() {
       NTP=2001:db8::123
       NTP=ntp.example.com.
       NTP=time
+      NTP=.
+      NTP=foo\.bar
+      NTP=foo\qbar
+      NTP=foo\065bar
+      NTP=foo\\\\bar
+      NTP=foo\\.bar
+      NTP=foo\\065bar
+      NTP=localhost.localdomain
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -33,12 +41,14 @@ class ConfigParseNtpOptionValueTest : AbstractUnitFileTest() {
       NTP=pool..ntp.org
       NTP=.ntp.org
       NTP=ok.example bad..example
+      NTP=foo\\bar
+      NTP=foo\\256bar
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(3, highlights)
+    assertSize(5, highlights)
   }
 }

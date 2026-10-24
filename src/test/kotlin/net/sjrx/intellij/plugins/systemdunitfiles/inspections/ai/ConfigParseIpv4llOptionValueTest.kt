@@ -14,6 +14,9 @@ class ConfigParseIpv4llOptionValueTest : AbstractUnitFileTest() {
       IPv4LL=yes
       IPv4LL=no
       IPv4LL=True
+      IPv4LL=Yes
+      IPv4LL=TRUE
+      IPv4LL=Off
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
