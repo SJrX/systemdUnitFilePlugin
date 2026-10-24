@@ -23,6 +23,11 @@ class ConfigParseCakeAckFilterOptionValueTest : AbstractUnitFileTest() {
       AckFilter=off
       AckFilter=YES
       AckFilter=No
+      AckFilter=Yes
+      AckFilter=TRUE
+      AckFilter=oFf
+      AckFilter=tRUE
+      AckFilter=N
       AckFilter=
     """.trimIndent()
 
@@ -43,13 +48,15 @@ class ConfigParseCakeAckFilterOptionValueTest : AbstractUnitFileTest() {
       AckFilter=aggresive
       AckFilter=2
       AckFilter=filter
+      AckFilter=AGGRESSIVE
+      AckFilter=aggressivE
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(5, highlights)
+    assertSize(7, highlights)
   }
 
 }

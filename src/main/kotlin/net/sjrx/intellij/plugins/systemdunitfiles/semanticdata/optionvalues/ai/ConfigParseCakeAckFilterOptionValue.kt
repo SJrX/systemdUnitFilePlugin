@@ -22,9 +22,16 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * handled before this grammar runs.
  *
  * A boolean (parse_boolean() is tried first, case-insensitively: `yes` -> filter, `no` -> off) or the
- * table word `aggressive`, which is matched exactly (case-sensitive).
+ * table word `aggressive`, which is matched exactly (case-sensitive streq). The table's `no`/`yes`
+ * entries are not listed as names: parse_boolean() already takes them, in any case.
  */
 class ConfigParseCakeAckFilterOptionValue : SimpleGrammarOptionValues(
   "config_parse_cake_ack_filter",
-  SequenceCombinator(AlternativeCombinator(FlexibleLiteralChoiceTerminal("aggressive"), QDISC_BOOLEAN), EOF()),
+  SequenceCombinator(
+    PreferValidAlternativeCombinator(
+      FlexibleLiteralChoiceTerminal("aggressive"),
+      BOOLEAN,
+    ),
+    EOF(),
+  ),
 )

@@ -24,7 +24,7 @@ import java.math.BigInteger
  *
  * Several of these are more faithful than the older shared terminals in Combinators.kt (TIME_VALUE
  * rejects "1min30s"; ByteSizeTerminal rejects "1G 512M"; UnsignedNumberTerminal rejects "0b101" and
- * "+5"; BOOLEAN is case-sensitive although parse_boolean is not). They live in this file only so the
+ * "+5"). They live in this file only so the
  * batch does not collide with parallel edits to Combinators.kt; see RECOMMENDATIONS.md for promoting
  * them.
  */
@@ -79,13 +79,6 @@ class ValueChecked(private val inner: Combinator, private val accept: (String) -
 
   override fun toString(): String = toStringIndented(0)
 }
-
-/**
- * The boolean spellings parse_boolean() accepts, matched case-insensitively as the C does
- * (STRCASE_IN_SET, https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L23;
- * test-parse-util.c asserts "YES", "TRUE", "ON", "N" … are accepted).
- */
-val QDISC_BOOLEAN = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreCase = true)
 
 // ---------------------------------------------------------------------------------------------------
 // safe_atou*

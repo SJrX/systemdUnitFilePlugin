@@ -25,5 +25,5 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 class ConfigParseFqCodelBoolOptionValue : SimpleGrammarOptionValues(
   "config_parse_fq_codel_bool",
-  SequenceCombinator(QDISC_BOOLEAN, EOF()),
+  SequenceCombinator(BOOLEAN, EOF()),
 )

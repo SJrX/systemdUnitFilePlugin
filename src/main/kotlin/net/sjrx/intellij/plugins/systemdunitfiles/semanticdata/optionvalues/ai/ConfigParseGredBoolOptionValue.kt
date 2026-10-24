@@ -25,5 +25,5 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 class ConfigParseGredBoolOptionValue : SimpleGrammarOptionValues(
   "config_parse_gred_bool",
-  SequenceCombinator(QDISC_BOOLEAN, EOF()),
+  SequenceCombinator(BOOLEAN, EOF()),
 )

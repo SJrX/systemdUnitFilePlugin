@@ -27,6 +27,10 @@ class ConfigParseFqCodelBoolOptionValueTest : AbstractUnitFileTest() {
       ECN=YES
       ECN=False
       ECN=On
+      ECN=Yes
+      ECN=TRUE
+      ECN=oFf
+      ECN=Y
       ECN=
     """.trimIndent()
 
@@ -46,13 +50,15 @@ class ConfigParseFqCodelBoolOptionValueTest : AbstractUnitFileTest() {
       ECN=2
       ECN=enable
       ECN=nope
+      ECN=Maybe
+      ECN=ENABLE
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(4, highlights)
+    assertSize(6, highlights)
   }
 
 }

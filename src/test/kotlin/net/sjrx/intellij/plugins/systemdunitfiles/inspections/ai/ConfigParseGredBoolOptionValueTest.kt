@@ -27,6 +27,10 @@ class ConfigParseGredBoolOptionValueTest : AbstractUnitFileTest() {
       GenericRIO=YES
       GenericRIO=False
       GenericRIO=On
+      GenericRIO=Yes
+      GenericRIO=TRUE
+      GenericRIO=oFf
+      GenericRIO=Y
       GenericRIO=
     """.trimIndent()
 
@@ -46,13 +50,15 @@ class ConfigParseGredBoolOptionValueTest : AbstractUnitFileTest() {
       GenericRIO=2
       GenericRIO=enable
       GenericRIO=nope
+      GenericRIO=Maybe
+      GenericRIO=ENABLE
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(4, highlights)
+    assertSize(6, highlights)
   }
 
 }
