@@ -57,14 +57,13 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
   // key_ separator_ value?
   public static boolean property(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "property")) return false;
-    if (!nextTokenIs(builder_, KEY)) return false;
     boolean result_, pinned_;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, PROPERTY, null);
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, PROPERTY, "<property>");
     result_ = key_(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
     result_ = result_ && report_error_(builder_, separator_(builder_, level_ + 1));
     result_ = pinned_ && property_2(builder_, level_ + 1) && result_;
-    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    exit_section_(builder_, level_, marker_, result_, pinned_, UnitFileParser::property_recover);
     return result_ || pinned_;
   }
 
@@ -73,6 +72,27 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(builder_, level_, "property_2")) return false;
     value(builder_, level_ + 1);
     return true;
+  }
+
+  /* ********************************************************** */
+  // !(KEY | SECTION | COMMENT)
+  static boolean property_recover(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "property_recover")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NOT_);
+    result_ = !property_recover_0(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, result_, false, null);
+    return result_;
+  }
+
+  // KEY | SECTION | COMMENT
+  private static boolean property_recover_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "property_recover_0")) return false;
+    boolean result_;
+    result_ = consumeToken(builder_, KEY);
+    if (!result_) result_ = consumeToken(builder_, SECTION);
+    if (!result_) result_ = consumeToken(builder_, COMMENT);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -85,13 +105,12 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
   // section_ section_items*
   public static boolean section_groups(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "section_groups")) return false;
-    if (!nextTokenIs(builder_, "<section header>", SECTION)) return false;
     boolean result_, pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, SECTION_GROUPS, "<section header>");
     result_ = section_(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
     result_ = result_ && section_groups_1(builder_, level_ + 1);
-    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    exit_section_(builder_, level_, marker_, result_, pinned_, UnitFileParser::section_recover);
     return result_ || pinned_;
   }
 
@@ -112,8 +131,21 @@ public class UnitFileParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(builder_, level_, "section_items")) return false;
     if (!nextTokenIs(builder_, "", COMMENT, KEY)) return false;
     boolean result_;
+    Marker marker_ = enter_section_(builder_);
     result_ = property(builder_, level_ + 1);
     if (!result_) result_ = comment_(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // !SECTION
+  static boolean section_recover(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "section_recover")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NOT_);
+    result_ = !consumeToken(builder_, SECTION);
+    exit_section_(builder_, level_, marker_, result_, false, null);
     return result_;
   }
 

@@ -2,6 +2,9 @@ package net.sjrx.intellij.plugins.systemdunitfiles.parser
 
 import com.intellij.testFramework.ParsingTestCase
 import junit.framework.TestCase
+import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.util.PsiTreeUtil
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileProperty
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileValueType
 
@@ -767,6 +770,37 @@ KeyThree=value 2\
     /*
      * Verification
      */assertSameLines(expectedPsiTree, parseTree)
+  }
+
+  fun testLineWithoutSeparatorDoesNotSwallowTheRestOfTheFile() {
+    // A free-text line (several words, no '=') used to make the parser give up, turning everything after it into
+    // one error element (#562). It must stay a local error and the following properties and sections must parse.
+    val sourceCode = "[Service]\nNice=abc\nthis line has no equals\nNice=def\n[Unit]\nDescription=x\n"
+
+    val file = createPsiFile("a", sourceCode)
+    ensureParsed(file)
+    TestCase.assertEquals(sourceCode, file.text)
+
+    val sections = PsiTreeUtil.getChildrenOfTypeAsList(file, UnitFileSectionGroups::class.java)
+    TestCase.assertEquals(listOf("[Service]", "[Unit]"), sections.map { it.sectionName.let { n -> "[$n]" } })
+
+    val properties = PsiTreeUtil.findChildrenOfType(file, UnitFileProperty::class.java).map { it.key to it.valueText }
+    TestCase.assertEquals(listOf("Nice" to "abc", "this" to null, "Nice" to "def", "Description" to "x"), properties)
+
+    val errors = PsiTreeUtil.findChildrenOfType(file, PsiErrorElement::class.java)
+    TestCase.assertEquals(1, errors.size)
+    TestCase.assertTrue(errors.first().errorDescription.contains("key-value separator"))
+  }
+
+  fun testLineWithoutSeparatorBeforeFirstSectionDoesNotSwallowTheRestOfTheFile() {
+    val sourceCode = "some free text here\n[Service]\nNice=abc\n"
+
+    val file = createPsiFile("a", sourceCode)
+    ensureParsed(file)
+
+    val properties = PsiTreeUtil.findChildrenOfType(file, UnitFileProperty::class.java).map { it.key to it.valueText }
+    TestCase.assertEquals(listOf("some" to null, "Nice" to "abc"), properties)
+    TestCase.assertEquals(1, PsiTreeUtil.getChildrenOfTypeAsList(file, UnitFileSectionGroups::class.java).size)
   }
 
   /**
