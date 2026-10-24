@@ -29,9 +29,9 @@ import java.math.BigInteger
  * string like `089` is number-shaped but not a valid octal literal, so it matches and is then rejected
  * — which is what strtoul()+`*x != 0` does too.
  *
- * Not accepted: `-0`. safe_atou_full lets a negative zero through (`l != 0 && s[0] == '-'` is the only
- * minus check), but no real configuration spells zero that way and accepting a leading `-` would blur
- * the error on every genuinely negative value.
+ * A leading `-` is number-shaped (so `-1` is reported as an out-of-range number rather than as junk)
+ * and valid only when the value is zero: safe_atou_full's only minus check is `l != 0 && s[0] == '-'`,
+ * so `-0` (and `-0x0`) really are accepted.
  *
  * @param minInclusive lowest accepted value
  * @param maxExclusive one past the highest accepted value
@@ -48,12 +48,14 @@ class SafeAtouTerminal(
     // mangle_base() only recognises 0b/0o at the very start, so they never carry a sign.
     if (text.length > 2 && (text.startsWith("0b") || text.startsWith("0B"))) return text.drop(2).toBigIntegerOrNull(2)
     if (text.length > 2 && (text.startsWith("0o") || text.startsWith("0O"))) return text.drop(2).toBigIntegerOrNull(8)
-    val digits = text.removePrefix("+")
-    return when {
+    val digits = text.removePrefix("+").removePrefix("-")
+    val magnitude = when {
       digits.length > 2 && (digits.startsWith("0x") || digits.startsWith("0X")) -> digits.drop(2).toBigIntegerOrNull(16)
       digits.length > 1 && digits.startsWith("0") -> digits.drop(1).toBigIntegerOrNull(8)
       else -> digits.toBigIntegerOrNull()
     }
+    // strtoul() negates a `-` value; safe_atou_full then refuses it unless it is zero.
+    return if (text.startsWith("-") && magnitude != BigInteger.ZERO) null else magnitude
   }
 
   private fun inRange(text: String): Boolean =
@@ -80,7 +82,7 @@ class SafeAtouTerminal(
   private companion object {
     // 0b/0o first: as plain digits they would otherwise be read as "0" followed by junk. Within the
     // signed group, hex before octal before decimal for the same reason.
-    val SHAPE = Regex("""0[bB][01]+|0[oO][0-7]+|\+?(?:0[xX][0-9a-fA-F]+|0[0-7]+|[0-9]+)""")
+    val SHAPE = Regex("""0[bB][01]+|0[oO][0-7]+|[+-]?(?:0[xX][0-9a-fA-F]+|0[0-7]+|[0-9]+)""")
   }
 }
 

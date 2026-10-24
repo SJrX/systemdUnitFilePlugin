@@ -25,8 +25,8 @@ class BatchNetdevLinkCombinatorsTest {
   @Test
   fun testSafeAtouAcceptsEveryBaseSystemdDoes() {
     val u16 = safeAtou(UINT16_LIMIT)
-    assertAccepts(u16, true, "0", "65535", "0xffff", "0XFF", "0177777", "0b101", "0B1", "0o17", "0O17", "+5", "+0x10")
-    assertAccepts(u16, false, "65536", "0x10000", "089", "0b2", "0o8", "-1", "+0b1", "0x", "abc", "1.5")
+    assertAccepts(u16, true, "0", "65535", "0xffff", "0XFF", "0177777", "0b101", "0B1", "0o17", "0O17", "+5", "+0x10", "-0", "-0x0")
+    assertAccepts(u16, false, "65536", "0x10000", "089", "0b2", "0o8", "-1", "-0x1", "-0b0", "+0b1", "0x", "abc", "1.5")
   }
 
   @Test
