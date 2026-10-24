@@ -26,9 +26,24 @@ if (isReleaseDay && started_by_timer) {
 echo "Release channel $releaseChannel"
 
 def buildPodDefinition(workerPodImage, ciUtilsEnabled, kanikoEnabled) {
+  // Pods that run Gradle (worker-pod) or kaniko are "heavy": at most one of them may be scheduled per node,
+  // across all builds, so a burst of PR builds queues instead of piling onto (and thrashing) the fast nodes.
+  def heavy = workerPodImage != null || kanikoEnabled
+
   // language=yaml
   yaml = """
 kind: Pod
+"""
+
+  if (heavy) {
+    yaml += """
+metadata:
+  labels:
+    systemd-plugin-ci/load: heavy
+"""
+  }
+
+  yaml += """
 spec:
   affinity:
       nodeAffinity:
@@ -40,6 +55,20 @@ spec:
                   operator: In
                   values:
                     - fast
+"""
+
+  if (heavy) {
+    yaml += """
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                systemd-plugin-ci/load: heavy
+            topologyKey: kubernetes.io/hostname
+"""
+  }
+
+  yaml += """
   hostAliases:
   # Custom set env var
   - ip: "${env.JENKINS_IP_ADDRESS}"
@@ -71,8 +100,8 @@ spec:
     args:
     - 99d
     resources:
-    requests:
-      memory: "3172Mi"
+      requests:
+        memory: "3172Mi"
     volumeMounts:
     - name: jenkins-docker-cfg
       mountPath: /kaniko/.docker
@@ -93,9 +122,14 @@ spec:
     - sleep
     args:
     - 99d
+    # Gradle (build + IntelliJ test JVM + Kotlin daemon) peaked at ~5.5Gi with no limit, because every JVM
+    # sized its default heap from the node's RAM. With a limit, the JVMs size from the container instead,
+    # and a runaway build is OOM-killed in its own cgroup rather than thrashing the node (#559).
     resources:
       requests:
-        memory: "2048Mi"
+        memory: "6Gi"
+      limits:
+        memory: "7Gi"
     volumeMounts:
     - name: github-ssh-host-key
       mountPath:  /github-ssh-host-key   
