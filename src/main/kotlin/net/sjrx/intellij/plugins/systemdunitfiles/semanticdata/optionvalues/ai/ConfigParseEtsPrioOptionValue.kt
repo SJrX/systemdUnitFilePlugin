@@ -8,9 +8,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  *
  * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#PriorityMap=
  * parser https://github.com/systemd/systemd/blob/0f0682b773/src/network/tc/ets.c#L227-L302   config_parse_ets_prio (QDISC_KIND_ETS)
- * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429-L475   safe_atou_full
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429-L478   safe_atou_full
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L403-L427   mangle_base
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.h#L45-L47   safe_atou8
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L583-L597   safe_atou8_full (rejects > UINT8_MAX)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/include/uapi/linux/pkt_sched.h#L28   TC_PRIO_MAX = 15
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/src/test/test-parse-util.c#L489   safe_atou16("+12345") accepted
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/src/test/test-parse-util.c#L466-L470   0o6 / 0B101 prefixes (safe_atolli, same mangle_base)

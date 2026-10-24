@@ -9,7 +9,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#DefaultClass=
  * parser https://github.com/systemd/systemd/blob/0f0682b773/src/network/tc/htb.c#L48-L98   config_parse_htb_default_class (QDISC_KIND_HTB)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.h#L61-L64   safe_atou32_full(rvalue, 16, ..)
- * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429-L475   safe_atou_full (explicit base: mangle_base is skipped)
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429-L478   safe_atou_full (explicit base: mangle_base is skipped)
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/test-network/conf/25-qdisc-htb-fifo.network#L12   DefaultClass=30 (i.e. 0x30)
  */
 
@@ -20,7 +20,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * handled before this grammar runs.
  *
  * The default class's minor id, always read as HEXADECIMAL (safe_atou32_full(.., 16)): `30` is 0x30, `0x30`
- * is the same, `ff` is legal and `0b1`/`0o7` are not (with an explicit base, mangle_base does not run).
+ * is the same, `ff` is legal, `0b1` is read as hex 0xb1, and `0o7` is rejected (with an explicit base,
+ * mangle_base does not run).
  * Range 0…0xffffffff.
  */
 class ConfigParseHtbDefaultClassOptionValue : SimpleGrammarOptionValues(

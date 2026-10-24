@@ -9,7 +9,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#VirtualQueues=
  * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#DefaultVirtualQueue=
  * parser https://github.com/systemd/systemd/blob/0f0682b773/src/network/tc/gred.c#L68-L133   config_parse_gred_u32 (QDISC_KIND_GRED)
- * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429-L475   safe_atou_full
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429-L478   safe_atou_full
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L403-L427   mangle_base
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/include/uapi/linux/pkt_sched.h#L305   MAX_DPs = 16
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/src/test/test-parse-util.c#L489   safe_atou16("+12345") accepted

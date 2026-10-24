@@ -40,6 +40,11 @@ class ConfigParseNetemDelayOptionValueTest : AbstractUnitFileTest() {
       DelayJitterSec=2 weeks
       DelaySec=100
       DelayJitterSec=100
+      # Largest finite values parse_time() accepts (total < USEC_INFINITY, each integer <= LLONG_MAX).
+      DelaySec=9223372036854775807us 9223372036854775807us
+      DelayJitterSec=9223372036854775807us 9223372036854775807us
+      DelaySec=18446744073708s
+      DelayJitterSec=18446744073708s
       DelaySec=infinity
       DelayJitterSec=infinity
       DelaySec=
@@ -74,13 +79,22 @@ class ConfigParseNetemDelayOptionValueTest : AbstractUnitFileTest() {
       DelayJitterSec=infinity 5s
       DelaySec=Infinity
       DelayJitterSec=Infinity
+      # parse_time() ERANGE: integer above LLONG_MAX, or total reaching USEC_INFINITY.
+      DelaySec=9223372036854775808us
+      DelayJitterSec=9223372036854775808us
+      DelaySec=18446744073709551615us
+      DelayJitterSec=18446744073709551615us
+      DelaySec=9223372036854775807us 9223372036854775807us 1us
+      DelayJitterSec=9223372036854775807us 9223372036854775807us 1us
+      DelaySec=18446744073709s
+      DelayJitterSec=18446744073709s
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(16, highlights)
+    assertSize(24, highlights)
   }
 
 }

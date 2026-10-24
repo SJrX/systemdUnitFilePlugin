@@ -54,6 +54,13 @@ class ConfigParseFqCodelUsecOptionValueTest : AbstractUnitFileTest() {
       TargetSec=100
       IntervalSec=100
       CEThresholdSec=100
+      # Largest finite values parse_time() accepts (total < USEC_INFINITY, each integer <= LLONG_MAX).
+      TargetSec=9223372036854775807us 9223372036854775807us
+      IntervalSec=9223372036854775807us 9223372036854775807us
+      CEThresholdSec=9223372036854775807us 9223372036854775807us
+      TargetSec=18446744073708s
+      IntervalSec=18446744073708s
+      CEThresholdSec=18446744073708s
       TargetSec=infinity
       IntervalSec=infinity
       CEThresholdSec=infinity
@@ -98,13 +105,26 @@ class ConfigParseFqCodelUsecOptionValueTest : AbstractUnitFileTest() {
       TargetSec=Infinity
       IntervalSec=Infinity
       CEThresholdSec=Infinity
+      # parse_time() ERANGE: integer above LLONG_MAX, or total reaching USEC_INFINITY.
+      TargetSec=9223372036854775808us
+      IntervalSec=9223372036854775808us
+      CEThresholdSec=9223372036854775808us
+      TargetSec=18446744073709551615us
+      IntervalSec=18446744073709551615us
+      CEThresholdSec=18446744073709551615us
+      TargetSec=9223372036854775807us 9223372036854775807us 1us
+      IntervalSec=9223372036854775807us 9223372036854775807us 1us
+      CEThresholdSec=9223372036854775807us 9223372036854775807us 1us
+      TargetSec=18446744073709s
+      IntervalSec=18446744073709s
+      CEThresholdSec=18446744073709s
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(24, highlights)
+    assertSize(36, highlights)
   }
 
 }

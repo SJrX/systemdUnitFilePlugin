@@ -13,8 +13,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/percent-util.c#L135-L157   parse_permyriad / parse_permyriad_unbounded
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/percent-util.c#L57-L99   parse_parts_value_with_hundredths_place
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L497-L519   safe_atoi (base 0)
- * tests  https://github.com/systemd/systemd/blob/0f0682b773/src/test/test-percent-util.c#L87-L131   TEST(parse_permyriad)
- * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/test-network/conf/25-qdisc-netem.network#L15   LossRate=20%
+ * tests  https://github.com/systemd/systemd/blob/0f0682b773/src/test/test-percent-util.c#L87-L130   TEST(parse_permyriad)
+ * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/test-network/conf/25-qdisc-netem.network#L14   LossRate=20%
  */
 
 /**

@@ -92,7 +92,7 @@ val QDISC_BOOLEAN = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreCase
 
 /**
  * An unsigned integer as systemd's `safe_atou*_full()` reads it
- * (https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429-L475).
+ * (https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429-L478).
  *
  * With [base] 0 (`safe_atou`, `safe_atou8`, `safe_atou32`, …) that is:
  *  - decimal, C octal (`0755`) or `0x` hex — strtoul(base 0);
@@ -217,6 +217,11 @@ private val PARSE_SEC = AlternativeCombinator(
 
 private val USEC_INFINITY: BigInteger = UINT64_MAX_BIG
 
+private val LLONG_MAX_BIG: BigInteger = BigInteger.valueOf(Long.MAX_VALUE)
+
+/** Returned by [evaluateParseSec] when parse_time() would fail with ERANGE; above every accepted bound. */
+private val PARSE_SEC_ERANGE: BigInteger = USEC_INFINITY + BigInteger.ONE
+
 private val SEC_MULTIPLIERS: Map<String, BigInteger> = run {
   val sec = 1_000_000L
   val minute = 60 * sec
@@ -237,7 +242,11 @@ private val SEC_MULTIPLIERS: Map<String, BigInteger> = run {
 
 private val SEC_EVAL_ELEMENT = Regex("""\s*\+?([0-9]*)(?:\.([0-9]+))?\s*($SEC_SUFFIX_ALTERNATION)?""")
 
-/** parse_time(t, USEC_PER_SEC) as a value in microseconds, or null if [text] is not evaluable. */
+/**
+ * parse_time(t, USEC_PER_SEC) as a value in microseconds, or null if [text] is not evaluable. Overflow
+ * (C's ERANGE: an integer part above LLONG_MAX, or a finite total reaching USEC_INFINITY) yields a value
+ * greater than USEC_INFINITY so that every bound check rejects it.
+ */
 fun evaluateParseSec(text: String): BigInteger? {
   val t = text.trim()
   if (t == "infinity") return USEC_INFINITY
@@ -250,12 +259,19 @@ fun evaluateParseSec(text: String): BigInteger? {
     if (m.value.isEmpty()) return null
     pos += m.value.length
     val multiplier = m.groupValues[3].takeIf { it.isNotEmpty() }?.let { SEC_MULTIPLIERS[it] } ?: SEC_MULTIPLIERS.getValue("s")
-    val whole = m.groupValues[1].ifEmpty { "0" }
-    total += BigInteger(whole) * multiplier
+    val whole = BigInteger(m.groupValues[1].ifEmpty { "0" })
+    // strtoll() sets ERANGE above LLONG_MAX; then `(usec_t) l >= USEC_INFINITY / multiplier` and
+    // `k >= USEC_INFINITY - usec` are ERANGE too, so a finite total can never reach USEC_INFINITY.
+    if (whole > LLONG_MAX_BIG || whole >= USEC_INFINITY / multiplier) return PARSE_SEC_ERANGE
+    val k = whole * multiplier
+    if (k >= USEC_INFINITY - total) return PARSE_SEC_ERANGE
+    total += k
     // The C adds the fractional digits one by one, each times a truncated multiplier/10^k.
     var step = multiplier / BigInteger.TEN
     for (digit in m.groupValues[2]) {
-      total += BigInteger.valueOf((digit - '0').toLong()) * step
+      val kf = BigInteger.valueOf((digit - '0').toLong()) * step
+      if (kf >= USEC_INFINITY - total) return PARSE_SEC_ERANGE
+      total += kf
       step /= BigInteger.TEN
     }
   }

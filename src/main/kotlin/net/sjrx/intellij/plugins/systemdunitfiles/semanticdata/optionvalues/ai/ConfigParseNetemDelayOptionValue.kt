@@ -12,7 +12,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/time-util.c#L1289   parse_sec
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/time-util.c#L1198-L1287   parse_time
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/time-util.c#L1147-L1196   extract_multiplier
- * tests  https://github.com/systemd/systemd/blob/0f0682b773/src/test/test-time-util.c#L21-L84   TEST(parse_sec)
+ * tests  https://github.com/systemd/systemd/blob/0f0682b773/src/test/test-time-util.c#L21-L83   TEST(parse_sec)
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/test-network/conf/25-qdisc-netem.network#L12-L13   DelaySec=50ms, DelayJitterSec=10ms
  */
 
