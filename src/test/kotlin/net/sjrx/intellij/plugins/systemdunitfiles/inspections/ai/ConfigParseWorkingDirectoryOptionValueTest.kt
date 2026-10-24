@@ -18,6 +18,8 @@ class ConfigParseWorkingDirectoryOptionValueTest : AbstractUnitFileTest() {
             WorkingDirectory=-/var/cache/myapp
             WorkingDirectory=-~
             WorkingDirectory=/var/lib/%n
+            WorkingDirectory=/path with space
+            WorkingDirectory=%S/osmocom
         """.trimIndent()
 
         setupFileInEditor("file.service", file)
@@ -34,7 +36,6 @@ class ConfigParseWorkingDirectoryOptionValueTest : AbstractUnitFileTest() {
             [Service]
             WorkingDirectory=<error descr="Invalid value">relative/path</error>
             WorkingDirectory=<error descr="Invalid value">somepath</error>
-            WorkingDirectory=<error descr="Invalid value">/path with space</error>
             WorkingDirectory=<error descr="Invalid value">--/path</error>
         """.trimIndent()
 
@@ -42,6 +43,6 @@ class ConfigParseWorkingDirectoryOptionValueTest : AbstractUnitFileTest() {
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(4, highlights)
+        assertSize(3, highlights)
     }
 }

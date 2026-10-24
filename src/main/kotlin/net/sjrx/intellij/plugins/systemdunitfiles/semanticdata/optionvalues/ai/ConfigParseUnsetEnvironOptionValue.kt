@@ -15,7 +15,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * an invalid entry localizes to that entry rather than invalidating the whole value.
  */
 private val UNSET_ENVIRON_ENTRY = SequenceCombinator(
-    RegexTerminal("[^=\\s]+", "[A-Za-z_][A-Za-z0-9_]*"),
+    // A name with a specifier (e.g. X%b) is only known once unit_env_printf() expands it, which depends on the
+    // machine, so it is accepted.
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L2905-L2972
+    RegexTerminal("[^=\\s]+", "[^=\\s]*%[^=\\s]*|[A-Za-z_][A-Za-z0-9_]*"),
     ZeroOrOne(SequenceCombinator(LiteralChoiceTerminal("="), RegexTerminal("[^\\s]*", "[^\\s]*")))
 )
 

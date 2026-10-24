@@ -6,15 +6,16 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 /**
  * Validator for SystemCallErrorNumber=.
  *
- * C function: config_parse_syscall_errno in src/core/load-fragment.c → parse_errno in
- * src/basic/parse-util.c. Accepts:
+ * C function: config_parse_syscall_errno → parse_errno,
+ * https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L3504-L3541
+ * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L342-L360. Accepts:
  *   - "kill" (special, resets to SECCOMP_ERROR_NUMBER_KILL)
  *   - an errno name (uppercase "E"-prefixed, e.g. EPERM, ENOENT) via errno_from_name
- *   - an integer that maps to a valid errno via errno_is_valid (or 0)
+ *   - a safe_atoi() number from 1 to ERRNO_MAX (4095). parse_errno() lets 0 through, but
+ *     config_parse_syscall_errno() then refuses it ("Invalid error number").
  *
  * The grammar matches the errno-name pattern loosely (any uppercase E-prefixed token);
- * unknown names like "ENOIENT" would slip past the grammar but fail at runtime. Numeric
- * range here is 0..4095 — wider than typical valid errnos but enough to catch obvious typos.
+ * unknown names like "ENOIENT" would slip past the grammar.
  */
 class ConfigParseSyscallErrnoOptionValue : SimpleGrammarOptionValues(
     "config_parse_syscall_errno",
@@ -22,7 +23,15 @@ class ConfigParseSyscallErrnoOptionValue : SimpleGrammarOptionValues(
         AlternativeCombinator(
             LiteralChoiceTerminal("kill"),
             RegexTerminal("E[A-Z][A-Z0-9]*", "E[A-Z][A-Z0-9]*"),
-            IntegerTerminal(0, 4096)
+            SafeAtoTerminal(
+                signed = true,
+                base = 0,
+                flags = emptySet(),
+                minInclusive = 1L,
+                maxInclusive = 4095L,
+                acceptsWhitespace = true,
+                acceptsMinus = true,
+            ),
         ),
         EOF()
     )

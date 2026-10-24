@@ -63,26 +63,10 @@ class InvalidValueInspectionForExecOutputOptionsTest : AbstractUnitFileTest() {
     TestCase.assertEquals("foo", info.text)
   }
 
-  fun testWeakWarningWhenMissingSecondArgumentForFd() {
-    // Fixture Setup
-    // language="unit file (systemd)"
-    val file = """
-           [Service]
-           StandardOutput=fd:
-           
-           """.trimIndent()
-
-
-    // Execute SUT
-    setupFileInEditor("file.service", file)
-    enableInspection(InvalidValueInspection::class.java)
-    val highlights = myFixture.doHighlighting()
-
-    // Verification
-    assertSize(1, highlights)
-    val info = highlights[0]
-    assertStringContains("name must be specified after the colon", info!!.description)
-    TestCase.assertEquals("fd:", info.text)
+  fun testNoWarningWhenSecondArgumentForFdIsEmpty() {
+    // config_parse_exec_output() accepts an empty fd: name (it then uses the default name); the test used to assert
+    // the opposite. https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L1354-L1369
+    runValidValueTest("fd:")
   }
 
   fun testWeakWarningWhenMissingSecondArgumentForFile() {

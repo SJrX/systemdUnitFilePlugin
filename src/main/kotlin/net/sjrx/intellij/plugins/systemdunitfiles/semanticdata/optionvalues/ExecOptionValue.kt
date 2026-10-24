@@ -9,11 +9,14 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
 import java.util.regex.Pattern
 
 /**
- * This validator is used for the config_parse_exec validator.
+ * This validator is used for the config_parse_exec validator (ExecStart=, ExecStop=, ExecReload=, ...).
  *
+ * Other inspections (e.g. the shell syntax inspection) also use the presence of this validator to decide whether
+ * they should run.
  *
- * This validator does nothing because other inspections use it to determine if they should run,
- * kind of hacky I know.
+ * It reports an error for exactly the command lines that systemd's config_parse_exec() refuses to load, and
+ * otherwise a weak warning recommending an absolute path:
+ * https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L882-L1094
  */
 class ExecOptionValue : OptionValueInformation {
   override fun getAutoCompleteOptions(project: Project): Set<String> {
@@ -26,6 +29,15 @@ class ExecOptionValue : OptionValueInformation {
    * @param holder - A problem holder that we should add to.
    */
   override fun generateProblemDescriptors(property: UnitFilePropertyType, holder: ProblemsHolder) {
+    val valueText = property.valueText
+    if (valueText != null) {
+      val error = getErrorMessage(valueText)
+      if (error != null) {
+        holder.registerProblem(property.valueNode.psi, error, ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+        return
+      }
+    }
+
     val values = property.valueNode.text
     val absMatcher = ABSOLUTE_PATH_REGEX.matcher(values)
     if (absMatcher.find()) {
@@ -43,12 +55,131 @@ class ExecOptionValue : OptionValueInformation {
     }
   }
 
+  /**
+   * Returns why systemd's config_parse_exec() would refuse this command line, or null if it loads it.
+   *
+   * Paths that contain a specifier (%) are not checked, because what they expand to depends on the unit name and
+   * the machine. Warnings that systemd logs while still loading the command (unknown escape sequences, the
+   * obsolete `!!` prefix) are not reported.
+   */
   override fun getErrorMessage(value: String): String? {
+    val rvalue = value.trim(' ', '\t', '\n', '\r')
+    var p: Int? = 0
+
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L913-L1091
+    do {
+      var semicolon = false
+
+      val first = extractFirstWordAndWarn(rvalue, p) ?: return UNBALANCED_QUOTING
+      val firstWord = first.word ?: return null
+      p = first.next
+
+      if (firstWord == ";") {
+        continue
+      }
+
+      // Prefix characters, https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L936-L973
+      var ignoreFailure = false
+      var separateArgv0 = false
+      var noEnvExpand = false
+      var viaShell = false
+      var fullyPrivileged = false
+      var noSetuid = false
+      var ambientHack = false
+      var f = 0
+      while (f < firstWord.length) {
+        val c = firstWord[f]
+        if (c == '-' && !ignoreFailure) {
+          ignoreFailure = true
+        } else if (c == '@' && !separateArgv0) {
+          separateArgv0 = true
+        } else if (c == ':' && !noEnvExpand) {
+          noEnvExpand = true
+        } else if (c == '|' && !viaShell) {
+          viaShell = true
+        } else if (c == '+' && !fullyPrivileged && !noSetuid && !ambientHack) {
+          fullyPrivileged = true
+        } else if (c == '!' && !fullyPrivileged && !noSetuid && !ambientHack) {
+          noSetuid = true
+        } else if (c == '!' && !fullyPrivileged && !ambientHack) {
+          noSetuid = false
+          ambientHack = true
+        } else {
+          break
+        }
+        f++
+      }
+      val path = firstWord.substring(f)
+
+      var argCount = 0
+      if (viaShell) {
+        // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L980-L990
+        argCount = if (path.isEmpty()) 1 else 2
+      } else if (!path.contains('%')) {
+        // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L992-L1028
+        if (path.isEmpty()) {
+          return "Empty path in command line"
+        }
+        if (!stringIsSafe(path)) {
+          return "Executable path contains special characters (control characters, quotes, backslashes or *?[): $path"
+        }
+        if (pathImpliesDirectory(path)) {
+          return "Executable path specifies a directory: $path"
+        }
+        if (!filenameOrAbsolutePathIsValid(path)) {
+          return "Neither a valid executable name nor an absolute path: $path"
+        }
+        if (!separateArgv0) {
+          argCount++
+        }
+      } else {
+        // The path is only known once the specifiers are expanded, assume it is fine.
+        if (!separateArgv0) {
+          argCount++
+        }
+      }
+
+      // Arguments, https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L1031-L1070
+      while (p != null && p < rvalue.length) {
+        val rest = p
+        if (rvalue[rest] == ';' && (rest + 1 == rvalue.length || rvalue[rest + 1] in WHITESPACE)) {
+          p = skipWhitespace(rvalue, rest + 1)
+          semicolon = true
+          break
+        }
+
+        if (rvalue[rest] == '\\' && rest + 1 < rvalue.length && rvalue[rest + 1] == ';'
+          && (rest + 2 == rvalue.length || rvalue[rest + 2] in WHITESPACE)) {
+          p = skipWhitespace(rvalue, rest + 2)
+          argCount++
+          continue
+        }
+
+        val arg = extractFirstWordAndWarn(rvalue, p) ?: return UNBALANCED_QUOTING
+        if (arg.word == null) {
+          break
+        }
+        p = arg.next
+        argCount++
+      }
+
+      // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L1072-L1077
+      if (argCount == 0) {
+        return "Empty executable name or zeroeth argument: with the '@' prefix the first argument after the path is argv[0]"
+      }
+    } while (semicolon || firstWord == ";")
+
     return null
   }
 
   override val validatorName: String
     get() = VALIDATOR_NAME
+
+  /**
+   * One extract_first_word() step: the word, and where the rest starts (null when the input is used up, like
+   * systemd's *p = NULL).
+   */
+  private class Word(val word: String?, val next: Int?)
 
   companion object {
     // Specifiers that systemd's unit_path_printf() expands to an absolute filesystem path. A command whose first
@@ -64,8 +195,193 @@ class ExecOptionValue : OptionValueInformation {
     // Used to determine what to highlight (we want to avoid highlighting valid prefixes).
     private val RELATIVE_PATH_REGEX = Pattern.compile("^\\s*(?:[+@:!-]+)?([^\\/\\s]\\S*)\\s*")
 
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/fundamental/string-util.h#L15
+    private const val WHITESPACE = " \t\n\r"
+
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L251-L253
+    private const val UNBALANCED_QUOTING = "Unbalanced quoting"
+
+    // Marks a \xNN or octal escape above 0x7F: systemd copies it as a raw byte, which is not valid UTF-8 on its own.
+    private const val RAW_HIGH_BYTE = '￿'
+
+    // NAME_MAX and PATH_MAX from linux/limits.h
+    private const val NAME_MAX = 255
+    private const val PATH_MAX = 4096
+
     const val VALIDATOR_NAME = "config_parse_exec"
 
     val validators = mapOf(Validator(VALIDATOR_NAME, "*") to ExecOptionValue())
+
+    private fun skipWhitespace(s: String, from: Int): Int? {
+      var i = from
+      while (i < s.length && s[i] in WHITESPACE) {
+        i++
+      }
+      return if (i < s.length) i else null
+    }
+
+    /**
+     * extract_first_word_and_warn(…, EXTRACT_UNQUOTE|EXTRACT_CUNESCAPE): an invalid escape sequence is only a
+     * warning (systemd retries with EXTRACT_UNESCAPE_RELAX and keeps the backslash), so this returns null only for
+     * unbalanced quoting.
+     * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L223-L257
+     */
+    private fun extractFirstWordAndWarn(s: String, from: Int?): Word? {
+      return extractFirstWord(s, from, false) ?: extractFirstWord(s, from, true)
+    }
+
+    /**
+     * extract_first_word() with WHITESPACE separators and EXTRACT_UNQUOTE|EXTRACT_CUNESCAPE (plus
+     * EXTRACT_UNESCAPE_RELAX when [unescapeRelax]). Returns null for -EINVAL.
+     * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L10-L188
+     */
+    private fun extractFirstWord(s: String, from: Int?, unescapeRelax: Boolean): Word? {
+      var i = from ?: return Word(null, null)
+      while (i < s.length && s[i] in WHITESPACE) {
+        i++
+      }
+      if (i >= s.length) {
+        return Word(null, null)
+      }
+
+      val out = StringBuilder()
+      var quote = 0.toChar()
+      var backslash = false
+      while (true) {
+        val atEnd = i >= s.length
+        val c = if (atEnd) 0.toChar() else s[i]
+        if (backslash) {
+          if (atEnd) {
+            if (unescapeRelax && quote == 0.toChar()) {
+              out.append('\\')
+              return Word(out.toString(), null)
+            }
+            return null
+          }
+          val consumed = cunescapeOne(s, i, out)
+          if (consumed > 0) {
+            i += consumed - 1
+          } else if (unescapeRelax) {
+            out.append('\\').append(c)
+          } else {
+            return null
+          }
+          backslash = false
+          i++
+        } else if (quote != 0.toChar()) {
+          if (atEnd) {
+            return null
+          } else if (c == quote) {
+            quote = 0.toChar()
+          } else if (c == '\\') {
+            backslash = true
+          } else {
+            out.append(c)
+          }
+          i++
+        } else {
+          if (atEnd) {
+            return Word(out.toString(), null)
+          } else if (c == '\'' || c == '"') {
+            quote = c
+          } else if (c == '\\') {
+            backslash = true
+          } else if (c in WHITESPACE) {
+            return Word(out.toString(), skipWhitespace(s, i))
+          } else {
+            out.append(c)
+          }
+          i++
+        }
+      }
+    }
+
+    /**
+     * cunescape_one(…, accept_nul = false) for the escape whose first character (after the backslash) is at [at].
+     * Appends the decoded character and returns how many characters were consumed, or -1 for -EINVAL.
+     * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/escape.c#L104-L296
+     */
+    private fun cunescapeOne(s: String, at: Int, out: StringBuilder): Int {
+      fun hex(offset: Int, count: Int): Long? {
+        if (at + offset + count > s.length) return null
+        var v = 0L
+        for (k in 0 until count) {
+          val d = Character.digit(s[at + offset + k], 16)
+          if (d < 0 || s[at + offset + k].code > 0x7f) return null
+          v = (v shl 4) or d.toLong()
+        }
+        return v
+      }
+
+      when (val c = s[at]) {
+        'a' -> out.append('\u0007')
+        'b' -> out.append('\b')
+        'f' -> out.append('\u000c')
+        'n' -> out.append('\n')
+        'r' -> out.append('\r')
+        't' -> out.append('\t')
+        'v' -> out.append('\u000b')
+        '\\', '"', '\'' -> out.append(c)
+        's' -> out.append(' ')
+        'x' -> {
+          val v = hex(1, 2) ?: return -1
+          if (v == 0L) return -1
+          out.append(if (v > 0x7f) RAW_HIGH_BYTE else v.toInt().toChar())
+          return 3
+        }
+        'u' -> {
+          val v = hex(1, 4) ?: return -1
+          if (v == 0L || v in 0xD800L..0xDFFFL) return -1
+          out.append(v.toInt().toChar())
+          return 5
+        }
+        'U' -> {
+          val v = hex(1, 8) ?: return -1
+          val invalid = v == 0L || v >= 0x110000L || (v and 0xFFFFF800L) == 0xD800L || v in 0xFDD0L..0xFDEFL
+            || (v and 0xFFFEL) == 0xFFFEL
+          if (invalid) return -1
+          out.appendCodePoint(v.toInt())
+          return 9
+        }
+        in '0'..'7' -> {
+          if (at + 3 > s.length) return -1
+          val digits = s.substring(at, at + 3)
+          if (digits.any { it !in '0'..'7' }) return -1
+          val v = digits.toInt(8)
+          if (v == 0 || v > 255) return -1
+          out.append(if (v > 0x7f) RAW_HIGH_BYTE else v.toChar())
+          return 3
+        }
+        else -> return -1
+      }
+      return 1
+    }
+
+    /**
+     * string_is_safe(p, 0): no control characters, newlines, backslashes, quotes or glob characters, valid UTF-8.
+     * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/string-util.c#L1154-L1192
+     */
+    private fun stringIsSafe(p: String): Boolean {
+      return p.none { it.code < 0x20 || it.code == 0x7f || it == '\\' || it == '"' || it == '\'' || it in "*?[" || it == RAW_HIGH_BYTE }
+    }
+
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/path-util.c#L1340-L1352
+    private fun pathImpliesDirectory(path: String): Boolean {
+      return path == "." || path == ".." || path.endsWith("/") || path.endsWith("/.") || path.endsWith("/..")
+    }
+
+    /**
+     * filename_or_absolute_path_is_valid(): an absolute path whose components fit NAME_MAX and whose length fits
+     * PATH_MAX, or a single file name that is not "." or "..".
+     * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/path-util.h#L156-L161
+     * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/path-util.c#L1143-L1190
+     */
+    private fun filenameOrAbsolutePathIsValid(path: String): Boolean {
+      if (path.startsWith("/")) {
+        if (path.toByteArray(Charsets.UTF_8).size >= PATH_MAX) return false
+        return path.split('/').all { it.toByteArray(Charsets.UTF_8).size <= NAME_MAX }
+      }
+      return path.isNotEmpty() && path != "." && path != ".." && !path.contains('/') && path.toByteArray(Charsets.UTF_8).size <= NAME_MAX
+    }
   }
 }

@@ -87,7 +87,9 @@ class NamespacePathOptionValue : OptionValueInformation {
   companion object {
     const val VALIDATOR_NAME = "config_parse_namespace_path_strv"
 
-    val NEXT_WORD_REGEX = """(?:[^\\ ]|\\\s|(?:\\\\))+""".toRegex()
+    // A word: anything but whitespace, or a backslash escaping the next character. A backslash at the end of a
+    // line is a line continuation, not part of a word.
+    val NEXT_WORD_REGEX = """(?:[^\\\s]|\\[^\r\n])+""".toRegex()
 
     val validators = mapOf(Validator(VALIDATOR_NAME, "0") to NamespacePathOptionValue())
   }

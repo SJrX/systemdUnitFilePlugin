@@ -50,14 +50,16 @@ class GrammarParseEngineInspectionTest : AbstractUnitFileTest() {
   fun testInvalidAddressFamiliesUnderNewEngine() {
     enableNewEngine()
     // One highlight each, exercising both ParseOutcome failure kinds now that AF names are
-    // enumerated: AF_BOGUS is well-formed but unknown (SemanticError), while the comma and the
-    // bare non-AF token are ill-formed against the grammar shape (SyntaxError).
+    // enumerated: AF_BOGUS is well-formed but unknown (SemanticError), while the semicolon and the
+    // unbalanced quote are ill-formed against the grammar shape (SyntaxError). (This used to use
+    // "AF_INET, AF_INET6" and "inet", which systemd accepts: commas separate too, and af_from_name()
+    // ignores case and adds a missing AF_ prefix (#568).)
     // language="unit file (systemd)"
     val file = """
             [Service]
             RestrictAddressFamilies=AF_BOGUS
-            RestrictAddressFamilies=AF_INET, AF_INET6
-            RestrictAddressFamilies=inet
+            RestrictAddressFamilies=AF_INET; AF_INET6
+            RestrictAddressFamilies=AF_INET "AF_UNIX
         """.trimIndent()
 
     setupFileInEditor("file.service", file)

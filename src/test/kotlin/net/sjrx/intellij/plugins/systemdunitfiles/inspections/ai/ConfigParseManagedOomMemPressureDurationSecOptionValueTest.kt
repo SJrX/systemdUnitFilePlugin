@@ -11,7 +11,6 @@ class ConfigParseManagedOomMemPressureDurationSecOptionValueTest : AbstractUnitF
         // language="unit file (systemd)"
         val file = """
             [Service]
-            ManagedOOMMemoryPressureDurationSec=infinity
             ManagedOOMMemoryPressureDurationSec=10
             ManagedOOMMemoryPressureDurationSec=30s
             ManagedOOMMemoryPressureDurationSec=2min

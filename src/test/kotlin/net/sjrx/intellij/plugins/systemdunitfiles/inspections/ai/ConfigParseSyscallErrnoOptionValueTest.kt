@@ -18,7 +18,6 @@ class ConfigParseSyscallErrnoOptionValueTest : AbstractUnitFileTest() {
             SystemCallErrorNumber=EAGAIN
             SystemCallErrorNumber=1
             SystemCallErrorNumber=13
-            SystemCallErrorNumber=0
         """.trimIndent()
 
         setupFileInEditor("file.service", file)

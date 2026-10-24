@@ -15,7 +15,11 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 class ConfigParseExecSelinuxContextOptionValue : SimpleGrammarOptionValues(
     "config_parse_exec_selinux_context",
     SequenceCombinator(
-        RegexTerminal(".*", "-?(?:[^%]|%%|%[iIjJnNpPfyYcrRCdDELSthsaAbBHlqmMovwWgGuUTV])*"),
+        // specifier_printf() only refuses an unknown ALPHANUMERIC specifier (-EBADSLT); a '%' followed by any other
+        // character, or at the very end, is kept as it is.
+        // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L1899-L1945
+        // https://github.com/systemd/systemd/blob/0f0682b773/src/shared/specifier.c#L31-L105
+        RegexTerminal(".*", "-?(?:[^%]|%%|%[iIjJnNpPfyYcrRCdDELSthsaAbBHlqmMovwWgGuUTV]|%(?![A-Za-z0-9%]))*"),
         EOF()
     )
 )

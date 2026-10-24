@@ -57,8 +57,8 @@ class InvalidValueForRLimitTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    assertStringContains("LimitCPU's value is correctly formatted but seems invalid.", info!!.description)
-    TestCase.assertEquals("-11", info.text)
+    // The time and size fields no longer read a leading \'-\' as a number, so this is now a format error (#568).
+    assertStringContains("LimitCPU\'s value does not match the expected format", info!!.description)
   }
 
   fun testNoWarningWhenCPULimitSpecifiedInNSpawnFile() {
@@ -95,8 +95,8 @@ class InvalidValueForRLimitTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    assertStringContains("LimitCPU's value is correctly formatted but seems invalid.", info!!.description)
-    TestCase.assertEquals("-11", info.text)
+    // The time and size fields no longer read a leading \'-\' as a number, so this is now a format error (#568).
+    assertStringContains("LimitCPU\'s value does not match the expected format", info!!.description)
   }
 
   fun testNoWarningWhenCPULimitSpecifiedInComplexFormat() {
@@ -166,8 +166,8 @@ class InvalidValueForRLimitTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    assertStringContains("LimitCPU's value is correctly formatted but seems invalid.", info!!.description)
-    TestCase.assertEquals(" n", info.text)
+    // The time and size fields no longer read a leading \'-\' as a number, so this is now a format error (#568).
+    assertStringContains("LimitCPU\'s value does not match the expected format", info!!.description)
   }
 
 
@@ -187,8 +187,8 @@ class InvalidValueForRLimitTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    assertStringContains("LimitCPU's value is correctly formatted but seems invalid.", info!!.description)
-    TestCase.assertEquals("-11", info.text)
+    // The time and size fields no longer read a leading \'-\' as a number, so this is now a format error (#568).
+    assertStringContains("LimitCPU\'s value does not match the expected format", info!!.description)
   }
 
   fun testNoWarningWhenFSIZELimitSpecified() {
@@ -258,8 +258,8 @@ class InvalidValueForRLimitTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    assertStringContains("LimitFSIZE's value is correctly formatted but seems invalid.", info!!.description)
-    TestCase.assertEquals("-11", info.text)
+    // The time and size fields no longer read a leading \'-\' as a number, so this is now a format error (#568).
+    assertStringContains("LimitFSIZE\'s value does not match the expected format", info!!.description)
   }
 
   fun testNoWarningWhenDATALimitSpecified() {
@@ -295,8 +295,8 @@ class InvalidValueForRLimitTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    assertStringContains("LimitDATA's value is correctly formatted but seems invalid.", info!!.description)
-    TestCase.assertEquals("-11", info.text)
+    // The time and size fields no longer read a leading \'-\' as a number, so this is now a format error (#568).
+    assertStringContains("LimitDATA\'s value does not match the expected format", info!!.description)
   }
 
   fun testNoWarningWhenSTACKLimitSpecified() {
@@ -332,8 +332,8 @@ class InvalidValueForRLimitTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    assertStringContains("LimitSTACK's value is correctly formatted but seems invalid.", info!!.description)
-    TestCase.assertEquals("-11", info.text)
+    // The time and size fields no longer read a leading \'-\' as a number, so this is now a format error (#568).
+    assertStringContains("LimitSTACK\'s value does not match the expected format", info!!.description)
   }
 
   fun testNoWarningWhenCORELimitSpecified() {
@@ -369,8 +369,8 @@ class InvalidValueForRLimitTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    assertStringContains("LimitCORE's value is correctly formatted but seems invalid.", info!!.description)
-    TestCase.assertEquals("-11", info.text)
+    // The time and size fields no longer read a leading \'-\' as a number, so this is now a format error (#568).
+    assertStringContains("LimitCORE\'s value does not match the expected format", info!!.description)
   }
 
   fun testNoWarningWhenRSSLIMITSpecified() {
@@ -406,8 +406,8 @@ class InvalidValueForRLimitTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    assertStringContains("LimitRSS's value is correctly formatted but seems invalid.", info!!.description)
-    TestCase.assertEquals("-11", info.text)
+    // The time and size fields no longer read a leading \'-\' as a number, so this is now a format error (#568).
+    assertStringContains("LimitRSS\'s value does not match the expected format", info!!.description)
   }
 
   fun testNoWarningWhenNOFILELimitSpecified() {
@@ -427,12 +427,33 @@ class InvalidValueForRLimitTest : AbstractUnitFileTest() {
     assertSize(0, highlights)
   }
 
-  fun testNoWarningWhenNOFILELimitWithWhitespaceSoftAndHardAndInfinityIsSpecified() {
+  fun testWarningWhenNOFILELimitWithWhitespaceSoftAndHardAndInfinityIsSpecified() {
+    // rlimit_parse_u64() compares the field with "infinity" exactly, and the field after ':' is not trimmed, so
+    // " infinity" is refused ("Failed to parse LimitNOFILE=1: infinity"). This test used to assert the opposite (#568).
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/rlimit-util.c#L79-L102
     // Fixture Setup
     // language="unit file (systemd)"
     val file = """
             [Service]
             LimitNOFILE=1: infinity
+            """.trimIndent()
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+  }
+
+  fun testNoWarningWhenNOFILELimitWithWhitespaceSoftAndHardIsSpecified() {
+    // safe_atou64() skips leading whitespace, so " 2" is fine.
+    // Fixture Setup
+    // language="unit file (systemd)"
+    val file = """
+            [Service]
+            LimitNOFILE=1: 2
             """.trimIndent()
 
     // Execute SUT
@@ -551,8 +572,8 @@ class InvalidValueForRLimitTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    assertStringContains("LimitMEMLOCK's value is correctly formatted but seems invalid.", info!!.description)
-    TestCase.assertEquals("-11", info.text)
+    // The time and size fields no longer read a leading \'-\' as a number, so this is now a format error (#568).
+    assertStringContains("LimitMEMLOCK\'s value does not match the expected format", info!!.description)
   }
 
   fun testNoWarningWhenLOCKSLimitSpecified() {
@@ -663,8 +684,8 @@ class InvalidValueForRLimitTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    assertStringContains("LimitMSGQUEUE's value is correctly formatted but seems invalid.", info!!.description)
-    TestCase.assertEquals("-11", info.text)
+    // The time and size fields no longer read a leading \'-\' as a number, so this is now a format error (#568).
+    assertStringContains("LimitMSGQUEUE\'s value does not match the expected format", info!!.description)
   }
 
   fun testNoWarningWhenNICELimitSpecified() {
@@ -774,7 +795,7 @@ class InvalidValueForRLimitTest : AbstractUnitFileTest() {
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    assertStringContains("LimitRTTIME's value is correctly formatted but seems invalid.", info!!.description)
-    TestCase.assertEquals("-11", info.text)
+    // The time and size fields no longer read a leading \'-\' as a number, so this is now a format error (#568).
+    assertStringContains("LimitRTTIME\'s value does not match the expected format", info!!.description)
   }
 }

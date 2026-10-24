@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.*
+import java.math.BigInteger
 
 
 
@@ -66,24 +67,38 @@ open class SimpleGrammarOptionValues(validatorName: String, grammar: Combinator)
                                                                                       ),
                                                                                  EOF())),
 
+      // config_parse_capability_set() → parse_capability_set(): an optional leading '~', then words
+      // (extract_first_word with EXTRACT_UNQUOTE|EXTRACT_RELAX). capability_set_from_string() only logs unknown
+      // names at debug level and skips them, so systemd's parser accepts any word; the known names are offered for
+      // completion. https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L1866-L1897
+      // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/capability-list.c#L160-L186
       Validator("config_parse_capability_set", "0") to SimpleGrammarOptionValues("config_parse_capability_set",
-
                                                                                  SequenceCombinator(
-                                                                                   AlternativeCombinator(
-                                                                                     SequenceCombinator(ZeroOrOne(FlexibleLiteralChoiceTerminal("~")), Capabilities, ZeroOrMore(SequenceCombinator(WhitespaceTerminal(), Capabilities))),
-                                                                                     FlexibleLiteralChoiceTerminal("~"),
+                                                                                   ZeroOrOne(LiteralChoiceTerminal("~")),
+                                                                                   ZeroOrOne(WhitespaceTerminal()),
+                                                                                   ZeroOrOne(
+                                                                                     SequenceCombinator(
+                                                                                       AlternativeCombinator(RegexTerminal("\\S+", "\\S+"), Capabilities),
+                                                                                       ZeroOrMore(
+                                                                                         SequenceCombinator(
+                                                                                           WhitespaceTerminal(),
+                                                                                           AlternativeCombinator(RegexTerminal("\\S+", "\\S+"), Capabilities),
+                                                                                         )
+                                                                                       ),
+                                                                                       ZeroOrOne(WhitespaceTerminal()),
+                                                                                     )
                                                                                    ),
                                                                                  EOF())),
 
+      // config_parse_exec_quota(): "off", a parse_permyriad() percentage (at most 100%), or a parse_size() byte count
+      // (base 1024, the full 64-bit range).
+      // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L4668-L4708
       Validator("config_parse_exec_quota", "0") to SimpleGrammarOptionValues("config_parse_exec_quota",
                                                                                SequenceCombinator(
-                                                                                 AlternativeCombinator(
-                                                                                   OptionalWhitespacePrefix(
-                                                                                     SequenceCombinator(IntegerTerminal(0, 4_294_967_296), OptionalWhitespacePrefix(FlexibleLiteralChoiceTerminal("K","M","G", "T"))
-                                                                                     )),
-                                                                                             SequenceCombinator(IntegerTerminal(0, 101), FlexibleLiteralChoiceTerminal("%")),
-                                                                                             OptionalWhitespacePrefix(IntegerTerminal(0, 4_294_967_296)),
-                                                                                             FlexibleLiteralChoiceTerminal("off"),
+                                                                                 PreferValidAlternativeCombinator(
+                                                                                   LiteralChoiceTerminal("off"),
+                                                                                   TC_PERCENT,
+                                                                                   parseSize(base = 1024, minInclusive = BigInteger.ZERO, maxInclusive = SafeAtoTerminal.UINT64_MAX, allowInnerWhitespace = true),
                                                                                  ),
                                                                                  EOF()
                                                                                ))
