@@ -2,13 +2,17 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.ConfigParseExposePortOptionValue
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.GrammarEngineVerdict
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ConfigParseExposePortOptionValueTest : AbstractUnitFileTest() {
 
     @Test
     fun testValidValues() {
-        // From TEST-13-NSPAWN; ports are safe_atou16 (base 0).
+        // From TEST-13-NSPAWN; ports are safe_atou16 (base 0). A `-` after the 0b prefix escapes safe_atou's minus
+        // check and strtoul() negates modulo 2^64, so `0b -<2^64-80 in binary>` is port 80 (sd-check accepts it).
         // language="unit file (systemd)"
         val file = """
             [Network]
@@ -23,6 +27,7 @@ class ConfigParseExposePortOptionValueTest : AbstractUnitFileTest() {
             Port=0b 1
             Port=80:0b 1
             Port=tcp:0o 120
+            Port=0b -$PORT_80_WRAPPED
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
@@ -60,4 +65,23 @@ class ConfigParseExposePortOptionValueTest : AbstractUnitFileTest() {
 
         assertSize(12, highlights)
     }
+
+    @Test
+    fun testLeadingVerticalTab() {
+        // SAFE_ATO_REFUSE_LEADING_WHITESPACE only checks " \t\n\r", so a \v reaches strtoul(), which skips it.
+        // sd-check accepts Port=\v80 and Port=tcp:\v80:81 but rejects Port=tcp:80: 81. The editor's lexer does not take
+        // \v right after `=`, so these are checked on the grammar directly, on both engines.
+        val grammar = ConfigParseExposePortOptionValue().combinator
+        for (value in listOf("\u000B80", "tcp:\u000B80:81", "80:\u000B81")) {
+            assertEquals("classic engine on <$value>", GrammarEngineVerdict.VALID, GrammarEngineVerdict.classic(grammar, value))
+            assertEquals("parse engine on <$value>", GrammarEngineVerdict.VALID, GrammarEngineVerdict.parseEngine(grammar, value))
+        }
+        for (value in listOf("tcp:80: 81", "tcp:\t80")) {
+            assertEquals("classic engine on <$value>", GrammarEngineVerdict.Kind.SYNTAX, GrammarEngineVerdict.classic(grammar, value).kind)
+            assertEquals("parse engine on <$value>", GrammarEngineVerdict.Kind.SYNTAX, GrammarEngineVerdict.parseEngine(grammar, value).kind)
+        }
+    }
 }
+
+/** 2^64 - 80 in binary: strtoul() negates it modulo 2^64 to 80. */
+private val PORT_80_WRAPPED = (java.math.BigInteger.ONE.shiftLeft(64) - java.math.BigInteger.valueOf(80)).toString(2)

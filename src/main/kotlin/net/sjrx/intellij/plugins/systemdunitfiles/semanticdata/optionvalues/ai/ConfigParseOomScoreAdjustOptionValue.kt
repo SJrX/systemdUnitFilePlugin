@@ -2,8 +2,8 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtoNumber
 
 /*
  * [Exec] OOMScoreAdjust= (.nspawn).
@@ -24,10 +24,23 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  *
  * parse_oom_score_adjust() reads the value with safe_atoi() — base 0 after mangle_base(), so besides
  * plain decimal it takes a sign, `0x` hex, leading-zero octal, `0o` octal and `0b` binary (where whitespace and a
- * sign may follow the prefix, as in `0b-1` or `0b 1`, because strtol() skips them) — and then requires OOM_SCORE_ADJ_MIN…OOM_SCORE_ADJ_MAX, i.e. -1000…1000 inclusive. An empty value resets the
- * setting and never reaches the grammar. Out-of-range or malformed input is logged and ignored.
+ * sign may follow the prefix, as in `0b-1` or `0b 1`, because strtol() skips them; a leading `\v` or `\f` is
+ * skipped by strtol() too) — and then requires OOM_SCORE_ADJ_MIN…OOM_SCORE_ADJ_MAX, i.e. -1000…1000 inclusive.
+ * The shared [SafeAtoTerminal] models all of that. An empty value resets the setting and never reaches the
+ * grammar. Out-of-range or malformed input is logged and ignored.
  */
 class ConfigParseOomScoreAdjustOptionValue : SimpleGrammarOptionValues(
     "config_parse_oom_score_adjust",
-    SequenceCombinator(safeAtoNumber(-1000, 1001, spaceAfterPrefix = true), EOF()),
+    SequenceCombinator(
+        SafeAtoTerminal(
+            signed = true,
+            base = 0,
+            flags = emptySet(),
+            minInclusive = -1000L,
+            maxInclusive = 1000L,
+            acceptsWhitespace = true,
+            acceptsMinus = true,
+        ),
+        EOF(),
+    ),
 )

@@ -5,10 +5,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.CAPABILITY_NAME
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrMore
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtoNumber
 
 /*
  * [Exec] Capability= / AmbientCapability= / DropCapability= (.nspawn).
@@ -28,7 +28,15 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 /** One capability word: the literal `all`, a capability number, or a capability name. */
 private val CAPABILITY_WORD = AlternativeCombinator(
     LiteralChoiceTerminal("all"),
-    safeAtoNumber(0, 63),
+    SafeAtoTerminal(
+        signed = true,
+        base = 0,
+        flags = emptySet(),
+        minInclusive = 0L,
+        maxInclusive = 62L,
+        acceptsWhitespace = false,
+        acceptsMinus = true,
+    ),
     CAPABILITY_NAME,
 )
 

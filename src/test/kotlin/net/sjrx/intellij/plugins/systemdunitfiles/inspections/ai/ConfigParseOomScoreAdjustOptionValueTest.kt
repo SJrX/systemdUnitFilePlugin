@@ -2,6 +2,9 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.ConfigParseOomScoreAdjustOptionValue
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.GrammarEngineVerdict
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ConfigParseOomScoreAdjustOptionValueTest : AbstractUnitFileTest() {
@@ -61,5 +64,17 @@ class ConfigParseOomScoreAdjustOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         assertSize(10, highlights)
+    }
+
+    @Test
+    fun testLeadingVerticalTabAndFormFeed() {
+        // config_parse strips " \t\n\r" but not \v or \f, and strtol() skips them, so sd-check accepts
+        // OOMScoreAdjust=\v5, \v-5 and \f-1000. The editor's lexer does not take \v right after `=`, so these are
+        // checked on the grammar directly, on both engines.
+        val grammar = ConfigParseOomScoreAdjustOptionValue().combinator
+        for (value in listOf("\u000B5", "\u000B-5", "\u000C-1000")) {
+            assertEquals("classic engine on <$value>", GrammarEngineVerdict.VALID, GrammarEngineVerdict.classic(grammar, value))
+            assertEquals("parse engine on <$value>", GrammarEngineVerdict.VALID, GrammarEngineVerdict.parseEngine(grammar, value))
+        }
     }
 }

@@ -7,100 +7,11 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gra
  * Everything here is pinned to systemd 0f0682b773, the commit recorded in
  * systemd-build/build/last_commit_hash. Browse it at https://github.com/systemd/systemd/blob/0f0682b773.
  *
- * Several of these are general-purpose (the safe_ato* number terminal, the colon-delimited interface
- * name, the address-family list) and are candidates for promotion into Combinators.kt; they live here
- * only so this batch does not collide with parallel edits there. Booleans use the shared [BOOLEAN].
+ * Several of these are general-purpose (the colon-delimited interface name, the address-family list)
+ * and are candidates for promotion into Combinators.kt; they live here only so this batch does not
+ * collide with parallel edits there. Booleans use the shared [BOOLEAN], and numbers the shared
+ * [SafeAtoTerminal].
  */
-
-// ---------------------------------------------------------------------------------------------------
-// Numbers as systemd's safe_atoi()/safe_atou*() read them (src/basic/parse-util.c).
-//
-// Both helpers call mangle_base() first, which recognises the Python-style `0b`/`0B` (binary) and
-// `0o`/`0O` (octal) prefixes, and then strtol()/strtoul() with base 0, which adds C's `0x` hex and
-// leading-zero octal plus an optional `+`/`-` sign. mangle_base() only looks at the very start of the
-// string, so a sign in front of `0b`/`0o` defeats it and strtol() then stops at the `b`/`o` — such
-// spellings are rejected, and the shape below does not allow them. A sign *after* the prefix is fine,
-// though: mangle_base() strips `0b`/`0o` and strtol() in base 2/8 still takes a sign, so `0b-1` is -1
-// and `0o+120` is 80. strtol() also skips whitespace after the prefix, so `OOMScoreAdjust=0b 1` and
-// `Port=0o 120` are valid (confirmed with fuzz-nspawn-settings at 0f0682b773). That is only modelled
-// for callers that pass `spaceAfterPrefix = true`: in a whitespace-separated list (Capability=) the
-// word split happens first, so `0b 1` there is the invalid word `0b` followed by `1`.
-
-/**
- * An integer in `[minInclusive, maxExclusive)` spelled any way safe_atoi()/safe_atou*() accept:
- * decimal, `0x` hex, leading-zero octal, `0o` octal or `0b` binary, with an optional sign (before the
- * number for decimal/hex/leading-zero octal, after the prefix for `0b`/`0o`). The range check is done on the real value, so it holds however the number
- * is spelled.
- *
- * A negative value is only in range when [minInclusive] allows it. safe_atou() accepts `-0` (it only
- * refuses a minus sign on a non-zero result) and so does this terminal, by treating it as zero.
- *
- * Unlike [UnsignedNumberTerminal] this also understands the `0b`/`0o` prefixes and signs.
- */
-class NspawnSafeAtoNumberTerminal(
-  private val minInclusive: Long,
-  private val maxExclusive: Long,
-  spaceAfterPrefix: Boolean = false,
-) : TerminalCombinator {
-
-  private val shape = if (spaceAfterPrefix) NSPAWN_SAFE_ATO_SHAPE_SPACED else SAFE_ATO_SHAPE
-
-  private fun span(value: String, offset: Int): String? = shape.matchAt(value, offset)?.value
-
-  private fun inRange(text: String): Boolean = safeAtoValueOf(text)?.let { it >= minInclusive && it < maxExclusive } ?: false
-
-  override fun SyntacticMatch(value: String, offset: Int): MatchResult {
-    val text = span(value, offset) ?: return NoMatch
-    return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
-  }
-
-  override fun SemanticMatch(value: String, offset: Int): MatchResult {
-    val text = span(value, offset) ?: return NoMatch
-    if (!inRange(text)) return NoMatch.copy(longestMatch = offset)
-    return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
-  }
-
-  override fun parse(value: String, offset: Int): Sequence<ParseStep> {
-    val text = span(value, offset) ?: return sequenceOf(Stuck(offset, setOf(this)))
-    return sequenceOf(Parse(offset + text.length, listOf(ParsedToken(offset, offset + text.length, text, this, inRange(text)))))
-  }
-
-  override fun toString(): String = "SafeAto($minInclusive,$maxExclusive)"
-}
-
-// The prefixed forms come first so `0b1`/`0x1f` are not read as a lone octal `0`. Kotlin's
-// toLongOrNull() takes the sign that may follow `0b`/`0o`.
-private val SAFE_ATO_SHAPE = Regex("""0[bB][+-]?[01]+|0[oO][+-]?[0-7]+|[+-]?(?:0[xX][0-9a-fA-F]+|0[0-7]*|[1-9][0-9]*)""")
-
-// As [SAFE_ATO_SHAPE], plus the isspace() run strtol() skips between a `0b`/`0o` prefix and the digits.
-private val NSPAWN_SAFE_ATO_SHAPE_SPACED =
-  Regex("""0[bB][ \t\u000B\u000C\r]*[+-]?[01]+|0[oO][ \t\u000B\u000C\r]*[+-]?[0-7]+|[+-]?(?:0[xX][0-9a-fA-F]+|0[0-7]*|[1-9][0-9]*)""")
-
-/**
- * The numeric value of [text] read the way safe_atoi()/safe_atou*() read it, assuming [text] is one
- * whole [SAFE_ATO_SHAPE] match; null when it does not fit a Long (and so is out of any range anyway).
- */
-private fun safeAtoValueOf(text: String): Long? {
-  if (text.length > 2 && (text.startsWith("0b") || text.startsWith("0B"))) return text.drop(2).trimStart().toLongOrNull(2)
-  if (text.length > 2 && (text.startsWith("0o") || text.startsWith("0O"))) return text.drop(2).trimStart().toLongOrNull(8)
-  val negative = text.startsWith("-")
-  val body = text.removePrefix("-").removePrefix("+")
-  val magnitude = when {
-    body.length > 2 && (body.startsWith("0x") || body.startsWith("0X")) -> body.drop(2).toLongOrNull(16)
-    body.length > 1 && body.startsWith("0") -> body.drop(1).toLongOrNull(8)
-    else -> body.toLongOrNull()
-  } ?: return null
-  return if (negative) -magnitude else magnitude
-}
-
-/** Whether all of [text] is a number safe_atoi() reads as an `int` greater than zero — parse_ifindex() success. */
-private fun isPositiveIfindex(text: String): Boolean =
-  SAFE_ATO_SHAPE.matchEntire(text) != null && safeAtoValueOf(text)?.let { it in 1..Int.MAX_VALUE.toLong() } == true
-
-/** A [NspawnSafeAtoNumberTerminal] coloured as a literal, like the other number terminals. */
-fun safeAtoNumber(minInclusive: Long, maxExclusive: Long, spaceAfterPrefix: Boolean = false): Combinator =
-  Labeled(Role.LITERAL, NspawnSafeAtoNumberTerminal(minInclusive, maxExclusive, spaceAfterPrefix))
-
 
 // ---------------------------------------------------------------------------------------------------
 // Interface names — ifname_valid() (ifname_valid_full with no flags, src/basic/socket-util.c):
@@ -151,7 +62,18 @@ private class NspawnInterfaceNameTerminal : TerminalCombinator {
   }
 
   private fun isRefused(value: String, start: Int, end: Int): Boolean =
-    isPositiveIfindex(value.substring(start, end)) || nspawnIfnameEscapesWhitespace(value, start, end)
+    ifindex.valueOf(value.substring(start, end)) != null || nspawnIfnameEscapesWhitespace(value, start, end)
+
+  /** parse_ifindex(): safe_atoi() on the whole name, then refuses anything not greater than zero. */
+  private val ifindex = SafeAtoTerminal(
+    signed = true,
+    base = 0,
+    flags = emptySet(),
+    minInclusive = 1L,
+    maxInclusive = Int.MAX_VALUE.toLong(),
+    acceptsWhitespace = true,
+    acceptsMinus = true,
+  )
 
   /** Report this terminal, not the wrapped regex, as the one that matched. */
   private fun MatchResult.owned(): MatchResult = if (matchResult < 0) this else copy(terminals = listOf(this@NspawnInterfaceNameTerminal))
