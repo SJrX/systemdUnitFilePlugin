@@ -15,6 +15,10 @@ class ConfigParseWireguardRouteTableOptionValueTest : AbstractUnitFileTest() {
             RouteTable=no
             RouteTable=0
             RouteTable=false
+            RouteTable=OFF
+            RouteTable=No
+            RouteTable=fAlSe
+            RouteTable=F
             RouteTable=1234
             RouteTable=main
             RouteTable=local

@@ -59,12 +59,14 @@ class ConfigParseVxlanAddressOptionValueTest : AbstractUnitFileTest() {
             Remote=ff02::1
             Local=239.1.1.1
             Local=ff02::1
+            Local=DHCP4
+            Local=Slaac
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(16, highlights)
+        assertSize(18, highlights)
     }
 }

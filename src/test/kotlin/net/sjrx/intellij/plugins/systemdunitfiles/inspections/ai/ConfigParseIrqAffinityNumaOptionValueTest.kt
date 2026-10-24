@@ -34,12 +34,13 @@ class ConfigParseIrqAffinityNumaOptionValueTest : AbstractUnitFileTest() {
             IRQAffinityNUMA=-1
             IRQAffinityNUMA=remote
             IRQAffinityNUMA=1.5
+            IRQAffinityNUMA=Local
         """.trimIndent()
 
         setupFileInEditor("file.link", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(4, highlights)
+        assertSize(5, highlights)
     }
 }
