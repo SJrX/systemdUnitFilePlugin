@@ -413,6 +413,22 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_socket_service", "0") to ConfigParseSocketServiceOptionValue() as OptionValueInformation,
     Validator("config_parse_service_sockets", "0") to ConfigParseServiceSocketsOptionValue() as OptionValueInformation,
 
+    // Batch 2026-10: exec
+    Validator("config_parse_bind_paths", "0") to ConfigParseBindPathsOptionValue() as OptionValueInformation,
+    Validator("config_parse_temporary_filesystems", "0") to ConfigParseTemporaryFilesystemsOptionValue() as OptionValueInformation,
+    Validator("config_parse_root_image_options", "0") to ConfigParseRootImageOptionsOptionValue() as OptionValueInformation,
+    Validator("config_parse_numa_mask", "0") to ConfigParseNumaMaskOptionValue() as OptionValueInformation,
+    Validator("config_parse_mount_images", "0") to ConfigParseMountImagesOptionValue() as OptionValueInformation,
+    Validator("config_parse_import_credential", "0") to ConfigParseImportCredentialOptionValue() as OptionValueInformation,
+    Validator("config_parse_extension_images", "0") to ConfigParseExtensionImagesOptionValue() as OptionValueInformation,
+    Validator("config_parse_exec_root_hash_sig", "0") to ConfigParseExecRootHashSigOptionValue() as OptionValueInformation,
+    Validator("config_parse_exec_root_hash", "0") to ConfigParseExecRootHashOptionValue() as OptionValueInformation,
+    Validator("config_parse_exec_input_data", "0") to ConfigParseExecInputDataOptionValue() as OptionValueInformation,
+    Validator("config_parse_exec_coredump_filter", "0") to ConfigParseExecCoredumpFilterOptionValue() as OptionValueInformation,
+    Validator("config_parse_environ", "0") to ConfigParseEnvironOptionValue() as OptionValueInformation,
+    Validator("config_parse_concurrency_max", "0") to ConfigParseConcurrencyMaxOptionValue() as OptionValueInformation,
+    Validator("config_parse_luo_sessions", "0") to ConfigParseLuoSessionsOptionValue() as OptionValueInformation,
+
   )
 
   return allValidators
