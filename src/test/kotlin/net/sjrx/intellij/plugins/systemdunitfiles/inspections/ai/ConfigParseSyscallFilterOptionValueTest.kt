@@ -66,7 +66,7 @@ class ConfigParseSyscallFilterOptionValueTest : AbstractUnitFileTest() {
             SystemCallFilter=~uname:0x1F
             SystemCallFilter=~uname:eperm
             SystemCallFilter=~uname:ePerm uname:Eilseq
-            SystemCallFilter=~uname:0777 uname:0b11 uname:0o17 uname:+5 uname:-0 uname:+0x10 uname:0b+1 uname:0o+7 uname:0B-0
+            SystemCallFilter=~uname:0777 uname:0b11 uname:0o17 uname:+5 uname:-0 uname:+0x10 uname:0b+1 uname:0o+7 uname:0B-0 uname:-0x0 uname:0o-0
             SystemCallFilter=~@sync:EPERM,@mount:kill uname:E2BIG
             SystemCallFilter=~
         """.trimIndent()
@@ -131,12 +131,14 @@ class ConfigParseSyscallFilterOptionValueTest : AbstractUnitFileTest() {
             SystemCallFilter=@service
             SystemCallFilter=~uname:0b-1
             SystemCallFilter=~uname:+0b1
+            SystemCallFilter=~uname:08
+            SystemCallFilter=~uname:0x
         """.trimIndent()
 
         setupFileInEditor("file.service", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(15, highlights)
+        assertSize(17, highlights)
     }
 }

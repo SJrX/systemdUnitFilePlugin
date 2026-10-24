@@ -10,10 +10,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.Parse
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ParseStep
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.TerminalCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UNIT_SPECIFIER_LETTERS
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.seccompBpfCgroupSafeAtoiValue
 
 /*
  * BindToDevice= ([Socket]).
@@ -48,14 +48,23 @@ private val IFNAME_WITH_SPECIFIERS = RegexTerminal(
 )
 
 /**
- * True if parse_ifindex() would take [name] as an interface index: safe_atoi() reads it (sign, `0x`,
- * `0b`, `0o`, leading-`0` octal) and the result is a positive `int`. ifname_valid() with no flags
+ * True if parse_ifindex() would take [name] as an interface index: safe_atoi() reads all of it (sign, `0x`,
+ * `0b`, `0o`, leading-`0` octal, exactly as [SafeAtoTerminal] models it) and the result is a positive `int`. ifname_valid() with no flags
  * refuses those, so `0x5`, `+5`, `0b101`, `0o7`, `010` and `0b+1` are invalid, while `-5`, `+0`, `0x0`,
  * `+0b1` (no prefix stripping after a sign) and out-of-range `0x80000000` are ordinary names.
  * Checked against systemd's own parser (sd-check) at 0f0682b773.
  */
-private fun bindToDeviceIsIfindex(name: String): Boolean =
-    seccompBpfCgroupSafeAtoiValue(name)?.let { it in 1..Int.MAX_VALUE.toLong() } ?: false
+private val IFINDEX = SafeAtoTerminal(
+    signed = true,
+    base = 0,
+    flags = emptySet(),
+    minInclusive = 1L,
+    maxInclusive = Int.MAX_VALUE.toLong(),
+    acceptsWhitespace = true,
+    acceptsMinus = true,
+)
+
+private fun bindToDeviceIsIfindex(name: String): Boolean = IFINDEX.valueOf(name) != null
 
 /** [IFNAME_WITH_SPECIFIERS], additionally refusing the spellings [bindToDeviceIsIfindex] matches. */
 private class BindToDeviceIfnameTerminal(private val inner: RegexTerminal) : TerminalCombinator {

@@ -35,6 +35,8 @@ class ConfigParseSocketBindtodeviceOptionValueTest : AbstractUnitFileTest() {
             BindToDevice=0b2
             BindToDevice=0xg
             BindToDevice=00x5
+            BindToDevice=0b-0
+            BindToDevice=-0x0
         """.trimIndent()
 
         setupFileInEditor("file.socket", file)
@@ -44,7 +46,8 @@ class ConfigParseSocketBindtodeviceOptionValueTest : AbstractUnitFileTest() {
 
     @Test
     fun testInvalidValues() {
-        // 0x5 … 0x7fffffff: parse_ifindex() reads them as an ifindex, which ifname_valid() refuses
+        // 08 is all digits, which ifname_valid() refuses outright.
+        // 0x5 … 0o+7: parse_ifindex() reads them as an ifindex, which ifname_valid() refuses
         // ("Invalid interface name, ignoring", sd-check at 0f0682b773).
         // language="unit file (systemd)"
         val file = """
@@ -69,10 +72,12 @@ class ConfigParseSocketBindtodeviceOptionValueTest : AbstractUnitFileTest() {
             BindToDevice=010
             BindToDevice=+010
             BindToDevice=0x7fffffff
+            BindToDevice=0o+7
+            BindToDevice=08
         """.trimIndent()
 
         setupFileInEditor("file.socket", file)
         enableInspection(InvalidValueInspection::class.java)
-        assertSize(20, myFixture.doHighlighting())
+        assertSize(22, myFixture.doHighlighting())
     }
 }

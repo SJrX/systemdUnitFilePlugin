@@ -59,74 +59,15 @@ val ERRNO_NAMES = arrayOf(
 val ERRNO_NAME = FlexibleLiteralChoiceTerminal(*ERRNO_NAMES, ignoreCase = true)
 
 /**
- * A signed integer written the way systemd's safe_atoi() reads one (src/basic/parse-util.c#L497),
- * range-checked in its real base.
+ * The argument of a `syscall:ERRNO` entry: `kill`, an errno name, or a number.
+ * seccomp_parse_errno_or_action() special-cases `kill` (exact, lower case) and otherwise calls
+ * parse_errno(), which takes a name first and then falls back to safe_atoi() (sign, `0x`, `0b`, `0o`,
+ * leading-`0` octal, see [SafeAtoTerminal]), accepting 0 and 1…ERRNO_MAX (4095), so `-0` is fine but `-3`
+ * is not.
  *
- * safe_atoi() first applies mangle_base() (#L403), which turns a leading `0b`/`0B` into base 2 and
- * `0o`/`0O` into base 8 (strtol() still takes a sign after that prefix: `0b+1`), and otherwise calls
- * strtol() with base 0 — so an optional `+`/`-` sign, then
- * `0x` hex, leading-`0` octal or decimal. [UnsignedNumberTerminal] covers only the unsigned base-0
- * spellings, which would flag `+5`, `0b11` or `-0`, all of which systemd takes.
- */
-class SafeAtoiTerminal(private val minInclusive: Long, private val maxExclusive: Long) : TerminalCombinator {
-
-  private fun span(value: String, offset: Int): String? = SECCOMP_BPF_CGROUP_SAFE_ATOI_SHAPE.matchAt(value, offset)?.value
-
-  private fun inRange(text: String): Boolean =
-    seccompBpfCgroupSafeAtoiValue(text)?.let { it >= minInclusive && it < maxExclusive } ?: false
-
-  override fun SyntacticMatch(value: String, offset: Int): MatchResult {
-    val text = span(value, offset) ?: return NoMatch
-    return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
-  }
-
-  override fun SemanticMatch(value: String, offset: Int): MatchResult {
-    val text = span(value, offset) ?: return NoMatch
-    if (!inRange(text)) return NoMatch.copy(longestMatch = offset)
-    return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
-  }
-
-  override fun parse(value: String, offset: Int): Sequence<ParseStep> {
-    val text = span(value, offset) ?: return sequenceOf(Stuck(offset, setOf(this)))
-    return sequenceOf(Parse(offset + text.length, listOf(ParsedToken(offset, offset + text.length, text, this, inRange(text)))))
-  }
-
-  override fun toString(): String = "SafeAtoi($minInclusive,$maxExclusive)"
-}
-
-// Prefixed forms first, so "0x10" / "0b11" aren't read as a lone 0. A sign may not come BEFORE
-// 0b/0o (mangle_base only looks at the very first characters, and strtol() would stop at the
-// 'b'/'o'), but one may come AFTER it: mangle_base strips the prefix and strtol("+1", 2) is fine,
-// so `0b+1` and `0o-0` are accepted; the range check then rejects `0b-1`.
-private val SECCOMP_BPF_CGROUP_SAFE_ATOI_SHAPE =
-  Regex("""0[bB][+-]?[01]+|0[oO][+-]?[0-7]+|[+-]?(?:0[xX][0-9a-fA-F]+|0[0-7]+|[0-9]+)""")
-
-/**
- * The value safe_atoi() would read from the whole of [text], or null if it isn't a safe_atoi() number
- * at all (see [SafeAtoiTerminal] for the accepted spellings). The result is a Long so callers can do
- * their own range check; safe_atoi() itself refuses anything outside `int` with -ERANGE.
- */
-fun seccompBpfCgroupSafeAtoiValue(text: String): Long? {
-  if (SECCOMP_BPF_CGROUP_SAFE_ATOI_SHAPE.matchEntire(text) == null) return null
-  val lower = text.lowercase()
-  if (lower.startsWith("0b")) return lower.drop(2).toLongOrNull(2)
-  if (lower.startsWith("0o")) return lower.drop(2).toLongOrNull(8)
-  val negative = lower.startsWith("-")
-  val digits = lower.removePrefix("+").removePrefix("-")
-  val magnitude = when {
-    digits.startsWith("0x") -> digits.drop(2).toLongOrNull(16)
-    digits.length > 1 && digits.startsWith("0") -> digits.drop(1).toLongOrNull(8)
-    else -> digits.toLongOrNull()
-  } ?: return null
-  return if (negative) -magnitude else magnitude
-}
-
-/**
- * The argument of a `syscall:ERRNO` entry (and of SystemCallErrorNumber=): `kill`, an errno name, or a
- * number. seccomp_parse_errno_or_action() special-cases `kill` (exact, lower case) and otherwise calls
- * parse_errno(), which takes a name first and then falls back to safe_atoi() ([SafeAtoiTerminal]: sign,
- * `0x`, `0b`, `0o`, leading-`0` octal), accepting 0 and 1…ERRNO_MAX (4095) — so `-0` is fine but `-3` is
- * not.
+ * The entry is a word from a whitespace split, so whitespace never reaches safe_atoi() here
+ * (`acceptsWhitespace = false`; sd-check rejects `SystemCallFilter=~uname:0b 1` because `0b` is a word of its
+ * own). A malformed number such as `08` is a syntax error located where strtol() stopped.
  *
  * The number comes before the name because ERRNO_NAME's lenient shape includes digits (E2BIG): under
  * the classic engine, with the name first, `0x1F` would be taken as the one-character name `0` and the
@@ -134,7 +75,15 @@ fun seccompBpfCgroupSafeAtoiValue(text: String): Long? {
  */
 val ERRNO_OR_SECCOMP_ACTION = AlternativeCombinator(
   LiteralChoiceTerminal("kill"),
-  SafeAtoiTerminal(0, 4096),
+  SafeAtoTerminal(
+    signed = true,
+    base = 0,
+    flags = emptySet(),
+    minInclusive = 0L,
+    maxInclusive = 4095L,
+    acceptsWhitespace = false,
+    acceptsMinus = true,
+  ),
   ERRNO_NAME,
 )
 
