@@ -1,0 +1,59 @@
+package net.sjrx.intellij.plugins.systemdunitfiles.inspections.ai
+
+import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
+import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
+import org.junit.Test
+
+class ConfigParseVlanQosMapsOptionValueTest : AbstractUnitFileTest() {
+
+    @Test
+    fun testValidValues() {
+        // language="unit file (systemd)"
+        val file = """
+            [VLAN]
+            EgressQOSMaps=21-7 45-5
+            IngressQOSMaps=1-1
+            EgressQOSMaps=5
+            IngressQOSMaps=0x10-0x3 "7-2" '8-1'
+            EgressQOSMaps=4294967295-7
+            IngressQOSMaps=1-7  2-6
+            EgressQOSMaps=1-"2" "1"-2 3
+            IngressQOSMaps=5--0
+            EgressQOSMaps=0-7
+            IngressQOSMaps=1-5
+            EgressQOSMaps=4294967295-1
+            EgressQOSMaps=0b+1-2
+            EgressQOSMaps=1-0b+10
+        """.trimIndent()
+
+        setupFileInEditor("file.netdev", file)
+        enableInspection(InvalidValueInspection::class.java)
+        val highlights = myFixture.doHighlighting()
+
+        assertSize(0, highlights)
+    }
+
+    @Test
+    fun testInvalidValues() {
+        // language="unit file (systemd)"
+        val file = """
+            [VLAN]
+            EgressQOSMaps=21:7
+            IngressQOSMaps=1-
+            EgressQOSMaps=-5
+            IngressQOSMaps=1-2-3
+            EgressQOSMaps=4294967296-1
+            IngressQOSMaps=a-b
+            EgressQOSMaps=-0
+            IngressQOSMaps=1-"2
+            EgressQOSMaps=0b 1-2
+            EgressQOSMaps=0b-0
+        """.trimIndent()
+
+        setupFileInEditor("file.netdev", file)
+        enableInspection(InvalidValueInspection::class.java)
+        val highlights = myFixture.doHighlighting()
+
+        assertSize(10, highlights)
+    }
+}
