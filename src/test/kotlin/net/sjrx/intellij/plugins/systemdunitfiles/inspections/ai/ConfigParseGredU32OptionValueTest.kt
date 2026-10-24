@@ -9,6 +9,7 @@ class ConfigParseGredU32OptionValueTest : AbstractUnitFileTest() {
   @Test
   fun testValidValues() {
     // Fixture values from systemd test/test-network/conf plus tricky spellings the C parser accepts.
+    // sd-check at 0f0682b773 accepts these: strtoul starts afresh after the 0b/0o prefix, so a sign or blank may follow it.
     // language="unit file (systemd)"
     val file = """
       [GenericRandomEarlyDetection]
@@ -28,6 +29,18 @@ class ConfigParseGredU32OptionValueTest : AbstractUnitFileTest() {
       DefaultVirtualQueue=020
       VirtualQueues=+3
       DefaultVirtualQueue=+3
+      VirtualQueues=0b+1
+      DefaultVirtualQueue=0b+1
+      VirtualQueues=0b-0
+      DefaultVirtualQueue=0b-0
+      VirtualQueues=0b 1
+      DefaultVirtualQueue=0b 1
+      VirtualQueues=0o 7
+      DefaultVirtualQueue=0o 7
+      VirtualQueues=0b +1
+      DefaultVirtualQueue=0b +1
+      VirtualQueues=0b -0
+      DefaultVirtualQueue=0b -0
       VirtualQueues=
       DefaultVirtualQueue=
     """.trimIndent()
@@ -41,6 +54,7 @@ class ConfigParseGredU32OptionValueTest : AbstractUnitFileTest() {
 
   @Test
   fun testInvalidValues() {
+    // sd-check at 0f0682b773 rejects these: 0b-1 and 0b -1 are -1 (ERANGE), -0b0 is -0 followed by junk (EINVAL).
     // language="unit file (systemd)"
     val file = """
       [GenericRandomEarlyDetection]
@@ -56,13 +70,19 @@ class ConfigParseGredU32OptionValueTest : AbstractUnitFileTest() {
       DefaultVirtualQueue=4294967296
       VirtualQueues=1.0
       DefaultVirtualQueue=1.0
+      VirtualQueues=0b-1
+      DefaultVirtualQueue=0b-1
+      VirtualQueues=0b -1
+      DefaultVirtualQueue=0b -1
+      VirtualQueues=-0b0
+      DefaultVirtualQueue=-0b0
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(12, highlights)
+    assertSize(18, highlights)
   }
 
 }

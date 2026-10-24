@@ -41,13 +41,15 @@ class ConfigParseHtbDefaultClassOptionValueTest : AbstractUnitFileTest() {
       DefaultClass=g
       DefaultClass=-1
       DefaultClass=1 2
+      DefaultClass=0b 1
+      DefaultClass=0x 1
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(6, highlights)
+    assertSize(8, highlights)
   }
 
 }

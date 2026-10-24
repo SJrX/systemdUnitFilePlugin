@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.*
+import java.math.BigInteger
 
 /*
  * [EnhancedTransmissionSelection] PriorityMap= (.network)
@@ -18,7 +19,15 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/test-network/conf/25-qdisc-ets.network#L18-L21   PriorityMap=8 7 6 5 / PriorityMap= / PriorityMap=3 4 5
  */
 
-private val ETS_BAND = qdiscSafeAtou(256)
+private val ETS_BAND = SafeAtoTerminal(
+  signed = false,
+  base = 0,
+  flags = emptySet(),
+  minInclusive = BigInteger.ZERO,
+  maxInclusive = SafeAtoTerminal.UINT8_MAX,
+  acceptsWhitespace = false,
+  acceptsMinus = true,
+)
 
 /**
  * Validator for [EnhancedTransmissionSelection] PriorityMap=.
@@ -27,7 +36,8 @@ private val ETS_BAND = qdiscSafeAtou(256)
  * handled before this grammar runs.
  *
  * A whitespace-separated list of band numbers, each read with safe_atou8 (base 0, 0…255), at most
- * TC_PRIO_MAX + 1 (16) entries per line. Out-of-range or unparsable entries are logged and skipped by
+ * TC_PRIO_MAX + 1 (16) entries per line. Each entry is a word from extract_first_word(), so the number
+ * cannot contain a blank: `0b+1` is 1, but `0b 1` is the words `0b` (invalid) and `1`. Out-of-range or unparsable entries are logged and skipped by
  * the C, and so are flagged here; so is a 17th entry.
  *
  * Lenient: enhanced_transmission_selection_verify later rejects the whole section if any entry is not

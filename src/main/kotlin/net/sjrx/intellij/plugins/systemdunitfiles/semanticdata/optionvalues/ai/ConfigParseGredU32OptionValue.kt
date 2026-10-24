@@ -24,7 +24,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * handled before this grammar runs.
  *
  * An unsigned integer read with safe_atou32 (base 0: decimal, `0x` hex, `0o`/leading-zero octal, `0b`
- * binary, optional `+`) that must not exceed MAX_DPs (16). Above 16 the parser logs "Invalid ..., ignoring
+ * binary, optional `+`; `0b+1` and `0b 1` are 1, see [SafeAtoTerminal]) that must not exceed MAX_DPs (16). Above 16 the parser logs "Invalid ..., ignoring
  * assignment" (although, at 0f0682b773, it still stores the value — a C bug; the kernel refuses more than
  * 16 DPs anyway), so it is flagged here.
  *
@@ -34,5 +34,16 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 class ConfigParseGredU32OptionValue : SimpleGrammarOptionValues(
   "config_parse_gred_u32",
-  SequenceCombinator(qdiscSafeAtou(17), EOF()),
+  SequenceCombinator(
+    SafeAtoTerminal(
+      signed = false,
+      base = 0,
+      flags = emptySet(),
+      minInclusive = 0L,
+      maxInclusive = 16L,
+      acceptsWhitespace = true,
+      acceptsMinus = true,
+    ),
+    EOF(),
+  ),
 )

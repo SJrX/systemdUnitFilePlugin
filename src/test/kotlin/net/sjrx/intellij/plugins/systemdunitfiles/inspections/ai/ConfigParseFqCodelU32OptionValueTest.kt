@@ -9,6 +9,7 @@ class ConfigParseFqCodelU32OptionValueTest : AbstractUnitFileTest() {
   @Test
   fun testValidValues() {
     // Fixture values from systemd test/test-network/conf plus tricky spellings the C parser accepts.
+    // sd-check at 0f0682b773 accepts these: strtoul starts afresh after the 0b/0o prefix, so a sign or blank may follow it.
     // language="unit file (systemd)"
     val file = """
       [FairQueueingControlledDelay]
@@ -32,6 +33,18 @@ class ConfigParseFqCodelU32OptionValueTest : AbstractUnitFileTest() {
       Flows=+5
       PacketLimit=-0
       Flows=-0
+      PacketLimit=0b+1
+      Flows=0b+1
+      PacketLimit=0b-0
+      Flows=0b-0
+      PacketLimit=0b 1
+      Flows=0b 1
+      PacketLimit=0o 7
+      Flows=0o 7
+      PacketLimit=0b +1
+      Flows=0b +1
+      PacketLimit=0b -0
+      Flows=0b -0
       PacketLimit=
       Flows=
     """.trimIndent()
@@ -45,6 +58,7 @@ class ConfigParseFqCodelU32OptionValueTest : AbstractUnitFileTest() {
 
   @Test
   fun testInvalidValues() {
+    // sd-check at 0f0682b773 rejects these: 0b-1 and 0b -1 are -1 (ERANGE), -0b0 is -0 followed by junk (EINVAL).
     // language="unit file (systemd)"
     val file = """
       [FairQueueingControlledDelay]
@@ -64,13 +78,19 @@ class ConfigParseFqCodelU32OptionValueTest : AbstractUnitFileTest() {
       Flows=+0b1
       PacketLimit=12 13
       Flows=12 13
+      PacketLimit=0b-1
+      Flows=0b-1
+      PacketLimit=0b -1
+      Flows=0b -1
+      PacketLimit=-0b0
+      Flows=-0b0
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(16, highlights)
+    assertSize(22, highlights)
   }
 
 }

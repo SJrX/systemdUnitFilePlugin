@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.*
+import java.math.BigInteger
 
 /*
  * [FairQueueingControlledDelay] PacketLimit=, Flows= (.network)
@@ -23,9 +24,21 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * handled before this grammar runs.
  *
  * An unsigned 32-bit integer read with safe_atou32 (base 0: decimal, `0x` hex, `0o`/leading-zero
- * octal, `0b` binary, optional `+`), 0…4294967295. No further bound in the parser.
+ * octal, `0b` binary, optional `+`), 0…4294967295. No further bound in the parser. strtoul starts
+ * afresh after a `0b`/`0o` prefix, so `0b+1` and `0b 1` are 1 (see [SafeAtoTerminal]).
  */
 class ConfigParseFqCodelU32OptionValue : SimpleGrammarOptionValues(
   "config_parse_fq_codel_u32",
-  safeAtou32Value(),
+  SequenceCombinator(
+    SafeAtoTerminal(
+      signed = false,
+      base = 0,
+      flags = emptySet(),
+      minInclusive = BigInteger.ZERO,
+      maxInclusive = SafeAtoTerminal.UINT32_MAX,
+      acceptsWhitespace = true,
+      acceptsMinus = true,
+    ),
+    EOF(),
+  ),
 )

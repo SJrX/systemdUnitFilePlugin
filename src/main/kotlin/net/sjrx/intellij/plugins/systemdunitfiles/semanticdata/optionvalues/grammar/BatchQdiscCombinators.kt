@@ -10,11 +10,11 @@ import java.math.BigInteger
  * Everything here is pinned to systemd 0f0682b773 (systemd-build/build/last_commit_hash):
  * https://github.com/systemd/systemd/blob/0f0682b773
  *
- * The tc parsers lean on four leaf helpers, each modelled here as closely to the C as the combinator
- * framework allows:
+ * The tc parsers lean on four leaf helpers. safe_atou / safe_atou32 / safe_atou8 /
+ * safe_atou32_full(.., 16) (https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429)
+ * are the shared [SafeAtoTerminal], written out at each call site. The other three are modelled here as
+ * closely to the C as the combinator framework allows:
  *
- *  - safe_atou / safe_atou32 / safe_atou8 / safe_atou32_full(.., 16)  -> [QdiscSafeAtouTerminal]
- *    https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429
  *  - parse_sec / parse_time                                            -> [parseSec]
  *    https://github.com/systemd/systemd/blob/0f0682b773/src/basic/time-util.c#L1198
  *  - parse_size(.., 1000 | 1024)                                       -> [parseSize]
@@ -22,10 +22,9 @@ import java.math.BigInteger
  *  - parse_permyriad (via parse_tc_percent)                            -> [TC_PERCENT]
  *    https://github.com/systemd/systemd/blob/0f0682b773/src/basic/percent-util.c#L149
  *
- * Several of these are more faithful than the older shared terminals in Combinators.kt (TIME_VALUE
- * rejects "1min30s"; ByteSizeTerminal rejects "1G 512M"; UnsignedNumberTerminal rejects "0b101" and
- * "+5"). They live in this file only so the
- * batch does not collide with parallel edits to Combinators.kt; see RECOMMENDATIONS.md for promoting
+ * These are more faithful than the older shared terminals in Combinators.kt (TIME_VALUE rejects
+ * "1min30s"; ByteSizeTerminal rejects "1G 512M"). They live in this file only so the batch does not
+ * collide with parallel edits to Combinators.kt; see RECOMMENDATIONS.md for promoting
  * them.
  */
 
@@ -81,99 +80,13 @@ class ValueChecked(private val inner: Combinator, private val accept: (String) -
 }
 
 // ---------------------------------------------------------------------------------------------------
-// safe_atou*
+// Bounds
 
-/**
- * An unsigned integer as systemd's `safe_atou*_full()` reads it
- * (https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429-L478).
- *
- * With [base] 0 (`safe_atou`, `safe_atou8`, `safe_atou32`, …) that is:
- *  - decimal, C octal (`0755`) or `0x` hex — strtoul(base 0);
- *  - Python-style `0b101` / `0o17` — mangle_base(), parse-util.c#L403;
- *  - an optional leading `+` (strtoul accepts it; test-parse-util.c asserts `+12345`), but not in front
- *    of `0b`/`0o` (mangle_base only looks at the first character);
- *  - a leading `-` only when the value is zero (`-0`): safe_atou_full returns ERANGE for `l != 0 &&
- *    s[0] == '-'`.
- *
- * With [base] 16 (`safe_atou32_full(.., 16)`) the digits are always hexadecimal, with an optional `0x`.
- *
- * The result must lie in `[minInclusive, maxExclusive)`.
- */
-class QdiscSafeAtouTerminal(
-  private val minInclusive: Long,
-  private val maxExclusive: Long,
-  private val base: Int = 0,
-) : TerminalCombinator {
-
-  private val shape: Regex = when (base) {
-    0 -> Regex("""[+-]?(?:0[xX][0-9a-fA-F]+|0[bBoO][0-9a-zA-Z]+|[0-9]+)""")
-    16 -> Regex("""[+-]?(?:0[xX])?[0-9a-fA-F]+""")
-    else -> throw IllegalArgumentException("unsupported base $base")
-  }
-
-  private fun span(value: String, offset: Int): String? = shape.matchAt(value, offset)?.value
-
-  private fun valueOf(text: String): BigInteger? {
-    var s = text
-    val negative = s.startsWith("-")
-    val signed = negative || s.startsWith("+")
-    if (signed) s = s.substring(1)
-    val n: BigInteger? = try {
-      when {
-        base == 16 -> BigInteger(if (s.startsWith("0x") || s.startsWith("0X")) s.substring(2) else s, 16)
-        s.startsWith("0x") || s.startsWith("0X") -> BigInteger(s.substring(2), 16)
-        s.startsWith("0b") || s.startsWith("0B") -> if (signed) null else BigInteger(s.substring(2), 2)
-        s.startsWith("0o") || s.startsWith("0O") -> if (signed) null else BigInteger(s.substring(2), 8)
-        s.length > 1 && s.startsWith("0") -> BigInteger(s.substring(1), 8)
-        else -> BigInteger(s, 10)
-      }
-    } catch (e: NumberFormatException) {
-      null
-    }
-    if (n == null) return null
-    if (negative && n.signum() != 0) return null
-    return n
-  }
-
-  private fun inRange(text: String): Boolean =
-    valueOf(text)?.let { it >= BigInteger.valueOf(minInclusive) && it < BigInteger.valueOf(maxExclusive) } ?: false
-
-  override fun SyntacticMatch(value: String, offset: Int): MatchResult {
-    val text = span(value, offset) ?: return NoMatch
-    return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
-  }
-
-  override fun SemanticMatch(value: String, offset: Int): MatchResult {
-    val text = span(value, offset) ?: return NoMatch
-    if (!inRange(text)) return NoMatch.copy(longestMatch = offset)
-    return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
-  }
-
-  override fun parse(value: String, offset: Int): Sequence<ParseStep> {
-    val text = span(value, offset) ?: return sequenceOf(Stuck(offset, setOf(this)))
-    return sequenceOf(Parse(offset + text.length, listOf(ParsedToken(offset, offset + text.length, text, this, inRange(text)))))
-  }
-
-  override fun toString(): String = "SafeAtou($minInclusive,$maxExclusive,base=$base)"
-
-  override fun toStringIndented(indent: Int): String = toString()
-}
-
-/** One past UINT32_MAX, the exclusive bound for every `safe_atou32` value. */
-const val QDISC_UINT32_LIMIT: Long = 4_294_967_296L
-
-/** One past UINT32_MAX as a BigInteger, for the size/time range checks. */
-private val UINT32_MAX_BIG: BigInteger = BigInteger.valueOf(QDISC_UINT32_LIMIT - 1)
+/** UINT32_MAX, for the size/time range checks. */
+private val UINT32_MAX_BIG: BigInteger = SafeAtoTerminal.UINT32_MAX
 
 /** ULLONG_MAX: parse_size() and parse_time() return ERANGE above it. */
-private val UINT64_MAX_BIG: BigInteger = BigInteger.ONE.shiftLeft(64).subtract(BigInteger.ONE)
-
-/** A [QdiscSafeAtouTerminal] coloured as a literal. */
-fun qdiscSafeAtou(maxExclusive: Long, minInclusive: Long = 0L, base: Int = 0): Combinator =
-  Labeled(Role.LITERAL, QdiscSafeAtouTerminal(minInclusive, maxExclusive, base))
-
-/** A whole value that is one safe_atou32() number. */
-fun safeAtou32Value(): Combinator = SequenceCombinator(qdiscSafeAtou(QDISC_UINT32_LIMIT), EOF())
+private val UINT64_MAX_BIG: BigInteger = SafeAtoTerminal.UINT64_MAX
 
 // ---------------------------------------------------------------------------------------------------
 // parse_sec / parse_time
@@ -366,10 +279,20 @@ val SIZE_UINT32_MAX: BigInteger = UINT32_MAX_BIG
 // ---------------------------------------------------------------------------------------------------
 // parse_permyriad / parse_tc_percent
 
-// The integer part goes through safe_atoi() (base 0, mangle_base) — so `0x10%` is 16% — and must not
-// be negative (`-0` is fine). Its magnitude is capped by the 100% check below, so an int-sized bound
-// on the terminal itself is enough.
-private val PCT_INT = qdiscSafeAtou(Int.MAX_VALUE.toLong() + 1)
+// The integer part goes through safe_atoi() (base 0, mangle_base), so `0x10%` is 16% and `0b 1%` is 1%,
+// and parse_parts_value_*() return ERANGE when it is negative (`-0` is fine, and so is `0b-0`). Its
+// magnitude is capped by the 100% check below, so int's range on the terminal itself is enough. The
+// whole value reaches safe_atoi() up to the '.' or the symbol, so whitespace can reach the parser.
+// https://github.com/systemd/systemd/blob/0f0682b773/src/basic/percent-util.c#L7-L23
+private val PCT_INT = SafeAtoTerminal(
+  signed = true,
+  base = 0,
+  flags = emptySet(),
+  minInclusive = 0L,
+  maxInclusive = Int.MAX_VALUE.toLong(),
+  acceptsWhitespace = true,
+  acceptsMinus = true,
+)
 
 /**
  * A percentage as parse_permyriad() reads it
@@ -388,24 +311,10 @@ val TC_PERCENT: Combinator = ValueChecked(
 
 private val PCT_EVAL = Regex("""(.*?)(?:\.([0-9]+))?([%‰‱])""")
 
-/** parse_permyriad_unbounded(text), or null if not evaluable (sign/base handled like safe_atoi). */
+/** parse_permyriad_unbounded(text), or null if not evaluable (the integer part is read like [PCT_INT]). */
 fun evaluatePermyriad(text: String): Long? {
   val m = PCT_EVAL.matchEntire(text) ?: return null
-  var intPart = m.groupValues[1]
-  val negative = intPart.startsWith("-")
-  if (negative || intPart.startsWith("+")) intPart = intPart.substring(1)
-  val n = try {
-    when {
-      intPart.startsWith("0x") || intPart.startsWith("0X") -> intPart.substring(2).toLong(16)
-      intPart.startsWith("0b") || intPart.startsWith("0B") -> intPart.substring(2).toLong(2)
-      intPart.startsWith("0o") || intPart.startsWith("0O") -> intPart.substring(2).toLong(8)
-      intPart.length > 1 && intPart.startsWith("0") -> intPart.substring(1).toLong(8)
-      else -> intPart.toLong()
-    }
-  } catch (e: NumberFormatException) {
-    return null
-  }
-  if (negative && n != 0L) return -1
+  val n = PCT_INT.valueOf(m.groupValues[1])?.toLong() ?: return null
   val frac = m.groupValues[2]
   return when (m.groupValues[3]) {
     "%" -> n * 100 + (frac.padEnd(2, '0').toLongOrNull() ?: 0)

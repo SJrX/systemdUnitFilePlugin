@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.*
+import java.math.BigInteger
 
 /*
  * [TrivialLinkEqualizer] Id= (.network)
@@ -21,11 +22,23 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * C function: config_parse_teql_id (QDISC_KIND_TEQL). An empty assignment resets the setting and is
  * handled before this grammar runs.
  *
- * An unsigned integer read with safe_atou (base 0) that must not exceed INT_MAX: above it the parser
+ * An unsigned integer read with safe_atou (base 0, so `0b+1` and `0b 1` are 1; see [SafeAtoTerminal])
+ * that must not exceed INT_MAX: above it the parser
  * logs "'Id=' is too large, ignoring assignment" (and, at 0f0682b773, still stores it — the qdisc kind
  * then becomes e.g. "teql4294967295"), so 0…2147483647 is accepted.
  */
 class ConfigParseTeqlIdOptionValue : SimpleGrammarOptionValues(
   "config_parse_teql_id",
-  SequenceCombinator(qdiscSafeAtou(2_147_483_648L), EOF()),
+  SequenceCombinator(
+    SafeAtoTerminal(
+      signed = false,
+      base = 0,
+      flags = emptySet(),
+      minInclusive = BigInteger.ZERO,
+      maxInclusive = SafeAtoTerminal.INT32_MAX,
+      acceptsWhitespace = true,
+      acceptsMinus = true,
+    ),
+    EOF(),
+  ),
 )

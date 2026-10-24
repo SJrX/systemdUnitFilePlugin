@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.*
+import java.math.BigInteger
 
 /*
  * [HierarchyTokenBucketClass] Priority= (.network)
@@ -21,9 +22,21 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * C function: config_parse_htb_class_u32 (TCLASS_KIND_HTB). An empty assignment resets the setting and is
  * handled before this grammar runs.
  *
- * An unsigned 32-bit integer read with safe_atou32 (base 0), 0…4294967295. No further bound.
+ * An unsigned 32-bit integer read with safe_atou32 (base 0, so `0b+1` and `0b 1` are 1; see
+ * [SafeAtoTerminal]), 0…4294967295. No further bound.
  */
 class ConfigParseHtbClassU32OptionValue : SimpleGrammarOptionValues(
   "config_parse_htb_class_u32",
-  safeAtou32Value(),
+  SequenceCombinator(
+    SafeAtoTerminal(
+      signed = false,
+      base = 0,
+      flags = emptySet(),
+      minInclusive = BigInteger.ZERO,
+      maxInclusive = SafeAtoTerminal.UINT32_MAX,
+      acceptsWhitespace = true,
+      acceptsMinus = true,
+    ),
+    EOF(),
+  ),
 )

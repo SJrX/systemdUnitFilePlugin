@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.*
+import java.math.BigInteger
 
 /*
  * [PIE] PacketLimit= (.network)
@@ -21,10 +22,22 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * C function: config_parse_pie_packet_limit (QDISC_KIND_PIE). An empty assignment resets the setting and is
  * handled before this grammar runs.
  *
- * An unsigned 32-bit integer read with safe_atou32 (base 0), 0…4294967295. No further bound in the
+ * An unsigned 32-bit integer read with safe_atou32 (base 0, so `0b+1` and `0b 1` are 1; see
+ * [SafeAtoTerminal]), 0…4294967295. No further bound in the
  * parser (the man page's "1…4294967294" is not enforced by it).
  */
 class ConfigParsePiePacketLimitOptionValue : SimpleGrammarOptionValues(
   "config_parse_pie_packet_limit",
-  safeAtou32Value(),
+  SequenceCombinator(
+    SafeAtoTerminal(
+      signed = false,
+      base = 0,
+      flags = emptySet(),
+      minInclusive = BigInteger.ZERO,
+      maxInclusive = SafeAtoTerminal.UINT32_MAX,
+      acceptsWhitespace = true,
+      acceptsMinus = true,
+    ),
+    EOF(),
+  ),
 )
