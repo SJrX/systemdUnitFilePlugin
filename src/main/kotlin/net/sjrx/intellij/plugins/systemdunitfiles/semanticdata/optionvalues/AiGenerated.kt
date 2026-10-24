@@ -421,6 +421,13 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_timer", "TIMER_STARTUP") to ConfigParseTimerMonotonicOptionValue() as OptionValueInformation,
     Validator("config_parse_timer", "TIMER_UNIT_ACTIVE") to ConfigParseTimerMonotonicOptionValue() as OptionValueInformation,
     Validator("config_parse_timer", "TIMER_UNIT_INACTIVE") to ConfigParseTimerMonotonicOptionValue() as OptionValueInformation,
+    // config_parse_socket_listen: SOCKET_SOCKET covers four keys with different value types, so its
+    // validator dispatches on the key name, exactly as the C function does.
+    Validator("config_parse_socket_listen", "SOCKET_SOCKET") to ConfigParseSocketListenSocketOptionValue() as OptionValueInformation,
+    Validator("config_parse_socket_listen", "SOCKET_FIFO") to ConfigParseSocketListenFileOptionValue() as OptionValueInformation,
+    Validator("config_parse_socket_listen", "SOCKET_MQUEUE") to ConfigParseSocketListenFileOptionValue() as OptionValueInformation,
+    Validator("config_parse_socket_listen", "SOCKET_USB_FUNCTION") to ConfigParseSocketListenFileOptionValue() as OptionValueInformation,
+    Validator("config_parse_socket_listen", "SOCKET_SPECIAL") to ConfigParseSocketListenSpecialOptionValue() as OptionValueInformation,
 
   )
 
