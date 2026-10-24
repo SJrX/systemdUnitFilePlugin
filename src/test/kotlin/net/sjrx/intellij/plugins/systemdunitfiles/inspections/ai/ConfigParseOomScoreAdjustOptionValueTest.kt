@@ -26,6 +26,8 @@ class ConfigParseOomScoreAdjustOptionValueTest : AbstractUnitFileTest() {
             OOMScoreAdjust=0b-1
             OOMScoreAdjust=0o+120
             OOMScoreAdjust=0O-1750
+            OOMScoreAdjust=0b 1
+            OOMScoreAdjust=0o  -7
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
@@ -37,7 +39,8 @@ class ConfigParseOomScoreAdjustOptionValueTest : AbstractUnitFileTest() {
 
     @Test
     fun testInvalidValues() {
-        // Out of range (also when spelled in hex), not a number, and a sign defeating mangle_base's 0b prefix.
+        // Out of range (also when spelled in hex), not a number, a sign defeating mangle_base's 0b prefix, and
+        // whitespace strtol() does not skip (after a sign, after 0x, between a sign and the digits).
         // language="unit file (systemd)"
         val file = """
             [Exec]
@@ -48,12 +51,15 @@ class ConfigParseOomScoreAdjustOptionValueTest : AbstractUnitFileTest() {
             OOMScoreAdjust=1.5
             OOMScoreAdjust=+0b1
             OOMScoreAdjust=0b-1111101001
+            OOMScoreAdjust=- 5
+            OOMScoreAdjust=0x 5
+            OOMScoreAdjust=0b - 1
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(7, highlights)
+        assertSize(10, highlights)
     }
 }

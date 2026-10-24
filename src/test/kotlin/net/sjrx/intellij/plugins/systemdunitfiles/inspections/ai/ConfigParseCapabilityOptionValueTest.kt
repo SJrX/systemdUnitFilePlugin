@@ -34,7 +34,8 @@ class ConfigParseCapabilityOptionValueTest : AbstractUnitFileTest() {
 
     @Test
     fun testInvalidValues() {
-        // Unknown name; comma is not a separator; above CAP_LIMIT; `all` is case-sensitive; negative; one bad word in a list.
+        // Unknown name; comma is not a separator; above CAP_LIMIT; `all` is case-sensitive; negative; one bad word in a list;
+        // `0b 1` is split into the words `0b` (invalid) and `1` before safe_atoi() sees it.
         // language="unit file (systemd)"
         val file = """
             [Exec]
@@ -44,12 +45,13 @@ class ConfigParseCapabilityOptionValueTest : AbstractUnitFileTest() {
             Capability=ALL
             Capability=-1
             DropCapability=CAP_NET_ADMIN CAP_NOPE
+            Capability=0b 1
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(6, highlights)
+        assertSize(7, highlights)
     }
 }

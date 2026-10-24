@@ -49,8 +49,9 @@ private val INTERFACE_PAIR_LIST: Combinator = SequenceCombinator(
  * too — so `eth0:` is the same as `eth0`, and a second colon is an invalid name. Unlike most nspawn
  * settings an invalid word is a hard error that fails loading the file.
  *
- * Deliberately lenient: backslash escapes in the outer whitespace split are not modelled, so
- * `eth0\ x` is read as two names here although C sees one invalid name `eth0 x`.
+ * Backslash escapes: each word is unescaped twice (whitespace split, then colon split), so a name that
+ * runs into whitespace after a backslash run that is not a multiple of 4 long is refused, as C refuses it —
+ * `eth0\ x` is one invalid name `eth0 x`, and `eth0\\ x` leaves a trailing backslash for the colon split.
  *
  * The prefixed default name (`mv-eth0`) may exceed 15 bytes; nspawn shortens it later, so the
  * host-side name alone is what is length-checked.

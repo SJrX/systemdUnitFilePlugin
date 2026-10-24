@@ -42,12 +42,13 @@ class ConfigParseVethExtraOptionValueTest : AbstractUnitFileTest() {
             VirtualEthernetExtra=default
             VirtualEthernetExtra=host name:x
             VirtualEthernetExtra=0x10:ve-b
+            VirtualEthernetExtra=a\ b:c
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(7, highlights)
+        assertSize(8, highlights)
     }
 }

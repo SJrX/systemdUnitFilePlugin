@@ -19,6 +19,10 @@ class ConfigParseExposePortOptionValueTest : AbstractUnitFileTest() {
             Port=65535
             Port=0x50
             Port=tcp:0x50:010
+            Port=0o+120
+            Port=0b 1
+            Port=80:0b 1
+            Port=tcp:0o 120
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
@@ -31,7 +35,8 @@ class ConfigParseExposePortOptionValueTest : AbstractUnitFileTest() {
     @Test
     fun testInvalidValues() {
         // Rejected spellings from TEST-13-NSPAWN (--port=-1, :, icmp:..., tcp::8080, 8080:) plus port 0, overflow,
-        // an upper-case protocol (startswith is case-sensitive) and a third field.
+        // an upper-case protocol (startswith is case-sensitive), a third field, and whitespace around a port (parse_ip_port
+        // refuses leading whitespace; only the whitespace strtoul() skips after a 0b/0o prefix is fine).
         // language="unit file (systemd)"
         val file = """
             [Network]
@@ -44,12 +49,15 @@ class ConfigParseExposePortOptionValueTest : AbstractUnitFileTest() {
             Port=65536
             Port=TCP:80
             Port=80:8080:1
+            Port=80: 90
+            Port=tcp: 80
+            Port=80 :90
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(9, highlights)
+        assertSize(12, highlights)
     }
 }

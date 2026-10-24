@@ -23,12 +23,11 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * Validator for the .nspawn `[Exec] OOMScoreAdjust=` setting (config_parse_oom_score_adjust, ltype 0).
  *
  * parse_oom_score_adjust() reads the value with safe_atoi() — base 0 after mangle_base(), so besides
- * plain decimal it takes a sign, `0x` hex, leading-zero octal, `0o` octal and `0b` binary (where a sign goes after the prefix,
- * as in `0b-1`) — and then
- * requires OOM_SCORE_ADJ_MIN…OOM_SCORE_ADJ_MAX, i.e. -1000…1000 inclusive. An empty value resets the
+ * plain decimal it takes a sign, `0x` hex, leading-zero octal, `0o` octal and `0b` binary (where whitespace and a
+ * sign may follow the prefix, as in `0b-1` or `0b 1`, because strtol() skips them) — and then requires OOM_SCORE_ADJ_MIN…OOM_SCORE_ADJ_MAX, i.e. -1000…1000 inclusive. An empty value resets the
  * setting and never reaches the grammar. Out-of-range or malformed input is logged and ignored.
  */
 class ConfigParseOomScoreAdjustOptionValue : SimpleGrammarOptionValues(
     "config_parse_oom_score_adjust",
-    SequenceCombinator(safeAtoNumber(-1000, 1001), EOF()),
+    SequenceCombinator(safeAtoNumber(-1000, 1001, spaceAfterPrefix = true), EOF()),
 )

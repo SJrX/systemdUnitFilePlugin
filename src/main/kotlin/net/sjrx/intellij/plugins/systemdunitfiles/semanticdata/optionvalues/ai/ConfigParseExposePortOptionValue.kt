@@ -21,8 +21,11 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/units/TEST-13-NSPAWN.nspawn.sh#L315-L326   (accepted and rejected --port= spellings)
  */
 
-/** parse_ip_port(): a safe_atou16() number (base 0) that is not zero. */
-private val PORT = safeAtoNumber(1, 65536)
+/**
+ * parse_ip_port(): a safe_atou16() number (base 0) that is not zero. Whitespace between a `0b`/`0o` prefix and
+ * the digits is skipped by strtoul() (`Port=0o 120` is valid), but not in front of the number (`80: 90` is not).
+ */
+private val PORT = safeAtoNumber(1, 65536, spaceAfterPrefix = true)
 
 /**
  * Validator for the .nspawn `[Network] Port=` setting (config_parse_expose_port, ltype 0).

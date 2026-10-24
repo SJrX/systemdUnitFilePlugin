@@ -39,8 +39,8 @@ class ConfigParseBindOptionValueTest : AbstractUnitFileTest() {
 
     @Test
     fun testInvalidValues() {
-        // A lone path must be absolute; empty or relative destination; `+` must be followed by an absolute path;
-        // unknown bind options.
+        // A lone path must be absolute; empty or relative destination; `+` must be followed by an absolute path.
+        // These are rejected by bind_mount_parse() itself.
         // language="unit file (systemd)"
         val file = """
             [Files]
@@ -48,9 +48,6 @@ class ConfigParseBindOptionValueTest : AbstractUnitFileTest() {
             Bind=/a:
             Bind=/a:relative
             Bind=+relative:/b
-            Bind=/a:/b:bogus
-            Bind=/a:/b:rbind:x
-            BindReadOnly=/a:/b:ro
             Bind=+:/b
         """.trimIndent()
 
@@ -58,6 +55,26 @@ class ConfigParseBindOptionValueTest : AbstractUnitFileTest() {
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(8, highlights)
+        assertSize(5, highlights)
+    }
+
+    @Test
+    fun testOptionsRejectedOnlyAtContainerStart() {
+        // Deliberately stricter than the settings parser: bind_mount_parse() stores the option string verbatim, so
+        // fuzz-nspawn-settings accepts these, but parse_mount_bind_options() fails the container start with
+        // "Invalid bind mount option" (`ro` is not an option, read-only is BindReadOnly=; `rbind:x` is one word).
+        // language="unit file (systemd)"
+        val file = """
+            [Files]
+            Bind=/a:/b:bogus
+            Bind=/a:/b:rbind:x
+            BindReadOnly=/a:/b:ro
+        """.trimIndent()
+
+        setupFileInEditor("file.nspawn", file)
+        enableInspection(InvalidValueInspection::class.java)
+        val highlights = myFixture.doHighlighting()
+
+        assertSize(3, highlights)
     }
 }

@@ -21,8 +21,10 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gra
 // string, so a sign in front of `0b`/`0o` defeats it and strtol() then stops at the `b`/`o` — such
 // spellings are rejected, and the shape below does not allow them. A sign *after* the prefix is fine,
 // though: mangle_base() strips `0b`/`0o` and strtol() in base 2/8 still takes a sign, so `0b-1` is -1
-// and `0o+120` is 80. (strtol() would also skip whitespace after the prefix, as in `0b 1`; that is not
-// modelled, as every caller here also splits on whitespace or the spelling is absurd.)
+// and `0o+120` is 80. strtol() also skips whitespace after the prefix, so `OOMScoreAdjust=0b 1` and
+// `Port=0o 120` are valid (confirmed with fuzz-nspawn-settings at 0f0682b773). That is only modelled
+// for callers that pass `spaceAfterPrefix = true`: in a whitespace-separated list (Capability=) the
+// word split happens first, so `0b 1` there is the invalid word `0b` followed by `1`.
 
 /**
  * An integer in `[minInclusive, maxExclusive)` spelled any way safe_atoi()/safe_atou*() accept:
@@ -38,9 +40,12 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gra
 class NspawnSafeAtoNumberTerminal(
   private val minInclusive: Long,
   private val maxExclusive: Long,
+  spaceAfterPrefix: Boolean = false,
 ) : TerminalCombinator {
 
-  private fun span(value: String, offset: Int): String? = SAFE_ATO_SHAPE.matchAt(value, offset)?.value
+  private val shape = if (spaceAfterPrefix) NSPAWN_SAFE_ATO_SHAPE_SPACED else SAFE_ATO_SHAPE
+
+  private fun span(value: String, offset: Int): String? = shape.matchAt(value, offset)?.value
 
   private fun inRange(text: String): Boolean = safeAtoValueOf(text)?.let { it >= minInclusive && it < maxExclusive } ?: false
 
@@ -67,13 +72,17 @@ class NspawnSafeAtoNumberTerminal(
 // toLongOrNull() takes the sign that may follow `0b`/`0o`.
 private val SAFE_ATO_SHAPE = Regex("""0[bB][+-]?[01]+|0[oO][+-]?[0-7]+|[+-]?(?:0[xX][0-9a-fA-F]+|0[0-7]*|[1-9][0-9]*)""")
 
+// As [SAFE_ATO_SHAPE], plus the isspace() run strtol() skips between a `0b`/`0o` prefix and the digits.
+private val NSPAWN_SAFE_ATO_SHAPE_SPACED =
+  Regex("""0[bB][ \t\u000B\u000C\r]*[+-]?[01]+|0[oO][ \t\u000B\u000C\r]*[+-]?[0-7]+|[+-]?(?:0[xX][0-9a-fA-F]+|0[0-7]*|[1-9][0-9]*)""")
+
 /**
  * The numeric value of [text] read the way safe_atoi()/safe_atou*() read it, assuming [text] is one
  * whole [SAFE_ATO_SHAPE] match; null when it does not fit a Long (and so is out of any range anyway).
  */
 private fun safeAtoValueOf(text: String): Long? {
-  if (text.length > 2 && (text.startsWith("0b") || text.startsWith("0B"))) return text.drop(2).toLongOrNull(2)
-  if (text.length > 2 && (text.startsWith("0o") || text.startsWith("0O"))) return text.drop(2).toLongOrNull(8)
+  if (text.length > 2 && (text.startsWith("0b") || text.startsWith("0B"))) return text.drop(2).trimStart().toLongOrNull(2)
+  if (text.length > 2 && (text.startsWith("0o") || text.startsWith("0O"))) return text.drop(2).trimStart().toLongOrNull(8)
   val negative = text.startsWith("-")
   val body = text.removePrefix("-").removePrefix("+")
   val magnitude = when {
@@ -89,8 +98,8 @@ private fun isPositiveIfindex(text: String): Boolean =
   SAFE_ATO_SHAPE.matchEntire(text) != null && safeAtoValueOf(text)?.let { it in 1..Int.MAX_VALUE.toLong() } == true
 
 /** A [NspawnSafeAtoNumberTerminal] coloured as a literal, like the other number terminals. */
-fun safeAtoNumber(minInclusive: Long, maxExclusive: Long): Combinator =
-  Labeled(Role.LITERAL, NspawnSafeAtoNumberTerminal(minInclusive, maxExclusive))
+fun safeAtoNumber(minInclusive: Long, maxExclusive: Long, spaceAfterPrefix: Boolean = false): Combinator =
+  Labeled(Role.LITERAL, NspawnSafeAtoNumberTerminal(minInclusive, maxExclusive, spaceAfterPrefix))
 
 
 // ---------------------------------------------------------------------------------------------------
@@ -120,9 +129,14 @@ fun enumWithBoolean(vararg names: String): Combinator =
 // Unlike [INTERFACE_NAME] the syntactic form stops at `:` as well as whitespace, because every nspawn
 // caller splits `NAME:NAME` pairs on the colon.
 //
-// Not modelled: the outer extract_first_word(WHITESPACE, 0) that splits Interface=/MACVLAN=/IPVLAN=
-// lists honours backslash escapes, so `a\ b` is one (invalid) word there but two valid names here,
-// and an escaping backslash is counted towards the 15-byte limit here although C drops it.
+// Backslashes: Interface=/MACVLAN=/IPVLAN= unescape each word twice — once in the outer
+// extract_first_word(WHITESPACE, 0) and again in the extract_first_word(":", 0) that splits the pair —
+// and VirtualEthernetExtra= once. A name that runs into whitespace after a run of n backslashes is
+// therefore invalid unless n is a multiple of 4: an odd n escapes the whitespace into the name (`a\ b`,
+// "interface name not valid: a b"), and n = 2 (mod 4) leaves a lone trailing backslash for the second
+// pass (`a\\ b`, "Failed to extract first word"). [nspawnIfnameEscapesWhitespace] models exactly that;
+// both verdicts were confirmed with fuzz-nspawn-settings at 0f0682b773. Still not modelled: an escaping
+// backslash elsewhere is counted towards the 15-byte limit here although C drops it.
 
 private const val NSPAWN_IFNAME_CHAR = """[\x21-\x7E&&[^:/%]]"""
 
@@ -140,7 +154,7 @@ private class NspawnInterfaceNameTerminal : TerminalCombinator {
 
   override fun SemanticMatch(value: String, offset: Int): MatchResult {
     val result = regex.SemanticMatch(value, offset)
-    if (result.matchResult >= 0 && isPositiveIfindex(value.substring(offset, result.matchResult))) {
+    if (result.matchResult >= 0 && isRefused(value, offset, result.matchResult)) {
       return NoMatch.copy(longestMatch = offset)
     }
     return result.owned()
@@ -148,15 +162,29 @@ private class NspawnInterfaceNameTerminal : TerminalCombinator {
 
   override fun parse(value: String, offset: Int): Sequence<ParseStep> = regex.parse(value, offset).map { step ->
     when (step) {
-      is Parse -> step.copy(tokens = step.tokens.map { it.copy(terminal = this, valid = it.valid && !isPositiveIfindex(it.text)) })
+      is Parse -> step.copy(tokens = step.tokens.map { it.copy(terminal = this, valid = it.valid && !isRefused(value, it.start, it.end)) })
       is Stuck -> Stuck(step.offset, setOf(this))
     }
   }
+
+  private fun isRefused(value: String, start: Int, end: Int): Boolean =
+    isPositiveIfindex(value.substring(start, end)) || nspawnIfnameEscapesWhitespace(value, start, end)
 
   /** Report this terminal, not the wrapped regex, as the one that matched. */
   private fun MatchResult.owned(): MatchResult = if (matchResult < 0) this else copy(terminals = listOf(this@NspawnInterfaceNameTerminal))
 
   override fun toString(): String = "NspawnIfname"
+}
+
+/**
+ * Whether the name `value[start, end)` ends in a run of backslashes that is not a multiple of 4 long and is
+ * followed by whitespace — see the comment above [NSPAWN_IFNAME_CHAR] for why C refuses that.
+ */
+private fun nspawnIfnameEscapesWhitespace(value: String, start: Int, end: Int): Boolean {
+  if (end >= value.length || !value[end].isWhitespace()) return false
+  var run = 0
+  while (end - run - 1 >= start && value[end - run - 1] == '\\') run++
+  return run % 4 != 0
 }
 
 /** One interface name in a `NAME[:NAME]` pair. */
