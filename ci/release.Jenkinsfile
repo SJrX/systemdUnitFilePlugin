@@ -26,8 +26,9 @@ if (isReleaseDay && started_by_timer) {
 echo "Release channel $releaseChannel"
 
 def buildPodDefinition(workerPodImage, ciUtilsEnabled, kanikoEnabled) {
-  // Pods that run Gradle (worker-pod) or kaniko are "heavy": at most one of them may be scheduled per node,
-  // across all builds, so a burst of PR builds queues instead of piling onto (and thrashing) the fast nodes.
+  // Pods that run Gradle (worker-pod) or kaniko are "heavy": they are restricted to the perf=fast nodes, and at most
+  // one of them may be scheduled per node across all builds, so a burst of PR builds queues instead of piling onto
+  // (and thrashing) the nodes.
   def heavy = workerPodImage != null || kanikoEnabled
 
   // language=yaml
@@ -47,6 +48,22 @@ metadata:
 spec:
   affinity:
       nodeAffinity:
+"""
+
+  if (heavy) {
+    // Gradle/kaniko pods must run on the perf=fast nodes (2.4 GHz). On the 1.5 GHz perf=slow nodes a full build
+    // or test run took over 30 minutes, and a soft preference was not enough to keep the scheduler off them (#559).
+    yaml += """
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: perf
+                  operator: In
+                  values:
+                    - fast
+"""
+  } else {
+    yaml += """
         preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 1
             preference:
@@ -56,6 +73,7 @@ spec:
                   values:
                     - fast
 """
+  }
 
   if (heavy) {
     yaml += """
