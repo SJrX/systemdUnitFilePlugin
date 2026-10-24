@@ -197,13 +197,20 @@ val FILESYSTEM_GROUP_NAME = FlexibleLiteralChoiceTerminal(
 /**
  * The specifier letters unit_full_printf() knows (src/core/unit-printf.c#L210-L238 plus
  * COMMON_SYSTEM/CREDS/TMP_SPECIFIERS from src/shared/specifier.h#L76-L99), and `%` for a literal
- * percent sign. Any other `%x` makes specifier_printf fail with -EBADSLT and the assignment is dropped.
- * Same set as ConfigParseUnitStringPrintfOptionValue uses.
+ * percent sign. Same set as ConfigParseUnitStringPrintfOptionValue uses.
  */
 const val UNIT_SPECIFIER_LETTERS = "iIjJnNpPfyYcrRCdDELSthsaAbBHlqmMovwWgGuUTV%"
 
-/** A regex fragment for one character of specifier-expanded text: a non-`%` or a valid `%x` pair. */
-const val PRINTF_CHAR = "(?:[^%]|%[$UNIT_SPECIFIER_LETTERS])"
+/**
+ * A regex fragment for one character (or `%x` pair) of specifier-expanded text, per specifier_printf
+ * (src/shared/specifier.c#L33): a known specifier expands; an unknown *alphanumeric* one is an error
+ * (-EBADSLT, the assignment is dropped); `%` followed by anything else — or at the very end — is kept
+ * literally. Use inside a character-class-free regex, e.g. `(?:$PRINTF_CHAR)*`.
+ */
+const val PRINTF_CHAR = "(?:[^%]|%[$UNIT_SPECIFIER_LETTERS]|%(?![A-Za-z0-9]))"
+
+/** [PRINTF_CHAR], but also excluding [excluded] (a character-class body, e.g. `=` or `\\s`) as a plain character. */
+fun printfCharExcluding(excluded: String): String = "(?:[^%$excluded]|%[$UNIT_SPECIFIER_LETTERS]|%(?![A-Za-z0-9]))"
 
 // ---------------------------------------------------------------------------------------------------
 // BPF token delegation lists — bpf_delegate_from_string (src/core/namespace.c#L4221).

@@ -422,6 +422,10 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_bpf_delegate_maps", "0") to ConfigParseBpfDelegateMapsOptionValue() as OptionValueInformation,
     Validator("config_parse_bpf_delegate_programs", "0") to ConfigParseBpfDelegateProgramsOptionValue() as OptionValueInformation,
     Validator("config_parse_bpf_delegate_attachments", "0") to ConfigParseBpfDelegateAttachmentsOptionValue() as OptionValueInformation,
+    Validator("config_parse_cgroup_nft_set", "NFT_SET_PARSE_CGROUP") to ConfigParseCgroupNftSetOptionValue() as OptionValueInformation,
+    Validator("config_parse_bpf_foreign_program", "0") to ConfigParseBpfForeignProgramOptionValue() as OptionValueInformation,
+    Validator("config_parse_xattr", "0") to ConfigParseXattrOptionValue() as OptionValueInformation,
+    Validator("config_parse_socket_bindtodevice", "0") to ConfigParseSocketBindtodeviceOptionValue() as OptionValueInformation,
     // END Batch 2026-10: seccomp-bpf-cgroup
 
   )
