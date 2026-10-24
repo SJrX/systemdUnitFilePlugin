@@ -18,6 +18,7 @@ class ConfigParseRoutingPolicyRuleFirewallMarkOptionValueTest : AbstractUnitFile
             FirewallMark=0
             FirewallMark=4294967295/4294967295
             FirewallMark=0b101
+            FirewallMark=7/ 255
         """.trimIndent()
 
     setupFileInEditor("file.network", file)

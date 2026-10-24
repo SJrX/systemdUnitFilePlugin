@@ -34,7 +34,10 @@ private val UID = Checked(RegexTerminal("""[0-9]+""", """0|[1-9][0-9]*""")) { ui
 
 private val UID_RANGE = Checked(SequenceCombinator(UID, ZeroOrOne(SequenceCombinator(HYPHEN, UID)))) { text ->
   val bounds = text.split('-')
-  bounds.size == 1 || (bounds[0].toLong() <= bounds[1].toLong())
+  // toLongOrNull: an over-long digit run is already rejected by UID; do not crash on it here.
+  val lo = bounds[0].toLongOrNull()
+  val hi = bounds.getOrNull(1)?.toLongOrNull()
+  bounds.size == 1 || lo == null || hi == null || lo <= hi
 }
 
 // A user name for getpwnam(): NSS is the judge, so anything without whitespace or `:` is accepted, as

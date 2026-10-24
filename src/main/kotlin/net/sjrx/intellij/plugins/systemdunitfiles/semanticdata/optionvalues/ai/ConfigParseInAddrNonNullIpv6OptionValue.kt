@@ -13,7 +13,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  *
  * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#IPv6StableSecretAddress=
  * parser https://github.com/systemd/systemd/blob/0f0682b773/src/shared/conf-parser.c#L2036-L2082   config_parse_in_addr_non_null (AF_INET6)
- * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/in-addr-util.c#L517-L530   in_addr_from_string
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/in-addr-util.c#L517-L529   in_addr_from_string
  * linux  https://man7.org/linux/man-pages/man3/inet_pton.3.html
  */
 

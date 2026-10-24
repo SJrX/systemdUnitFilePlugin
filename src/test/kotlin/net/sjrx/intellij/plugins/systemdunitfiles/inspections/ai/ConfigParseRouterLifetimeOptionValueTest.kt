@@ -18,6 +18,8 @@ class ConfigParseRouterLifetimeOptionValueTest : AbstractUnitFileTest() {
             RouterLifetimeSec=1s
             RouterLifetimeSec=10000
             RouterLifetimeSec=infinity
+            RouterLifetimeSec=.5
+            RouterLifetimeSec=+5
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -33,10 +35,11 @@ class ConfigParseRouterLifetimeOptionValueTest : AbstractUnitFileTest() {
             [IPv6SendRA]
             RouterLifetimeSec=forever
             RouterLifetimeSec=30 minuts
+            RouterLifetimeSec=+.5
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
-    assertSize(2, myFixture.doHighlighting())
+    assertSize(3, myFixture.doHighlighting())
   }
 }

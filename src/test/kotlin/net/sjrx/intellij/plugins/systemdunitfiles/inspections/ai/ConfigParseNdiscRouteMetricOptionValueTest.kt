@@ -17,6 +17,8 @@ class ConfigParseNdiscRouteMetricOptionValueTest : AbstractUnitFileTest() {
             RouteMetric=100:200:300
             RouteMetric=0
             RouteMetric=0x10:0x20:0x30
+            RouteMetric=100: 200:	300
+            RouteMetric=100:200:300:
             [DHCPv6]
             RouteMetric=1024
         """.trimIndent()
@@ -38,10 +40,12 @@ class ConfigParseNdiscRouteMetricOptionValueTest : AbstractUnitFileTest() {
             RouteMetric=1:2
             RouteMetric=1:2:3:4
             RouteMetric=1::3
+            RouteMetric=1:2:3::
+            RouteMetric=100 :200:300
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
-    assertSize(6, myFixture.doHighlighting())
+    assertSize(8, myFixture.doHighlighting())
   }
 }

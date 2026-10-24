@@ -8,6 +8,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtouTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UINT32_LIMIT
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtouValue
 
 /*
@@ -22,8 +23,13 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 private val METRIC = SafeAtouTerminal(0, UINT32_LIMIT)
 
 // high < medium < low, compared on the parsed numbers.
-private val METRIC_TRIPLE = Checked(SequenceCombinator(METRIC, COLON, METRIC, COLON, METRIC)) { text ->
-  val v = text.split(':').map { safeAtouValue(it) }
+// safe_atou32 skips leading whitespace, so `100: 200: 300` is fine.
+private val NEXT_METRIC = SafeAtouTerminal(0, UINT32_LIMIT, allowLeadingWhitespace = true)
+
+// extract_many_words(…, EXTRACT_DONT_COALESCE_SEPARATORS) leaves p at "" after a single trailing `:`,
+// which passes the isempty(p) check, so `100:200:300:` is accepted too.
+private val METRIC_TRIPLE = Checked(SequenceCombinator(METRIC, COLON, NEXT_METRIC, COLON, NEXT_METRIC, ZeroOrOne(COLON))) { text ->
+  val v = text.removeSuffix(":").split(':').map { safeAtouValue(it) }
   v.size == 3 && v.all { it != null } && v[0]!! < v[1]!! && v[1]!! < v[2]!!
 }
 

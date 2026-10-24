@@ -23,6 +23,12 @@ class ConfigParseNftSetNetworkOptionValueTest : AbstractUnitFileTest() {
             NFTSet=address:inet:t:s
             [DHCPPrefixDelegation]
             NFTSet=prefix:bridge:t_1:s_2
+            NFTSet=address::inet:t:s
+            NFTSet=:address:inet:t:s
+            NFTSet=address:inet:t:s:
+            NFTSet=address:"inet":t:s
+            NFTSet='address':inet:"t":s prefix:ip:t:s
+            NFTSet=address:inet:"t:s"
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -43,10 +49,13 @@ class ConfigParseNftSetNetworkOptionValueTest : AbstractUnitFileTest() {
             NFTSet=address:inet:table:set:extra
             [DHCPv4]
             NFTSet=address:inet:filter:bad-name
+            NFTSet=address:"inet:t
+            NFTSet=address:"ipx":t:s
+            NFTSet="address:inet:t:s:extra"
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
-    assertSize(6, myFixture.doHighlighting())
+    assertSize(9, myFixture.doHighlighting())
   }
 }

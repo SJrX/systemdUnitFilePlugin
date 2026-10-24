@@ -24,6 +24,9 @@ class ConfigParseStackedNetdevOptionValueTest : AbstractUnitFileTest() {
             VXLAN=vxlan-slaac
             Xfrm=xfrm98
             VLAN=
+            VLAN=0x0
+            VLAN=-5
+            VLAN=0xvlan
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -41,10 +44,13 @@ class ConfigParseStackedNetdevOptionValueTest : AbstractUnitFileTest() {
             VXLAN=this-name-is-way-too-long
             Tunnel=123
             MACVLAN=ok all
+            IPVLAN=0x10
+            VLAN=+5
+            VLAN=0b1
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
-    assertSize(4, myFixture.doHighlighting())
+    assertSize(7, myFixture.doHighlighting())
   }
 }

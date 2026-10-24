@@ -1,5 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
+import com.intellij.codeInspection.ProblemsHolder
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN_ANY_CASE
@@ -13,7 +15,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#IPv6SendRA=
  * parser https://github.com/systemd/systemd/blob/0f0682b773/src/network/networkd-radv.c#L1418-L1461   config_parse_router_prefix_delegation (0)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/network/networkd-radv.c#L1406-L1416   radv_prefix_delegation_table (DEFINE_STRING_TABLE_LOOKUP_WITH_BOOLEAN)
- * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L23-L48           parse_boolean (case-insensitive)
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L23-L46           parse_boolean (case-insensitive)
  */
 
 /**
@@ -24,10 +26,11 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * the backward-compatible `IPv6PrefixDelegation=` it uses radv_prefix_delegation_from_string(), a
  * string table with boolean fallback: any boolean, or `static` / `dhcpv6`.
  *
- * Both keys share one (parser, ltype) registration, so this grammar accepts the union — a boolean, or
- * `static` / `dhcpv6`. That is exact for `IPv6PrefixDelegation=` and lenient for `IPv6SendRA=`, where
- * `static` and `dhcpv6` are in fact rejected. Booleans are matched case-insensitively, as parse_boolean() does. The names come before the boolean so the classic matcher
- * tries them first.
+ * Both keys share one (parser, ltype) registration, so the registered grammar is the union — a boolean,
+ * or `static` / `dhcpv6` — which is exact for `IPv6PrefixDelegation=`. For `IPv6SendRA=`
+ * [generateProblemDescriptors] branches on the key, as the C does, and checks against a boolean-only
+ * grammar, so `IPv6SendRA=static` is flagged. Booleans are matched case-insensitively, as
+ * parse_boolean() does. The names come before the boolean so the classic matcher tries them first.
  */
 class ConfigParseRouterPrefixDelegationOptionValue : SimpleGrammarOptionValues(
     "config_parse_router_prefix_delegation",
@@ -38,4 +41,21 @@ class ConfigParseRouterPrefixDelegationOptionValue : SimpleGrammarOptionValues(
         ),
         EOF()
     )
-)
+) {
+
+  override fun generateProblemDescriptors(property: UnitFilePropertyType, holder: ProblemsHolder) {
+    if (property.key == "IPv6SendRA") {
+      SEND_RA_BOOLEAN_ONLY.generateProblemDescriptors(property, holder)
+    } else {
+      super.generateProblemDescriptors(property, holder)
+    }
+  }
+
+  private companion object {
+    // streq(lvalue, "IPv6SendRA") → parse_boolean() only.
+    val SEND_RA_BOOLEAN_ONLY = SimpleGrammarOptionValues(
+        "config_parse_router_prefix_delegation",
+        SequenceCombinator(BOOLEAN_ANY_CASE, EOF())
+    )
+  }
+}

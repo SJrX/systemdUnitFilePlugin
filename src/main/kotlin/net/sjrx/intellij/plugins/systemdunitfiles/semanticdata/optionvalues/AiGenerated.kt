@@ -454,7 +454,7 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_route_section", "ROUTE_METRIC_INITCWND") to ConfigParseRouteMetricInitCwndOptionValue() as OptionValueInformation,
     Validator("config_parse_route_section", "ROUTE_METRIC_RTO_MIN") to ConfigParseRouteMetricTcpRtoOptionValue() as OptionValueInformation,
     // [RoutingPolicyRule] table slots.
-    Validator("config_parse_routing_policy_rule", "ROUTING_POLICY_RULE_TABLE") to ConfigParseRouteTableOptionValue() as OptionValueInformation,
+    Validator("config_parse_routing_policy_rule", "ROUTING_POLICY_RULE_TABLE") to ConfigParseRouteTableOptionValue("config_parse_routing_policy_rule") as OptionValueInformation,
     Validator("config_parse_routing_policy_rule", "ROUTING_POLICY_RULE_FWMARK") to ConfigParseRoutingPolicyRuleFirewallMarkOptionValue() as OptionValueInformation,
     Validator("config_parse_routing_policy_rule", "ROUTING_POLICY_RULE_IP_PROTOCOL") to ConfigParseRoutingPolicyRuleIpProtocolOptionValue() as OptionValueInformation,
     Validator("config_parse_routing_policy_rule", "ROUTING_POLICY_RULE_UID_RANGE") to ConfigParseRoutingPolicyRuleUidRangeOptionValue() as OptionValueInformation,

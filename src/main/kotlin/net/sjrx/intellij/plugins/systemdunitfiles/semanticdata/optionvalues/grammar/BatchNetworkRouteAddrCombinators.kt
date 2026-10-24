@@ -42,7 +42,10 @@ class Checked(private val inner: Combinator, private val predicate: (String) -> 
 
   override fun parse(value: String, offset: Int): Sequence<ParseStep> =
     inner.parse(value, offset).map { step ->
-      if (step is Parse && step.tokens.isNotEmpty() && step.end > offset && !predicate(value.substring(offset, step.end))) {
+      // The predicate only runs on spans whose tokens are all individually valid, so predicates may assume
+      // well-formed input (e.g. a digit run that fits its range) and need not be total.
+      if (step is Parse && step.tokens.isNotEmpty() && step.end > offset && step.tokens.all { it.valid } &&
+        !predicate(value.substring(offset, step.end))) {
         step.copy(tokens = listOf(step.tokens[0].copy(valid = false)) + step.tokens.drop(1))
       } else {
         step
@@ -97,10 +100,19 @@ fun safeAtouValue(text: String): BigInteger? {
  * is any run starting with a digit (or sign) and continuing with alphanumerics, so a malformed number
  * like `12abc` is located as one token; use it only where the number is followed by a separator
  * (whitespace, `/`, `-`, `:`, `@`) or the end of the value.
+ *
+ * safe_atou*() skip leading whitespace themselves. Pass [allowLeadingWhitespace] where the number comes
+ * straight after a non-whitespace separator that systemd splits on itself (`100: 200` in a `:` list,
+ * `::/ 64` after a prefix slash), so that whitespace is part of the number token. Leave it off where the
+ * value was already split into words on whitespace, or where whitespace is the separator.
  */
-class SafeAtouTerminal(private val minInclusive: Long, private val maxExclusive: Long) : TerminalCombinator {
+class SafeAtouTerminal(
+  private val minInclusive: Long,
+  private val maxExclusive: Long,
+  private val allowLeadingWhitespace: Boolean = false,
+) : TerminalCombinator {
 
-  private fun span(value: String, offset: Int): String? = SHAPE.matchAt(value, offset)?.value
+  private fun span(value: String, offset: Int): String? = (if (allowLeadingWhitespace) SHAPE_WS else SHAPE).matchAt(value, offset)?.value
 
   private fun inRange(text: String): Boolean {
     val v = safeAtouValue(text) ?: return false
@@ -127,6 +139,7 @@ class SafeAtouTerminal(private val minInclusive: Long, private val maxExclusive:
 
   private companion object {
     val SHAPE = Regex("""[+-]?[0-9][0-9a-zA-Z]*""")
+    val SHAPE_WS = Regex("""[ \t]*[+-]?[0-9][0-9a-zA-Z]*""")
   }
 }
 
@@ -174,7 +187,8 @@ val USEC_INFINITY: BigInteger = BigInteger.ONE.shiftLeft(64).subtract(BigInteger
 val USEC_PER_SEC: BigInteger = BigInteger.valueOf(1_000_000L)
 val USEC_PER_MSEC: BigInteger = BigInteger.valueOf(1_000L)
 
-private val TIME_NUMBER = RegexTerminal("""[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]*)""", """\+?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)""")
+// `+.5` is refused: strtoll() reads no digits after the sign, so e == p and *e is not '.'.
+private val TIME_NUMBER = RegexTerminal("""[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]*)""", """(?:\+?[0-9]+(?:\.[0-9]+)?|\.[0-9]+)""")
 private val TIME_UNIT = FlexibleLiteralChoiceTerminal(*TIME_UNIT_USEC.keys.toTypedArray())
 private val TIME_INFINITY = FlexibleLiteralChoiceTerminal("infinity")
 
@@ -189,7 +203,7 @@ val PARSE_SEC = AlternativeCombinator(
   OneOrMore(SequenceCombinator(TIME_ELEMENT, ZeroOrOne(WhitespaceTerminal()))),
 )
 
-private val TIME_ELEMENT_REGEX = Regex("""\s*\+?([0-9]*)(?:\.([0-9]+))?\s*(seconds|second|sec|s|minutes|minute|min|months|month|M|msec|ms|m|hours|hour|hr|h|days|day|d|weeks|week|w|years|year|y|usec|us|μs|µs)?""")
+private val TIME_ELEMENT_REGEX = Regex("""\s*(?:\+(?=[0-9]))?([0-9]*)(?:\.([0-9]+))?\s*(seconds|second|sec|s|minutes|minute|min|months|month|M|msec|ms|m|hours|hour|hr|h|days|day|d|weeks|week|w|years|year|y|usec|us|μs|µs)?""")
 
 /**
  * The value parse_sec() gives [text] in microseconds — [USEC_INFINITY] for `infinity` — or null if
@@ -424,5 +438,6 @@ val BOOLEAN_ANY_CASE = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreC
 // ---------------------------------------------------------------------------------------------------
 // IPv6 prefixes — in_addr_prefix_from_string(…, AF_INET6, …) (src/basic/in-addr-util.c): an IPv6 literal
 // and an optional `/LEN`, where LEN goes through in_addr_parse_prefixlen → safe_atou8 (base 0) and must
-// be ≤ 128. Without a slash the prefix length is 128. Not followed by EOF.
-val IPV6_PREFIX_SAFE_LEN: Combinator = SequenceCombinator(IPV6_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, SafeAtouTerminal(0, 129))))
+// be ≤ 128 (safe_atou8 skips whitespace, so `::/ 64` is fine). Without a slash the prefix length is 128.
+// Not followed by EOF.
+val IPV6_PREFIX_SAFE_LEN: Combinator = SequenceCombinator(IPV6_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, SafeAtouTerminal(0, 129, allowLeadingWhitespace = true))))

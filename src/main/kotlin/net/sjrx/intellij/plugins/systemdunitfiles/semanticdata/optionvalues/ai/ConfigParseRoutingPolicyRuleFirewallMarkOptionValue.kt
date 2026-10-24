@@ -30,7 +30,7 @@ class ConfigParseRoutingPolicyRuleFirewallMarkOptionValue : SimpleGrammarOptionV
     "config_parse_routing_policy_rule",
     SequenceCombinator(
         SafeAtouTerminal(0, UINT32_LIMIT),
-        ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, SafeAtouTerminal(0, UINT32_LIMIT))),
+        ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, SafeAtouTerminal(0, UINT32_LIMIT, allowLeadingWhitespace = true))),
         EOF()
     )
 )

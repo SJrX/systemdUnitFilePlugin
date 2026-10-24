@@ -16,6 +16,7 @@ class ConfigParseIpv6AddressLabelPrefixOptionValueTest : AbstractUnitFileTest() 
             Prefix=::/0
             Prefix=::ffff:0:0/96
             Prefix=fe80::1
+            Prefix=2001:db8::/ 32
         """.trimIndent()
 
     setupFileInEditor("file.network", file)

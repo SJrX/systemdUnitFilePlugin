@@ -39,8 +39,8 @@ private val ROUTE_TABLE_NAME = RegexTerminal("""\S+""", """(?![0-9]+(?:\s|$))[^\
  * Lenient corner: a non-decimal number such as `0x0` is indistinguishable from a possible user-defined
  * name and is accepted.
  */
-class ConfigParseRouteTableOptionValue : SimpleGrammarOptionValues(
-    "config_parse_route_section",
+class ConfigParseRouteTableOptionValue(parserName: String = "config_parse_route_section") : SimpleGrammarOptionValues(
+    parserName,
     SequenceCombinator(
         // The name branch must come first: its lenient shape matches digits too but only *validates*
         // non-numeric names, so under the classic matcher a number falls through to the second branch.

@@ -16,6 +16,9 @@ class ConfigParseRouterPrefixDelegationOptionValueTest : AbstractUnitFileTest() 
             IPv6SendRA=no
             IPv6SendRA=True
             IPv6SendRA=0
+            IPv6PrefixDelegation=static
+            IPv6PrefixDelegation=dhcpv6
+            IPv6PrefixDelegation=yes
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -31,10 +34,12 @@ class ConfigParseRouterPrefixDelegationOptionValueTest : AbstractUnitFileTest() 
             [Network]
             IPv6SendRA=maybe
             IPv6SendRA=both
+            IPv6SendRA=static
+            IPv6SendRA=dhcpv6
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
-    assertSize(2, myFixture.doHighlighting())
+    assertSize(4, myFixture.doHighlighting())
   }
 }

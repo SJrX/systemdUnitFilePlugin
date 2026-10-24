@@ -36,10 +36,12 @@ class ConfigParseRoutingPolicyRuleUidRangeOptionValueTest : AbstractUnitFileTest
             User=4294967295
             User=01000
             User=100-
+            User=1000-99999999999999999999
+            User=99999999999999999999-1000
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
-    assertSize(5, myFixture.doHighlighting())
+    assertSize(7, myFixture.doHighlighting())
   }
 }

@@ -17,6 +17,7 @@ class ConfigParseRoutePrefixOptionValueTest : AbstractUnitFileTest() {
             Route=::/0
             Route=2001:db8::1
             Route=2001:db8::/0x40
+            Route=2001:db8::/ 64
         """.trimIndent()
 
     setupFileInEditor("file.network", file)

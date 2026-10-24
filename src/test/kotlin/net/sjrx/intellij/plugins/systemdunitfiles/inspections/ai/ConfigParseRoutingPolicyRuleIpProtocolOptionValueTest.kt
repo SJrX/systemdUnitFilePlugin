@@ -20,6 +20,11 @@ class ConfigParseRoutingPolicyRuleIpProtocolOptionValueTest : AbstractUnitFileTe
             IPProtocol=17
             IPProtocol=0x11
             IPProtocol=255
+            IPProtocol=aggfrag
+            IPProtocol=AGGFRAG
+            IPProtocol=144
+            IPProtocol=0
+            IPProtocol=58
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -37,10 +42,12 @@ class ConfigParseRoutingPolicyRuleIpProtocolOptionValueTest : AbstractUnitFileTe
             IPProtocol=256
             IPProtocol=mptcp
             IPProtocol=-6
+            IPProtocol=3
+            IPProtocol=200
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
-    assertSize(4, myFixture.doHighlighting())
+    assertSize(6, myFixture.doHighlighting())
   }
 }
