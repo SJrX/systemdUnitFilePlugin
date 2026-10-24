@@ -3,6 +3,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COLON
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COLON_DELIMITED_INTERFACE_NAME
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COLON_FIELD_CHAR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
@@ -23,10 +24,12 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 
 /**
  * The container-side name. veth_extra_parse() does not reject an invalid one: if it is empty or fails
- * ifname_valid() it is silently replaced by the host-side name. So anything without a further colon is
- * accepted here.
+ * ifname_valid() it is silently replaced by the host-side name. So any field is accepted here; the
+ * field ends at the next unescaped colon, because extract_first_word() (no flags) makes the character
+ * after a backslash literal — `a:b\:c` is host `a`, container `b:c` (invalid, so it falls back to `a`)
+ * — and refuses a lone trailing backslash.
  */
-private val CONTAINER_SIDE = RegexTerminal("""[^:]+""", """[^:]+""")
+private val CONTAINER_SIDE = RegexTerminal("""$COLON_FIELD_CHAR+""", """$COLON_FIELD_CHAR+""")
 
 /**
  * Validator for the .nspawn `[Network] VirtualEthernetExtra=` setting (config_parse_veth_extra, ltype 0).

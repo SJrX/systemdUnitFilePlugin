@@ -17,6 +17,8 @@ class ConfigParseVethExtraOptionValueTest : AbstractUnitFileTest() {
             VirtualEthernetExtra=ve-host:
             VirtualEthernetExtra=ve-host:name-that-is-far-too-long
             VirtualEthernetExtra=ve-a:all
+            VirtualEthernetExtra=a:b\:c
+            VirtualEthernetExtra=ve-a:0x10
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
@@ -28,7 +30,8 @@ class ConfigParseVethExtraOptionValueTest : AbstractUnitFileTest() {
 
     @Test
     fun testInvalidValues() {
-        // Empty/too long/reserved host-side name, anything after a second colon (even empty), whitespace in the name.
+        // Empty/too long/reserved/ifindex-like host-side name, anything after a second colon (even empty), whitespace in
+        // the name.
         // language="unit file (systemd)"
         val file = """
             [Network]
@@ -38,12 +41,13 @@ class ConfigParseVethExtraOptionValueTest : AbstractUnitFileTest() {
             VirtualEthernetExtra=averyveryverylongname
             VirtualEthernetExtra=default
             VirtualEthernetExtra=host name:x
+            VirtualEthernetExtra=0x10:ve-b
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(6, highlights)
+        assertSize(7, highlights)
     }
 }

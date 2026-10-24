@@ -19,12 +19,15 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gra
 // `0o`/`0O` (octal) prefixes, and then strtol()/strtoul() with base 0, which adds C's `0x` hex and
 // leading-zero octal plus an optional `+`/`-` sign. mangle_base() only looks at the very start of the
 // string, so a sign in front of `0b`/`0o` defeats it and strtol() then stops at the `b`/`o` — such
-// spellings are rejected, and the shape below does not allow them.
+// spellings are rejected, and the shape below does not allow them. A sign *after* the prefix is fine,
+// though: mangle_base() strips `0b`/`0o` and strtol() in base 2/8 still takes a sign, so `0b-1` is -1
+// and `0o+120` is 80. (strtol() would also skip whitespace after the prefix, as in `0b 1`; that is not
+// modelled, as every caller here also splits on whitespace or the spelling is absurd.)
 
 /**
  * An integer in `[minInclusive, maxExclusive)` spelled any way safe_atoi()/safe_atou*() accept:
- * decimal, `0x` hex, leading-zero octal, `0o` octal or `0b` binary, with an optional sign on the
- * decimal/hex/octal forms. The range check is done on the real value, so it holds however the number
+ * decimal, `0x` hex, leading-zero octal, `0o` octal or `0b` binary, with an optional sign (before the
+ * number for decimal/hex/leading-zero octal, after the prefix for `0b`/`0o`). The range check is done on the real value, so it holds however the number
  * is spelled.
  *
  * A negative value is only in range when [minInclusive] allows it. safe_atou() accepts `-0` (it only
@@ -37,23 +40,9 @@ class SafeAtoNumberTerminal(
   private val maxExclusive: Long,
 ) : TerminalCombinator {
 
-  private fun span(value: String, offset: Int): String? = SHAPE.matchAt(value, offset)?.value
+  private fun span(value: String, offset: Int): String? = SAFE_ATO_SHAPE.matchAt(value, offset)?.value
 
-  /** The numeric value of [text], or null when it does not fit a Long (and so is out of range anyway). */
-  private fun valueOf(text: String): Long? {
-    if (text.length > 2 && (text.startsWith("0b") || text.startsWith("0B"))) return text.drop(2).toLongOrNull(2)
-    if (text.length > 2 && (text.startsWith("0o") || text.startsWith("0O"))) return text.drop(2).toLongOrNull(8)
-    val negative = text.startsWith("-")
-    val body = text.removePrefix("-").removePrefix("+")
-    val magnitude = when {
-      body.length > 2 && (body.startsWith("0x") || body.startsWith("0X")) -> body.drop(2).toLongOrNull(16)
-      body.length > 1 && body.startsWith("0") -> body.drop(1).toLongOrNull(8)
-      else -> body.toLongOrNull()
-    } ?: return null
-    return if (negative) -magnitude else magnitude
-  }
-
-  private fun inRange(text: String): Boolean = valueOf(text)?.let { it >= minInclusive && it < maxExclusive } ?: false
+  private fun inRange(text: String): Boolean = safeAtoValueOf(text)?.let { it >= minInclusive && it < maxExclusive } ?: false
 
   override fun SyntacticMatch(value: String, offset: Int): MatchResult {
     val text = span(value, offset) ?: return NoMatch
@@ -72,12 +61,32 @@ class SafeAtoNumberTerminal(
   }
 
   override fun toString(): String = "SafeAto($minInclusive,$maxExclusive)"
-
-  private companion object {
-    // The prefixed forms come first so `0b1`/`0x1f` are not read as a lone octal `0`.
-    val SHAPE = Regex("""0[bB][01]+|0[oO][0-7]+|[+-]?(?:0[xX][0-9a-fA-F]+|0[0-7]*|[1-9][0-9]*)""")
-  }
 }
+
+// The prefixed forms come first so `0b1`/`0x1f` are not read as a lone octal `0`. Kotlin's
+// toLongOrNull() takes the sign that may follow `0b`/`0o`.
+private val SAFE_ATO_SHAPE = Regex("""0[bB][+-]?[01]+|0[oO][+-]?[0-7]+|[+-]?(?:0[xX][0-9a-fA-F]+|0[0-7]*|[1-9][0-9]*)""")
+
+/**
+ * The numeric value of [text] read the way safe_atoi()/safe_atou*() read it, assuming [text] is one
+ * whole [SAFE_ATO_SHAPE] match; null when it does not fit a Long (and so is out of any range anyway).
+ */
+private fun safeAtoValueOf(text: String): Long? {
+  if (text.length > 2 && (text.startsWith("0b") || text.startsWith("0B"))) return text.drop(2).toLongOrNull(2)
+  if (text.length > 2 && (text.startsWith("0o") || text.startsWith("0O"))) return text.drop(2).toLongOrNull(8)
+  val negative = text.startsWith("-")
+  val body = text.removePrefix("-").removePrefix("+")
+  val magnitude = when {
+    body.length > 2 && (body.startsWith("0x") || body.startsWith("0X")) -> body.drop(2).toLongOrNull(16)
+    body.length > 1 && body.startsWith("0") -> body.drop(1).toLongOrNull(8)
+    else -> body.toLongOrNull()
+  } ?: return null
+  return if (negative) -magnitude else magnitude
+}
+
+/** Whether all of [text] is a number safe_atoi() reads as an `int` greater than zero — parse_ifindex() success. */
+private fun isPositiveIfindex(text: String): Boolean =
+  SAFE_ATO_SHAPE.matchEntire(text) != null && safeAtoValueOf(text)?.let { it in 1..Int.MAX_VALUE.toLong() } == true
 
 /** A [SafeAtoNumberTerminal] coloured as a literal, like the other number terminals. */
 fun safeAtoNumber(minInclusive: Long, maxExclusive: Long): Combinator =
@@ -104,19 +113,54 @@ fun enumWithBoolean(vararg names: String): Combinator =
 // ---------------------------------------------------------------------------------------------------
 // Interface names — ifname_valid() (ifname_valid_full with no flags, src/basic/socket-util.c):
 // printable ASCII 33…126 except `:`, `/` and `%`, at most IFNAMSIZ-1 = 15 bytes, not `.`/`..`, not
-// `all`/`default`, and not all digits. (parse_ifindex() also refuses anything safe_atoi() reads as a
-// positive number, e.g. `0x10` or `+5`; those rare spellings are not modelled and are accepted.)
+// `all`/`default`, not all digits, and not anything parse_ifindex() accepts — i.e. anything safe_atoi()
+// reads as a positive `int`, such as `0x10`, `+5`, `0o7` or `0b1`. (`0x0`, `-5` or an out-of-range
+// `0xFFFFFFFFFF` are not ifindexes and so are valid names.)
 //
 // Unlike [INTERFACE_NAME] the syntactic form stops at `:` as well as whitespace, because every nspawn
 // caller splits `NAME:NAME` pairs on the colon.
+//
+// Not modelled: the outer extract_first_word(WHITESPACE, 0) that splits Interface=/MACVLAN=/IPVLAN=
+// lists honours backslash escapes, so `a\ b` is one (invalid) word there but two valid names here,
+// and an escaping backslash is counted towards the 15-byte limit here although C drops it.
 
 private const val NSPAWN_IFNAME_CHAR = """[\x21-\x7E&&[^:/%]]"""
 
 private fun nspawnIfnameSemantic(maxLength: Int) =
   """(?!(?:[0-9]+|\.\.?|all|default)(?!$NSPAWN_IFNAME_CHAR))$NSPAWN_IFNAME_CHAR{1,$maxLength}"""
 
+/**
+ * A [RegexTerminal] for interface names that additionally refuses, as ifname_valid() does, a span that
+ * parse_ifindex() would read as an interface index.
+ */
+private class NspawnInterfaceNameTerminal : TerminalCombinator {
+  private val regex = RegexTerminal("""[^\s:]+""", nspawnIfnameSemantic(15))
+
+  override fun SyntacticMatch(value: String, offset: Int): MatchResult = regex.SyntacticMatch(value, offset).owned()
+
+  override fun SemanticMatch(value: String, offset: Int): MatchResult {
+    val result = regex.SemanticMatch(value, offset)
+    if (result.matchResult >= 0 && isPositiveIfindex(value.substring(offset, result.matchResult))) {
+      return NoMatch.copy(longestMatch = offset)
+    }
+    return result.owned()
+  }
+
+  override fun parse(value: String, offset: Int): Sequence<ParseStep> = regex.parse(value, offset).map { step ->
+    when (step) {
+      is Parse -> step.copy(tokens = step.tokens.map { it.copy(terminal = this, valid = it.valid && !isPositiveIfindex(it.text)) })
+      is Stuck -> Stuck(step.offset, setOf(this))
+    }
+  }
+
+  /** Report this terminal, not the wrapped regex, as the one that matched. */
+  private fun MatchResult.owned(): MatchResult = if (matchResult < 0) this else copy(terminals = listOf(this@NspawnInterfaceNameTerminal))
+
+  override fun toString(): String = "NspawnIfname"
+}
+
 /** One interface name in a `NAME[:NAME]` pair. */
-val COLON_DELIMITED_INTERFACE_NAME = RegexTerminal("""[^\s:]+""", nspawnIfnameSemantic(15))
+val COLON_DELIMITED_INTERFACE_NAME: TerminalCombinator = NspawnInterfaceNameTerminal()
 
 
 // ---------------------------------------------------------------------------------------------------
@@ -126,7 +170,7 @@ val COLON_DELIMITED_INTERFACE_NAME = RegexTerminal("""[^\s:]+""", nspawnIfnameSe
 // backslash is an error. Whitespace is NOT a separator here, so a path may contain spaces.
 
 /** The characters one colon-delimited field may contain. */
-private const val COLON_FIELD_CHAR = """(?:[^:\\]|\\[\s\S])"""
+internal const val COLON_FIELD_CHAR = """(?:[^:\\]|\\[\s\S])"""
 
 /** Any non-empty colon-delimited field — the lenient (syntactic) shape shared by the terminals below. */
 private const val COLON_FIELD = """$COLON_FIELD_CHAR+"""

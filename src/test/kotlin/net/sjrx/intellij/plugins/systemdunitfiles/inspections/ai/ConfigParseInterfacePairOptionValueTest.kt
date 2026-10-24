@@ -19,6 +19,7 @@ class ConfigParseInterfacePairOptionValueTest : AbstractUnitFileTest() {
             Interface=eth0    wlan0
             MACVLAN=enp0s31f6
             IPVLAN=a.b:c-d
+            Interface=0x0 -5 0b-1 0xFFFFFFFFFF
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
@@ -30,7 +31,8 @@ class ConfigParseInterfacePairOptionValueTest : AbstractUnitFileTest() {
 
     @Test
     fun testInvalidValues() {
-        // Reserved name, all digits, a second colon, too long (either side), `/`, and a reserved name later in the list.
+        // Reserved name, all digits, a second colon, too long (either side), `/`, a reserved name later in the list,
+        // and names that parse_ifindex() reads as a positive index (so ifname_valid() refuses them).
         // language="unit file (systemd)"
         val file = """
             [Network]
@@ -41,12 +43,15 @@ class ConfigParseInterfacePairOptionValueTest : AbstractUnitFileTest() {
             Interface=averyveryverylongname
             MACVLAN=eth/0
             IPVLAN=eth0 default
+            Interface=0x10
+            MACVLAN=+5
+            IPVLAN=eth0:0o7
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(7, highlights)
+        assertSize(10, highlights)
     }
 }

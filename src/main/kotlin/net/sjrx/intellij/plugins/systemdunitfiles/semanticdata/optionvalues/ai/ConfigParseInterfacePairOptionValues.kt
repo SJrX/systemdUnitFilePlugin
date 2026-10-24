@@ -44,9 +44,13 @@ private val INTERFACE_PAIR_LIST: Combinator = SequenceCombinator(
  *
  * The value is a whitespace-separated list (extract_first_word with WHITESPACE). Each word is split once
  * at the first `:`: the host-side name must pass ifname_valid() (printable ASCII except `:`, `/`, `%`; at
- * most 15 bytes; not all digits, `.`, `..`, `all` or `default`), and the container-side name, if present
- * and non-empty, must too — so `eth0:` is the same as `eth0`, and a second colon is an invalid name.
- * Unlike most nspawn settings an invalid word is a hard error that fails loading the file.
+ * most 15 bytes; not all digits, `.`, `..`, `all` or `default`, and nothing parse_ifindex() reads as a
+ * positive index such as `0x10` or `+5`), and the container-side name, if present and non-empty, must
+ * too — so `eth0:` is the same as `eth0`, and a second colon is an invalid name. Unlike most nspawn
+ * settings an invalid word is a hard error that fails loading the file.
+ *
+ * Deliberately lenient: backslash escapes in the outer whitespace split are not modelled, so
+ * `eth0\ x` is read as two names here although C sees one invalid name `eth0 x`.
  *
  * The prefixed default name (`mv-eth0`) may exceed 15 bytes; nspawn shortens it later, so the
  * host-side name alone is what is length-checked.

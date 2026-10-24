@@ -23,6 +23,9 @@ class ConfigParseOomScoreAdjustOptionValueTest : AbstractUnitFileTest() {
             OOMScoreAdjust=0b101
             OOMScoreAdjust=017
             OOMScoreAdjust=-0
+            OOMScoreAdjust=0b-1
+            OOMScoreAdjust=0o+120
+            OOMScoreAdjust=0O-1750
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
@@ -44,12 +47,13 @@ class ConfigParseOomScoreAdjustOptionValueTest : AbstractUnitFileTest() {
             OOMScoreAdjust=0x3e9
             OOMScoreAdjust=1.5
             OOMScoreAdjust=+0b1
+            OOMScoreAdjust=0b-1111101001
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(6, highlights)
+        assertSize(7, highlights)
     }
 }
