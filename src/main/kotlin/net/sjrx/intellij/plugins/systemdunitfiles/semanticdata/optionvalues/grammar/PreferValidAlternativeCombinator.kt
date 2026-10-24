@@ -1,21 +1,26 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar
 
 /**
- * An [AlternativeCombinator] whose *syntactic* pass first looks for a branch that is already valid
- * at this offset, and only falls back to the usual first-syntactic-match when none is.
+ * A workaround for the LEGACY (classic SyntacticMatch/SemanticMatch) engine only. Under the new
+ * list-of-successes engine ([parse]/validate) it behaves exactly like [AlternativeCombinator].
  *
- * Under the classic SyntacticMatch/SemanticMatch engine a plain AlternativeCombinator commits to the
- * first branch that *syntactically* matches. That goes wrong for "one of these names, or a boolean":
- * the names terminal's lenient shape regex happily matches part of a perfectly good boolean — the `t`
- * of `tRUE` (its regex is lower-case only), or the `fals` of `false` when no name is five characters
- * long — and the enclosing sequence then fails at the stranded remainder. Asking each branch for a
- * semantic match first lets the boolean win when it is the right reading, while an invalid value still
- * falls through to the lenient branch so it can be located and offered quick-fixes.
+ * The classic engine's [AlternativeCombinator] returns the first branch that *syntactically* matches
+ * and never backtracks. A [FlexibleLiteralChoiceTerminal] matches syntactically with a lenient regex
+ * built from its choices' characters and capped at the longest choice, so a first branch can grab
+ * part of a value that belongs to a later branch, and the enclosing sequence then fails on the
+ * stranded rest. Every one of these is valid, and every one fails with a plain AlternativeCombinator:
  *
- * The list-of-successes engine ([parse]) already tries every branch, so it is inherited unchanged.
+ *  - `Alt(Flex("yes", "no"), Flex("maybe"))` on `maybe`: the first regex `[a-z]{1,3}` takes `may`.
+ *  - `Alt(Flex("ab"), Flex("abc"))` on `abc`: the exact prefix `ab` wins before `abc` is tried.
+ *  - `Alt(Flex("none", "both", "ipv4", "ipv6"), BOOLEAN)` on `false`: the 4-char cap takes `fals`.
+ *  - `Alt(Flex("connected", "disconnected"), BOOLEAN)` on `tRUE`: the lower-case class stops at `R`.
  *
- * Order still matters for the semantic pass: put the names before the boolean, so a prefix such as
- * the `no` in `none` cannot be taken by the boolean.
+ * This class first asks each branch for an exact (semantic) match and returns the first that has
+ * one; only if none does it fall back to the usual lenient first-match, so an invalid value can
+ * still be located and offered quick-fixes. Order still matters for that exact pass: put longer or
+ * more specific branches first (e.g. names before [BOOLEAN], so `no` cannot be taken out of `none`).
+ *
+ * Can be replaced by a plain [AlternativeCombinator] once the legacy engine is removed.
  */
 class PreferValidAlternativeCombinator(vararg tokens: Combinator) : AlternativeCombinator(*tokens) {
 
