@@ -6,6 +6,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UNIT_PATH
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
 
 /*
  * BPFProgram= ([Service]/[Socket]/[Mount]/[Swap]/[Slice]/[Scope]).
@@ -30,7 +31,7 @@ private val BPF_CGROUP_ATTACH_TYPE = FlexibleLiteralChoiceTerminal(
  *
  * config_parse_bpf_foreign_program() splits off the first `:`-delimited word (extract_first_word with
  * `:` as the only separator; a run of colons coalesces, so `egress::/x` still leaves `/x`), requires
- * something after it, and looks the word up in bpf_cgroup_attach_type_table — one of `ingress`,
+ * something after it (leading colons are skipped too, so `:egress:/x` is the type `egress`), and looks the word up in bpf_cgroup_attach_type_table — one of `ingress`,
  * `egress`, `sock_create`, `sock_ops`, `device`, `bind4`, `bind6`, `connect4`, `connect6`,
  * `post_bind4`, `post_bind6`, `sendmsg4`, `sendmsg6`, `sysctl`, `recvmsg4`, `recvmsg6`, `getsockopt`,
  * `setsockopt` (exact, case-sensitive).
@@ -51,6 +52,7 @@ private val BPF_CGROUP_ATTACH_TYPE = FlexibleLiteralChoiceTerminal(
 class ConfigParseBpfForeignProgramOptionValue : SimpleGrammarOptionValues(
     "config_parse_bpf_foreign_program",
     SequenceCombinator(
+        ZeroOrOne(RegexTerminal(":+", ":+")),
         BPF_CGROUP_ATTACH_TYPE,
         RegexTerminal(":+", ":+"),
         UNIT_PATH,

@@ -34,6 +34,8 @@ class ConfigParseBpfForeignProgramOptionValueTest : AbstractUnitFileTest() {
             BPFProgram=egress:%t/bpf/prog
             BPFProgram=egress::/sys/fs/bpf/double-colon
             BPFProgram=egress:/sys/fs/bpf/with:colon
+            BPFProgram=:egress:/sys/fs/bpf/leading-colon
+            BPFProgram=::ingress::/sys/fs/bpf/x
         """.trimIndent()
 
         setupFileInEditor("file.service", file)
@@ -90,10 +92,11 @@ class ConfigParseBpfForeignProgramOptionValueTest : AbstractUnitFileTest() {
             BPFProgram=egress:sys/fs/bpf/x
             BPFProgram=egress:/sys/fs/bpf/../x
             BPFProgram=cgroup_inet_egress:/sys/fs/bpf/x
+            BPFProgram=:/sys/fs/bpf/x
         """.trimIndent()
 
         setupFileInEditor("file.service", file)
         enableInspection(InvalidValueInspection::class.java)
-        assertSize(8, myFixture.doHighlighting())
+        assertSize(9, myFixture.doHighlighting())
     }
 }

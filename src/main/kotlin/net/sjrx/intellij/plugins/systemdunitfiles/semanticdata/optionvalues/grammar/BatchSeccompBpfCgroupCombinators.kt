@@ -63,7 +63,8 @@ val ERRNO_NAME = FlexibleLiteralChoiceTerminal(*ERRNO_NAMES, ignoreCase = true)
  * range-checked in its real base.
  *
  * safe_atoi() first applies mangle_base() (#L403), which turns a leading `0b`/`0B` into base 2 and
- * `0o`/`0O` into base 8, and otherwise calls strtol() with base 0 — so an optional `+`/`-` sign, then
+ * `0o`/`0O` into base 8 (strtol() still takes a sign after that prefix: `0b+1`), and otherwise calls
+ * strtol() with base 0 — so an optional `+`/`-` sign, then
  * `0x` hex, leading-`0` octal or decimal. [UnsignedNumberTerminal] covers only the unsigned base-0
  * spellings, which would flag `+5`, `0b11` or `-0`, all of which systemd takes.
  */
@@ -106,9 +107,11 @@ class SafeAtoiTerminal(private val minInclusive: Long, private val maxExclusive:
   override fun toString(): String = "SafeAtoi($minInclusive,$maxExclusive)"
 
   private companion object {
-    // Prefixed forms first, so "0x10" / "0b11" aren't read as a lone 0. The 0b/0o forms take no sign:
-    // mangle_base only looks at the very first characters, and strtol() would stop at the 'b'/'o'.
-    val SHAPE = Regex("""0[bB][01]+|0[oO][0-7]+|[+-]?(?:0[xX][0-9a-fA-F]+|0[0-7]+|[0-9]+)""")
+    // Prefixed forms first, so "0x10" / "0b11" aren't read as a lone 0. A sign may not come BEFORE
+    // 0b/0o (mangle_base only looks at the very first characters, and strtol() would stop at the
+    // 'b'/'o'), but one may come AFTER it: mangle_base strips the prefix and strtol("+1", 2) is fine,
+    // so `0b+1` and `0o-0` are accepted; the range check then rejects `0b-1`.
+    val SHAPE = Regex("""0[bB][+-]?[01]+|0[oO][+-]?[0-7]+|[+-]?(?:0[xX][0-9a-fA-F]+|0[0-7]+|[0-9]+)""")
   }
 }
 

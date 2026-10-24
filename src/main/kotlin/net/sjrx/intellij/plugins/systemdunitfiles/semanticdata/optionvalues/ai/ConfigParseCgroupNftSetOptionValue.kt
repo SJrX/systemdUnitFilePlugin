@@ -9,6 +9,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrMore
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
 
 /*
  * NFTSet= in the cgroup context ([Service]/[Socket]/[Mount]/[Swap]/[Slice]/[Scope]).
@@ -20,6 +21,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/firewall-util.c#L1125   nfproto_table
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L824   nft_identifier_valid (NFT_NAME_MAXLEN 256)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L240   extract_many_words (":" , EXTRACT_CUNESCAPE)
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L39-L55   extract_first_word (skips leading separators; trailing ones coalesce at #L151-L158)
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/units/TEST-07-PID1.nft.sh#L24   NFTSet=cgroup:inet:sd_test:c user:inet:sd_test:u group:inet:sd_test:g
  * linux  https://www.netfilter.org/projects/nftables/manpage.html   (nft(8): address families, table/set names)
  */
@@ -43,8 +45,15 @@ private val NFT_IDENTIFIER = RegexTerminal("""[^\s:"']+""", """[A-Za-z][A-Za-z0-
  */
 private val FIELD_SEPARATOR = RegexTerminal(":+", ":+")
 
+/**
+ * extract_first_word() skips leading separators, and after the 4th word it swallows any trailing run of
+ * separators up to the end of the string (leaving q == NULL, so the isempty(q) check passes) — hence
+ * `:cgroup:inet:t:s` and `cgroup:inet:t:s:` are both accepted.
+ */
 private val NFT_SET_TUPLE = SequenceCombinator(
+    ZeroOrOne(FIELD_SEPARATOR),
     NFT_CGROUP_SOURCE, FIELD_SEPARATOR, NFT_FAMILY, FIELD_SEPARATOR, NFT_IDENTIFIER, FIELD_SEPARATOR, NFT_IDENTIFIER,
+    ZeroOrOne(FIELD_SEPARATOR),
 )
 
 /** The outer split uses EXTRACT_UNQUOTE, so a whole tuple may be quoted. */
@@ -69,6 +78,12 @@ private val NFT_SET_ENTRY = AlternativeCombinator(
  *
  * The man page's term reads `NFTSet=family:table:set`, but both its body text and the C parser require
  * the leading source type; this grammar follows the C.
+ *
+ * Leading and trailing `:` around a tuple are accepted (see NFT_SET_TUPLE).
+ *
+ * Known over-rejection: the outer whitespace split uses EXTRACT_UNQUOTE, so quotes *inside* a tuple
+ * (`cgroup:inet:"t":s`) are removed by systemd and accepted; this grammar only accepts a tuple quoted
+ * as a whole. No real configuration writes that.
  *
  * Deliberately lenient: backslash escapes inside a name (decoded by EXTRACT_CUNESCAPE before the
  * identifier check) are not decoded — `\` is simply accepted as an identifier character, as

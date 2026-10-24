@@ -19,6 +19,10 @@ class ConfigParseCgroupNftSetOptionValueTest : AbstractUnitFileTest() {
             NFTSet=group:arp:a:b group:bridge:a:b group:netdev:a:b
             NFTSet="cgroup:inet:filter:quoted"
             NFTSet=cgroup::inet:t:s
+            NFTSet=:cgroup:inet:t:s
+            NFTSet=cgroup:inet:t:s:
+            NFTSet=::cgroup:inet:t:s:: user:inet:t:u:
+            NFTSet="cgroup:inet:t:s:"
         """.trimIndent()
 
         setupFileInEditor("file.service", file)
@@ -76,10 +80,11 @@ class ConfigParseCgroupNftSetOptionValueTest : AbstractUnitFileTest() {
             NFTSet=cgroup:inet:t:s,user:inet:t:u
             NFTSet=cgroup:inet:t-x:s
             NFTSet=CGROUP:inet:t:s
+            NFTSet=cgroup:inet:t:
         """.trimIndent()
 
         setupFileInEditor("file.service", file)
         enableInspection(InvalidValueInspection::class.java)
-        assertSize(9, myFixture.doHighlighting())
+        assertSize(10, myFixture.doHighlighting())
     }
 }

@@ -21,7 +21,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/filesystems.c#L21   filesystem_set_find (group names)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/core/bpf-restrict-fs.c#L117   fs_type_from_string at BPF-map time ("Invalid filesystem name, ignoring")
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/filesystem-sets.py#L9   NAME_TO_MAGIC / FILESYSTEM_SETS (the name tables)
- * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/units/TEST-07-PID1.exec-context.sh#L342   ("foo", "@foo" are logged and ignored)
+ * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/units/TEST-07-PID1.exec-context.sh#L351-L358   ("foo", "@foo" are logged and ignored)
  * linux  https://man7.org/linux/man-pages/man2/statfs.2.html   (the f_type magics the names map to)
  */
 
@@ -63,8 +63,9 @@ private val LIST = SequenceCombinator(
  *    resolved with fs_type_from_string() against NAME_TO_MAGIC and an unknown one is logged and skipped
  *    — so it is flagged here. The lookup is a case-sensitive gperf table (`EXT4` is not `ext4`).
  *
- * Deliberately lenient: quote characters in the middle of a word (`ext"4"`, which EXTRACT_UNQUOTE would
- * also accept) are not modelled and get flagged.
+ * Known over-rejection (not lenient): quote characters inside or at the end of a word (`ext"4"`,
+ * `ext4""`), which EXTRACT_UNQUOTE strips so systemd accepts them, are not modelled and get flagged.
+ * Only a word quoted as a whole is accepted. No real configuration writes these.
  *
  * Covers: Service.RestrictFileSystems, Socket.RestrictFileSystems, Mount.RestrictFileSystems,
  * Swap.RestrictFileSystems.
