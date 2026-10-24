@@ -413,6 +413,15 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_socket_service", "0") to ConfigParseSocketServiceOptionValue() as OptionValueInformation,
     Validator("config_parse_service_sockets", "0") to ConfigParseServiceSocketsOptionValue() as OptionValueInformation,
 
+    // Batch 2026-10: unit-core
+    // config_parse_timer: TIMER_CALENDAR goes to calendar_spec_from_string, every other ltype to parse_sec.
+    Validator("config_parse_timer", "TIMER_CALENDAR") to ConfigParseTimerCalendarOptionValue() as OptionValueInformation,
+    Validator("config_parse_timer", "TIMER_ACTIVE") to ConfigParseTimerMonotonicOptionValue() as OptionValueInformation,
+    Validator("config_parse_timer", "TIMER_BOOT") to ConfigParseTimerMonotonicOptionValue() as OptionValueInformation,
+    Validator("config_parse_timer", "TIMER_STARTUP") to ConfigParseTimerMonotonicOptionValue() as OptionValueInformation,
+    Validator("config_parse_timer", "TIMER_UNIT_ACTIVE") to ConfigParseTimerMonotonicOptionValue() as OptionValueInformation,
+    Validator("config_parse_timer", "TIMER_UNIT_INACTIVE") to ConfigParseTimerMonotonicOptionValue() as OptionValueInformation,
+
   )
 
   return allValidators
