@@ -428,6 +428,17 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_socket_listen", "SOCKET_MQUEUE") to ConfigParseSocketListenFileOptionValue() as OptionValueInformation,
     Validator("config_parse_socket_listen", "SOCKET_USB_FUNCTION") to ConfigParseSocketListenFileOptionValue() as OptionValueInformation,
     Validator("config_parse_socket_listen", "SOCKET_SPECIAL") to ConfigParseSocketListenSpecialOptionValue() as OptionValueInformation,
+    Validator("config_parse_service_refresh_on_reload", "0") to ConfigParseServiceRefreshOnReloadOptionValue() as OptionValueInformation,
+    Validator("config_parse_pid_file", "0") to ConfigParsePidFileOptionValue() as OptionValueInformation,
+    Validator("config_parse_open_file", "0") to ConfigParseOpenFileOptionValue() as OptionValueInformation,
+    Validator("config_parse_job_timeout_sec", "0") to ConfigParseJobTimeoutSecOptionValue() as OptionValueInformation,
+    Validator("config_parse_bus_name", "0") to ConfigParseBusNameOptionValue() as OptionValueInformation,
+    // RequiresOverridable=/RequisiteOverridable= just log and forward to config_parse_unit_deps.
+    Validator("config_parse_obsolete_unit_deps", "UNIT_REQUIRES") to UnitDependencyOptionValue() as OptionValueInformation,
+    Validator("config_parse_obsolete_unit_deps", "UNIT_REQUISITE") to UnitDependencyOptionValue() as OptionValueInformation,
+    Validator("config_parse_path", "0") to ConfigParsePathOptionValue() as OptionValueInformation,
+    Validator("config_parse_long", "0") to ConfigParseLongOptionValue() as OptionValueInformation,
+    Validator("config_parse_iec_size_long", "0") to ConfigParseIecSizeLongOptionValue() as OptionValueInformation,
 
   )
 

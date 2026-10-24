@@ -1,8 +1,8 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.TIMESPAN
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.withUnitSpecifiers
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.TIMESPAN
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.withUnitSpecifiers
 
 /*
  * [Timer] OnActiveSec= / OnBootSec= / OnStartupSec= / OnUnitActiveSec= / OnUnitInactiveSec=

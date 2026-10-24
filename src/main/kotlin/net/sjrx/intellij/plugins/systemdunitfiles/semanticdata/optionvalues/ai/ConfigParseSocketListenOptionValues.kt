@@ -14,14 +14,14 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UNIT_ABSOLUTE_NON_API_VFS_PATH
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UNIT_ABSOLUTE_PATH
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UNIT_SPECIFIER_LETTERS
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UNIT_TEXT_CHAR
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.UNIT_ABSOLUTE_NON_API_VFS_PATH
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.UNIT_ABSOLUTE_PATH
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.UNIT_SPECIFIER_LETTERS
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.UNIT_TEXT_CHAR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtou
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.withUnitSpecifiers
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.safeAtou
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.withUnitSpecifiers
 
 /*
  * [Socket] ListenStream= / ListenDatagram= / ListenSequentialPacket= / ListenNetlink= (SOCKET_SOCKET),
@@ -65,7 +65,7 @@ private val PERCENT_START_SPECIFIER = """%[$UNIT_SPECIFIER_LETTERS]"""
 // because a specifier's expansion length is unknown; a specifier may also stand at the start (%t/foo).
 private val UNIX_SOCKET_ADDRESS = RegexTerminal(
   """[/@%][\s\S]*""",
-  """(?:(?=[^%]*$)[/@][\s\S]{1,106}|(?=[\s\S]*%)(?:[/@]|$PERCENT_START_SPECIFIER)$UNIT_TEXT_CHAR*)"""
+  """(?:(?=[^%]*$)[/@][\s\S]{1,106}|(?=[\s\S]*%)(?:[/@]|$PERCENT_START_SPECIFIER)$UNIT_TEXT_CHAR*)$"""
 )
 
 private val IP_PORT = safeAtou(1, 65535)
