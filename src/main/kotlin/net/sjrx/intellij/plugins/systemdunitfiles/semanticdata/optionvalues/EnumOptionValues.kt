@@ -1,7 +1,13 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues
 
 import com.google.common.collect.ImmutableSet
+import com.intellij.openapi.project.Project
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
 
 
@@ -74,7 +80,32 @@ class PersonalityOptionValue : AbstractGrammarEnumOptionValue(ImmutableSet.of("a
   }
 }
 
-class CpuSchedulingPolicyOptionValue : AbstractGrammarEnumOptionValue(ImmutableSet.of("other", "batch", "idle", "fifo", "rr"), VALIDATOR_NAME) {
+/**
+ * sched_policy_from_string(): a name from sched_policy_table, or (string-table fallback) any safe_atou() number up
+ * to INT_MAX.
+ * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/process-util.c#L2317-L2326
+ * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/string-table.c#L65-L80
+ */
+class CpuSchedulingPolicyOptionValue : SimpleGrammarOptionValues(
+  VALIDATOR_NAME,
+  SequenceCombinator(
+    AlternativeCombinator(
+      FlexibleLiteralChoiceTerminal("other", "batch", "idle", "fifo", "ext", "rr", ignoreCase = false),
+      SafeAtoTerminal(
+        signed = false,
+        base = 0,
+        flags = emptySet(),
+        minInclusive = 0L,
+        maxInclusive = Int.MAX_VALUE.toLong(),
+        acceptsWhitespace = true,
+        acceptsMinus = true,
+      ),
+    ),
+    EOF(),
+  ),
+) {
+  override fun getAutoCompleteOptions(project: Project): Set<String> = ImmutableSet.of("other", "batch", "idle", "fifo", "ext", "rr")
+
   companion object {
     const val VALIDATOR_NAME = "config_parse_exec_cpu_sched_policy"
   }
@@ -86,7 +117,32 @@ class NumaPolicyOptionValue : AbstractGrammarEnumOptionValue(ImmutableSet.of("de
   }
 }
 
-class IOSchedulingClassOptionValue : AbstractGrammarEnumOptionValue(ImmutableSet.of("realtime", "best-effort", "idle"), VALIDATOR_NAME) {
+/**
+ * ioprio_class_from_string(): a name from ioprio_class_table, or (string-table fallback) any safe_atou() number up
+ * to IOPRIO_NR_CLASSES-1 (7).
+ * https://github.com/systemd/systemd/blob/0f0682b773/src/shared/ioprio-util.c#L24-L31
+ * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/string-table.c#L65-L80
+ */
+class IOSchedulingClassOptionValue : SimpleGrammarOptionValues(
+  VALIDATOR_NAME,
+  SequenceCombinator(
+    AlternativeCombinator(
+      FlexibleLiteralChoiceTerminal("none", "realtime", "best-effort", "idle", ignoreCase = false),
+      SafeAtoTerminal(
+        signed = false,
+        base = 0,
+        flags = emptySet(),
+        minInclusive = 0L,
+        maxInclusive = 7L,
+        acceptsWhitespace = true,
+        acceptsMinus = true,
+      ),
+    ),
+    EOF(),
+  ),
+) {
+  override fun getAutoCompleteOptions(project: Project): Set<String> = ImmutableSet.of("none", "realtime", "best-effort", "idle")
+
   companion object {
     const val VALIDATOR_NAME = "config_parse_exec_io_class"
   }

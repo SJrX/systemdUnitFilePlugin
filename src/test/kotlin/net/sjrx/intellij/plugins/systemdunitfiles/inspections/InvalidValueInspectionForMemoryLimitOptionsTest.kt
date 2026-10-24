@@ -30,13 +30,17 @@ class InvalidValueInspectionForMemoryLimitOptionsTest : AbstractUnitFileTest() {
   fun testNoWarningWithVariousPercentageValues() {
     // Fixture Setup
     // language="unit file (systemd)"
+    // MemoryHigh=0% (a limit of 0, refused for MemoryHigh=) and MemoryMin=50   % (no whitespace allowed before the
+    // '%') used to be listed here, but systemd rejects both; MemoryLow=0% and MemorySwapMax=0% are fine.
     val file = """
            [Service]
-           MemoryHigh=0%
+           MemoryHigh=0.5%
            MemoryLow=1%
-           MemoryMin=50   %  
+           MemoryMin=50%  
            MemoryMax=50.0%
            MemorySwapMax=100%
+           MemoryLow=0%
+           StartupMemorySwapMax=0%
            """.trimIndent()
 
 

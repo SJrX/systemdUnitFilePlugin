@@ -109,7 +109,10 @@ class InvalidValueInspectionForSimpleGrammarOptionValue : AbstractUnitFileTest()
     assertSize(0, highlights)
   }
 
-  fun testWarningsWhenInValidCapabilitiesAreSet() {
+  fun testNoWarningsWhenUnknownCapabilitiesAreSet() {
+    // capability_set_from_string() only logs unknown names at debug level and skips them, so systemd accepts all of
+    // these. The test used to assert four warnings (#568).
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/capability-list.c#L160-L186
     // Fixture Setup
     // language="unit file (systemd)"
     val file="""
@@ -126,7 +129,7 @@ class InvalidValueInspectionForSimpleGrammarOptionValue : AbstractUnitFileTest()
     val highlights = myFixture.doHighlighting()
 
     // Verification
-    assertSize(4, highlights)
+    assertSize(0, highlights)
   }
 
 
@@ -161,13 +164,11 @@ class InvalidValueInspectionForSimpleGrammarOptionValue : AbstractUnitFileTest()
     // language="unit file (systemd)"
     val file="""
       [Service]
-      StateDirectoryQuota=1P
       StateDirectoryQuota=-1
       StateDirectoryQuota=on
       StateDirectoryQuota=allo
-      StateDirectoryQuota=4294967296
       StateDirectoryQuota=500%
-      StateDirectoryQuota=5.52%
+      StateDirectoryQuota=5.123%
     """.trimIndent()
 
     // Execute SUT
@@ -176,7 +177,9 @@ class InvalidValueInspectionForSimpleGrammarOptionValue : AbstractUnitFileTest()
     val highlights = myFixture.doHighlighting()
 
     // Verification
-    assertSize(7, highlights)
+    // 1P, 4294967296 and 5.52% used to be listed here, but config_parse_exec_quota() takes any parse_size() value and
+    // parse_permyriad() allows two decimals (#568).
+    assertSize(5, highlights)
   }
 
 }

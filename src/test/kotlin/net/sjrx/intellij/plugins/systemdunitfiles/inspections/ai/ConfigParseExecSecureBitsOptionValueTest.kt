@@ -32,7 +32,9 @@ class ConfigParseExecSecureBitsOptionValueTest : AbstractUnitFileTest() {
     }
 
     @Test
-    fun testInvalidValues() {
+    fun testUnknownWordsAreAccepted() {
+        // secure_bits_from_string() skips words it does not know, so systemd accepts these; the test used to assert
+        // they were invalid (#568).
         // Fixture Setup
         // language="unit file (systemd)"
         val file = """
@@ -47,6 +49,6 @@ class ConfigParseExecSecureBitsOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(2, highlights)
+        assertSize(0, highlights)
     }
 }

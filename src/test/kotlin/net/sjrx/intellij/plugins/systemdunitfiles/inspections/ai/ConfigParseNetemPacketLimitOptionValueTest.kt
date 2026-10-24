@@ -35,7 +35,6 @@ class ConfigParseNetemPacketLimitOptionValueTest : AbstractUnitFileTest() {
         val file = """
             [NetworkEmulator]
             PacketLimit=-1
-            PacketLimit=4294967295
             PacketLimit=4294967296
             PacketLimit=abc
             PacketLimit=1.5
@@ -47,6 +46,7 @@ class ConfigParseNetemPacketLimitOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(5, highlights)
+        // 4294967295 used to be listed here, but safe_atou() takes the full unsigned range (#568).
+        assertSize(4, highlights)
     }
 }

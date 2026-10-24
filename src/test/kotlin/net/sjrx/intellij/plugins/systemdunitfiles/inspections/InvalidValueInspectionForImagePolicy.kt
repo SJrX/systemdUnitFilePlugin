@@ -1,6 +1,5 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.inspections
 
-import junit.framework.TestCase
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 
 class InvalidValueInspectionForImagePolicy : AbstractUnitFileTest() {
@@ -24,113 +23,51 @@ class InvalidValueInspectionForImagePolicy : AbstractUnitFileTest() {
 
   }
 
-  fun testWeakWarningWhenInvalidPartitionTypeIsSpecified() {
-    // Fixture Setup
-    // language="unit file (systemd)"
-    val file = """
-           [Service]
-           RootImagePolicy=opt=unprotected
-           """.trimIndent()
+  // image_policy_from_string() runs in graceful mode for unit files, so an unknown partition designator or policy
+  // flag (and the empty flag after a trailing '+') is skipped rather than refused. These values used to be asserted
+  // invalid; systemd's parser accepts every one of them (#568).
+  // https://github.com/systemd/systemd/blob/0f0682b773/src/shared/image-policy.c#L341-L465
 
-
-    // Execute SUT
-    setupFileInEditor("file.service", file)
-    enableInspection(InvalidValueInspection::class.java)
-    val highlights = myFixture.doHighlighting()
-
-    // Verification
-    assertSize(1, highlights)
-    val info = highlights[0]
-    assertStringContains("RootImagePolicy's value is correctly formatted but seems invalid", info!!.description)
-    TestCase.assertEquals("opt", info.text)
+  fun testNoWarningWhenUnknownPartitionTypeIsSpecified() {
+    assertNoHighlights("opt=unprotected")
   }
 
-  fun testWeakWarningWhenInvalidPolicyFlagIsSpecified() {
-    // Fixture Setup
-    // language="unit file (systemd)"
-    val file = """
-           [Service]
-           RootImagePolicy=root=unsigned
-           """.trimIndent()
-
-
-    // Execute SUT
-    setupFileInEditor("file.service", file)
-    enableInspection(InvalidValueInspection::class.java)
-    val highlights = myFixture.doHighlighting()
-
-    // Verification
-    assertSize(1, highlights)
-    val info = highlights[0]
-    assertStringContains("RootImagePolicy's value is correctly formatted but seems invalid", info!!.description)
-    TestCase.assertEquals("unsigned", info.text)
+  fun testNoWarningWhenUnknownPolicyFlagIsSpecified() {
+    assertNoHighlights("root=unsigned")
   }
 
-  fun testWeakWarningWhenInvalidPolicyFlagIsSpecifiedInSecondaryPolicy() {
-    // Fixture Setup
-    // language="unit file (systemd)"
-    val file = """
-           [Service]
-           RootImagePolicy=home=encrypted+used
-           """.trimIndent()
-
-
-    // Execute SUT
-    setupFileInEditor("file.service", file)
-    enableInspection(InvalidValueInspection::class.java)
-    val highlights = myFixture.doHighlighting()
-
-
-    // Verification
-    assertSize(1, highlights)
-    val info = highlights[0]
-
-    assertStringContains("RootImagePolicy's value is correctly formatted but seems invalid", info!!.description)
-    TestCase.assertEquals("used", info.text)
-    assertContainsQuickfix(info, "Replace 'used' with 'absent'")
+  fun testNoWarningWhenUnknownPolicyFlagIsSpecifiedInSecondaryPolicy() {
+    assertNoHighlights("home=encrypted+used")
   }
 
-  fun testWeakWarningWhenIncompletePolicyFlagIsSpecifiedInSecondaryPolicy() {
-    // Fixture Setup
-    // language="unit file (systemd)"
-    val file = """
-           [Service]
-           RootImagePolicy=home=encrypted+absent+
-           """.trimIndent()
-
-
-    // Execute SUT
-    setupFileInEditor("file.service", file)
-    enableInspection(InvalidValueInspection::class.java)
-    val highlights = myFixture.doHighlighting()
-
-    // Verification
-    assertSize(1, highlights)
-    val info = highlights[0]
-    assertStringContains("RootImagePolicy's value does not match the expected format. Possible reasons include unrecognized characters or premature end of input", info!!.description)
-    TestCase.assertEquals("home=encrypted+absent+", info.text)
+  fun testNoWarningWhenPolicyFlagsEndWithPlus() {
+    assertNoHighlights("home=encrypted+absent+")
   }
 
-  fun testWeakWarningWhenInvalidPolicySetInSecondPolicy() {
-    // Fixture Setup
+  fun testNoWarningWhenUnknownPolicyFlagIsSetInSecondPolicy() {
+    assertNoHighlights("home=encrypted:root=encrypted+used")
+  }
+
+  fun testWarningWhenEqualsIsMissing() {
+    // "Missing '=' in policy expression" is a hard error even in graceful mode.
     // language="unit file (systemd)"
     val file = """
            [Service]
-           RootImagePolicy=home=encrypted:root=encrypted+used
+           RootImagePolicy=root
            """.trimIndent()
 
-
-    // Execute SUT
     setupFileInEditor("file.service", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    // Verification
     assertSize(1, highlights)
-    val info = highlights[0]
-    assertStringContains("RootImagePolicy's value is correctly formatted but seems invalid", info!!.description)
-    TestCase.assertEquals("used", info.text)
-    assertContainsQuickfix(info, "Replace 'used' with 'absent'")
+    assertStringContains("RootImagePolicy's value does not match the expected format", highlights[0]!!.description)
+  }
+
+  private fun assertNoHighlights(value: String) {
+    setupFileInEditor("file.service", "[Service]\nRootImagePolicy=$value\n")
+    enableInspection(InvalidValueInspection::class.java)
+    assertSize(0, myFixture.doHighlighting())
   }
 
 }

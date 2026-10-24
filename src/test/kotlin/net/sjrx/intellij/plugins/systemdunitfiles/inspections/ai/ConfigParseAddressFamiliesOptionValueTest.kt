@@ -73,14 +73,15 @@ class ConfigParseAddressFamiliesOptionValueTest : AbstractUnitFileTest() {
         // any AF_-prefixed token, so these passed validation incorrectly. With the enumerated
         // family set they must be flagged (syntactically well-formed, semantically invalid).
         // Raw values (no <error> markup) so the guard does not depend on markup stripping; each
-        // invalid property contributes exactly one highlight.
+        // invalid property contributes exactly one highlight. (AF_DECNET used to be the fourth value, but af_from_name()
+        // ignores case, so systemd accepts it (#568); AF_UNSPEC is not in the table at all.)
         // language="unit file (systemd)"
         val file = """
             [Service]
             RestrictAddressFamilies=AF_BOGUS
             RestrictAddressFamilies=AF_INETZ
             RestrictAddressFamilies=AF_INET AF_MADEUP
-            RestrictAddressFamilies=AF_DECNET
+            RestrictAddressFamilies=AF_UNSPEC
         """.trimIndent()
 
         setupFileInEditor("file.service", file)

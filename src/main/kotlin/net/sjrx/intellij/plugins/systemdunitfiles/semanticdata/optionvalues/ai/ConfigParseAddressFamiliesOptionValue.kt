@@ -6,25 +6,18 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 /**
  * Validator for RestrictAddressFamilies=.
  *
- * C function: config_parse_address_families in src/core/load-fragment.c → parse_address_families
- * in src/shared/parse-helpers.c:90. Accepts:
+ * C function: config_parse_address_families → parse_address_families,
+ * https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L3543-L3576
+ * https://github.com/systemd/systemd/blob/0f0682b773/src/shared/parse-helpers.c#L90-L145. Accepts:
  *   - "none" (clears the set, sets allowlist)
- *   - optional leading "~" (invert / denylist mode), followed by a whitespace-separated list
- *     of address family names resolved by af_from_name
+ *   - an optional leading "~" (denylist), then words separated by whitespace and/or commas
+ *     (extract_first_word with WHITESPACE "," and EXTRACT_UNQUOTE; leading, trailing and repeated separators are
+ *     fine), each resolved by af_from_name(), which ignores case and retries with "AF_" prepended
+ *     (https://github.com/systemd/systemd/blob/0f0682b773/src/basic/af-list.c#L39-L51). So `AF_INET`, `inet` and
+ *     `AF_DECNET` are all fine. A word may be quoted.
  *
- * The name set is the list of AF_* macros systemd's af_from_name knows about, which is
- * generated (src/basic/generate-af-list.sh) from the AF_* #defines in <sys/socket.h>, minus
- * AF_UNSPEC and AF_MAX. It can be reproduced by preprocessing <sys/socket.h> with
- * `cpp -dM`, keeping the `#define AF_*` lines (dropping AF_UNSPEC/AF_MAX), and taking the macro
- * names.
- *
- * Enumerating the names exactly (rather than the old loose RegexTerminal("AF_[A-Z0-9_]+"))
- * makes validation correct (AF_BOGUS is now rejected) and sets up grammar-based completion.
- *
- * Note: some of these names still resolve via af_from_name (the macro exists in libc headers)
- * even though the kernel removed the protocol — AF_DECnet (Linux 6.1), AF_IRDA (4.17),
- * AF_ECONET (3.5), AF_WANPIPE (2.6.21). These are valid-but-removed and are intended targets
- * of a future deprecation annotator (see GitHub #467 / address_families(7)).
+ * The name terminal is the shared [ADDRESS_FAMILY_NAME], which also marks the families the kernel removed as
+ * deprecated.
  */
 class ConfigParseAddressFamiliesOptionValue : SimpleGrammarOptionValues(
     "config_parse_address_families",
@@ -33,80 +26,29 @@ class ConfigParseAddressFamiliesOptionValue : SimpleGrammarOptionValues(
             LiteralChoiceTerminal("none"),
             SequenceCombinator(
                 ZeroOrOne(LiteralChoiceTerminal("~")),
-                ADDRESS_FAMILY,
-                ZeroOrMore(SequenceCombinator(
-                    WhitespaceTerminal(),
-                    ADDRESS_FAMILY
-                ))
+                ZeroOrOne(RegexTerminal("[\\s,]+", "[\\s,]+")),
+                ZeroOrOne(
+                    SequenceCombinator(
+                        AlternativeCombinator(
+                            ADDRESS_FAMILY_NAME,
+                            SequenceCombinator(LiteralChoiceTerminal("\""), ADDRESS_FAMILY_NAME, LiteralChoiceTerminal("\"")),
+                            SequenceCombinator(LiteralChoiceTerminal("'"), ADDRESS_FAMILY_NAME, LiteralChoiceTerminal("'")),
+                        ),
+                        ZeroOrMore(
+                            SequenceCombinator(
+                                RegexTerminal("[\\s,]+", "[\\s,]+"),
+                                AlternativeCombinator(
+                                    ADDRESS_FAMILY_NAME,
+                                    SequenceCombinator(LiteralChoiceTerminal("\""), ADDRESS_FAMILY_NAME, LiteralChoiceTerminal("\"")),
+                                    SequenceCombinator(LiteralChoiceTerminal("'"), ADDRESS_FAMILY_NAME, LiteralChoiceTerminal("'")),
+                                ),
+                            )
+                        ),
+                        ZeroOrOne(RegexTerminal("[\\s,]+", "[\\s,]+")),
+                    )
+                ),
             )
         ),
         EOF()
     )
-) {
-    companion object {
-        /**
-         * The AF_* names systemd's af_from_name accepts. FlexibleLiteralChoiceTerminal matches
-         * loosely for syntax (so coloring / error localization still work) but requires an exact
-         * choice to be semantically valid.
-         */
-        private val ADDRESS_FAMILY = FlexibleLiteralChoiceTerminal(
-            "AF_ALG",
-            "AF_APPLETALK",
-            "AF_ASH",
-            "AF_ATMPVC",
-            "AF_ATMSVC",
-            "AF_AX25",
-            "AF_BLUETOOTH",
-            "AF_BRIDGE",
-            "AF_CAIF",
-            "AF_CAN",
-            "AF_DECnet",
-            "AF_ECONET",
-            "AF_FILE",
-            "AF_IB",
-            "AF_IEEE802154",
-            "AF_INET",
-            "AF_INET6",
-            "AF_IPX",
-            "AF_IRDA",
-            "AF_ISDN",
-            "AF_IUCV",
-            "AF_KCM",
-            "AF_KEY",
-            "AF_LLC",
-            "AF_LOCAL",
-            "AF_MCTP",
-            "AF_MPLS",
-            "AF_NETBEUI",
-            "AF_NETLINK",
-            "AF_NETROM",
-            "AF_NFC",
-            "AF_PACKET",
-            "AF_PHONET",
-            "AF_PPPOX",
-            "AF_QIPCRTR",
-            "AF_RDS",
-            "AF_ROSE",
-            "AF_ROUTE",
-            "AF_RXRPC",
-            "AF_SECURITY",
-            "AF_SMC",
-            "AF_SNA",
-            "AF_TIPC",
-            "AF_UNIX",
-            "AF_VSOCK",
-            "AF_WANPIPE",
-            "AF_X25",
-            "AF_XDP"
-        ).deprecating(
-            // Still resolved by af_from_name (the libc macro exists) but the kernel removed the
-            // protocol, so configuring them has no effect. Reasons per address_families(7).
-            mapOf(
-                "AF_DECnet" to "AF_DECnet is obsolete: DECnet support was removed from the Linux kernel in 6.1.",
-                "AF_IRDA" to "AF_IRDA is obsolete: IrDA support was removed from the Linux kernel in 4.17.",
-                "AF_ECONET" to "AF_ECONET is obsolete: Acorn Econet support was removed from the Linux kernel in 3.5.",
-                "AF_WANPIPE" to "AF_WANPIPE is obsolete: WANPIPE support was removed from the Linux kernel in 2.6.21.",
-            )
-        )
-    }
-}
+)
