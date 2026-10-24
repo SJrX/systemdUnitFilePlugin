@@ -3,8 +3,8 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.CAPABILITY_NAME
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.conditionString
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.unsignedNumber
 
 /*
  * [Unit] ConditionCapability= / AssertCapability=.
@@ -24,7 +24,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * 0…CAP_LIMIT (62) or a single capability name. One capability, not a list.
  *
  * The number is tried first so the numeric form isn't swallowed by the name terminal's lenient shape
- * match, and it is an [unsignedNumber] because capability_from_name reads it with safe_atoi().
+ * match. capability_from_name reads it with safe_atoi() and refuses anything outside 0…CAP_LIMIT, so it is a
+ * signed base-0 [SafeAtoTerminal] bounded to 0…62 (#568): `+3`, `0b11`, `0o3` and `-0` are capabilities too.
+ * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/capability-list.c#L45-L58
+ * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/capability-util.h#L17
  *
  * Case: the name lookup is gperf-generated with `--ignore-case`
  * (src/basic/meson.build: `gperf … '--ignore-case'`), and capability_to_name() actually renders the
@@ -34,5 +37,18 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 class ConfigParseUnitConditionCapabilityOptionValue : SimpleGrammarOptionValues(
     "config_parse_unit_condition_string",
-    conditionString(AlternativeCombinator(unsignedNumber(63), CAPABILITY_NAME))
+    conditionString(
+        AlternativeCombinator(
+            SafeAtoTerminal(
+                signed = true,
+                base = 0,
+                flags = emptySet(),
+                minInclusive = 0L,
+                maxInclusive = 62L,
+                acceptsWhitespace = true,
+                acceptsMinus = true,
+            ),
+            CAPABILITY_NAME,
+        )
+    )
 )
