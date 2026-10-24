@@ -2,7 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoNumberTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkDhcpMiscSafeAtoNumberTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.wordList
 
@@ -23,5 +23,5 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 class ConfigParseDhcpRequestOptionsOptionValue : SimpleGrammarOptionValues(
     "config_parse_dhcp_request_options",
-    SequenceCombinator(wordList(SafeAtoNumberTerminal(1, 255)), EOF())
+    SequenceCombinator(wordList(NetworkDhcpMiscSafeAtoNumberTerminal(1, 255)), EOF())
 )

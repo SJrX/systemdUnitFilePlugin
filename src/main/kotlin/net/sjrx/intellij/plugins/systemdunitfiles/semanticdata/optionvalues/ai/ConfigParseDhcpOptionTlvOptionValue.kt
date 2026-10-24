@@ -1,10 +1,10 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COALESCED_COLONS
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_DHCP_MISC_COALESCED_COLONS
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COLON
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoNumberTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkDhcpMiscSafeAtoNumberTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
@@ -48,8 +48,8 @@ class ConfigParseDhcpOptionTlvOptionValue : SimpleGrammarOptionValues(
     SequenceCombinator(
         ZeroOrMore(COLON),
         ZeroOrOne(WhitespaceTerminal()),
-        SafeAtoNumberTerminal(1, 255),
-        COALESCED_COLONS,
+        NetworkDhcpMiscSafeAtoNumberTerminal(1, 255),
+        NETWORK_DHCP_MISC_COALESCED_COLONS,
         dhcpOptionTypedData(),
         EOF(),
     )

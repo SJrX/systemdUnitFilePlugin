@@ -1,7 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COALESCED_COLONS
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_DHCP_MISC_COALESCED_COLONS
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COLON
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
@@ -48,7 +48,7 @@ class ConfigParseDuidRawdataOptionValue(validatorName: String = "config_parse_du
         ZeroOrOne(
             SequenceCombinator(
                 DUID_BYTE,
-                Repeat(SequenceCombinator(COALESCED_COLONS, DUID_BYTE), 0, 127),
+                Repeat(SequenceCombinator(NETWORK_DHCP_MISC_COALESCED_COLONS, DUID_BYTE), 0, 127),
                 ZeroOrMore(COLON),
             ),
         ),

@@ -2,7 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN_ANY_CASE
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_DHCP_MISC_BOOLEAN_ANY_CASE
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COLON
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
@@ -41,6 +41,6 @@ class ConfigParseRequiredForOnlineOptionValue : SimpleGrammarOptionValues(
     AlternativeCombinator(
         SequenceCombinator(OPERSTATE, ZeroOrOne(SequenceCombinator(COLON, ZeroOrOne(OPERSTATE))), EOF()),
         SequenceCombinator(COLON, OPERSTATE, EOF()),
-        SequenceCombinator(BOOLEAN_ANY_CASE, EOF()),
+        SequenceCombinator(NETWORK_DHCP_MISC_BOOLEAN_ANY_CASE, EOF()),
     )
 )

@@ -32,9 +32,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups
  * with STRCASE_IN_SET, i.e. case-insensitively (`Yes`, `TRUE` and `Off` are all accepted). The shared
  * [BOOLEAN] is case-sensitive and therefore flags those; this one doesn't.
  */
-val BOOLEAN_ANY_CASE = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreCase = true)
+val NETWORK_DHCP_MISC_BOOLEAN_ANY_CASE = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreCase = true)
 
-/** Only the false half of parse_boolean(), case-insensitively — see [BOOLEAN_FALSE] and [BOOLEAN_ANY_CASE]. */
+/** Only the false half of parse_boolean(), case-insensitively — see [BOOLEAN_FALSE] and [NETWORK_DHCP_MISC_BOOLEAN_ANY_CASE]. */
 val BOOLEAN_FALSE_ANY_CASE = FlexibleLiteralChoiceTerminal("0", "no", "n", "false", "f", "off", ignoreCase = true)
 
 /**
@@ -59,7 +59,7 @@ val BOOLEAN_FALSE_ANY_CASE = FlexibleLiteralChoiceTerminal("0", "no", "n", "fals
  * [UnsignedNumberTerminal] covers the common subset (decimal/hex/octal, no sign, no `0b`/`0o`); this one
  * exists because the batch needed the signed form and the extra prefixes.
  */
-class SafeAtoNumberTerminal(
+class NetworkDhcpMiscSafeAtoNumberTerminal(
   private val minInclusive: Long,
   private val maxExclusive: Long,
   private val signed: Boolean = false,
@@ -146,7 +146,7 @@ class SafeAtoNumberTerminal(
 }
 
 /** One or more `:` — extract_first_word(…, ":", 0) coalesces runs of its separator. */
-val COALESCED_COLONS = OneOrMore(COLON)
+val NETWORK_DHCP_MISC_COALESCED_COLONS = OneOrMore(COLON)
 
 /**
  * One C escape sequence as cunescape_one() accepts it: `\a \b \f \n \r \t \v \\ \" \' \s`, `\xHH`,
@@ -192,7 +192,7 @@ private val IFNAME_ALTERNATIVE = Regex("""(?!(?:\.\.?|all|default)\z)$IFNAME_CHA
 
 /**
  * A terminal that takes the span [shape] matches and accepts it iff [valid] says so. Like
- * [SafeAtoNumberTerminal], for leaves whose acceptance is a computation rather than a regular language.
+ * [NetworkDhcpMiscSafeAtoNumberTerminal], for leaves whose acceptance is a computation rather than a regular language.
  */
 class CheckedTerminal(private val shape: Regex, private val name: String, private val valid: (String) -> Boolean) : TerminalCombinator {
 
@@ -332,12 +332,12 @@ val IPV6_ADDR_NO_LEADING_COLON = Labeled(Role.LITERAL, tag = SemanticTag.IPV6, i
  * check (`check_length`, <= 255 bytes once unescaped) is not modelled.
  */
 fun dhcpOptionTypedData(): Combinator = AlternativeCombinator(
-  SequenceCombinator(LiteralChoiceTerminal("uint8"), COALESCED_COLONS, ZeroOrOne(WhitespaceTerminal()), SafeAtoNumberTerminal(0, 256L)),
-  SequenceCombinator(LiteralChoiceTerminal("uint16"), COALESCED_COLONS, ZeroOrOne(WhitespaceTerminal()), SafeAtoNumberTerminal(0, 65_536L)),
-  SequenceCombinator(LiteralChoiceTerminal("uint32"), COALESCED_COLONS, ZeroOrOne(WhitespaceTerminal()), SafeAtoNumberTerminal(0, 4_294_967_296L)),
-  SequenceCombinator(LiteralChoiceTerminal("ipv4address"), COALESCED_COLONS, IPV4_ADDR),
-  SequenceCombinator(LiteralChoiceTerminal("ipv6address"), COALESCED_COLONS, IPV6_ADDR_NO_LEADING_COLON),
-  SequenceCombinator(LiteralChoiceTerminal("string"), COALESCED_COLONS, C_ESCAPED_TEXT),
+  SequenceCombinator(LiteralChoiceTerminal("uint8"), NETWORK_DHCP_MISC_COALESCED_COLONS, ZeroOrOne(WhitespaceTerminal()), NetworkDhcpMiscSafeAtoNumberTerminal(0, 256L)),
+  SequenceCombinator(LiteralChoiceTerminal("uint16"), NETWORK_DHCP_MISC_COALESCED_COLONS, ZeroOrOne(WhitespaceTerminal()), NetworkDhcpMiscSafeAtoNumberTerminal(0, 65_536L)),
+  SequenceCombinator(LiteralChoiceTerminal("uint32"), NETWORK_DHCP_MISC_COALESCED_COLONS, ZeroOrOne(WhitespaceTerminal()), NetworkDhcpMiscSafeAtoNumberTerminal(0, 4_294_967_296L)),
+  SequenceCombinator(LiteralChoiceTerminal("ipv4address"), NETWORK_DHCP_MISC_COALESCED_COLONS, IPV4_ADDR),
+  SequenceCombinator(LiteralChoiceTerminal("ipv6address"), NETWORK_DHCP_MISC_COALESCED_COLONS, IPV6_ADDR_NO_LEADING_COLON),
+  SequenceCombinator(LiteralChoiceTerminal("string"), NETWORK_DHCP_MISC_COALESCED_COLONS, C_ESCAPED_TEXT),
 )
 
 // ---------------------------------------------------------------------------------------------------

@@ -2,13 +2,13 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COALESCED_COLONS
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_DHCP_MISC_COALESCED_COLONS
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COLON
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.Combinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoNumberTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkDhcpMiscSafeAtoNumberTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrMore
 
@@ -42,10 +42,10 @@ private fun duidType(): Combinator = SequenceCombinator(
     ZeroOrMore(COLON),
     AlternativeCombinator(
         // Only DUID-LLT (type 1) may carry a time; spelled either by name or as the number 1.
-        SequenceCombinator(FlexibleLiteralChoiceTerminal("link-layer-time"), COALESCED_COLONS, DUID_TIMESTAMP, EOF()),
-        SequenceCombinator(SafeAtoNumberTerminal(1, 2), COALESCED_COLONS, DUID_TIMESTAMP, EOF()),
+        SequenceCombinator(FlexibleLiteralChoiceTerminal("link-layer-time"), NETWORK_DHCP_MISC_COALESCED_COLONS, DUID_TIMESTAMP, EOF()),
+        SequenceCombinator(NetworkDhcpMiscSafeAtoNumberTerminal(1, 2), NETWORK_DHCP_MISC_COALESCED_COLONS, DUID_TIMESTAMP, EOF()),
         SequenceCombinator(DUID_TYPE_NAME, ZeroOrMore(COLON), EOF()),
-        SequenceCombinator(SafeAtoNumberTerminal(0, 65_536), ZeroOrMore(COLON), EOF()),
+        SequenceCombinator(NetworkDhcpMiscSafeAtoNumberTerminal(0, 65_536), ZeroOrMore(COLON), EOF()),
     ),
 )
 

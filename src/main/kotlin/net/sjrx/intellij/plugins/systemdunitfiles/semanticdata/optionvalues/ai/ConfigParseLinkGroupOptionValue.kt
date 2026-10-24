@@ -2,7 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoNumberTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkDhcpMiscSafeAtoNumberTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
 /*
@@ -20,5 +20,5 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 class ConfigParseLinkGroupOptionValue : SimpleGrammarOptionValues(
     "config_parse_link_group",
-    SequenceCombinator(SafeAtoNumberTerminal(0, 2_147_483_648L, signed = true), EOF())
+    SequenceCombinator(NetworkDhcpMiscSafeAtoNumberTerminal(0, 2_147_483_648L, signed = true), EOF())
 )

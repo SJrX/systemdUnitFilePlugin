@@ -2,7 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN_ANY_CASE
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_DHCP_MISC_BOOLEAN_ANY_CASE
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
@@ -26,6 +26,6 @@ class ConfigParseLldpMulticastModeOptionValue : SimpleGrammarOptionValues(
     "config_parse_lldp_multicast_mode",
     AlternativeCombinator(
         SequenceCombinator(FlexibleLiteralChoiceTerminal("nearest-bridge", "non-tpmr-bridge", "customer-bridge"), EOF()),
-        SequenceCombinator(BOOLEAN_ANY_CASE, EOF()),
+        SequenceCombinator(NETWORK_DHCP_MISC_BOOLEAN_ANY_CASE, EOF()),
     )
 )

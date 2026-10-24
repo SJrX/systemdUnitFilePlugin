@@ -4,7 +4,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoNumberTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkDhcpMiscSafeAtoNumberTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
 /*
@@ -31,6 +31,6 @@ class ConfigParseDhcpPdSubnetIdOptionValue : SimpleGrammarOptionValues(
     "config_parse_dhcp_pd_subnet_id",
     AlternativeCombinator(
         SequenceCombinator(FlexibleLiteralChoiceTerminal("auto"), EOF()),
-        SequenceCombinator(SafeAtoNumberTerminal(0, Long.MAX_VALUE, hexOnly = true), EOF()),
+        SequenceCombinator(NetworkDhcpMiscSafeAtoNumberTerminal(0, Long.MAX_VALUE, hexOnly = true), EOF()),
     )
 )

@@ -4,7 +4,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.CIDR_SEPARATOR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IPV4_ADDR
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoNumberTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkDhcpMiscSafeAtoNumberTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
@@ -33,7 +33,7 @@ class ConfigParseDhcpServerAddressOptionValue : SimpleGrammarOptionValues(
     "config_parse_dhcp_server_address",
     SequenceCombinator(
         IPV4_ADDR,
-        ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, ZeroOrOne(WhitespaceTerminal()), SafeAtoNumberTerminal(0, 33))),
+        ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, ZeroOrOne(WhitespaceTerminal()), NetworkDhcpMiscSafeAtoNumberTerminal(0, 33))),
         EOF(),
     )
 )
