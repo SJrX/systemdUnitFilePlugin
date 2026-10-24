@@ -4,9 +4,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETDEV_LINK_UINT32_LIMIT
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.netdevLinkSafeAtou
 
 /*
  * [Link] IRQAffinityNUMA= in a .link file.
@@ -22,13 +21,24 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  *
  * C function: config_parse_irq_affinity_numa. Either `local` (the device's own NUMA node) or a NUMA
  * node number read with safe_atou() (so hex works). UINT_MAX and UINT_MAX - 1 are reserved as the
- * "unset" and "local" markers, so the number must be below 4294967294. An empty assignment unsets it.
+ * "unset" and "local" markers, so the number must be at most 4294967293. An empty assignment unsets it.
  * An out-of-range number is logged and ignored by udev.
  */
 class ConfigParseIrqAffinityNumaOptionValue : SimpleGrammarOptionValues(
     "config_parse_irq_affinity_numa",
     SequenceCombinator(
-        AlternativeCombinator(FlexibleLiteralChoiceTerminal("local"), netdevLinkSafeAtou(NETDEV_LINK_UINT32_LIMIT - 2)),
+        AlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("local"),
+            SafeAtoTerminal(
+                signed = false,
+                base = 0,
+                flags = emptySet(),
+                minInclusive = 0L,
+                maxInclusive = 4_294_967_293L,
+                acceptsWhitespace = true,
+                acceptsMinus = true,
+            ),
+        ),
         EOF()
     )
 )

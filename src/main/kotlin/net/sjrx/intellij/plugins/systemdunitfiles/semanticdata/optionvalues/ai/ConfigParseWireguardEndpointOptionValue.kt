@@ -9,10 +9,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IPV6_ADDR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UINT16_LIMIT
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.netdevLinkSafeAtou
 
 /*
  * [WireGuardPeer] Endpoint= in a .netdev file.
@@ -27,8 +26,17 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/test-network/conf/25-wireguard.netdev#L17   Endpoint=@network.wireguard.peer0.endpoint
  */
 
-// parse_ip_port: a safe_atou16 number (base 0), not zero.
-private val ENDPOINT_PORT = netdevLinkSafeAtou(UINT16_LIMIT, 1)
+// parse_ip_port: safe_atou16_full(…, SAFE_ATO_REFUSE_LEADING_WHITESPACE) (base 0), then 0 is refused. The port is
+// everything after the last `:`, so whitespace can reach the parser: `\v80` and `0b 1` are accepted, ` 80` is not.
+private val ENDPOINT_PORT = SafeAtoTerminal(
+    signed = false,
+    base = 0,
+    flags = setOf(SafeAtoTerminal.Flag.REFUSE_LEADING_WHITESPACE),
+    minInclusive = 1L,
+    maxInclusive = 65_535L,
+    acceptsWhitespace = true,
+    acceptsMinus = true,
+)
 
 // The hostname fallback: everything up to the LAST colon (strrchr), checked with dns_name_is_valid():
 // dot-separated labels of at most 63 characters, each character printable (>= ' ', not DEL) or one of
@@ -52,7 +60,8 @@ private val ENDPOINT_HOST = RegexTerminal(
  *  - otherwise `host:port`, split at the last colon, where the host only has to pass
  *    dns_name_is_valid(), which is permissive (any printable characters, labels up to 63 bytes).
  *
- * The port is a parse_ip_port() number, 1…65535 (safe_atou16 base 0, so hex works). Because the host
+ * The port is a parse_ip_port() number, 1…65535 (safe_atou16 base 0, so hex, octal and `0b`/`0o` work, and
+ * a leading space is refused while a leading `\v` is not). Because the host
  * fallback is so permissive, something like `[fe80::1%eth0]:51820` is accepted (as a hostname), as it
  * is by systemd at parse time. What is flagged: a missing or invalid port, empty labels, over-long labels
  * and control characters. Lenient: the overall name length (DNS_HOSTNAME_MAX, enforced by

@@ -6,6 +6,9 @@ import org.junit.Test
 
 class ConfigParseVrfTableOptionValueTest : AbstractUnitFileTest() {
 
+    // Values with whitespace are possible table names (networkd.conf can define `my\ table:100`), so they are not
+    // flagged even though sd-check, which loads no networkd.conf, reports them. `0b 1`, `0b+1` and `0o 7` are
+    // safe_atou32 numbers (sd-check accepts them).
     @Test
     fun testValidValues() {
         // language="unit file (systemd)"
@@ -21,6 +24,12 @@ class ConfigParseVrfTableOptionValueTest : AbstractUnitFileTest() {
             Table=yes
             Table=0x0
             Table=mian
+            Table=main 42
+            Table=1 2
+            Table=my table
+            Table=0b 1
+            Table=0b+1
+            Table=0o 7
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
@@ -37,9 +46,9 @@ class ConfigParseVrfTableOptionValueTest : AbstractUnitFileTest() {
             [VRF]
             Table=0
             Table=4294967296
-            Table=main 42
+            Table=08
             Table=vrf:42
-            Table=1 2
+            Table=040000000000
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)

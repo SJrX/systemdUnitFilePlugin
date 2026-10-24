@@ -16,6 +16,8 @@ class ConfigParseIpv6FlowlabelOptionValueTest : AbstractUnitFileTest() {
             IPv6FlowLabel=1048575
             IPv6FlowLabel=0xFFFFF
             IPv6FlowLabel=0x12345
+            IPv6FlowLabel=0b 1
+            IPv6FlowLabel=0b-0
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)

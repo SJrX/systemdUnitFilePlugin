@@ -15,150 +15,20 @@ import java.math.BigInteger
  */
 
 // ---------------------------------------------------------------------------------------------------
-// safe_atou() and friends — src/basic/parse-util.c (safe_atou_full, mangle_base).
+// parse_range() — src/basic/parse-util.c. Its bounds are safe_atou() numbers, modelled by [SafeAtoTerminal].
 
 /**
- * An unsigned number exactly as systemd's `safe_atou*()` helpers read it with base 0.
- *
- * Compared with [UnsignedNumberTerminal] this also accepts the two spellings that helper family adds
- * on top of strtoul(): the Python-style `0b`/`0o` prefixes that mangle_base() strips before calling
- * strtoul (so `0b101` and `0o17` are legal), and a leading `+`, which strtoul accepts and
- * safe_atou_full only refuses when SAFE_ATO_REFUSE_PLUS_MINUS is set (none of the callers here set it).
- *
- * Hex (`0x`/`0X`) and C octal (leading `0`) are accepted as for [UnsignedNumberTerminal]; a digit
- * string like `089` is number-shaped but not a valid octal literal, so it matches and is then rejected
- * — which is what strtoul()+`*x != 0` does too.
- *
- * A leading `-` is number-shaped (so `-1` is reported as an out-of-range number rather than as junk)
- * and valid only when the value is zero: safe_atou_full's only minus check is `l != 0 && s[0] == '-'`,
- * so `-0` (and `-0x0`) really are accepted.
- *
- * @param minInclusive lowest accepted value
- * @param maxExclusive one past the highest accepted value
- * @param allowMinus false for a position where a `-` cannot reach safe_atou at all — the lower bound
- *   of a parse_range(), which is cut at the first `-`, so `-0` there is an empty word and EINVAL.
+ * Whether parse_range() (https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L305-L340)
+ * accepts the already-extracted [word]: the text before the first `-` must satisfy [lower] and, if there is a `-`,
+ * the non-empty rest must satisfy [upper]. A predicate for an [ExtractedWordTerminal], whose words have had their
+ * quotes and escapes removed first; the structured grammar spells the same check out with the terminals.
  */
-class NetdevLinkSafeAtouTerminal(
-  private val minInclusive: Long,
-  private val maxExclusive: Long,
-  private val allowMinus: Boolean = true,
-) : TerminalCombinator {
-
-  private fun span(value: String, offset: Int): String? = (if (allowMinus) SHAPE else SHAPE_NO_MINUS).matchAt(value, offset)?.value
-
-  private fun inRange(text: String): Boolean = inRange(valueOf(text), minInclusive, maxExclusive)
-
-  override fun SyntacticMatch(value: String, offset: Int): MatchResult {
-    val text = span(value, offset) ?: return NoMatch
-    return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
-  }
-
-  override fun SemanticMatch(value: String, offset: Int): MatchResult {
-    val text = span(value, offset) ?: return NoMatch
-    if (!inRange(text)) return NoMatch.copy(longestMatch = offset)
-    return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
-  }
-
-  override fun parse(value: String, offset: Int): Sequence<ParseStep> {
-    val text = span(value, offset) ?: return sequenceOf(Stuck(offset, setOf(this)))
-    return sequenceOf(Parse(offset + text.length, listOf(ParsedToken(offset, offset + text.length, text, this, inRange(text)))))
-  }
-
-  override fun toString(): String = "SafeAtou($minInclusive,$maxExclusive${if (allowMinus) "" else ",no-minus"})"
-
-  internal companion object {
-    // 0b/0o first: as plain digits they would otherwise be read as "0" followed by junk. Within the
-    // signed group, hex before octal before decimal for the same reason.
-    val SHAPE = Regex("""0[bB][01]+|0[oO][0-7]+|[+-]?(?:0[xX][0-9a-fA-F]+|0[0-7]+|[0-9]+)""")
-    val SHAPE_NO_MINUS = Regex("""0[bB][01]+|0[oO][0-7]+|\+?(?:0[xX][0-9a-fA-F]+|0[0-7]+|[0-9]+)""")
-
-    fun inRange(value: BigInteger?, minInclusive: Long, maxExclusive: Long): Boolean =
-      value != null && value >= BigInteger.valueOf(minInclusive) && value < BigInteger.valueOf(maxExclusive)
-
-    /**
-     * What safe_atou() makes of the whole string [s], or null when it refuses it: leading whitespace is
-     * skipped (`s += strspn(s, WHITESPACE)`), then the rest must be exactly one [SHAPE] literal.
-     */
-    fun safeAtouValue(s: String): BigInteger? {
-      val text = s.trimStart(' ', '\t', '\n', '\r')
-      return if (SHAPE.matches(text)) valueOf(text) else null
-    }
-
-    /** The numeric value of [text], or null when it is not a valid literal in its base. */
-    fun valueOf(text: String): BigInteger? {
-      // mangle_base() only recognises 0b/0o at the very start, so they never carry a sign.
-      if (text.length > 2 && (text.startsWith("0b") || text.startsWith("0B"))) return text.drop(2).toBigIntegerOrNull(2)
-      if (text.length > 2 && (text.startsWith("0o") || text.startsWith("0O"))) return text.drop(2).toBigIntegerOrNull(8)
-      val digits = text.removePrefix("+").removePrefix("-")
-      val magnitude = when {
-        digits.length > 2 && (digits.startsWith("0x") || digits.startsWith("0X")) -> digits.drop(2).toBigIntegerOrNull(16)
-        digits.length > 1 && digits.startsWith("0") -> digits.drop(1).toBigIntegerOrNull(8)
-        else -> digits.toBigIntegerOrNull()
-      }
-      // strtoul() negates a `-` value; safe_atou_full then refuses it unless it is zero.
-      return if (text.startsWith("-") && magnitude != BigInteger.ZERO) null else magnitude
-    }
-  }
-}
-
-/**
- * A [NetdevLinkSafeAtouTerminal] over `[minInclusive, maxExclusive)`, coloured as a literal. The [Labeled] wrapper
- * is only there because [defaultRole] does not know this terminal class yet (it is transparent to
- * matching); once the terminal is promoted next to [UnsignedNumberTerminal] it can go.
- */
-fun netdevLinkSafeAtou(maxExclusive: Long, minInclusive: Long = 0L, allowMinus: Boolean = true): Combinator =
-  Labeled(Role.LITERAL, NetdevLinkSafeAtouTerminal(minInclusive, maxExclusive, allowMinus))
-
-/** Exclusive upper bound of a uint16_t. */
-const val UINT16_LIMIT = 65_536L
-
-/** Exclusive upper bound of a uint32_t / unsigned. */
-const val NETDEV_LINK_UINT32_LIMIT = 4_294_967_296L
-
-/**
- * `N` or `N-M` as parse_range() (src/basic/parse-util.c) reads it, each bound a safe_atou() number in
- * `[minInclusive, maxExclusive)`. The value is split on the first `-` (EXTRACT_DONT_COALESCE_SEPARATORS,
- * so `-5` and `5-` both fail); the lower part goes to safe_atou() and so can never start with `-`
- * (`-0` is an empty lower word), while the upper part is handed to safe_atou() as is, so `5--0` is legal.
- * safe_atou() skips leading whitespace, so whitespace may follow the dash — but only where the caller's
- * own word splitting cannot cut there, hence [spaceAfterDash] (true for a whole-value range such as
- * PortRange=; false inside a whitespace-separated list, where `0- 3` is two words). The `lower <= upper`
- * checks that callers make afterwards compare parsed numbers and are not modelled.
- */
-fun parseRange(maxExclusive: Long, minInclusive: Long = 0L, spaceAfterDash: Boolean = false): Combinator = SequenceCombinator(
-  netdevLinkSafeAtou(maxExclusive, minInclusive, allowMinus = false),
-  ZeroOrOne(
-    if (spaceAfterDash) SequenceCombinator(HYPHEN, ZeroOrOne(WhitespaceTerminal()), netdevLinkSafeAtou(maxExclusive, minInclusive))
-    else SequenceCombinator(HYPHEN, netdevLinkSafeAtou(maxExclusive, minInclusive))
-  ),
-)
-
-/**
- * Whether parse_range() accepts the already-extracted [word] with both bounds in
- * `[minInclusive, maxExclusive)` — the same check as [parseRange], done on a string rather than as a
- * grammar, for words whose quotes or escapes have to be removed first (see [ExtractedWordTerminal]).
- */
-fun parseRangeAccepts(word: String, minInclusive: Long, maxExclusive: Long): Boolean {
+fun netdevLinkParseRangeAccepts(word: String, lower: SafeAtoTerminal, upper: SafeAtoTerminal): Boolean {
   val dash = word.indexOf('-')
-  val lower = if (dash < 0) word else word.substring(0, dash)
-  if (lower.isEmpty()) return false
-  if (!NetdevLinkSafeAtouTerminal.inRange(NetdevLinkSafeAtouTerminal.safeAtouValue(lower), minInclusive, maxExclusive)) return false
-  if (dash < 0) return true
-  val upper = word.substring(dash + 1)
-  return upper.isNotEmpty() && NetdevLinkSafeAtouTerminal.inRange(NetdevLinkSafeAtouTerminal.safeAtouValue(upper), minInclusive, maxExclusive)
+  if (dash < 0) return lower.valueOf(word) != null
+  val upperText = word.substring(dash + 1)
+  return lower.valueOf(word.substring(0, dash)) != null && upperText.isNotEmpty() && upper.valueOf(upperText) != null
 }
-
-/**
- * [inner] optionally wrapped in a matching pair of `"…"` or `'…'`, the form a word takes after
- * extract_first_word(…, EXTRACT_UNQUOTE) has removed its quotes (systemd's own test-cpu-set-util.c
- * writes `8 '9' 10 "11"`). Only whole-word quoting is modelled here; pair it with an
- * [ExtractedWordTerminal] fallback (as [extractedRangeWord] does) for quotes that start mid-word.
- */
-fun optionallyQuoted(inner: Combinator): Combinator = AlternativeCombinator(
-  SequenceCombinator(LiteralChoiceTerminal("\""), inner, LiteralChoiceTerminal("\"")),
-  SequenceCombinator(LiteralChoiceTerminal("'"), inner, LiteralChoiceTerminal("'")),
-  inner,
-)
 
 
 // ---------------------------------------------------------------------------------------------------
@@ -305,30 +175,70 @@ private fun cunescapeOne(s: String, p: Int): Pair<String, Int>? {
   }
 }
 
-/**
- * One parse_range() word of a separator-split list: the structured `N[-M]` grammar (optionally quoted
- * as a whole) for highlighting, with an [ExtractedWordTerminal] fallback that accepts the same numbers
- * however extract_first_word's quoting and escaping spells them (`0-"3"`, `'0'-'3'`).
- */
-fun extractedRangeWord(maxExclusive: Long, minInclusive: Long, separators: String, cunescape: Boolean): Combinator =
-  AlternativeCombinator(
-    SequenceCombinator(optionallyQuoted(parseRange(maxExclusive, minInclusive)), WordEnd(separators)),
-    ExtractedWordTerminal(separators, cunescape, "range $minInclusive..${maxExclusive - 1}") {
-      parseRangeAccepts(it, minInclusive, maxExclusive)
-    },
-  )
-
-
 // ---------------------------------------------------------------------------------------------------
 // CPU sets — config_parse_cpu_set (src/shared/cpu-set-util.c).
-
-/** The largest CPU index cpu_set_add_range() accepts is CPU_SET_MAX_NCPU - 1 = 8191. */
-private const val CPU_SET_MAX_NCPU = 8192L
 
 // One extract_first_word() separator run: any mix of whitespace and commas (separators coalesce).
 private val CPU_SET_SEPARATOR = RegexTerminal("""[\s,]+""", """[\s,]+""")
 
-private val CPU_SET_ITEM = extractedRangeWord(CPU_SET_MAX_NCPU, 0L, """\s,""", cunescape = false)
+// parse_range() bounds as safe_atou() reads them, below CPU_SET_MAX_NCPU (8192, cpu_set_add_range). The word was
+// split on whitespace and commas, so no whitespace can reach safe_atou(). The lower bound is cut at the first `-`
+// by parse_range(), so it never sees a minus; the upper bound is the rest of the word, which may (`0--0`).
+private val CPU_SET_LOWER = SafeAtoTerminal(
+  signed = false,
+  base = 0,
+  flags = emptySet(),
+  minInclusive = 0L,
+  maxInclusive = 8191L,
+  acceptsWhitespace = false,
+  acceptsMinus = false,
+)
+private val CPU_SET_UPPER = SafeAtoTerminal(
+  signed = false,
+  base = 0,
+  flags = emptySet(),
+  minInclusive = 0L,
+  maxInclusive = 8191L,
+  acceptsWhitespace = false,
+  acceptsMinus = true,
+)
+private val CPU_SET_RANGE = SequenceCombinator(CPU_SET_LOWER, ZeroOrOne(SequenceCombinator(HYPHEN, CPU_SET_UPPER)))
+
+// The same bounds for a word whose quotes have been removed: quoted whitespace does reach safe_atou() (`" 3"`).
+private val CPU_SET_UNQUOTED_LOWER = SafeAtoTerminal(
+  signed = false,
+  base = 0,
+  flags = emptySet(),
+  minInclusive = 0L,
+  maxInclusive = 8191L,
+  acceptsWhitespace = true,
+  acceptsMinus = false,
+)
+private val CPU_SET_UNQUOTED_UPPER = SafeAtoTerminal(
+  signed = false,
+  base = 0,
+  flags = emptySet(),
+  minInclusive = 0L,
+  maxInclusive = 8191L,
+  acceptsWhitespace = true,
+  acceptsMinus = true,
+)
+
+// One word: the structured `N[-M]` grammar, bare or quoted as a whole, for highlighting; then an
+// [ExtractedWordTerminal] fallback for quotes and escapes anywhere in the word (`0-"3"`, `'0'-'3'`).
+private val CPU_SET_ITEM = AlternativeCombinator(
+  SequenceCombinator(
+    AlternativeCombinator(
+      SequenceCombinator(LiteralChoiceTerminal("\""), CPU_SET_RANGE, LiteralChoiceTerminal("\"")),
+      SequenceCombinator(LiteralChoiceTerminal("'"), CPU_SET_RANGE, LiteralChoiceTerminal("'")),
+      CPU_SET_RANGE,
+    ),
+    WordEnd("""\s,"""),
+  ),
+  ExtractedWordTerminal("""\s,""", cunescape = false, "range 0..8191") { word ->
+    netdevLinkParseRangeAccepts(word, CPU_SET_UNQUOTED_LOWER, CPU_SET_UNQUOTED_UPPER)
+  },
+)
 
 /**
  * A CPU set: CPU indices and `N-M` ranges separated by whitespace and/or commas.
@@ -336,8 +246,8 @@ private val CPU_SET_ITEM = extractedRangeWord(CPU_SET_MAX_NCPU, 0L, """\s,""", c
  * config_parse_cpu_set splits with extract_first_word(…, WHITESPACE ",", EXTRACT_UNQUOTE), so separators
  * coalesce, leading and trailing separators are harmless (`0, 1, 2, 3, 4, 5, 6, 7, 63, ` is in
  * test-cpu-set-util.c), and a word may be quoted — anywhere in the word, not only around it (`0-"3"` is
- * `0-3`; see [extractedRangeWord]). Each word goes to parse_range(), whose bounds are
- * safe_atou() numbers — so hex works — and cpu_set_add_range() refuses anything at or above
+ * `0-3`; the [ExtractedWordTerminal] fallback handles that). Each word goes to parse_range(), whose bounds are
+ * safe_atou() numbers ([SafeAtoTerminal]: hex, octal, `0b`/`0o`) — and cpu_set_add_range() refuses anything at or above
  * CPU_SET_MAX_NCPU (8192). A range whose lower end exceeds its upper end (`3-0`) is rejected by systemd
  * after parsing; that compares numbers and is not modelled.
  */
@@ -481,37 +391,51 @@ val CREDENTIAL_REFERENCE: Combinator = SequenceCombinator(LiteralChoiceTerminal(
 
 
 // ---------------------------------------------------------------------------------------------------
-// Route tables — manager_get_route_table_from_string (src/network/networkd-route-util.c).
-
-// Names an administrator can define with RouteTable=name:number in networkd.conf. That parser splits
-// words on whitespace, cuts each at the first `:`, and refuses an empty or all-digit name; any other
-// spelling is a potential name, so a non-numeric word here cannot be checked against a closed set.
-private val ROUTE_TABLE_NAME = RegexTerminal("""[^\s:]+""", """(?![0-9]+$)[^\s:]+""")
-
-/**
- * A route table: one of the predefined names `default`, `main`, `local`, a name defined in
- * networkd.conf, or a non-zero uint32 (safe_atou32, so hex works). Each branch carries its own EOF so
- * the classic first-match engine can fall back from the numeric branch to the name branch on `1abc`.
- */
-val ROUTE_TABLE: Combinator = AlternativeCombinator(
-  SequenceCombinator(FlexibleLiteralChoiceTerminal("default", "main", "local"), EOF()),
-  SequenceCombinator(netdevLinkSafeAtou(NETDEV_LINK_UINT32_LIMIT, 1), EOF()),
-  SequenceCombinator(ROUTE_TABLE_NAME, EOF()),
-)
-
-
-// ---------------------------------------------------------------------------------------------------
 // Address prefixes — in_addr_prefix_from_string_auto_full (src/basic/in-addr-util.c).
 
 /**
  * An IPv4 or IPv6 address with an optional `/prefixlen`, as in_addr_prefix_from_string_auto (mode
  * PREFIXLEN_FULL) reads it. Like [IP_ADDR_AND_ANY_PREFIX], but the length goes through
- * in_addr_parse_prefixlen → safe_atou8, so it is a base-0 number (`/0x18` is 24) up to the family width.
- * IPv6 is tried first so the IPv4 branch never strands part of an IPv6 literal.
+ * in_addr_parse_prefixlen → safe_atou8, so it is a base-0 number (`/0x18` is 24, `/0b+1000` is 8) up to the
+ * family width. Its only user, AllowedIPs=, splits the list on whitespace first, so no whitespace reaches
+ * safe_atou8 (`/0b 1` is the two words `…/0b` and `1`). IPv6 is tried first so the IPv4 branch never strands
+ * part of an IPv6 literal.
  */
 val IP_ADDR_AND_SAFE_PREFIX: Combinator = AlternativeCombinator(
-  SequenceCombinator(IPV6_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, netdevLinkSafeAtou(129)))),
-  SequenceCombinator(IPV4_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, netdevLinkSafeAtou(33)))),
+  SequenceCombinator(
+    IPV6_ADDR,
+    ZeroOrOne(
+      SequenceCombinator(
+        CIDR_SEPARATOR,
+        SafeAtoTerminal(
+          signed = false,
+          base = 0,
+          flags = emptySet(),
+          minInclusive = 0L,
+          maxInclusive = 128L,
+          acceptsWhitespace = false,
+          acceptsMinus = true,
+        ),
+      ),
+    ),
+  ),
+  SequenceCombinator(
+    IPV4_ADDR,
+    ZeroOrOne(
+      SequenceCombinator(
+        CIDR_SEPARATOR,
+        SafeAtoTerminal(
+          signed = false,
+          base = 0,
+          flags = emptySet(),
+          minInclusive = 0L,
+          maxInclusive = 32L,
+          acceptsWhitespace = false,
+          acceptsMinus = true,
+        ),
+      ),
+    ),
+  ),
 )
 
 

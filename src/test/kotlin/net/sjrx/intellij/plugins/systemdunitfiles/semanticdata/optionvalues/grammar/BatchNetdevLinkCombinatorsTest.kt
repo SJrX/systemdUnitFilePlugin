@@ -7,7 +7,8 @@ import org.junit.Test
  * Grammar-level tests for the shared helpers in BatchNetdevLinkCombinators.kt, run against BOTH matching
  * engines: the classic SyntacticMatch/SemanticMatch pair and the list-of-successes [validate]. The cases
  * come from systemd's own unit tests at 0f0682b773 (test-parse-util.c, test-time-util.c,
- * test-cpu-set-util.c) where one exists.
+ * test-cpu-set-util.c) where one exists, otherwise from sd-check. The integer and route-table terminals
+ * themselves are covered by SafeAtoTerminalTest and RouteTableTest.
  */
 class BatchNetdevLinkCombinatorsTest {
 
@@ -20,19 +21,6 @@ class BatchNetdevLinkCombinatorsTest {
       assertEquals("classic engine on '$value'", expected, classicAccepts(whole, value))
       assertEquals("parse engine on '$value'", expected, whole.validate(value) == ParseOutcome.Valid)
     }
-  }
-
-  @Test
-  fun testSafeAtouAcceptsEveryBaseSystemdDoes() {
-    val u16 = netdevLinkSafeAtou(UINT16_LIMIT)
-    assertAccepts(u16, true, "0", "65535", "0xffff", "0XFF", "0177777", "0b101", "0B1", "0o17", "0O17", "+5", "+0x10", "-0", "-0x0")
-    assertAccepts(u16, false, "65536", "0x10000", "089", "0b2", "0o8", "-1", "-0x1", "-0b0", "+0b1", "0x", "abc", "1.5")
-  }
-
-  @Test
-  fun testSafeAtouHonoursTheLowerBound() {
-    assertAccepts(netdevLinkSafeAtou(NETDEV_LINK_UINT32_LIMIT, 1), true, "1", "4294967295")
-    assertAccepts(netdevLinkSafeAtou(NETDEV_LINK_UINT32_LIMIT, 1), false, "0", "00", "0x0", "4294967296")
   }
 
   @Test
@@ -67,14 +55,39 @@ class BatchNetdevLinkCombinatorsTest {
     assertAccepts(CPU_SET, true, "0-\"3\"", "'0'-'3'", "\"0\"-3, 4", "0-\\3", "\" 3\"", "1-\"0x3\"")
     // The lower bound of a range is cut at the first `-`, so `-0` is an empty word there.
     assertAccepts(CPU_SET, false, "-0", "-0-3", "0-\"9000\"", "\"0-3", "\"3 \"", "0-\"\"", "0-", "0- 3")
+
+    // The bounds are SafeAtoTerminal numbers in a word split on whitespace and commas (sd-check, IRQAffinity=):
+    // a sign after 0b/0o is fine, but `0b 1` is two words and the lower bound of `0b-0` is the bare word `0b`.
+    assertAccepts(CPU_SET, true, "0b+1", "0-0b+1", "0-0b-0", "0o17", "\"0b 1\"")
+    assertAccepts(CPU_SET, false, "0b-0", "0b 1", "0-0b 1", "0b-1-3")
   }
 
   @Test
-  fun testParseRangeBounds() {
-    assertAccepts(parseRange(100), true, "5", "5-7", "5--0", "0x5-+7", "0")
-    assertAccepts(parseRange(100), false, "-0", "-5", "5-", "5- 7", "5 -7", "100", "5-100")
-    assertAccepts(parseRange(UINT16_LIMIT, 1, spaceAfterDash = true), true, "1000- 2000", "1000-2000")
-    assertAccepts(parseRange(UINT16_LIMIT, 1, spaceAfterDash = true), false, "1000 -2000", "0-5", "5--0")
+  fun testParseRangeAcceptsSplitsAtTheFirstDash() {
+    val lower = SafeAtoTerminal(
+      signed = false,
+      base = 0,
+      flags = emptySet(),
+      minInclusive = 0L,
+      maxInclusive = 99L,
+      acceptsWhitespace = true,
+      acceptsMinus = false,
+    )
+    val upper = SafeAtoTerminal(
+      signed = false,
+      base = 0,
+      flags = emptySet(),
+      minInclusive = 0L,
+      maxInclusive = 99L,
+      acceptsWhitespace = true,
+      acceptsMinus = true,
+    )
+    for (word in listOf("5", "5-7", "5--0", "0x5-+7", "0", " 5", "5- 7", "0b 1-0b+1")) {
+      assertEquals("parse_range accepts <$word>", true, netdevLinkParseRangeAccepts(word, lower, upper))
+    }
+    for (word in listOf("", "-0", "-5", "5-", "5 -7", "100", "5-100", "5-0b-1", "0b-0")) {
+      assertEquals("parse_range refuses <$word>", false, netdevLinkParseRangeAccepts(word, lower, upper))
+    }
   }
 
   @Test
@@ -111,9 +124,13 @@ class BatchNetdevLinkCombinatorsTest {
   }
 
   @Test
-  fun testRouteTableAcceptsNamesAndNonZeroNumbers() {
-    assertAccepts(ROUTE_TABLE, true, "main", "local", "default", "1", "0x10", "4294967295", "custom", "1abc", "-1")
-    assertAccepts(ROUTE_TABLE, false, "0", "00", "4294967296", "a b", "name:1")
+  fun testSafePrefixLengthIsASafeAtou8WithinTheFamilyWidth() {
+    // sd-check (AllowedIPs=): `/0b+1000`, `/0o10` and `0.0.0.0/0b-0` are accepted; `/0b-1` is refused, and so are
+    // `/0b 1` and `/ 8`, which the list splits into two words.
+    assertAccepts(IP_ADDR_AND_SAFE_PREFIX, true, "10.0.0.0/8", "10.0.0.0/0x8", "10.0.0.0/0b+1000", "10.0.0.0/0o10",
+      "0.0.0.0/0b-0", "10.0.0.1", "fd00::/0x40", "::/128")
+    assertAccepts(IP_ADDR_AND_SAFE_PREFIX, false, "10.0.0.0/33", "10.0.0.0/0b-1", "10.0.0.0/0b 1", "10.0.0.0/ 8",
+      "fd00::/129", "10.0.0.0/")
   }
 
   @Test

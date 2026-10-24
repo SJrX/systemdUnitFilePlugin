@@ -16,6 +16,8 @@ class ConfigParseIrqAffinityNumaOptionValueTest : AbstractUnitFileTest() {
             IRQAffinityNUMA=3
             IRQAffinityNUMA=0x1
             IRQAffinityNUMA=4294967293
+            IRQAffinityNUMA=0b 1
+            IRQAffinityNUMA=0b+1
         """.trimIndent()
 
         setupFileInEditor("file.link", file)

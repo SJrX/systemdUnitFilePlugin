@@ -17,6 +17,10 @@ class ConfigParseDefaultPortVlanidOptionValueTest : AbstractUnitFileTest() {
             DefaultPVID=4094
             DefaultPVID=0
             DefaultPVID=0xFFE
+            DefaultPVID=0b 1
+            DefaultPVID=0b+1
+            DefaultPVID=0o 7
+            DefaultPVID=0b -0
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)

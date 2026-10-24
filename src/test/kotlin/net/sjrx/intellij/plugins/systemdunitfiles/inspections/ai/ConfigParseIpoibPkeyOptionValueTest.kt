@@ -17,6 +17,8 @@ class ConfigParseIpoibPkeyOptionValueTest : AbstractUnitFileTest() {
             PartitionKey=0x7fff
             PartitionKey=32769
             PartitionKey=0b1
+            PartitionKey=0b 1
+            PartitionKey=0b+1
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)

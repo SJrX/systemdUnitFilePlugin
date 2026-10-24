@@ -3,9 +3,8 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UINT16_LIMIT
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.netdevLinkSafeAtou
 
 /*
  * [IPoIB] PartitionKey= in a .netdev file.
@@ -26,7 +25,26 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 class ConfigParseIpoibPkeyOptionValue : SimpleGrammarOptionValues(
     "config_parse_ipoib_pkey",
     SequenceCombinator(
-        AlternativeCombinator(netdevLinkSafeAtou(0x8000L, 1), netdevLinkSafeAtou(UINT16_LIMIT, 0x8001L)),
+        AlternativeCombinator(
+            SafeAtoTerminal(
+                signed = false,
+                base = 0,
+                flags = emptySet(),
+                minInclusive = 1L,
+                maxInclusive = 0x7fffL,
+                acceptsWhitespace = true,
+                acceptsMinus = true,
+            ),
+            SafeAtoTerminal(
+                signed = false,
+                base = 0,
+                flags = emptySet(),
+                minInclusive = 0x8001L,
+                maxInclusive = 0xffffL,
+                acceptsWhitespace = true,
+                acceptsMinus = true,
+            ),
+        ),
         EOF()
     )
 )

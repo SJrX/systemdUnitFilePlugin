@@ -4,8 +4,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.netdevLinkSafeAtou
 
 /*
  * [Bridge] DefaultPVID= in a .netdev file.
@@ -21,7 +21,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * Validator for `[Bridge] DefaultPVID=` (.netdev).
  *
  * C function: config_parse_default_port_vlanid. Either `none` (no PVID) or a VLAN id read by
- * parse_vlanid (safe_atou16, so hex works) and checked by vlanid_is_valid, i.e. 0…4094.
+ * parse_vlanid (safe_atou16, so hex, octal and `0b`/`0o` work) and checked by vlanid_is_valid, i.e. 0…4094.
  *
  * The man page says "an integer in the range 1…4094", but vlanid_is_valid only checks `id <= 4094`, so
  * `0` is accepted (and stored as 0, the same as `none`). This follows the C. An invalid value is logged
@@ -33,7 +33,18 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 class ConfigParseDefaultPortVlanidOptionValue : SimpleGrammarOptionValues(
     "config_parse_default_port_vlanid",
     SequenceCombinator(
-        AlternativeCombinator(FlexibleLiteralChoiceTerminal("none"), netdevLinkSafeAtou(4095L)),
+        AlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("none"),
+            SafeAtoTerminal(
+                signed = false,
+                base = 0,
+                flags = emptySet(),
+                minInclusive = 0L,
+                maxInclusive = 4094L,
+                acceptsWhitespace = true,
+                acceptsMinus = true,
+            ),
+        ),
         EOF()
     )
 )

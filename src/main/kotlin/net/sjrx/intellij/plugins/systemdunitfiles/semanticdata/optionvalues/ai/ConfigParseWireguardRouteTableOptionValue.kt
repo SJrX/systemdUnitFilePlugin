@@ -4,7 +4,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN_FALSE
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ROUTE_TABLE
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ROUTE_TABLE_FROM_STRING
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
 /*
@@ -24,17 +24,18 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * C function: config_parse_wireguard_route_table. A value that parse_boolean() reads as false (`no`, `off`, `0`, …)
  * disables route configuration; anything else is a route table for manager_get_route_table_from_string:
  * `default`, `main`, `local`, a name defined with `RouteTable=` in networkd.conf, or a non-zero uint32
- * (safe_atou32, so hex works). See [ROUTE_TABLE]. An empty assignment also disables it.
+ * (safe_atou32, so hex, octal and `0b`/`0o` work). See [ROUTE_TABLE_FROM_STRING]. An empty assignment also disables it.
  *
- * Because table names are user-defined, any word without whitespace or `:` that is not all digits is
- * accepted as a potential name — including `yes`, which is only valid if networkd.conf defines it.
- * What is flagged: out-of-range numbers, values containing whitespace, and `name:number` pairs (that is
- * networkd.conf syntax, not a table reference). An invalid value is logged and ignored by systemd.
+ * Because table names are user-defined (networkd.conf can even define `my\ table:100`), any value without
+ * `:` that is not all digits is accepted as a potential name — including `yes`, which is only valid if
+ * networkd.conf defines it. What is flagged: out-of-range or malformed all-digit numbers (`4294967296`,
+ * `08`) and anything containing `:` (`name:number` is networkd.conf syntax, not a table reference). An
+ * invalid value is logged and ignored by systemd.
  */
 class ConfigParseWireguardRouteTableOptionValue : SimpleGrammarOptionValues(
     "config_parse_wireguard_route_table",
     AlternativeCombinator(
         SequenceCombinator(BOOLEAN_FALSE, EOF()),
-        ROUTE_TABLE,
+        ROUTE_TABLE_FROM_STRING,
     )
 )

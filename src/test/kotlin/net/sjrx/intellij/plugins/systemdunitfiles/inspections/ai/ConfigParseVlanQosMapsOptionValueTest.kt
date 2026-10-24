@@ -22,6 +22,8 @@ class ConfigParseVlanQosMapsOptionValueTest : AbstractUnitFileTest() {
             EgressQOSMaps=0-7
             IngressQOSMaps=1-5
             EgressQOSMaps=4294967295-1
+            EgressQOSMaps=0b+1-2
+            EgressQOSMaps=1-0b+10
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
@@ -44,12 +46,14 @@ class ConfigParseVlanQosMapsOptionValueTest : AbstractUnitFileTest() {
             IngressQOSMaps=a-b
             EgressQOSMaps=-0
             IngressQOSMaps=1-"2
+            EgressQOSMaps=0b 1-2
+            EgressQOSMaps=0b-0
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(8, highlights)
+        assertSize(10, highlights)
     }
 }

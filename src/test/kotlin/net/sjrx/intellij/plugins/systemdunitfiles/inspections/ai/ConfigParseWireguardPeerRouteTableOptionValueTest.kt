@@ -6,6 +6,9 @@ import org.junit.Test
 
 class ConfigParseWireguardPeerRouteTableOptionValueTest : AbstractUnitFileTest() {
 
+    // Values with whitespace are possible table names (networkd.conf can define `my\ table:100`), so they are not
+    // flagged even though sd-check, which loads no networkd.conf, reports them. `0b 1`, `0b+1` and `0o 7` are
+    // safe_atou32 numbers (sd-check accepts them).
     @Test
     fun testValidValues() {
         // language="unit file (systemd)"
@@ -27,6 +30,10 @@ class ConfigParseWireguardPeerRouteTableOptionValueTest : AbstractUnitFileTest()
             RouteTable=4294967295
             RouteTable=custom
             RouteTable=vpn-table
+            RouteTable=main table
+            RouteTable=0b 1
+            RouteTable=0b+1
+            RouteTable=0o 7
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
@@ -42,7 +49,7 @@ class ConfigParseWireguardPeerRouteTableOptionValueTest : AbstractUnitFileTest()
         val file = """
             [WireGuardPeer]
             RouteTable=4294967296
-            RouteTable=main table
+            RouteTable=08
             RouteTable=custom:100
             RouteTable=00
         """.trimIndent()
