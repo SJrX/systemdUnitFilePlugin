@@ -70,23 +70,10 @@ val ERRNO_NAME = FlexibleLiteralChoiceTerminal(*ERRNO_NAMES, ignoreCase = true)
  */
 class SafeAtoiTerminal(private val minInclusive: Long, private val maxExclusive: Long) : TerminalCombinator {
 
-  private fun span(value: String, offset: Int): String? = SHAPE.matchAt(value, offset)?.value
+  private fun span(value: String, offset: Int): String? = SECCOMP_BPF_CGROUP_SAFE_ATOI_SHAPE.matchAt(value, offset)?.value
 
-  private fun valueOf(text: String): Long? {
-    val lower = text.lowercase()
-    if (lower.startsWith("0b")) return lower.drop(2).toLongOrNull(2)
-    if (lower.startsWith("0o")) return lower.drop(2).toLongOrNull(8)
-    val negative = lower.startsWith("-")
-    val digits = lower.removePrefix("+").removePrefix("-")
-    val magnitude = when {
-      digits.startsWith("0x") -> digits.drop(2).toLongOrNull(16)
-      digits.length > 1 && digits.startsWith("0") -> digits.drop(1).toLongOrNull(8)
-      else -> digits.toLongOrNull()
-    } ?: return null
-    return if (negative) -magnitude else magnitude
-  }
-
-  private fun inRange(text: String): Boolean = valueOf(text)?.let { it >= minInclusive && it < maxExclusive } ?: false
+  private fun inRange(text: String): Boolean =
+    seccompBpfCgroupSafeAtoiValue(text)?.let { it >= minInclusive && it < maxExclusive } ?: false
 
   override fun SyntacticMatch(value: String, offset: Int): MatchResult {
     val text = span(value, offset) ?: return NoMatch
@@ -105,14 +92,33 @@ class SafeAtoiTerminal(private val minInclusive: Long, private val maxExclusive:
   }
 
   override fun toString(): String = "SafeAtoi($minInclusive,$maxExclusive)"
+}
 
-  private companion object {
-    // Prefixed forms first, so "0x10" / "0b11" aren't read as a lone 0. A sign may not come BEFORE
-    // 0b/0o (mangle_base only looks at the very first characters, and strtol() would stop at the
-    // 'b'/'o'), but one may come AFTER it: mangle_base strips the prefix and strtol("+1", 2) is fine,
-    // so `0b+1` and `0o-0` are accepted; the range check then rejects `0b-1`.
-    val SHAPE = Regex("""0[bB][+-]?[01]+|0[oO][+-]?[0-7]+|[+-]?(?:0[xX][0-9a-fA-F]+|0[0-7]+|[0-9]+)""")
-  }
+// Prefixed forms first, so "0x10" / "0b11" aren't read as a lone 0. A sign may not come BEFORE
+// 0b/0o (mangle_base only looks at the very first characters, and strtol() would stop at the
+// 'b'/'o'), but one may come AFTER it: mangle_base strips the prefix and strtol("+1", 2) is fine,
+// so `0b+1` and `0o-0` are accepted; the range check then rejects `0b-1`.
+private val SECCOMP_BPF_CGROUP_SAFE_ATOI_SHAPE =
+  Regex("""0[bB][+-]?[01]+|0[oO][+-]?[0-7]+|[+-]?(?:0[xX][0-9a-fA-F]+|0[0-7]+|[0-9]+)""")
+
+/**
+ * The value safe_atoi() would read from the whole of [text], or null if it isn't a safe_atoi() number
+ * at all (see [SafeAtoiTerminal] for the accepted spellings). The result is a Long so callers can do
+ * their own range check; safe_atoi() itself refuses anything outside `int` with -ERANGE.
+ */
+fun seccompBpfCgroupSafeAtoiValue(text: String): Long? {
+  if (SECCOMP_BPF_CGROUP_SAFE_ATOI_SHAPE.matchEntire(text) == null) return null
+  val lower = text.lowercase()
+  if (lower.startsWith("0b")) return lower.drop(2).toLongOrNull(2)
+  if (lower.startsWith("0o")) return lower.drop(2).toLongOrNull(8)
+  val negative = lower.startsWith("-")
+  val digits = lower.removePrefix("+").removePrefix("-")
+  val magnitude = when {
+    digits.startsWith("0x") -> digits.drop(2).toLongOrNull(16)
+    digits.length > 1 && digits.startsWith("0") -> digits.drop(1).toLongOrNull(8)
+    else -> digits.toLongOrNull()
+  } ?: return null
+  return if (negative) -magnitude else magnitude
 }
 
 /**

@@ -8,6 +8,8 @@ class ConfigParseSyscallLogOptionValueTest : AbstractUnitFileTest() {
 
     @Test
     fun testValidValues() {
+        // "~ some_name  another_name" (kf6 autotest): systemd warns that both names are unknown, but syscall
+        // names are resolved by libseccomp per architecture, so only their shape is checked (deliberate).
         // "@system-service", "read write open" and "ptrace,reboot swapoff" are from systemd's
         // test/units/TEST-*.sh and the man page.
         // language="unit file (systemd)"
@@ -20,6 +22,7 @@ class ConfigParseSyscallLogOptionValueTest : AbstractUnitFileTest() {
             SystemCallLog=~ read, write
             SystemCallLog=~
             SystemCallLog=_llseek,
+            SystemCallLog=~ some_name  another_name
         """.trimIndent()
 
         setupFileInEditor("file.service", file)

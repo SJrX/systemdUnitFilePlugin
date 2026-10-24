@@ -32,6 +32,23 @@ class ConfigParseSyscallFilterOptionValueTest : AbstractUnitFileTest() {
     }
 
     @Test
+    fun testUnknownSyscallNamesAreAcceptedDeliberately() {
+        // systemd warns "System call invalid is not known, ignoring." for these (sd-check at 0f0682b773),
+        // but whether a name resolves depends on libseccomp and the native architecture, so only the
+        // shape of a syscall name is checked. Documented leniency.
+        // language="unit file (systemd)"
+        val file = """
+            [Service]
+            SystemCallFilter=invalid
+            SystemCallFilter=madeupcall
+        """.trimIndent()
+
+        setupFileInEditor("file.service", file)
+        enableInspection(InvalidValueInspection::class.java)
+        assertSize(0, myFixture.doHighlighting())
+    }
+
+    @Test
     fun testValidDenyListsAndErrno() {
         // ~uname:EILSEQ, :kill, :255 come from systemd's test units; :4095/:0 from test-seccomp.c.
         // language="unit file (systemd)"
@@ -86,7 +103,10 @@ class ConfigParseSyscallFilterOptionValueTest : AbstractUnitFileTest() {
             SystemCallFilter=~@clock add_key
         """.trimIndent()
         setupFileInEditor("file.nspawn", nspawn)
-        // "@system-service ~@mount": the second word would be the (unknown) name "~@mount" — flagged.
+        // "@system-service ~@mount": nspawn only honours `~` as the first character, so the second word goes
+        // into the allow list verbatim as "~@mount". sd-check is silent (nspawn's parser stores words
+        // unchecked), but at container start seccomp_add_syscall_filter_item() can never resolve it and
+        // drops it with only a debug message, so the entry is a guaranteed no-op. Flagged on purpose.
         assertSize(1, myFixture.doHighlighting())
     }
 

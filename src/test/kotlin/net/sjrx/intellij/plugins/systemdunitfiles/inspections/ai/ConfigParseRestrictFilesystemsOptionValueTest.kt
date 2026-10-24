@@ -61,6 +61,11 @@ class ConfigParseRestrictFilesystemsOptionValueTest : AbstractUnitFileTest() {
     @Test
     fun testInvalidValues() {
         // "foo", "@foo" and "@bar" are TEST-07's deliberately unknown names (logged and ignored).
+        // Unknown groups are refused while parsing. Unknown plain names ("foo", "EXT4", "ext5", and the kf6
+        // autotest's "invalid"/"temporary"/"unknown") pass the unit-file parser, so sd-check is silent, but
+        // in a BPF_FRAMEWORK build the unit logs "bpf-restrict-fs: Invalid filesystem name '…', ignoring."
+        // when it starts (src/core/bpf-restrict-fs.c#L117-L121). The name table is compiled in, so they are
+        // flagged on purpose.
         // language="unit file (systemd)"
         val file = """
             [Service]
@@ -70,10 +75,14 @@ class ConfigParseRestrictFilesystemsOptionValueTest : AbstractUnitFileTest() {
             RestrictFileSystems=EXT4
             RestrictFileSystems=ext5
             RestrictFileSystems=@basic_api
+            RestrictFileSystems=invalid
+            RestrictFileSystems=temporary
+            RestrictFileSystems=@auxiliary-api btrfs  nfs @temporary unknown
+            RestrictFileSystems=@unknowngroup
         """.trimIndent()
 
         setupFileInEditor("file.service", file)
         enableInspection(InvalidValueInspection::class.java)
-        assertSize(6, myFixture.doHighlighting())
+        assertSize(10, myFixture.doHighlighting())
     }
 }
