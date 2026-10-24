@@ -2,7 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.BOOLEAN_ANY_CASE
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
@@ -43,7 +43,7 @@ private val OPTIONAL_WHITESPACE = ZeroOrOne(WhitespaceTerminal())
 class ConfigParseServiceRefreshOnReloadOptionValue : SimpleGrammarOptionValues(
   "config_parse_service_refresh_on_reload",
   AlternativeCombinator(
-    SequenceCombinator(BOOLEAN_ANY_CASE, EOF()),
+    SequenceCombinator(BOOLEAN, EOF()),
     SequenceCombinator(
       ZeroOrOne(LiteralChoiceTerminal("~")),
       OPTIONAL_WHITESPACE,

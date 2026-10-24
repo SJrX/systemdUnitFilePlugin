@@ -19,6 +19,9 @@ class ConfigParseServiceRefreshOnReloadOptionValueTest : AbstractUnitFileTest() 
       RefreshOnReload=TRUE
       RefreshOnReload=oN
       RefreshOnReload=OFF
+      RefreshOnReload=oFf
+      RefreshOnReload=fAlSe
+      RefreshOnReload=T
       RefreshOnReload=extensions
       RefreshOnReload=credentials
       RefreshOnReload=extensions credentials
@@ -46,12 +49,14 @@ class ConfigParseServiceRefreshOnReloadOptionValueTest : AbstractUnitFileTest() 
       RefreshOnReload=~~extensions
       RefreshOnReload=extensions ~credentials
       RefreshOnReload=all
+      RefreshOnReload=CREDENTIALS
+      RefreshOnReload=extensions Credentials
     """.trimIndent()
 
     setupFileInEditor("file.service", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(6, highlights)
+    assertSize(8, highlights)
   }
 }

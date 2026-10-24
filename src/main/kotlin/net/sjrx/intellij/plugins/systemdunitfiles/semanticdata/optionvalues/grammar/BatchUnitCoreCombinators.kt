@@ -63,17 +63,6 @@ object BatchUnitCoreGrammar {
 
 
   // ---------------------------------------------------------------------------------------------------
-  // Booleans.
-
-  /**
-   * A boolean as parse_boolean() (src/basic/parse-util.c) really reads it: STRCASE_IN_SET, so `Yes`,
-   * `TRUE` and `oN` are all fine. The shared [BOOLEAN] in Combinators.kt is case-sensitive; this is the
-   * batch-local case-insensitive one (see RECOMMENDATIONS.md about promoting it).
-   */
-  val BOOLEAN_ANY_CASE = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreCase = true)
-
-
-  // ---------------------------------------------------------------------------------------------------
   // Time spans — parse_time(…, USEC_PER_SEC) a.k.a. parse_sec (src/basic/time-util.c).
   //
   //  - Leading/trailing whitespace is skipped. `infinity` stands alone (only whitespace may follow).
