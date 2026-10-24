@@ -4,7 +4,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN_FALSE
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkDhcpMiscSafeAtoNumberTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
 /*
@@ -26,7 +26,18 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 class ConfigParseBridgeVlanIdOptionValue : SimpleGrammarOptionValues(
     "config_parse_bridge_vlan_id",
     AlternativeCombinator(
-        SequenceCombinator(NetworkDhcpMiscSafeAtoNumberTerminal(0, 4095), EOF()),
+        SequenceCombinator(
+            SafeAtoTerminal(
+                signed = false,
+                base = 0,
+                flags = emptySet(),
+                minInclusive = 0L,
+                maxInclusive = 4_094L,
+                acceptsWhitespace = true,
+                acceptsMinus = true,
+            ),
+            EOF(),
+        ),
         SequenceCombinator(BOOLEAN_FALSE, EOF()),
     )
 )

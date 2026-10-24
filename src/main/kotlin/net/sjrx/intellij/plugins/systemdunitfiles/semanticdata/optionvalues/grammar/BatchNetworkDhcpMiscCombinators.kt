@@ -4,6 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.util.PsiTreeUtil
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups
+import java.math.BigInteger
 
 /*
  * Shared grammar pieces for the network-dhcp-misc validator batch (systemd-networkd DHCPv4/DHCPv6/DHCP
@@ -15,125 +16,15 @@ import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups
  * (see the batch's RECOMMENDATIONS.md).
  *
  * leaf https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L23-L46     parse_boolean
- * leaf https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L403-L427   mangle_base
- * leaf https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429-L478   safe_atou_full
- * leaf https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L497-L520   safe_atoi
- * leaf https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L522-L558   safe_atollu_full
  * leaf https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L112-L124   parse_ifindex
+ *
+ * Integers (safe_atou8/16/32, safe_atoi, safe_atoux64, parse_ifindex) are read with the shared [SafeAtoTerminal].
  * leaf https://github.com/systemd/systemd/blob/0f0682b773/src/basic/escape.c#L104-L296       cunescape_one
  * leaf https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L10-L188  extract_first_word
  * leaf https://github.com/systemd/systemd/blob/0f0682b773/src/basic/socket-util.c#L785-L830  ifname_valid_full
  * leaf https://github.com/systemd/systemd/blob/0f0682b773/src/shared/dns-domain.c#L24-L150   dns_label_unescape
  * leaf https://github.com/systemd/systemd/blob/0f0682b773/src/shared/dns-domain.c#L304-L387  dns_name_concat
  */
-
-/**
- * An integer spelled the way systemd's `safe_ato*` helpers read one, range-checked in the base it is
- * actually written in.
- *
- * With base 0 (safe_atou, safe_atou8, safe_atou16, safe_atou32, safe_atoi, safe_atoi32) the helper first
- * runs mangle_base(), which understands Python-style `0b`/`0o` prefixes, and then hands the string to
- * strtoul()/strtol() with base 0, which understands `0x` hex and leading-zero octal. strtoul() also takes
- * an optional sign: `+5` is 5, and for the unsigned helpers `-0` is 0 while any other negative number is
- * -ERANGE. Note mangle_base() runs *before* the sign is looked at, so `+0b1` is not binary (strtoul stops
- * at the `b` and the helper fails) whereas `+0x1` is fine.
- *
- * With [hexOnly] (safe_atoux64 and friends, which pass an explicit base 16) every number is hexadecimal,
- * with an optional `0x` that strtoull itself tolerates.
- *
- * Leading whitespace — which safe_atou_full skips — is NOT consumed here; model it in the enclosing
- * grammar (an optional [WhitespaceTerminal]) wherever it can occur: after a `:` or `/` separator, since
- * unit-file values themselves arrive stripped. Whitespace *after* a `0b`/`0o` prefix, and a sign there,
- * is part of this terminal (strtoul sees a fresh string after mangle_base strips the prefix).
- *
- * [UnsignedNumberTerminal] covers the common subset (decimal/hex/octal, no sign, no `0b`/`0o`); this one
- * exists because the batch needed the signed form and the extra prefixes.
- */
-class NetworkDhcpMiscSafeAtoNumberTerminal(
-  private val minInclusive: Long,
-  private val maxExclusive: Long,
-  private val signed: Boolean = false,
-  private val hexOnly: Boolean = false,
-) : TerminalCombinator {
-
-  private val shape = if (hexOnly) HEX_SHAPE else BASE0_SHAPE
-
-  private fun span(value: String, offset: Int): String? = shape.matchAt(value, offset)?.value
-
-  /** The value [text] denotes, or null when strtoul would reject it or it overflows a Long. */
-  private fun valueOf(text: String): Long? {
-    var s = text
-    var negative = false
-    if (s.startsWith("+") || s.startsWith("-")) {
-      negative = s[0] == '-'
-      s = s.substring(1)
-    }
-    val magnitude: Long = magnitudeOf(s, signPresent = text != s) ?: return null
-    if (!negative) return magnitude
-    if (signed) return -magnitude
-    // strtoul happily negates; safe_atou_full then refuses anything but -0.
-    return if (magnitude == 0L) 0L else null
-  }
-
-  private fun magnitudeOf(s: String, signPresent: Boolean): Long? {
-    if (hexOnly) return (if (s.startsWith("0x") || s.startsWith("0X")) s.substring(2) else s).toLongOrNull(16)
-    return when {
-      s.length > 2 && (s.startsWith("0x") || s.startsWith("0X")) -> s.substring(2).toLongOrNull(16)
-      // mangle_base only sees an unsigned string, so `+0b1` / `-0o7` fail in systemd too.
-      s.length > 2 && (s.startsWith("0b") || s.startsWith("0B")) -> if (signPresent) null else afterPythonPrefix(s.substring(2), 2)
-      s.length > 2 && (s.startsWith("0o") || s.startsWith("0O")) -> if (signPresent) null else afterPythonPrefix(s.substring(2), 8)
-      s.length > 1 && s.startsWith("0") -> s.substring(1).toLongOrNull(8)
-      else -> s.toLongOrNull()
-    }
-  }
-
-  /**
-   * The part after a `0b`/`0o` prefix, which mangle_base hands to strtoul() as a fresh string: strtoul
-   * skips leading whitespace and takes a sign again, so `0b 1`, `0b+1` and `0b-0` are all accepted
-   * (for the unsigned helpers a negative non-zero result is -ERANGE; for safe_atoi it is just negative).
-   */
-  private fun afterPythonPrefix(rest: String, radix: Int): Long? {
-    var t = rest.trimStart(' ', '\t', '\n', '\r')
-    var negative = false
-    if (t.startsWith("+") || t.startsWith("-")) {
-      negative = t[0] == '-'
-      t = t.substring(1)
-    }
-    val magnitude = t.toLongOrNull(radix) ?: return null
-    if (!negative) return magnitude
-    return if (signed) -magnitude else if (magnitude == 0L) 0L else null
-  }
-
-  // A maxExclusive of Long.MAX_VALUE means "anything that fits a signed 64-bit integer", so that
-  // INT64_MAX itself (the SubnetId= ceiling) stays expressible; larger spellings already fail valueOf().
-  private fun inRange(text: String): Boolean = valueOf(text)?.let {
-    it >= minInclusive && (maxExclusive == Long.MAX_VALUE || it < maxExclusive)
-  } ?: false
-
-  override fun SyntacticMatch(value: String, offset: Int): MatchResult {
-    val text = span(value, offset) ?: return NoMatch
-    return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
-  }
-
-  override fun SemanticMatch(value: String, offset: Int): MatchResult {
-    val text = span(value, offset) ?: return NoMatch
-    if (!inRange(text)) return NoMatch.copy(longestMatch = offset)
-    return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
-  }
-
-  override fun parse(value: String, offset: Int): Sequence<ParseStep> {
-    val text = span(value, offset) ?: return sequenceOf(Stuck(offset, setOf(this)))
-    return sequenceOf(Parse(offset + text.length, listOf(ParsedToken(offset, offset + text.length, text, this, inRange(text)))))
-  }
-
-  override fun toString(): String = "SafeAto($minInclusive,$maxExclusive${if (signed) ",signed" else ""}${if (hexOnly) ",hex" else ""})"
-
-  private companion object {
-    // Prefixed forms before plain digits so "0x10" isn't read as the single digit 0.
-    val BASE0_SHAPE = Regex("""0[bBoO][ \t\n\r]*[+-]?[0-9]+|[+-]?(?:0[xX][0-9a-fA-F]+|0[bBoO][0-9]+|[0-9]+)""")
-    val HEX_SHAPE = Regex("""[+-]?(?:0[xX])?[0-9a-fA-F]+""")
-  }
-}
 
 /** One or more `:` — extract_first_word(…, ":", 0) coalesces runs of its separator. */
 val NETWORK_DHCP_MISC_COALESCED_COLONS = OneOrMore(COLON)
@@ -196,8 +87,8 @@ private const val IFNAME_CHAR = """[\x21-\x7E&&[^:/%]]"""
 private val IFNAME_ALTERNATIVE = Regex("""(?!(?:\.\.?|all|default)\z)$IFNAME_CHAR{1,127}""")
 
 /**
- * A terminal that takes the span [shape] matches and accepts it iff [valid] says so. Like
- * [NetworkDhcpMiscSafeAtoNumberTerminal], for leaves whose acceptance is a computation rather than a regular language.
+ * A terminal that takes the span [shape] matches and accepts it iff [valid] says so, for leaves whose
+ * acceptance is a computation rather than a regular language.
  */
 class CheckedTerminal(private val shape: Regex, private val name: String, private val valid: (String) -> Boolean) : TerminalCombinator {
 
@@ -223,26 +114,28 @@ class CheckedTerminal(private val shape: Regex, private val name: String, privat
 }
 
 /**
- * True iff an all-digit [text] is a positive interface index as parse_ifindex() → safe_atoi() reads it:
- * base 0, so a leading `0` means octal (`010` is 8, `08` fails), and the value must be 1…INT_MAX.
- */
-private fun isPositiveIfindexDigits(text: String): Boolean {
-  val v = if (text.length > 1 && text[0] == '0') text.substring(1).toLongOrNull(8) else text.toLongOrNull()
-  return v != null && v in 1..Int.MAX_VALUE.toLong()
-}
-
-/**
- * A positive interface index, or an alternative interface name (ifname_valid_full with
- * IFNAME_VALID_ALTERNATIVE: 1…127 printable ASCII characters other than `:`, `/`, `%`; not `.`, `..`,
- * `all`, `default`, or all digits).
+ * A positive interface index, or an alternative interface name: `parse_ifindex(s) > 0 ||
+ * ifname_valid_full(s, IFNAME_VALID_ALTERNATIVE)`.
  *
- * An all-digit spelling is therefore valid exactly when parse_ifindex() accepts it: 1…2147483647, with a
- * leading `0` meaning octal (`010` is index 8; `0`, `08` and `99999999999` are refused both as an index
- * and, being all digits, as a name). A spelling with any non-digit (`0x10`, `+5`, `1eth`) is a legal
- * name whatever parse_ifindex makes of it, so only the name rules apply to it.
+ * parse_ifindex() is safe_atoi() (base 0) plus `> 0`, so `010` is index 8, `0x10` is 16 and `+5` is 5, while
+ * `0`, `08` and `99999999999` are refused. ifname_valid_full() then takes 1…127 printable ASCII characters
+ * other than `:`, `/`, `%`, but not `.`, `..`, `all`, `default`, or a spelling made only of digits (those
+ * failed parse_ifindex above, so they are zero, too large or malformed octal).
+ *
+ * The span is the whole value, whitespace included, because safe_atoi sees all of it: `0b 1`, `0o 7` and `\v5`
+ * are indexes 1, 7 and 5, while `eth 0` and `0b 0` are refused (checked with systemd's parser at 0f0682b773).
  */
-val IFNAME_OR_IFINDEX = CheckedTerminal(Regex("""\S+"""), "IfnameOrIfindex") { text ->
-  if (text.all { it in '0'..'9' }) isPositiveIfindexDigits(text) else IFNAME_ALTERNATIVE.matches(text)
+val IFNAME_OR_IFINDEX = CheckedTerminal(Regex("""[\s\S]+"""), "IfnameOrIfindex") { text ->
+  SafeAtoTerminal(
+    signed = true,
+    base = 0,
+    flags = emptySet(),
+    minInclusive = 1L,
+    maxInclusive = Int.MAX_VALUE.toLong(),
+    acceptsWhitespace = true,
+    acceptsMinus = true,
+  ).valueOf(text) != null ||
+    (!text.all { it in '0'..'9' } && IFNAME_ALTERNATIVE.matches(text))
 }
 
 // ---------------------------------------------------------------------------------------------------
@@ -344,7 +237,7 @@ val IPV6_ADDR_NO_LEADING_COLON = Labeled(Role.LITERAL, tag = SemanticTag.IPV6, i
  * config_parse_dhcp6_send_option() parse after their numeric prefix(es). TYPE is one of
  * dhcp_option_data_type_table and decides how the remainder is read:
  *
- *  - `uint8` / `uint16` / `uint32` — safe_atou8/16/32 (base 0, leading whitespace skipped);
+ *  - `uint8` / `uint16` / `uint32` — safe_atou8/16/32 ([SafeAtoTerminal], base 0);
  *  - `ipv4address` / `ipv6address` — inet_pton() of that family, no prefix, no scope;
  *  - `string` — cunescape(…, UNESCAPE_ACCEPT_NUL): anything, with valid C escapes; may contain `:`.
  *
@@ -354,13 +247,50 @@ val IPV6_ADDR_NO_LEADING_COLON = Labeled(Role.LITERAL, tag = SemanticTag.IPV6, i
  * and fails), while `ipv6address::2001:db8::1` is fine. Hence [IPV6_ADDR_NO_LEADING_COLON] after
  * the colon run. Likewise a `string` value cannot start with `:`.
  *
- * The number after `uintN:` may be preceded by whitespace (safe_atou_full skips it). The string length
- * check (`check_length`, <= 255 bytes once unescaped) is not modelled.
+ * The number after `uintN:` is a field cut on `:`, so whitespace reaches safe_atou_full, which skips it
+ * (acceptsWhitespace = true). The string length check (`check_length`, <= 255 bytes once unescaped) is not
+ * modelled.
  */
 fun dhcpOptionTypedData(): Combinator = AlternativeCombinator(
-  SequenceCombinator(LiteralChoiceTerminal("uint8"), NETWORK_DHCP_MISC_COALESCED_COLONS, ZeroOrOne(WhitespaceTerminal()), NetworkDhcpMiscSafeAtoNumberTerminal(0, 256L)),
-  SequenceCombinator(LiteralChoiceTerminal("uint16"), NETWORK_DHCP_MISC_COALESCED_COLONS, ZeroOrOne(WhitespaceTerminal()), NetworkDhcpMiscSafeAtoNumberTerminal(0, 65_536L)),
-  SequenceCombinator(LiteralChoiceTerminal("uint32"), NETWORK_DHCP_MISC_COALESCED_COLONS, ZeroOrOne(WhitespaceTerminal()), NetworkDhcpMiscSafeAtoNumberTerminal(0, 4_294_967_296L)),
+  SequenceCombinator(
+    LiteralChoiceTerminal("uint8"),
+    NETWORK_DHCP_MISC_COALESCED_COLONS,
+    SafeAtoTerminal(
+      signed = false,
+      base = 0,
+      flags = emptySet(),
+      minInclusive = BigInteger.ZERO,
+      maxInclusive = SafeAtoTerminal.UINT8_MAX,
+      acceptsWhitespace = true,
+      acceptsMinus = true,
+    ),
+  ),
+  SequenceCombinator(
+    LiteralChoiceTerminal("uint16"),
+    NETWORK_DHCP_MISC_COALESCED_COLONS,
+    SafeAtoTerminal(
+      signed = false,
+      base = 0,
+      flags = emptySet(),
+      minInclusive = BigInteger.ZERO,
+      maxInclusive = SafeAtoTerminal.UINT16_MAX,
+      acceptsWhitespace = true,
+      acceptsMinus = true,
+    ),
+  ),
+  SequenceCombinator(
+    LiteralChoiceTerminal("uint32"),
+    NETWORK_DHCP_MISC_COALESCED_COLONS,
+    SafeAtoTerminal(
+      signed = false,
+      base = 0,
+      flags = emptySet(),
+      minInclusive = BigInteger.ZERO,
+      maxInclusive = SafeAtoTerminal.UINT32_MAX,
+      acceptsWhitespace = true,
+      acceptsMinus = true,
+    ),
+  ),
   SequenceCombinator(LiteralChoiceTerminal("ipv4address"), NETWORK_DHCP_MISC_COALESCED_COLONS, IPV4_ADDR),
   SequenceCombinator(LiteralChoiceTerminal("ipv6address"), NETWORK_DHCP_MISC_COALESCED_COLONS, IPV6_ADDR_NO_LEADING_COLON),
   SequenceCombinator(LiteralChoiceTerminal("string"), NETWORK_DHCP_MISC_COALESCED_COLONS, C_ESCAPED_TEXT),

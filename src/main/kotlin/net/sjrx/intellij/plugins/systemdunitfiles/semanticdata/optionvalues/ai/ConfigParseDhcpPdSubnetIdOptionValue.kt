@@ -4,8 +4,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkDhcpMiscSafeAtoNumberTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
+import java.math.BigInteger
 
 /*
  * [DHCPPrefixDelegation] SubnetId= (and the old [DHCPv6PrefixDelegation] SubnetId=) (.network).
@@ -31,6 +32,17 @@ class ConfigParseDhcpPdSubnetIdOptionValue : SimpleGrammarOptionValues(
     "config_parse_dhcp_pd_subnet_id",
     AlternativeCombinator(
         SequenceCombinator(FlexibleLiteralChoiceTerminal("auto"), EOF()),
-        SequenceCombinator(NetworkDhcpMiscSafeAtoNumberTerminal(0, Long.MAX_VALUE, hexOnly = true), EOF()),
+        SequenceCombinator(
+            SafeAtoTerminal(
+                signed = false,
+                base = 16,
+                flags = emptySet(),
+                minInclusive = BigInteger.ZERO,
+                maxInclusive = SafeAtoTerminal.INT64_MAX,
+                acceptsWhitespace = true,
+                acceptsMinus = true,
+            ),
+            EOF(),
+        ),
     )
 )

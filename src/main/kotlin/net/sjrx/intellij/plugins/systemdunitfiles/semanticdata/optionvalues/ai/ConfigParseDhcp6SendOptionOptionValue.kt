@@ -6,12 +6,11 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COLON
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.KeyOrSectionDispatchingGrammarOptionValue
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkDhcpMiscSafeAtoNumberTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrMore
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.dhcpOptionTypedData
+import java.math.BigInteger
 
 /*
  * [DHCPv6] SendOption= / SendVendorOption= (.network).
@@ -29,20 +28,37 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * linux  https://man7.org/linux/man-pages/man3/inet_pton.3.html
  */
 
-private val DHCP6_OPTION_CODE = NetworkDhcpMiscSafeAtoNumberTerminal(1, 65_535L)
-
 // safe_atou16/safe_atou32 skip leading whitespace, and extract_first_word(…, ":", 0) leaves any that
-// follows a colon inside the next word, so `123: 1:string:x` is fine.
-private val OPTIONAL_WS = ZeroOrOne(WhitespaceTerminal())
-
-private val CODE_TYPE_DATA = SequenceCombinator(OPTIONAL_WS, DHCP6_OPTION_CODE, NETWORK_DHCP_MISC_COALESCED_COLONS, dhcpOptionTypedData(), EOF())
+// follows a colon inside the next word, so `123: 1:string:x` is fine: hence acceptsWhitespace = true.
+// CODE is safe_atou16 with `u16 < 1 || u16 >= UINT16_MAX` refused, so 1…65534.
+private val CODE_TYPE_DATA = SequenceCombinator(
+    SafeAtoTerminal(
+        signed = false,
+        base = 0,
+        flags = emptySet(),
+        minInclusive = 1L,
+        maxInclusive = 65_534L,
+        acceptsWhitespace = true,
+        acceptsMinus = true,
+    ),
+    NETWORK_DHCP_MISC_COALESCED_COLONS,
+    dhcpOptionTypedData(),
+    EOF(),
+)
 
 private val SEND_OPTION = SequenceCombinator(ZeroOrMore(COLON), CODE_TYPE_DATA)
 
 private val SEND_VENDOR_OPTION = SequenceCombinator(
     ZeroOrMore(COLON),
-    OPTIONAL_WS,
-    NetworkDhcpMiscSafeAtoNumberTerminal(0, 4_294_967_296L),
+    SafeAtoTerminal(
+        signed = false,
+        base = 0,
+        flags = emptySet(),
+        minInclusive = BigInteger.ZERO,
+        maxInclusive = SafeAtoTerminal.UINT32_MAX,
+        acceptsWhitespace = true,
+        acceptsMinus = true,
+    ),
     NETWORK_DHCP_MISC_COALESCED_COLONS,
     CODE_TYPE_DATA,
 )

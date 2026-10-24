@@ -4,10 +4,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_DHCP_MISC_COALESCED_COLONS
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COLON
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkDhcpMiscSafeAtoNumberTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrMore
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.dhcpOptionTypedData
 
@@ -34,7 +32,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * `[DHCPServer] SendVendorOption=` and `[DHCPRelay] ExtraOption=` (in both .network files and
  * networkd.conf).
  *
- * CODE is read by safe_atou8 (so `0x0c` and `014` are 12 too) and must be 1…254. The rest is handed to
+ * CODE is read by safe_atou8 (so `0x0c` and `014` are 12 too, and leading whitespace, `0b 1` or `\v5` are
+ * fine because the field is cut on `:`, not on whitespace) and must be 1…254. The rest is handed to
  * config_parse_dhcp_option and has the [dhcpOptionTypedData] shape: `uint8`/`uint16`/`uint32` take a
  * number in range, `ipv4address`/`ipv6address` a bare address, `string` any C-escaped text (which may
  * itself contain colons). Every separator is extract_first_word(…, ":", 0), so leading and repeated
@@ -47,8 +46,15 @@ class ConfigParseDhcpOptionTlvOptionValue : SimpleGrammarOptionValues(
     "config_parse_dhcp_option_tlv",
     SequenceCombinator(
         ZeroOrMore(COLON),
-        ZeroOrOne(WhitespaceTerminal()),
-        NetworkDhcpMiscSafeAtoNumberTerminal(1, 255),
+        SafeAtoTerminal(
+            signed = false,
+            base = 0,
+            flags = emptySet(),
+            minInclusive = 1L,
+            maxInclusive = 254L,
+            acceptsWhitespace = true,
+            acceptsMinus = true,
+        ),
         NETWORK_DHCP_MISC_COALESCED_COLONS,
         dhcpOptionTypedData(),
         EOF(),

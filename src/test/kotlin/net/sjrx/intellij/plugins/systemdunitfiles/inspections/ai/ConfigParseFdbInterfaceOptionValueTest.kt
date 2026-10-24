@@ -15,6 +15,8 @@ class ConfigParseFdbInterfaceOptionValueTest : AbstractUnitFileTest() {
       OutgoingInterface=dummy98
       OutgoingInterface=7
       OutgoingInterface=010
+      OutgoingInterface=0b 1
+      OutgoingInterface=0o 7
       OutgoingInterface=an-alternative-name-longer-than-fifteen
       OutgoingInterface=
     """.trimIndent()
@@ -36,6 +38,8 @@ class ConfigParseFdbInterfaceOptionValueTest : AbstractUnitFileTest() {
       OutgoingInterface=a%d
       OutgoingInterface=..
       OutgoingInterface=08
+      OutgoingInterface=eth 0
+      OutgoingInterface=0b -1
       OutgoingInterface=4294967297
       OutgoingInterface=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     """.trimIndent()
@@ -44,6 +48,6 @@ class ConfigParseFdbInterfaceOptionValueTest : AbstractUnitFileTest() {
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(7, highlights)
+    assertSize(9, highlights)
   }
 }

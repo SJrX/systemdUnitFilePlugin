@@ -5,9 +5,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkDhcpMiscCheckedSpan
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IPV4_ADDR
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkDhcpMiscSafeAtoNumberTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
 
 /*
@@ -27,8 +26,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 
 /**
  * Validator for `[DHCPServer] ServerAddress=`: an IPv4 address with an optional `/PREFIXLEN` of 0…32
- * (read by safe_atou8, so base-0 spellings like `0x18` are legal, and whitespace after the `/` is
- * skipped), e.g. `192.168.5.1/24`.
+ * (read by safe_atou8, so base-0 spellings like `0x18` are legal, and whitespace after the `/` reaches
+ * the parser and is skipped), e.g. `192.168.5.1/24`.
  *
  * A localhost (127.0.0.0/8) or link-local (169.254.0.0/16) address is flagged: systemd ignores it with
  * "DHCP server address cannot be a localhost or link-local address" (checked with systemd's parser at
@@ -41,7 +40,20 @@ class ConfigParseDhcpServerAddressOptionValue : SimpleGrammarOptionValues(
             val o = addr.split('.').map { it.toIntOrNull() }
             !(o.getOrNull(0) == 127 || (o.getOrNull(0) == 169 && o.getOrNull(1) == 254))
         },
-        ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, ZeroOrOne(WhitespaceTerminal()), NetworkDhcpMiscSafeAtoNumberTerminal(0, 33))),
+        ZeroOrOne(
+            SequenceCombinator(
+                CIDR_SEPARATOR,
+                SafeAtoTerminal(
+                    signed = false,
+                    base = 0,
+                    flags = emptySet(),
+                    minInclusive = 0L,
+                    maxInclusive = 32L,
+                    acceptsWhitespace = true,
+                    acceptsMinus = true,
+                ),
+            ),
+        ),
         EOF(),
     )
 )
