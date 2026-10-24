@@ -14,8 +14,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseIpMasqueradeOptionValue : SimpleGrammarOptionValues(
     "config_parse_ip_masquerade",
     SequenceCombinator(
-        namesOrBoolean(
-            FlexibleLiteralChoiceTerminal("ipv4", "ipv6", "both", "no"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("ipv4", "ipv6", "both"),
             DEPRECATED_BOOLEAN
         ),
         EOF()

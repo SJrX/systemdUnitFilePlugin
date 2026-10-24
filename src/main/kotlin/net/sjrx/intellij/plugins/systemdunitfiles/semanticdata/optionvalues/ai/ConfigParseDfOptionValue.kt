@@ -14,7 +14,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseDfOptionValue : SimpleGrammarOptionValues(
     "config_parse_df",
     SequenceCombinator(
-        namesOrBoolean("no", "yes", "inherit"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("inherit"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

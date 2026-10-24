@@ -17,7 +17,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParsePrivateTmpOptionValue : SimpleGrammarOptionValues(
     "config_parse_private_tmp",
     SequenceCombinator(
-        namesOrBoolean("no", "connected", "disconnected"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("connected", "disconnected"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

@@ -16,7 +16,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseKeepConfigurationOptionValue : SimpleGrammarOptionValues(
     "config_parse_keep_configuration",
     SequenceCombinator(
-        namesOrBoolean("no", "dynamic-on-stop", "dynamic", "static", "yes", "dhcp", "dhcp-on-stop"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("dynamic-on-stop", "dynamic", "static", "dhcp", "dhcp-on-stop"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

@@ -16,7 +16,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseLinkLocalAddressFamilyOptionValue : SimpleGrammarOptionValues(
     "config_parse_link_local_address_family",
     SequenceCombinator(
-        namesOrBoolean("no", "yes", "ipv4", "ipv6", "fallback", "fallback-ipv4"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("ipv4", "ipv6", "fallback", "fallback-ipv4"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

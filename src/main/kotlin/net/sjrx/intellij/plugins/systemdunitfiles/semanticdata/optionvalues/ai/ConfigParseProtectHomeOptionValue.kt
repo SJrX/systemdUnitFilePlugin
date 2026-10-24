@@ -15,7 +15,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseProtectHomeOptionValue : SimpleGrammarOptionValues(
     "config_parse_protect_home",
     SequenceCombinator(
-        namesOrBoolean("no", "yes", "read-only", "tmpfs"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("read-only", "tmpfs"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

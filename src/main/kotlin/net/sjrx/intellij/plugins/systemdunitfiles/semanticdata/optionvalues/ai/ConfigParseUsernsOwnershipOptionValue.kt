@@ -15,7 +15,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseUsernsOwnershipOptionValue : SimpleGrammarOptionValues(
     "config_parse_userns_ownership",
     SequenceCombinator(
-        namesOrBoolean("off", "chown", "map", "foreign", "auto"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("chown", "map", "foreign", "auto"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

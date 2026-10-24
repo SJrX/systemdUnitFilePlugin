@@ -16,7 +16,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseMulticastRouterOptionValue : SimpleGrammarOptionValues(
     "config_parse_multicast_router",
     SequenceCombinator(
-        namesOrBoolean("no", "query", "permanent", "temporary", boolean = BOOLEAN_FALSE),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("query", "permanent", "temporary"),
+            BOOLEAN_FALSE,
+        ),
         EOF()
     )
 )
