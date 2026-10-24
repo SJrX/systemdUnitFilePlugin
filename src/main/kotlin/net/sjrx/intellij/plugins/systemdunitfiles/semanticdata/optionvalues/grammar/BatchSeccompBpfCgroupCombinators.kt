@@ -1,0 +1,209 @@
+package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar
+
+/*
+ * Shared terminals for the seccomp / BPF / cgroup validators (batch 2026-10).
+ *
+ * Everything here is pinned to systemd 0f0682b773, the commit in systemd-build/build/last_commit_hash
+ * that the plugin's gperf and man data are generated from. Browse it at
+ * https://github.com/systemd/systemd/blob/0f0682b773.
+ *
+ * These live in their own file rather than Combinators.kt because several validator families were
+ * written in parallel; the generally useful ones (ERRNO_OR_SECCOMP_ACTION, PRINTF_CHAR, the
+ * whitespace-or-comma separator) are candidates for promotion.
+ */
+
+/**
+ * One run of separators for a list split with `extract_first_word(&p, &word, WHITESPACE ",", …)`.
+ *
+ * extract_first_word skips any leading separators and coalesces runs of them (unless
+ * EXTRACT_DONT_COALESCE_SEPARATORS is passed, which none of these callers do), so `a, b`, `a,,b` and
+ * `a b` all split into the same two words.
+ *
+ * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L10
+ */
+val WHITESPACE_OR_COMMA_SEPARATOR = RegexTerminal("[\\s,]+", "[\\s,]+")
+
+// ---------------------------------------------------------------------------------------------------
+// errno names / numbers — parse_errno (src/basic/parse-util.c#L342) and
+// seccomp_parse_errno_or_action (src/shared/seccomp-util.c#L2688).
+
+/**
+ * The errno names errno_from_name() knows: the `#define E…` macros of `<errno.h>`, as listed by
+ * src/basic/generate-errno-list.sh (which drops the parisc-only aliases ECANCELLED, EREFUSED,
+ * EFSBADCRC and EFSCORRUPTED). Regenerate with
+ *
+ *     echo | gcc -dM -include errno.h -E - | grep -Ev '^#define[[:space:]]+(ECANCELLED|EREFUSED|EFSBADCRC|EFSCORRUPTED)' \
+ *       | awk '/^#define[ \t]+E[^ _]+[ \t]+/ { print $2; }' | sort
+ *
+ * The lookup table is built by gperf with `--ignore-case` (src/basic/meson.build#L168), so `eperm`
+ * resolves as well as `EPERM`.
+ */
+val ERRNO_NAMES = arrayOf(
+  "E2BIG", "EACCES", "EADDRINUSE", "EADDRNOTAVAIL", "EADV", "EAFNOSUPPORT", "EAGAIN", "EALREADY", "EBADE", "EBADF",
+  "EBADFD", "EBADMSG", "EBADR", "EBADRQC", "EBADSLT", "EBFONT", "EBUSY", "ECANCELED", "ECHILD", "ECHRNG",
+  "ECOMM", "ECONNABORTED", "ECONNREFUSED", "ECONNRESET", "EDEADLK", "EDEADLOCK", "EDESTADDRREQ", "EDOM", "EDOTDOT", "EDQUOT",
+  "EEXIST", "EFAULT", "EFBIG", "EHOSTDOWN", "EHOSTUNREACH", "EHWPOISON", "EIDRM", "EILSEQ", "EINPROGRESS", "EINTR",
+  "EINVAL", "EIO", "EISCONN", "EISDIR", "EISNAM", "EKEYEXPIRED", "EKEYREJECTED", "EKEYREVOKED", "EL2HLT", "EL2NSYNC",
+  "EL3HLT", "EL3RST", "ELIBACC", "ELIBBAD", "ELIBEXEC", "ELIBMAX", "ELIBSCN", "ELNRNG", "ELOOP", "EMEDIUMTYPE",
+  "EMFILE", "EMLINK", "EMSGSIZE", "EMULTIHOP", "ENAMETOOLONG", "ENAVAIL", "ENETDOWN", "ENETRESET", "ENETUNREACH", "ENFILE",
+  "ENOANO", "ENOBUFS", "ENOCSI", "ENODATA", "ENODEV", "ENOENT", "ENOEXEC", "ENOKEY", "ENOLCK", "ENOLINK",
+  "ENOMEDIUM", "ENOMEM", "ENOMSG", "ENONET", "ENOPKG", "ENOPROTOOPT", "ENOSPC", "ENOSR", "ENOSTR", "ENOSYS",
+  "ENOTBLK", "ENOTCONN", "ENOTDIR", "ENOTEMPTY", "ENOTNAM", "ENOTRECOVERABLE", "ENOTSOCK", "ENOTSUP", "ENOTTY", "ENOTUNIQ",
+  "ENXIO", "EOPNOTSUPP", "EOVERFLOW", "EOWNERDEAD", "EPERM", "EPFNOSUPPORT", "EPIPE", "EPROTO", "EPROTONOSUPPORT", "EPROTOTYPE",
+  "ERANGE", "EREMCHG", "EREMOTE", "EREMOTEIO", "ERESTART", "ERFKILL", "EROFS", "ESHUTDOWN", "ESOCKTNOSUPPORT", "ESPIPE",
+  "ESRCH", "ESRMNT", "ESTALE", "ESTRPIPE", "ETIME", "ETIMEDOUT", "ETOOMANYREFS", "ETXTBSY", "EUCLEAN", "EUNATCH",
+  "EUSERS", "EWOULDBLOCK", "EXDEV", "EXFULL",
+)
+
+/** An errno name as errno_from_name() resolves it (case-insensitively). */
+val ERRNO_NAME = FlexibleLiteralChoiceTerminal(*ERRNO_NAMES, ignoreCase = true)
+
+/**
+ * The argument of a `syscall:ERRNO` entry: `kill`, an errno name, or a number.
+ * seccomp_parse_errno_or_action() special-cases `kill` (exact, lower case) and otherwise calls
+ * parse_errno(), which takes a name first and then falls back to safe_atoi() (sign, `0x`, `0b`, `0o`,
+ * leading-`0` octal, see [SafeAtoTerminal]), accepting 0 and 1…ERRNO_MAX (4095), so `-0` is fine but `-3`
+ * is not.
+ *
+ * The entry is a word from a whitespace split, so whitespace never reaches safe_atoi() here
+ * (`acceptsWhitespace = false`; sd-check rejects `SystemCallFilter=~uname:0b 1` because `0b` is a word of its
+ * own). A malformed number such as `08` is a syntax error located where strtol() stopped.
+ *
+ * The number comes before the name because ERRNO_NAME's lenient shape includes digits (E2BIG): under
+ * the classic engine, with the name first, `0x1F` would be taken as the one-character name `0` and the
+ * rest stranded.
+ */
+val ERRNO_OR_SECCOMP_ACTION = AlternativeCombinator(
+  LiteralChoiceTerminal("kill"),
+  SafeAtoTerminal(
+    signed = true,
+    base = 0,
+    flags = emptySet(),
+    minInclusive = 0L,
+    maxInclusive = 4095L,
+    acceptsWhitespace = false,
+    acceptsMinus = true,
+  ),
+  ERRNO_NAME,
+)
+
+// ---------------------------------------------------------------------------------------------------
+// System call names and groups — seccomp_parse_syscall_filter (src/shared/seccomp-util.c#L1293).
+
+/**
+ * The predefined system call groups, without their leading `@` (syscall_filter_sets[],
+ * src/shared/seccomp-util.c#L334; looked up by exact string compare in syscall_filter_set_find,
+ * #L1016). An unknown group is logged ("Unknown system call group, ignoring") and dropped.
+ */
+val SYSCALL_GROUP_NAME = FlexibleLiteralChoiceTerminal(
+  "default", "aio", "basic-io", "chown", "clock", "cpu-emulation", "debug", "file-system", "io-event", "ipc",
+  "keyring", "memlock", "module", "mount", "network-io", "obsolete", "pkey", "privileged", "process", "raw-io",
+  "reboot", "resources", "sandbox", "setuid", "signal", "swap", "sync", "system-service", "timer", "known",
+)
+
+/**
+ * A bare system call name. These are resolved at runtime by libseccomp's
+ * seccomp_syscall_resolve_name() for the *native* architecture, so whether e.g. `arm_fadvise64_64` is
+ * "known" depends on the machine; an unknown name is logged and ignored. The set is therefore not
+ * enumerated here: the only check is the shape every libseccomp name has (lower case letters, digits
+ * and underscores — `_llseek`, `epoll_wait`, `s390_pci_mmio_read`). The lenient syntactic side takes
+ * anything up to a separator or `:`, so `DONOTEXIST` is located and flagged as a single token. It does not
+ * start at `@` or `~`, which belong to the `@group` and literal-`~` alternatives: otherwise each such word
+ * would also get a second (invalid) parse here, and a long invalid list would explode into 2^n parses on the
+ * new engine.
+ */
+val SYSCALL_NAME = RegexTerminal("[^\\s,:@~][^\\s,:]*", "[a-z_][a-z0-9_]*")
+
+/** `@group` or a bare system call name. */
+val SYSCALL_OR_GROUP = AlternativeCombinator(
+  SequenceCombinator(LiteralChoiceTerminal("@"), SYSCALL_GROUP_NAME),
+  SYSCALL_NAME,
+)
+
+// ---------------------------------------------------------------------------------------------------
+// File system names — bpf_restrict_fs_parse_filesystem (src/core/bpf-restrict-fs.c#L212).
+
+/**
+ * The file system names fs_type_from_string() resolves: the keys of NAME_TO_MAGIC in
+ * src/basic/filesystem-sets.py, compiled into a case-sensitive gperf table. A name outside this set is
+ * accepted by the unit-file parser and only logged and skipped when the unit starts and the BPF map is
+ * filled ("bpf-restrict-fs: Invalid filesystem name '%s', ignoring.", src/core/bpf-restrict-fs.c#L117-L121).
+ * Validators must therefore accept such names too (RestrictFileSystems= uses these choices as exact
+ * literals next to a lenient word); issue #565 tracks a separate warning for them. The list is kept for
+ * completion and coloring.
+ */
+val FILESYSTEM_NAME = FlexibleLiteralChoiceTerminal(
+  "apparmorfs", "adfs", "affs", "afs", "anon_inodefs", "autofs", "balloon-kvm", "bcachefs", "bdev", "binder",
+  "binfmt_misc", "bpf", "btrfs", "btrfs_test_fs", "cpuset", "ceph", "cgroup2", "cgroup", "cifs", "coda",
+  "configfs", "cramfs", "dax", "debugfs", "devmem", "devpts", "devtmpfs", "dmabuf", "ecryptfs", "efivarfs",
+  "efs", "erofs", "ext2", "ext3", "ext4", "exfat", "f2fs", "failfs", "fuseblk", "fuse",
+  "fusectl", "gfs", "gfs2", "gmem", "hostfs", "hpfs", "hugetlbfs", "iso9660", "jffs2", "minix",
+  "mqueue", "msdos", "ncp", "ncpfs", "nfs", "nfs4", "nilfs2", "nsfs", "ntfs", "ntfs3",
+  "nullfs", "ocfs2", "openpromfs", "orangefs", "overlay", "pidfs", "pipefs", "ppc-cmm", "proc", "pstore",
+  "pvfs2", "qnx4", "qnx6", "ramfs", "resctrl", "reiserfs", "rpc_pipefs", "secretmem", "securityfs", "selinuxfs",
+  "shiftfs", "smackfs", "smb3", "smbfs", "sockfs", "squashfs", "sysfs", "tmpfs", "tracefs", "udf",
+  "usbdevfs", "vboxsf", "vfat", "v9fs", "xenfs", "xfs", "z3fold", "zonefs", "zsmalloc",
+)
+
+/**
+ * The file system groups, without the leading `@` (FILESYSTEM_SETS in src/basic/filesystem-sets.py,
+ * looked up by exact compare in filesystem_set_find, src/basic/filesystems.c#L21). The unit-file parser
+ * refuses an unknown group ("Unknown filesystem group, ignoring"), so validators flag it.
+ */
+val FILESYSTEM_GROUP_NAME = FlexibleLiteralChoiceTerminal(
+  "basic-api", "anonymous", "application", "auxiliary-api", "common-block", "historical-block", "network",
+  "privileged-api", "security", "temporary", "known",
+)
+
+// ---------------------------------------------------------------------------------------------------
+// Specifier expansion — unit_full_printf_full (src/core/unit-printf.c#L179).
+
+/**
+ * The specifier letters unit_full_printf() knows (src/core/unit-printf.c#L210-L238 plus
+ * COMMON_SYSTEM/CREDS/TMP_SPECIFIERS from src/shared/specifier.h#L76-L99), and `%` for a literal
+ * percent sign. Same set as ConfigParseUnitStringPrintfOptionValue uses.
+ */
+const val UNIT_SPECIFIER_LETTERS = "iIjJnNpPfyYcrRCdDELSthsaAbBHlqmMovwWgGuUTV%"
+
+/**
+ * A regex fragment for one character (or `%x` pair) of specifier-expanded text, per specifier_printf
+ * (src/shared/specifier.c#L33): a known specifier expands; an unknown *alphanumeric* one is an error
+ * (-EBADSLT, the assignment is dropped); `%` followed by anything else — or at the very end — is kept
+ * literally. Use inside a character-class-free regex, e.g. `(?:$PRINTF_CHAR)*`.
+ */
+const val PRINTF_CHAR = "(?:[^%]|%[$UNIT_SPECIFIER_LETTERS]|%(?![A-Za-z0-9]))"
+
+/** [PRINTF_CHAR], but also excluding [excluded] (a character-class body, e.g. `=` or `\\s`) as a plain character. */
+fun printfCharExcluding(excluded: String): String = "(?:[^%$excluded]|%[$UNIT_SPECIFIER_LETTERS]|%(?![A-Za-z0-9]))"
+
+// ---------------------------------------------------------------------------------------------------
+// BPF token delegation lists — bpf_delegate_from_string (src/core/namespace.c#L4221).
+
+/**
+ * The value grammar shared by BPFDelegateCommands= / BPFDelegateMaps= / BPFDelegatePrograms= /
+ * BPFDelegateAttachments=: either the whole value `any`, or a comma-separated list of names from
+ * [names].
+ *
+ * bpf_delegate_from_string() checks `streq(s, "any")` against the whole value, then splits on `,`
+ * *only* — no whitespace — with extract_first_word(..., ",", 0), which skips leading commas and
+ * coalesces runs of them. So `A, B` makes a word ` B` that is not in the table ("Unknown BPF delegate
+ * option, ignoring") and is flagged here, while `A,,B` and a trailing comma are fine. Each word is
+ * looked up with DEFINE_STRING_TABLE_LOOKUP, i.e. an exact, case-sensitive streq.
+ */
+fun bpfDelegateList(names: FlexibleLiteralChoiceTerminal): Combinator {
+  val commas = RegexTerminal(",+", ",+")
+  return AlternativeCombinator(
+    SequenceCombinator(LiteralChoiceTerminal("any"), EOF()),
+    SequenceCombinator(
+      ZeroOrOne(commas),
+      ZeroOrOne(
+        SequenceCombinator(
+          names,
+          ZeroOrMore(SequenceCombinator(commas, names)),
+          ZeroOrOne(commas),
+        )
+      ),
+      EOF(),
+    ),
+  )
+}
