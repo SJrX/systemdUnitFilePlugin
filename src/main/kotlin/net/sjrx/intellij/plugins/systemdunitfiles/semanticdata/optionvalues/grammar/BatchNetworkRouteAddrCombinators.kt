@@ -430,12 +430,6 @@ fun ipIsMulticast(bytes: ByteArray): Boolean =
 
 
 // ---------------------------------------------------------------------------------------------------
-// parse_boolean() (src/basic/parse-util.c) compares with STRCASE_IN_SET, so `Yes`, `TRUE` and `Off` are
-// all booleans. The shared [BOOLEAN] terminal is case-sensitive; this one is not.
-val NETWORK_ROUTE_ADDR_BOOLEAN_ANY_CASE = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreCase = true)
-
-
-// ---------------------------------------------------------------------------------------------------
 // IPv6 prefixes — in_addr_prefix_from_string(…, AF_INET6, …) (src/basic/in-addr-util.c): an IPv6 literal
 // and an optional `/LEN`, where LEN goes through in_addr_parse_prefixlen → safe_atou8 (base 0) and must
 // be ≤ 128 (safe_atou8 skips whitespace, so `::/ 64` is fine). Without a slash the prefix length is 128.

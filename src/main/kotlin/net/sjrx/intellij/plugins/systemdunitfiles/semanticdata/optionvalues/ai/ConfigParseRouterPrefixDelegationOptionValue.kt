@@ -3,10 +3,10 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 import com.intellij.codeInspection.ProblemsHolder
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_ROUTE_ADDR_BOOLEAN_ANY_CASE
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.PreferValidAlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
 /*
@@ -29,15 +29,18 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * Both keys share one (parser, ltype) registration, so the registered grammar is the union — a boolean,
  * or `static` / `dhcpv6` — which is exact for `IPv6PrefixDelegation=`. For `IPv6SendRA=`
  * [generateProblemDescriptors] branches on the key, as the C does, and checks against a boolean-only
- * grammar, so `IPv6SendRA=static` is flagged. Booleans are matched case-insensitively, as
- * parse_boolean() does. The names come before the boolean so the classic matcher tries them first.
+ * grammar, so `IPv6SendRA=static` is flagged.
+ *
+ * string_table_lookup_from_string_with_boolean() runs parse_boolean() first (STRCASE_IN_SET, so `Yes`,
+ * `TRUE`, `oFf` are fine), then a case-sensitive streq() lookup, so `Static` is refused. The table's
+ * `no` / `yes` entries are left out of the names because [BOOLEAN] already covers them in any case.
  */
 class ConfigParseRouterPrefixDelegationOptionValue : SimpleGrammarOptionValues(
     "config_parse_router_prefix_delegation",
     SequenceCombinator(
-        AlternativeCombinator(
+        PreferValidAlternativeCombinator(
             FlexibleLiteralChoiceTerminal("static", "dhcpv6"),
-            NETWORK_ROUTE_ADDR_BOOLEAN_ANY_CASE,
+            BOOLEAN,
         ),
         EOF()
     )
@@ -55,7 +58,7 @@ class ConfigParseRouterPrefixDelegationOptionValue : SimpleGrammarOptionValues(
     // streq(lvalue, "IPv6SendRA") → parse_boolean() only.
     val SEND_RA_BOOLEAN_ONLY = SimpleGrammarOptionValues(
         "config_parse_router_prefix_delegation",
-        SequenceCombinator(NETWORK_ROUTE_ADDR_BOOLEAN_ANY_CASE, EOF())
+        SequenceCombinator(BOOLEAN, EOF())
     )
   }
 }

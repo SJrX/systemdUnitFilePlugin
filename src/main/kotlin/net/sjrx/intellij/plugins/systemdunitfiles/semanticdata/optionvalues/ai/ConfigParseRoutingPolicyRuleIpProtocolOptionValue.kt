@@ -1,11 +1,11 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.Checked
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkRouteAddrSafeAtouTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.PreferValidAlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtouValue
 
@@ -56,7 +56,7 @@ private val IP_PROTOCOL_NUMBERS = setOf(
 class ConfigParseRoutingPolicyRuleIpProtocolOptionValue : SimpleGrammarOptionValues(
     "config_parse_routing_policy_rule",
     SequenceCombinator(
-        AlternativeCombinator(
+        PreferValidAlternativeCombinator(
             FlexibleLiteralChoiceTerminal(*IP_PROTOCOL_NAMES, ignoreCase = true),
             Checked(NetworkRouteAddrSafeAtouTerminal(0, 256)) { text -> safeAtouValue(text)?.toInt() in IP_PROTOCOL_NUMBERS },
         ),

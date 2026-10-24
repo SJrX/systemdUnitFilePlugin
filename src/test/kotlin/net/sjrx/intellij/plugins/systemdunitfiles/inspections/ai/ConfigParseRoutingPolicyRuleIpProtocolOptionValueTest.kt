@@ -25,6 +25,9 @@ class ConfigParseRoutingPolicyRuleIpProtocolOptionValueTest : AbstractUnitFileTe
             IPProtocol=144
             IPProtocol=0
             IPProtocol=58
+            IPProtocol=TcP
+            IPProtocol=IcMpV6
+            IPProtocol=L2TP
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -44,10 +47,12 @@ class ConfigParseRoutingPolicyRuleIpProtocolOptionValueTest : AbstractUnitFileTe
             IPProtocol=-6
             IPProtocol=3
             IPProtocol=200
+            IPProtocol=TcPx
+            IPProtocol=Yes
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
-    assertSize(6, myFixture.doHighlighting())
+    assertSize(8, myFixture.doHighlighting())
   }
 }
