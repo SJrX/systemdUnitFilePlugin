@@ -9,6 +9,8 @@ class ConfigParseRoutingPolicyRuleUidRangeOptionValueTest : AbstractUnitFileTest
 
   @Test
   fun testValidValues() {
+    // systemd-network and +1000 are accepted as possible user names: systemd resolves them via NSS at runtime
+    // (get_user_creds), so they are only rejected on a machine without that user.
     // language="unit file (systemd)"
     val file = """
             [RoutingPolicyRule]
@@ -18,6 +20,7 @@ class ConfigParseRoutingPolicyRuleUidRangeOptionValueTest : AbstractUnitFileTest
             User=root
             User=systemd-network
             User=1000-1000
+            User=+1000
         """.trimIndent()
 
     setupFileInEditor("file.network", file)

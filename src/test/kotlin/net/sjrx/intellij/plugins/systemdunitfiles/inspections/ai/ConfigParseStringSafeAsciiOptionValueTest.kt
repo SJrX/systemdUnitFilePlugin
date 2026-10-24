@@ -16,6 +16,7 @@ class ConfigParseStringSafeAsciiOptionValueTest : AbstractUnitFileTest() {
             BootFilename=efi/grubx64.efi
             BootFilename=boot file with spaces*.efi
             BootFilename=p@ss:w0rd!#[x]?
+            BootFilename=foo*bar[1]?
         """.trimIndent()
 
     setupFileInEditor("file.network", file)

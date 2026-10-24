@@ -9,6 +9,8 @@ class ConfigParseRouteTableOptionValueTest : AbstractUnitFileTest() {
 
   @Test
   fun testValidValues() {
+    // custom-table, my_table and 0x0 are deliberate leniencies: they are legal networkd.conf RouteTable= names
+    // (only all-digit names are refused), which the plugin cannot see. systemd without such a definition rejects them.
     // language="unit file (systemd)"
     val file = """
             [Route]
@@ -18,6 +20,7 @@ class ConfigParseRouteTableOptionValueTest : AbstractUnitFileTest() {
             Table=1011
             Table=4294967295
             Table=custom-table
+            Table=0x0
             [RoutingPolicyRule]
             Table=7
             Table=my_table

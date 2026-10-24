@@ -9,6 +9,8 @@ class ConfigParseTimezoneOptionValueTest : AbstractUnitFileTest() {
 
   @Test
   fun testValidValues() {
+    // Nowhere/Fake is well-formed; systemd only rejects it because /usr/share/zoneinfo/Nowhere/Fake does not exist,
+    // which depends on the installed tzdata (deliberate leniency).
     // language="unit file (systemd)"
     val file = """
             [DHCPServer]
@@ -17,6 +19,7 @@ class ConfigParseTimezoneOptionValueTest : AbstractUnitFileTest() {
             Timezone=America/Argentina/Buenos_Aires
             Timezone=Etc/GMT+5
             Timezone=Etc/GMT-14
+            Timezone=Nowhere/Fake
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
