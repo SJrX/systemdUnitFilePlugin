@@ -13,7 +13,7 @@ import java.math.BigInteger
  * The tc parsers lean on four leaf helpers, each modelled here as closely to the C as the combinator
  * framework allows:
  *
- *  - safe_atou / safe_atou32 / safe_atou8 / safe_atou32_full(.., 16)  -> [SafeAtouTerminal]
+ *  - safe_atou / safe_atou32 / safe_atou8 / safe_atou32_full(.., 16)  -> [QdiscSafeAtouTerminal]
  *    https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429
  *  - parse_sec / parse_time                                            -> [parseSec]
  *    https://github.com/systemd/systemd/blob/0f0682b773/src/basic/time-util.c#L1198
@@ -106,7 +106,7 @@ val QDISC_BOOLEAN = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreCase
  *
  * The result must lie in `[minInclusive, maxExclusive)`.
  */
-class SafeAtouTerminal(
+class QdiscSafeAtouTerminal(
   private val minInclusive: Long,
   private val maxExclusive: Long,
   private val base: Int = 0,
@@ -167,20 +167,20 @@ class SafeAtouTerminal(
 }
 
 /** One past UINT32_MAX, the exclusive bound for every `safe_atou32` value. */
-const val UINT32_LIMIT: Long = 4_294_967_296L
+const val QDISC_UINT32_LIMIT: Long = 4_294_967_296L
 
 /** One past UINT32_MAX as a BigInteger, for the size/time range checks. */
-private val UINT32_MAX_BIG: BigInteger = BigInteger.valueOf(UINT32_LIMIT - 1)
+private val UINT32_MAX_BIG: BigInteger = BigInteger.valueOf(QDISC_UINT32_LIMIT - 1)
 
 /** ULLONG_MAX: parse_size() and parse_time() return ERANGE above it. */
 private val UINT64_MAX_BIG: BigInteger = BigInteger.ONE.shiftLeft(64).subtract(BigInteger.ONE)
 
-/** A [SafeAtouTerminal] coloured as a literal. */
-fun safeAtou(maxExclusive: Long, minInclusive: Long = 0L, base: Int = 0): Combinator =
-  Labeled(Role.LITERAL, SafeAtouTerminal(minInclusive, maxExclusive, base))
+/** A [QdiscSafeAtouTerminal] coloured as a literal. */
+fun qdiscSafeAtou(maxExclusive: Long, minInclusive: Long = 0L, base: Int = 0): Combinator =
+  Labeled(Role.LITERAL, QdiscSafeAtouTerminal(minInclusive, maxExclusive, base))
 
 /** A whole value that is one safe_atou32() number. */
-fun safeAtou32Value(): Combinator = SequenceCombinator(safeAtou(UINT32_LIMIT), EOF())
+fun safeAtou32Value(): Combinator = SequenceCombinator(qdiscSafeAtou(QDISC_UINT32_LIMIT), EOF())
 
 // ---------------------------------------------------------------------------------------------------
 // parse_sec / parse_time
@@ -376,7 +376,7 @@ val SIZE_UINT32_MAX: BigInteger = UINT32_MAX_BIG
 // The integer part goes through safe_atoi() (base 0, mangle_base) — so `0x10%` is 16% — and must not
 // be negative (`-0` is fine). Its magnitude is capped by the 100% check below, so an int-sized bound
 // on the terminal itself is enough.
-private val PCT_INT = safeAtou(Int.MAX_VALUE.toLong() + 1)
+private val PCT_INT = qdiscSafeAtou(Int.MAX_VALUE.toLong() + 1)
 
 /**
  * A percentage as parse_permyriad() reads it

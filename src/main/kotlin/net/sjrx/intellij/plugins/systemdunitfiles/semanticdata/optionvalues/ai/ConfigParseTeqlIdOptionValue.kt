@@ -27,5 +27,5 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 class ConfigParseTeqlIdOptionValue : SimpleGrammarOptionValues(
   "config_parse_teql_id",
-  SequenceCombinator(safeAtou(2_147_483_648L), EOF()),
+  SequenceCombinator(qdiscSafeAtou(2_147_483_648L), EOF()),
 )

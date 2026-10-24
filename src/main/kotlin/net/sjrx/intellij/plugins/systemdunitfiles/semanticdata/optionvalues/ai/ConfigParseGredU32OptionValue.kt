@@ -34,5 +34,5 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 class ConfigParseGredU32OptionValue : SimpleGrammarOptionValues(
   "config_parse_gred_u32",
-  SequenceCombinator(safeAtou(17), EOF()),
+  SequenceCombinator(qdiscSafeAtou(17), EOF()),
 )

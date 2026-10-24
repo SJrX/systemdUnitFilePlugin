@@ -18,7 +18,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/test-network/conf/25-qdisc-ets.network#L18-L21   PriorityMap=8 7 6 5 / PriorityMap= / PriorityMap=3 4 5
  */
 
-private val ETS_BAND = safeAtou(256)
+private val ETS_BAND = qdiscSafeAtou(256)
 
 /**
  * Validator for [EnhancedTransmissionSelection] PriorityMap=.

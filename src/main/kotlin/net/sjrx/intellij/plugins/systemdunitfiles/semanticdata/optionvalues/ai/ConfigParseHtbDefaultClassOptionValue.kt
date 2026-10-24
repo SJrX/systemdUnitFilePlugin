@@ -26,5 +26,5 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 class ConfigParseHtbDefaultClassOptionValue : SimpleGrammarOptionValues(
   "config_parse_htb_default_class",
-  SequenceCombinator(safeAtou(UINT32_LIMIT, base = 16), EOF()),
+  SequenceCombinator(qdiscSafeAtou(QDISC_UINT32_LIMIT, base = 16), EOF()),
 )
