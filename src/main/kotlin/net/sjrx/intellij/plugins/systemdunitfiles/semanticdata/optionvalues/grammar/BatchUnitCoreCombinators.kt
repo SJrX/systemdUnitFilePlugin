@@ -10,8 +10,8 @@ import java.math.BigInteger
  * systemd-build/build/last_commit_hash: https://github.com/systemd/systemd/blob/0f0682b773
  *
  * These were written for one batch and live in their own file so parallel work on Combinators.kt does
- * not collide; several of them (the time span, the unit-specifier escape hatch, the safe_ato* number)
- * are general enough to be promoted there.
+ * not collide; some of them (the time span, the unit-specifier escape hatch) are general enough to be
+ * promoted there. Integers read by the safe_ato* family use the shared [SafeAtoTerminal] instead.
  *
  * Every grammar here is careful about the classic engine: no repetition wraps something that can match
  * the empty string (classic ZeroOrMore/OneOrMore would loop forever), and every alternative that
@@ -351,79 +351,6 @@ object BatchUnitCoreGrammar {
         SequenceCombinator(CAL_WEEKDAYS, CAL_TIMEZONE_AFTER_SPACES, EOF())
       ).toTypedArray()
   )
-
-
-  // ---------------------------------------------------------------------------------------------------
-  // Numbers as the safe_ato* family reads them (src/basic/parse-util.c): leading whitespace is skipped,
-  // mangle_base() turns a `0b`/`0o` prefix into base 2/8, and otherwise strtoul()/strtoll() run with base
-  // 0, so `0x` is hexadecimal and a leading `0` is octal. The unsigned helpers accept a leading `+` and
-  // refuse `-` with ERANGE — but only when the parsed value is non-zero (`l != 0 && s[0] == '-'`), so
-  // `-0` and `-0x0` are a valid 0. The signed ones accept both signs. `0b`/`0o` are only recognised unsigned.
-
-  /**
-   * An integer spelled any way the safe_atou and safe_atoi helpers accept, range-checked on the value it denotes.
-   *
-   * Unlike [UnsignedNumberTerminal] this also accepts `0b…`, `0o…` and a leading `+`, and with
-   * [signed] a leading `-`.
-   */
-  class SafeAtoNumberTerminal(
-    private val minInclusive: BigInteger,
-    private val maxInclusive: BigInteger,
-    private val signed: Boolean,
-  ) : TerminalCombinator {
-
-    constructor(minInclusive: Long, maxInclusive: Long, signed: Boolean) :
-      this(BigInteger.valueOf(minInclusive), BigInteger.valueOf(maxInclusive), signed)
-
-    private fun span(value: String, offset: Int): String? = SHAPE.matchAt(value, offset)?.value
-
-    private fun valueOf(text: String): BigInteger? {
-      var s = text
-      if (s.length > 2 && (s.startsWith("0b") || s.startsWith("0B"))) return s.drop(2).toBigIntegerOrNull(2)
-      if (s.length > 2 && (s.startsWith("0o") || s.startsWith("0O"))) return s.drop(2).toBigIntegerOrNull(8)
-      var negative = false
-      if (s.startsWith("+") || s.startsWith("-")) {
-        negative = s[0] == '-'
-        s = s.drop(1)
-      }
-      val magnitude = when {
-        s.length > 2 && (s.startsWith("0x") || s.startsWith("0X")) -> s.drop(2).toBigIntegerOrNull(16)
-        s.length > 1 && s.startsWith("0") -> s.drop(1).toBigIntegerOrNull(8)
-        else -> s.toBigIntegerOrNull(10)
-      } ?: return null
-      if (negative && !signed && magnitude.signum() != 0) return null // safe_atou*: ERANGE unless the value is 0
-      return if (negative) magnitude.negate() else magnitude
-    }
-
-    private fun inRange(text: String): Boolean = valueOf(text)?.let { it >= minInclusive && it <= maxInclusive } ?: false
-
-    override fun SyntacticMatch(value: String, offset: Int): MatchResult {
-      val text = span(value, offset) ?: return NoMatch
-      return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
-    }
-
-    override fun SemanticMatch(value: String, offset: Int): MatchResult {
-      val text = span(value, offset) ?: return NoMatch
-      if (!inRange(text)) return NoMatch.copy(longestMatch = offset)
-      return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
-    }
-
-    override fun parse(value: String, offset: Int): Sequence<ParseStep> {
-      val text = span(value, offset) ?: return sequenceOf(Stuck(offset, setOf(this)))
-      return sequenceOf(Parse(offset + text.length, listOf(ParsedToken(offset, offset + text.length, text, this, inRange(text)))))
-    }
-
-    override fun toString(): String = "SafeAto($minInclusive,$maxInclusive${if (signed) ",signed" else ""})"
-
-    private companion object {
-      // Prefixed forms first so "0x10" isn't read as "0". Over-long digit runs (e.g. "08", an invalid
-      // octal) are still matched whole so the bad token can be highlighted.
-      val SHAPE = Regex("""0[bB][0-9]+|0[oO][0-9]+|[+-]?(?:0[xX][0-9a-fA-F]+|[0-9]+)""")
-    }
-  }
-
-  /** An unsigned number in `[minInclusive, maxInclusive]` as safe_atou*() reads it. */
-  fun safeAtou(minInclusive: Long, maxInclusive: Long): Combinator = SafeAtoNumberTerminal(minInclusive, maxInclusive, signed = false)
 
 
   // ---------------------------------------------------------------------------------------------------

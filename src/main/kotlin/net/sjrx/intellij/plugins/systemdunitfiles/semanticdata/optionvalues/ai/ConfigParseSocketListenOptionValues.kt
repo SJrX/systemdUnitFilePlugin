@@ -13,14 +13,13 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IPV6_ADDR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.UNIT_ABSOLUTE_NON_API_VFS_PATH
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.UNIT_ABSOLUTE_PATH
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.UNIT_SPECIFIER_LETTERS
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.UNIT_TEXT_CHAR
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.safeAtou
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.withUnitSpecifiers
 
 /*
@@ -43,11 +42,13 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/socket-util.c#L1754   socket_address_parse_vsock
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/socket-util.c#L1708   vsock_parse_port
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/socket-util.c#L1731   vsock_parse_cid
- * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L718   parse_ip_port (1..65535, safe_atou16 so hex/octal are fine)
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L718   parse_ip_port (1..65535, safe_atou16_full with SAFE_ATO_REFUSE_LEADING_WHITESPACE)
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429-L478   safe_atou_full (vsock CID/port, netlink group)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/socket-netlink.c#L220   in_addr_port_ifindex_name_from_string_auto
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/socket-util.c#L785   ifname_valid_full (IFNAME_VALID_ALTERNATIVE | IFNAME_VALID_NUMERIC)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/socket-netlink.c#L119-L152   socket_address_parse_netlink
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/socket-util.c#L656   netlink_family_table (WITH_FALLBACK: a number up to INT_MAX also works)
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/string-table.c#L65-L80   string_table_lookup_from_string_fallback (safe_atou, then <= max)
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/src/test/test-socket-netlink.c#L40   TEST(socket_address_parse)
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/src/test/test-socket-netlink.c#L105   TEST(socket_address_parse_netlink)
  * linux  https://man7.org/linux/man-pages/man7/unix.7.html
@@ -73,20 +74,49 @@ private val UNIX_SOCKET_ADDRESS = RegexTerminal(
   """(?:(?=[^%]*$)(?:/+var/+run/+[\s\S]{0,102}|[/@][\s\S]{1,106})|(?=[\s\S]*%)(?:[/@]|$PERCENT_START_SPECIFIER)$UNIT_TEXT_CHAR*)$"""
 )
 
-private val IP_PORT = safeAtou(1, 65535)
+// parse_ip_port: safe_atou16_full(…, SAFE_ATO_REFUSE_LEADING_WHITESPACE), then 0 is refused. The port is a
+// whole value or the text after the last ':' (cut before a '%' scope), so a leading `\v` and `0b 1` reach
+// the parser (accepted) while a leading space is refused (sd-check: `ListenStream=1.2.3.4: 80`).
+private val IP_PORT = SafeAtoTerminal(
+  signed = false,
+  base = 0,
+  flags = setOf(SafeAtoTerminal.Flag.REFUSE_LEADING_WHITESPACE),
+  minInclusive = 1L,
+  maxInclusive = 65_535L,
+  acceptsWhitespace = true,
+  acceptsMinus = true,
+)
 
 // AF_VSOCK: vsock[-stream|-dgram|-seqpacket]:CID:PORT; the CID may be empty (VMADDR_CID_ANY), one of the
-// named CIDs, "-1", or a number; the port is any unsigned except VMADDR_PORT_ANY (UINT32_MAX).
+// named CIDs, "-1", or a number; the port is any unsigned except VMADDR_PORT_ANY (UINT32_MAX). Both numbers
+// are plain safe_atou() on a field cut at the first ':', so whitespace reaches the parser
+// (sd-check accepts `vsock:2: 80` and `vsock: 2:80`).
 private val VSOCK_CID = AlternativeCombinator(
   FlexibleLiteralChoiceTerminal("hypervisor", "local", "host", "any"),
   LiteralChoiceTerminal("-1"),
-  safeAtou(0, 4_294_967_295),
+  SafeAtoTerminal(
+    signed = false,
+    base = 0,
+    flags = emptySet(),
+    minInclusive = 0L,
+    maxInclusive = 4_294_967_295L,
+    acceptsWhitespace = true,
+    acceptsMinus = true,
+  ),
 )
 private val VSOCK_ADDRESS = SequenceCombinator(
   LiteralChoiceTerminal("vsock-seqpacket:", "vsock-stream:", "vsock-dgram:", "vsock:"),
   ZeroOrOne(VSOCK_CID),
   COLON,
-  safeAtou(0, 4_294_967_294),
+  SafeAtoTerminal(
+    signed = false,
+    base = 0,
+    flags = emptySet(),
+    minInclusive = 0L,
+    maxInclusive = 4_294_967_294L,
+    acceptsWhitespace = true,
+    acceptsMinus = true,
+  ),
 )
 
 // An interface scope after the port. The `%` that introduces it has to be written `%%` in a unit file:
@@ -115,18 +145,47 @@ private val SOCKET_ADDRESS = withUnitSpecifiers(
 /** ListenSequentialPacket=: config_parse_socket_listen refuses every family but AF_UNIX for SOCK_SEQPACKET. */
 private val SEQPACKET_ADDRESS = withUnitSpecifiers(SequenceCombinator(UNIX_SOCKET_ADDRESS, EOF()))
 
-/** ListenNetlink=: `FAMILY [GROUP]`, the family a name from netlink_family_table or a number. */
+/**
+ * ListenNetlink=: `FAMILY [GROUP]`, the family a name from netlink_family_table or a number.
+ *
+ * socket_address_parse_netlink() takes the family as the first word (extract_first_word, split on
+ * `" \t\n\r"` only, so `route\v5` is one word and refused) and hands the whole REST to safe_atou(), so
+ * the group may contain whitespace that strtoul skips (sd-check accepts `route 0b 1` and `route \v5`).
+ */
 private val NETLINK_ADDRESS = withUnitSpecifiers(
   SequenceCombinator(
+    // The number goes first: the name list contains digits and '-' (ip6-fw), so its syntactic shape also
+    // matches the `0b` of `0b+1`, and the classic engine commits to the first syntactic match.
     AlternativeCombinator(
+      SafeAtoTerminal(
+        signed = false,
+        base = 0,
+        flags = emptySet(),
+        minInclusive = 0L,
+        maxInclusive = Int.MAX_VALUE.toLong(),
+        acceptsWhitespace = false,
+        acceptsMinus = true,
+      ),
       FlexibleLiteralChoiceTerminal(
         "route", "firewall", "inet-diag", "nflog", "xfrm", "selinux", "iscsi", "audit", "fib-lookup",
         "connector", "netfilter", "ip6-fw", "dnrtmsg", "kobject-uevent", "generic", "scsitransport",
         "ecryptfs", "rdma",
       ),
-      safeAtou(0, Int.MAX_VALUE.toLong()),
     ),
-    ZeroOrOne(SequenceCombinator(WhitespaceTerminal(), safeAtou(0, 4_294_967_295))),
+    ZeroOrOne(
+      SequenceCombinator(
+        RegexTerminal("[ \t\n\r]+", "[ \t\n\r]+"),
+        SafeAtoTerminal(
+          signed = false,
+          base = 0,
+          flags = emptySet(),
+          minInclusive = 0L,
+          maxInclusive = 4_294_967_295L,
+          acceptsWhitespace = true,
+          acceptsMinus = true,
+        ),
+      )
+    ),
     EOF(),
   )
 )
@@ -139,7 +198,7 @@ private val NETLINK_ADDRESS = withUnitSpecifiers(
  *
  *  - `ListenStream=` / `ListenDatagram=`: any socket_address_parse() address — an absolute path or
  *    `@abstract` name (2..107 bytes), `vsock:CID:PORT` (also `vsock-stream:` etc.), a bare port
- *    (1..65535; safe_atou16, so `0x50` is port 80), `IPv4:PORT` or `[IPv6]:PORT`, the latter two
+ *    (1..65535; parse_ip_port, so `0x50` is port 80), `IPv4:PORT` or `[IPv6]:PORT`, the latter two
  *    optionally followed by an interface scope. Because unit_path_printf() runs first, that scope's
  *    `%` must be written `%%` (`[fe80::1]:80%%eth0`).
  *  - `ListenSequentialPacket=`: AF_UNIX only.

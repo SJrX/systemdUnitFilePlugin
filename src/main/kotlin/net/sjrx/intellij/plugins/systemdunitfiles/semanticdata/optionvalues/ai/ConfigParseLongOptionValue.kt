@@ -1,8 +1,8 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.SafeAtoNumberTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
 /*
@@ -20,8 +20,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 /**
  * Validator for config_parse_long, used only by `[Socket] MessageQueueMaxMessages=`.
  *
- * A signed `long` as safe_atoli() reads it: an optional sign, then decimal, `0x` hex, leading-zero
- * octal, or (unsigned only) a `0b`/`0o` prefix — anything from LONG_MIN to LONG_MAX on a 64-bit host.
+ * A signed `long` as safe_atoli() reads it ([SafeAtoTerminal], signed, base 0): optional leading
+ * whitespace and sign, then decimal, `0x` hex, leading-zero octal, or a `0b`/`0o` prefix — after which
+ * strtoll starts afresh, so `0b-1` and `0b -1` are -1 (sd-check accepts both) — anything from LONG_MIN
+ * to LONG_MAX on a 64-bit host.
  * The setting itself only means something when positive (socket.c tests `mq_maxmsg > 0`), but the
  * parser accepts any long and so does this.
  *
@@ -30,5 +32,16 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 class ConfigParseLongOptionValue : SimpleGrammarOptionValues(
   "config_parse_long",
-  SequenceCombinator(SafeAtoNumberTerminal(Long.MIN_VALUE, Long.MAX_VALUE, signed = true), EOF())
+  SequenceCombinator(
+    SafeAtoTerminal(
+      signed = true,
+      base = 0,
+      flags = emptySet(),
+      minInclusive = SafeAtoTerminal.INT64_MIN,
+      maxInclusive = SafeAtoTerminal.INT64_MAX,
+      acceptsWhitespace = true,
+      acceptsMinus = true,
+    ),
+    EOF(),
+  )
 )

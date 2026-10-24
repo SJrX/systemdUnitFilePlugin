@@ -2,6 +2,8 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.ConfigParseSocketListenSocketOptionValue
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.GrammarEngineVerdict
 import org.junit.Test
 
 class ConfigParseSocketListenSocketOptionValueTest : AbstractUnitFileTest() {
@@ -165,6 +167,61 @@ class ConfigParseSocketListenSocketOptionValueTest : AbstractUnitFileTest() {
     val highlights = myFixture.doHighlighting()
 
     assertSize(5, highlights)
+  }
+
+  @Test
+  fun testSafeAtoSpellings() {
+    // The numbers go through the shared SafeAtoTerminal. Every value here was checked one per file with
+    // sd-check at 0f0682b773: the first 15 are accepted, the last 5 rejected. Ports are parse_ip_port
+    // (SAFE_ATO_REFUSE_LEADING_WHITESPACE, then 0 refused); vsock CID/port and the netlink group are plain
+    // safe_atou() on the rest of the text; the netlink family is the first " \t\n\r"-separated word.
+    // The plugin's lexer does not take a raw \v, so those spellings are in testVerticalTabSpellings.
+    // language="unit file (systemd)"
+    val file = """
+      [Socket]
+      ListenStream=0b+1
+      ListenStream=0b 1
+      ListenStream=0b +1
+      ListenStream=0o 7
+      ListenStream=1.2.3.4:0b 1
+      ListenStream=[::1]:0b+1
+      ListenStream=1.2.3.4:0b+1%%lo
+      ListenStream=vsock:2: 80
+      ListenStream=vsock: 2:80
+      ListenStream=vsock:2:0b 1
+      ListenStream=vsock:0b+1:80
+      ListenNetlink=route 0b 1
+      ListenNetlink=route 0b+1
+      ListenNetlink=0b+1 5
+      ListenNetlink=route  5
+      ListenStream=0b-0
+      ListenStream=1.2.3.4: 80
+      ListenStream=+0b1
+      ListenStream=vsock:2:0b -1
+      ListenNetlink=route 0b -1
+    """.trimIndent()
+
+    setupFileInEditor("file.socket", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    assertSize(5, highlights)
+  }
+
+  @Test
+  fun testVerticalTabSpellings() {
+    // strtoul skips a leading \v, but neither SAFE_ATO_REFUSE_LEADING_WHITESPACE nor extract_first_word
+    // treat it as whitespace. sd-check at 0f0682b773, one value per file: the first three are accepted,
+    // `route\v5` is rejected (one word, not a netlink family).
+    val validator = ConfigParseSocketListenSocketOptionValue()
+    val stream = validator.combinatorForKey("ListenStream")
+    val netlink = validator.combinatorForKey("ListenNetlink")
+    for (engine in listOf(GrammarEngineVerdict::classic, GrammarEngineVerdict::parseEngine)) {
+      assertEquals(GrammarEngineVerdict.VALID, engine(stream, "\u000B80"))
+      assertEquals(GrammarEngineVerdict.VALID, engine(stream, "1.2.3.4:\u000B80"))
+      assertEquals(GrammarEngineVerdict.VALID, engine(netlink, "route \u000B5"))
+      assertEquals(GrammarEngineVerdict.Kind.SYNTAX, engine(netlink, "route\u000B5").kind)
+    }
   }
 
   @Test
