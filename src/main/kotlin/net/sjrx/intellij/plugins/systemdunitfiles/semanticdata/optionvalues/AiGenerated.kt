@@ -442,6 +442,32 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_xattr", "0") to ConfigParseXattrOptionValue() as OptionValueInformation,
     Validator("config_parse_socket_bindtodevice", "0") to ConfigParseSocketBindtodeviceOptionValue() as OptionValueInformation,
     // END Batch 2026-10: seccomp-bpf-cgroup
+    // Batch 2026-10: unit-core
+    // config_parse_timer: TIMER_CALENDAR goes to calendar_spec_from_string, every other ltype to parse_sec.
+    Validator("config_parse_timer", "TIMER_CALENDAR") to ConfigParseTimerCalendarOptionValue() as OptionValueInformation,
+    Validator("config_parse_timer", "TIMER_ACTIVE") to ConfigParseTimerMonotonicOptionValue() as OptionValueInformation,
+    Validator("config_parse_timer", "TIMER_BOOT") to ConfigParseTimerMonotonicOptionValue() as OptionValueInformation,
+    Validator("config_parse_timer", "TIMER_STARTUP") to ConfigParseTimerMonotonicOptionValue() as OptionValueInformation,
+    Validator("config_parse_timer", "TIMER_UNIT_ACTIVE") to ConfigParseTimerMonotonicOptionValue() as OptionValueInformation,
+    Validator("config_parse_timer", "TIMER_UNIT_INACTIVE") to ConfigParseTimerMonotonicOptionValue() as OptionValueInformation,
+    // config_parse_socket_listen: SOCKET_SOCKET covers four keys with different value types, so its
+    // validator dispatches on the key name, exactly as the C function does.
+    Validator("config_parse_socket_listen", "SOCKET_SOCKET") to ConfigParseSocketListenSocketOptionValue() as OptionValueInformation,
+    Validator("config_parse_socket_listen", "SOCKET_FIFO") to ConfigParseSocketListenFileOptionValue() as OptionValueInformation,
+    Validator("config_parse_socket_listen", "SOCKET_MQUEUE") to ConfigParseSocketListenFileOptionValue() as OptionValueInformation,
+    Validator("config_parse_socket_listen", "SOCKET_USB_FUNCTION") to ConfigParseSocketListenFileOptionValue() as OptionValueInformation,
+    Validator("config_parse_socket_listen", "SOCKET_SPECIAL") to ConfigParseSocketListenSpecialOptionValue() as OptionValueInformation,
+    Validator("config_parse_service_refresh_on_reload", "0") to ConfigParseServiceRefreshOnReloadOptionValue() as OptionValueInformation,
+    Validator("config_parse_pid_file", "0") to ConfigParsePidFileOptionValue() as OptionValueInformation,
+    Validator("config_parse_open_file", "0") to ConfigParseOpenFileOptionValue() as OptionValueInformation,
+    Validator("config_parse_job_timeout_sec", "0") to ConfigParseJobTimeoutSecOptionValue() as OptionValueInformation,
+    Validator("config_parse_bus_name", "0") to ConfigParseBusNameOptionValue() as OptionValueInformation,
+    // RequiresOverridable=/RequisiteOverridable= just log and forward to config_parse_unit_deps.
+    Validator("config_parse_obsolete_unit_deps", "UNIT_REQUIRES") to UnitDependencyOptionValue() as OptionValueInformation,
+    Validator("config_parse_obsolete_unit_deps", "UNIT_REQUISITE") to UnitDependencyOptionValue() as OptionValueInformation,
+    Validator("config_parse_path", "0") to ConfigParsePathOptionValue() as OptionValueInformation,
+    Validator("config_parse_long", "0") to ConfigParseLongOptionValue() as OptionValueInformation,
+    Validator("config_parse_iec_size_long", "0") to ConfigParseIecSizeLongOptionValue() as OptionValueInformation,
 
   )
 
