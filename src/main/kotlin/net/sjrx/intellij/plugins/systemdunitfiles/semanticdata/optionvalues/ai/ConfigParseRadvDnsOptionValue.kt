@@ -11,6 +11,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 /*
  * [IPv6SendRA] DNS= (and the old [IPv6PrefixDelegation] DNS=) (.network).
  *
+ * Note: the plugin reports the deprecated [IPv6PrefixDelegation] section as not allowed in .network files, so this
+ * validator never actually runs for keys there; they are listed only because the gperf shares the parser.
+ *
  * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#DNS=
  * parser https://github.com/systemd/systemd/blob/0f0682b773/src/network/networkd-radv.c#L1285-L1347   config_parse_radv_dns (0)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L10-L188         extract_first_word (whitespace, flags 0)

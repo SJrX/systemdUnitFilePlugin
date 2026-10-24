@@ -10,6 +10,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 /*
  * [DHCPPrefixDelegation] SubnetId= (and the old [DHCPv6PrefixDelegation] SubnetId=) (.network).
  *
+ * Note: the plugin reports the deprecated [DHCPv6PrefixDelegation] section as not allowed in .network files, so this
+ * validator never actually runs for keys there; they are listed only because the gperf shares the parser.
+ *
  * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#SubnetId=
  * parser https://github.com/systemd/systemd/blob/0f0682b773/src/network/networkd-dhcp-prefix-delegation.c#L1428-L1470  config_parse_dhcp_pd_subnet_id (0)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L522-L558                          safe_atollu_full (safe_atoux64: explicit base 16)

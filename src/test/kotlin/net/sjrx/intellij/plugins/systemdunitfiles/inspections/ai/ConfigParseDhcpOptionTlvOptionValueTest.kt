@@ -23,6 +23,10 @@ class ConfigParseDhcpOptionTlvOptionValueTest : AbstractUnitFileTest() {
       SendOption=60:string:tab\there\x41\u00e9\101 é
       SendOption=12::uint8::5
       SendOption=12:uint8: 7
+      SendOption=12:uint8:0b+1
+      SendOption=12:uint8:0b 1
+      SendOption=12:ipv6address::2001:db8::1
+      SendOption=12:ipv6address:::2001:db8::1
       SendOption=
       SendVendorOption=43:string:vendor
       [DHCPServer]
@@ -55,12 +59,15 @@ class ConfigParseDhcpOptionTlvOptionValueTest : AbstractUnitFileTest() {
       [DHCPServer]
       SendVendorOption=12:ipv6address:1.2.3.4
       SendVendorOption=12:uint32:-1
+      SendOption=12:ipv6address:::1
+      SendOption=12:ipv6address::
+      SendOption=12:uint8:0b-1
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(12, highlights)
+    assertSize(15, highlights)
   }
 }

@@ -6,6 +6,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoNumberTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrMore
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.dhcpOptionTypedData
 
@@ -45,6 +47,7 @@ class ConfigParseDhcpOptionTlvOptionValue : SimpleGrammarOptionValues(
     "config_parse_dhcp_option_tlv",
     SequenceCombinator(
         ZeroOrMore(COLON),
+        ZeroOrOne(WhitespaceTerminal()),
         SafeAtoNumberTerminal(1, 255),
         COALESCED_COLONS,
         dhcpOptionTypedData(),

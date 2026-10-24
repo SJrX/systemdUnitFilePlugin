@@ -9,6 +9,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 /*
  * [DHCPv4] UserClass= (and the old [DHCP] UserClass=) (.network).
  *
+ * Note: the plugin reports the deprecated [DHCP] section as not allowed in .network files, so this
+ * validator never actually runs for keys there; they are listed only because the gperf shares the parser.
+ *
  * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#UserClass=
  * parser https://github.com/systemd/systemd/blob/0f0682b773/src/network/networkd-dhcp-common.c#L655-L698  config_parse_dhcp4_user_class (0)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L10-L188            extract_first_word (EXTRACT_CUNESCAPE|EXTRACT_UNQUOTE)

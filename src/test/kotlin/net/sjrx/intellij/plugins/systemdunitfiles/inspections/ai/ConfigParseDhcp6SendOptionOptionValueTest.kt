@@ -17,6 +17,10 @@ class ConfigParseDhcp6SendOptionOptionValueTest : AbstractUnitFileTest() {
       SendOption=23:ipv6address:2001:db8::53
       SendOption=23:ipv4address:10.0.0.1
       SendOption=12:uint32:4294967295
+      SendOption=1:ipv6address::2001:db8::1
+      SendOption=1:uint8:0b+1
+      SendVendorOption=1: 2:uint8:0b 1
+      SendVendorOption=123: 1:string:x
       SendVendorOption=123:1:string:hello
       SendVendorOption=0:1:uint8:2
       SendVendorOption=4294967295:65534:string:x
@@ -42,12 +46,15 @@ class ConfigParseDhcp6SendOptionOptionValueTest : AbstractUnitFileTest() {
       SendOption=1:string:\U
       SendVendorOption=4294967296:1:string:x
       SendVendorOption=123:1:bytes:x
+      SendVendorOption=12:string:x
+      SendOption=123:1:string:x
+      SendOption=1:ipv6address:::1
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(7, highlights)
+    assertSize(10, highlights)
   }
 }

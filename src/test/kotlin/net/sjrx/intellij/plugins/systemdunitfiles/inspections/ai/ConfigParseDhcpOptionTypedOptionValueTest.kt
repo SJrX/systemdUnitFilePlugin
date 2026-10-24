@@ -20,6 +20,7 @@ class ConfigParseDhcpOptionTypedOptionValueTest : AbstractUnitFileTest() {
       RelayAgentRemoteId=uint32:0
       RelayAgentRemoteId=ipv4address:192.0.2.1
       RelayAgentRemoteId=ipv6address:fe80::1
+      RelayAgentRemoteId=ipv6address::2001:db8::1
       RelayAgentRemoteId=string:with\x00nul\ttab
       RelayAgentRemoteId=::string:leading-colons
       RelayAgentCircuitId=
@@ -43,12 +44,14 @@ class ConfigParseDhcpOptionTypedOptionValueTest : AbstractUnitFileTest() {
       RelayAgentCircuitId=uint16:-1
       RelayAgentCircuitId=ipv4address:192.0.2.1/24
       RelayAgentCircuitId=string
+      RelayAgentRemoteId=ipv6address:::1
+      RelayAgentRemoteId=ipv6address::ffff:192.0.2.1
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(6, highlights)
+    assertSize(8, highlights)
   }
 }

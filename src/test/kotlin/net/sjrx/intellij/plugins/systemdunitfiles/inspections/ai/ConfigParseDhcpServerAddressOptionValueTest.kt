@@ -17,6 +17,7 @@ class ConfigParseDhcpServerAddressOptionValueTest : AbstractUnitFileTest() {
       ServerAddress=10.0.0.1/0
       ServerAddress=10.0.0.1/32
       ServerAddress=10.0.0.1/0x18
+      ServerAddress=10.0.0.1/ 24
       ServerAddress=
     """.trimIndent()
 

@@ -15,6 +15,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * the old [DHCP] DUIDRawData= (.network, config_parse_network_duid_rawdata), and [DHCPv4]/[DHCPv6]
  * DUIDRawData= in networkd.conf (config_parse_duid_rawdata).
  *
+ * Note: the plugin reports the deprecated [DHCP] section as not allowed in .network files, so this
+ * validator never actually runs for keys there; they are listed only because the gperf shares the parser.
+ *
  * man    https://www.freedesktop.org/software/systemd/man/latest/networkd.conf.html#DUIDRawData=
  *        https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#DUIDRawData=
  * parser https://github.com/systemd/systemd/blob/0f0682b773/src/network/networkd-dhcp-common.c#L1321-L1392  config_parse_duid_rawdata (0)

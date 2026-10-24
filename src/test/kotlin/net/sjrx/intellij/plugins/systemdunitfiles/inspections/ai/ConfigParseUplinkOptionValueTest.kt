@@ -8,8 +8,7 @@ class ConfigParseUplinkOptionValueTest : AbstractUnitFileTest() {
 
   @Test
   fun testValidValues() {
-    // `:none` is only meaningful for [DHCPServer]/[IPv6SendRA] and `:self` only for
-    // [DHCPPrefixDelegation]; the validator can't see the section, so both are accepted everywhere.
+    // `:none` is only accepted in [DHCPServer]/[IPv6SendRA] and `:self` only in [DHCPPrefixDelegation].
     // language="unit file (systemd)"
     val file = """
       [DHCPServer]
@@ -26,6 +25,9 @@ class ConfigParseUplinkOptionValueTest : AbstractUnitFileTest() {
       [IPv6SendRA]
       UplinkInterface=this-is-a-long-alternative-interface-name
       UplinkInterface=0x10
+      UplinkInterface=:none
+      UplinkInterface=010
+      UplinkInterface=2147483647
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -48,12 +50,20 @@ class ConfigParseUplinkOptionValueTest : AbstractUnitFileTest() {
       UplinkInterface=eth/0
       [IPv6SendRA]
       UplinkInterface=eth0 eth1
+      UplinkInterface=:self
+      UplinkInterface=99999999999
+      UplinkInterface=2147483648
+      UplinkInterface=08
+      [DHCPServer]
+      UplinkInterface=:self
+      [DHCPPrefixDelegation]
+      UplinkInterface=:none
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(6, highlights)
+    assertSize(12, highlights)
   }
 }

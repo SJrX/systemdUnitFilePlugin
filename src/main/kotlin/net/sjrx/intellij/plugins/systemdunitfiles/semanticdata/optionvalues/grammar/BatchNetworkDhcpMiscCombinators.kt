@@ -1,5 +1,10 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar
 
+import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.psi.util.PsiTreeUtil
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups
+
 /*
  * Shared grammar pieces for the network-dhcp-misc validator batch (systemd-networkd DHCPv4/DHCPv6/DHCP
  * server/DUID/DNS/NTP/LLDP and assorted [Network]/[Link] settings).
@@ -46,8 +51,10 @@ val BOOLEAN_FALSE_ANY_CASE = FlexibleLiteralChoiceTerminal("0", "no", "n", "fals
  * With [hexOnly] (safe_atoux64 and friends, which pass an explicit base 16) every number is hexadecimal,
  * with an optional `0x` that strtoull itself tolerates.
  *
- * Leading whitespace — which strtoul skips — is NOT consumed here; model it in the enclosing grammar
- * where it can actually occur (unit-file values arrive stripped).
+ * Leading whitespace — which safe_atou_full skips — is NOT consumed here; model it in the enclosing
+ * grammar (an optional [WhitespaceTerminal]) wherever it can occur: after a `:` or `/` separator, since
+ * unit-file values themselves arrive stripped. Whitespace *after* a `0b`/`0o` prefix, and a sign there,
+ * is part of this terminal (strtoul sees a fresh string after mangle_base strips the prefix).
  *
  * [UnsignedNumberTerminal] covers the common subset (decimal/hex/octal, no sign, no `0b`/`0o`); this one
  * exists because the batch needed the signed form and the extra prefixes.
@@ -83,11 +90,28 @@ class SafeAtoNumberTerminal(
     return when {
       s.length > 2 && (s.startsWith("0x") || s.startsWith("0X")) -> s.substring(2).toLongOrNull(16)
       // mangle_base only sees an unsigned string, so `+0b1` / `-0o7` fail in systemd too.
-      s.length > 2 && (s.startsWith("0b") || s.startsWith("0B")) -> if (signPresent) null else s.substring(2).toLongOrNull(2)
-      s.length > 2 && (s.startsWith("0o") || s.startsWith("0O")) -> if (signPresent) null else s.substring(2).toLongOrNull(8)
+      s.length > 2 && (s.startsWith("0b") || s.startsWith("0B")) -> if (signPresent) null else afterPythonPrefix(s.substring(2), 2)
+      s.length > 2 && (s.startsWith("0o") || s.startsWith("0O")) -> if (signPresent) null else afterPythonPrefix(s.substring(2), 8)
       s.length > 1 && s.startsWith("0") -> s.substring(1).toLongOrNull(8)
       else -> s.toLongOrNull()
     }
+  }
+
+  /**
+   * The part after a `0b`/`0o` prefix, which mangle_base hands to strtoul() as a fresh string: strtoul
+   * skips leading whitespace and takes a sign again, so `0b 1`, `0b+1` and `0b-0` are all accepted
+   * (for the unsigned helpers a negative non-zero result is -ERANGE; for safe_atoi it is just negative).
+   */
+  private fun afterPythonPrefix(rest: String, radix: Int): Long? {
+    var t = rest.trimStart(' ', '\t', '\n', '\r')
+    var negative = false
+    if (t.startsWith("+") || t.startsWith("-")) {
+      negative = t[0] == '-'
+      t = t.substring(1)
+    }
+    val magnitude = t.toLongOrNull(radix) ?: return null
+    if (!negative) return magnitude
+    return if (signed) -magnitude else if (magnitude == 0L) 0L else null
   }
 
   // A maxExclusive of Long.MAX_VALUE means "anything that fits a signed 64-bit integer", so that
@@ -116,7 +140,7 @@ class SafeAtoNumberTerminal(
 
   private companion object {
     // Prefixed forms before plain digits so "0x10" isn't read as the single digit 0.
-    val BASE0_SHAPE = Regex("""[+-]?(?:0[xX][0-9a-fA-F]+|0[bBoO][0-9]+|[0-9]+)""")
+    val BASE0_SHAPE = Regex("""0[bBoO][ \t\n\r]*[+-]?[0-9]+|[+-]?(?:0[xX][0-9a-fA-F]+|0[bBoO][0-9]+|[0-9]+)""")
     val HEX_SHAPE = Regex("""[+-]?(?:0[xX])?[0-9a-fA-F]+""")
   }
 }
@@ -164,17 +188,57 @@ fun wordList(word: Combinator): Combinator = SequenceCombinator(
 // the pattern used by config_parse_uplink and config_parse_fdb_interface.
 private const val IFNAME_CHAR = """[\x21-\x7E&&[^:/%]]"""
 
+private val IFNAME_ALTERNATIVE = Regex("""(?!(?:\.\.?|all|default)\z)$IFNAME_CHAR{1,127}""")
+
+/**
+ * A terminal that takes the span [shape] matches and accepts it iff [valid] says so. Like
+ * [SafeAtoNumberTerminal], for leaves whose acceptance is a computation rather than a regular language.
+ */
+class CheckedTerminal(private val shape: Regex, private val name: String, private val valid: (String) -> Boolean) : TerminalCombinator {
+
+  private fun span(value: String, offset: Int): String? = shape.matchAt(value, offset)?.value?.takeIf { it.isNotEmpty() }
+
+  override fun SyntacticMatch(value: String, offset: Int): MatchResult {
+    val text = span(value, offset) ?: return NoMatch
+    return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
+  }
+
+  override fun SemanticMatch(value: String, offset: Int): MatchResult {
+    val text = span(value, offset) ?: return NoMatch
+    if (!valid(text)) return NoMatch.copy(longestMatch = offset)
+    return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
+  }
+
+  override fun parse(value: String, offset: Int): Sequence<ParseStep> {
+    val text = span(value, offset) ?: return sequenceOf(Stuck(offset, setOf(this)))
+    return sequenceOf(Parse(offset + text.length, listOf(ParsedToken(offset, offset + text.length, text, this, valid(text)))))
+  }
+
+  override fun toString(): String = name
+}
+
+/**
+ * True iff an all-digit [text] is a positive interface index as parse_ifindex() → safe_atoi() reads it:
+ * base 0, so a leading `0` means octal (`010` is 8, `08` fails), and the value must be 1…INT_MAX.
+ */
+private fun isPositiveIfindexDigits(text: String): Boolean {
+  val v = if (text.length > 1 && text[0] == '0') text.substring(1).toLongOrNull(8) else text.toLongOrNull()
+  return v != null && v in 1..Int.MAX_VALUE.toLong()
+}
+
 /**
  * A positive interface index, or an alternative interface name (ifname_valid_full with
  * IFNAME_VALID_ALTERNATIVE: 1…127 printable ASCII characters other than `:`, `/`, `%`; not `.`, `..`,
- * `all`, `default`, or all digits). An all-digit spelling is therefore valid exactly when it is a
- * positive index. The digit branch carries a `(?!\S)` guard so that a name like `1eth` is still offered
- * to the name branch rather than stopping at its leading digit.
+ * `all`, `default`, or all digits).
+ *
+ * An all-digit spelling is therefore valid exactly when parse_ifindex() accepts it: 1…2147483647, with a
+ * leading `0` meaning octal (`010` is index 8; `0`, `08` and `99999999999` are refused both as an index
+ * and, being all digits, as a name). A spelling with any non-digit (`0x10`, `+5`, `1eth`) is a legal
+ * name whatever parse_ifindex makes of it, so only the name rules apply to it.
  */
-val IFNAME_OR_IFINDEX = RegexTerminal(
-  """\S+""",
-  """(?:[0-9]*[1-9][0-9]*(?!\S))|(?!(?:[0-9]+|\.\.?|all|default)(?!$IFNAME_CHAR))$IFNAME_CHAR{1,127}(?!\S)""",
-)
+val IFNAME_OR_IFINDEX = CheckedTerminal(Regex("""\S+"""), "IfnameOrIfindex") { text ->
+  if (text.all { it in '0'..'9' }) isPositiveIfindexDigits(text) else IFNAME_ALTERNATIVE.matches(text)
+}
 
 // ---------------------------------------------------------------------------------------------------
 // DNS names.
@@ -229,6 +293,27 @@ val LDH_DNS_NAME = AlternativeCombinator(
 // Typed DHCP option payloads — config_parse_dhcp_option / the tail of config_parse_dhcp6_send_option.
 
 /**
+ * [IPV6_ADDR] minus the two forms that begin with `::` (`::1`, `::ffff:1.2.3.4`, `::`) — for positions
+ * where a preceding coalescing `:` separator has already swallowed any leading colons.
+ */
+val IPV6_ADDR_NO_LEADING_COLON = Labeled(Role.LITERAL, tag = SemanticTag.IPV6, inner = AlternativeCombinator(
+  IPV6_IPV4_SUFFIX_FULL,
+  IPV6_IPV4_SUFFIX_ONE_HEXTET_BEFORE_ZERO_COMP,
+  IPV6_IPV4_SUFFIX_TWO_HEXTET_BEFORE_ZERO_COMP,
+  IPV6_IPV4_SUFFIX_THREE_HEXTET_BEFORE_ZERO_COMP,
+  IPV6_IPV4_SUFFIX_FOUR_HEXTET_BEFORE_ZERO_COMP,
+  IPV6_IPV4_SUFFIX_FIVE_HEXTET_BEFORE_ZERO_COMP,
+  IPV6_FULL_SPECIFIED,
+  IPV6_SEVEN_HEXTET_BEFORE_ZERO_COMP,
+  IPV6_SIX_HEXTET_BEFORE_ZERO_COMP,
+  IPV6_FIVE_HEXTET_BEFORE_ZERO_COMP,
+  IPV6_FOUR_HEXTET_BEFORE_ZERO_COMP,
+  IPV6_THREE_HEXTET_BEFORE_ZERO_COMP,
+  IPV6_TWO_HEXTET_BEFORE_ZERO_COMP,
+  IPV6_ONE_HEXTET_BEFORE_ZERO_COMP,
+))
+
+/**
  * `TYPE:DATA`, the shape config_parse_dhcp_option() parses and config_parse_dhcp_option_tlv() /
  * config_parse_dhcp6_send_option() parse after their numeric prefix(es). TYPE is one of
  * dhcp_option_data_type_table and decides how the remainder is read:
@@ -238,15 +323,92 @@ val LDH_DNS_NAME = AlternativeCombinator(
  *  - `string` — cunescape(…, UNESCAPE_ACCEPT_NUL): anything, with valid C escapes; may contain `:`.
  *
  * The separator is extract_first_word(…, ":", 0), which coalesces a run of colons, so `uint8::5` is
- * fine. For `ipv6address` systemd would also swallow the leading colons of the address itself (so
- * `ipv6address:::1` actually fails there); the grammar takes a single colon and accepts it — lenient.
- * The string length check (`check_length`, <= 255 bytes once unescaped) is not modelled.
+ * fine. That coalescing also eats the leading colons of the data itself: for `ipv6address` an address
+ * beginning with `::` therefore cannot be written at all (`ipv6address:::1` hands inet_pton just `1`
+ * and fails), while `ipv6address::2001:db8::1` is fine. Hence [IPV6_ADDR_NO_LEADING_COLON] after
+ * the colon run. Likewise a `string` value cannot start with `:`.
+ *
+ * The number after `uintN:` may be preceded by whitespace (safe_atou_full skips it). The string length
+ * check (`check_length`, <= 255 bytes once unescaped) is not modelled.
  */
 fun dhcpOptionTypedData(): Combinator = AlternativeCombinator(
   SequenceCombinator(LiteralChoiceTerminal("uint8"), COALESCED_COLONS, ZeroOrOne(WhitespaceTerminal()), SafeAtoNumberTerminal(0, 256L)),
   SequenceCombinator(LiteralChoiceTerminal("uint16"), COALESCED_COLONS, ZeroOrOne(WhitespaceTerminal()), SafeAtoNumberTerminal(0, 65_536L)),
   SequenceCombinator(LiteralChoiceTerminal("uint32"), COALESCED_COLONS, ZeroOrOne(WhitespaceTerminal()), SafeAtoNumberTerminal(0, 4_294_967_296L)),
   SequenceCombinator(LiteralChoiceTerminal("ipv4address"), COALESCED_COLONS, IPV4_ADDR),
-  SequenceCombinator(LiteralChoiceTerminal("ipv6address"), COLON, IPV6_ADDR),
+  SequenceCombinator(LiteralChoiceTerminal("ipv6address"), COALESCED_COLONS, IPV6_ADDR_NO_LEADING_COLON),
   SequenceCombinator(LiteralChoiceTerminal("string"), COALESCED_COLONS, C_ESCAPED_TEXT),
 )
+
+// ---------------------------------------------------------------------------------------------------
+// Time spans — parse_sec() / parse_time(…, USEC_PER_SEC).
+//
+// leaf https://github.com/systemd/systemd/blob/0f0682b773/src/basic/time-util.c#L1146-L1196  extract_multiplier
+// leaf https://github.com/systemd/systemd/blob/0f0682b773/src/basic/time-util.c#L1198-L1287  parse_time
+// tests https://github.com/systemd/systemd/blob/0f0682b773/src/test/test-time-util.c
+
+// extract_multiplier's table, in table order; the first prefix that matches wins (startswith, no
+// longest-match), hence the atomic group. Note: no `ns`/`nsec` — those belong to parse_nsec only.
+private const val PARSE_SEC_UNIT_REGEX =
+  "(?>seconds|second|sec|s|minutes|minute|min|months|month|M|msec|ms|m|hours|hour|hr|h|days|day|d|weeks|week|w|years|year|y|usec|us|\u03bcs|\u00b5s)"
+
+/**
+ * One number of a parse_time() element: strtoll() digits (an optional `+`, never `-`) with an optional
+ * `.FRACTION`, or a bare `.FRACTION` (strtoll converts nothing, then the `.` branch runs: `.5s` is
+ * legal). A trailing `.` without digits (`5.`, `5.s`) is refused.
+ *
+ * The lookahead encodes the one adjacency rule of parse_time(): when no unit follows a number, the next
+ * element must be separated by whitespace (`5.5.5` and `5+5` fail, `5 .5` and `5s.5` are fine). So a
+ * number may only be followed by whitespace, the end, or the first letter of a unit.
+ */
+private val PARSE_SEC_NUMBER = RegexTerminal(
+  """\+?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]*)""",
+  """(?:\+?[0-9]+(?:\.[0-9]+)?|\.[0-9]+)(?=[ \t\n\r]|\z|[smMhdwyu\u03bc\u00b5])""",
+)
+
+private val PARSE_SEC_UNIT = RegexTerminal(PARSE_SEC_UNIT_REGEX, PARSE_SEC_UNIT_REGEX)
+
+private val PARSE_SEC_ELEMENT = SequenceCombinator(
+  PARSE_SEC_NUMBER,
+  ZeroOrOne(SequenceCombinator(ZeroOrOne(WhitespaceTerminal()), PARSE_SEC_UNIT)),
+)
+
+/**
+ * A time span exactly as parse_sec() reads it: `infinity`, or one or more `NUMBER [UNIT]` elements whose
+ * values are summed, with optional whitespace anywhere between a number and its unit and between
+ * elements — elements may also be written back to back after a unit (`1h30min`, `55s500ms`, `5s.5`).
+ * The default unit is seconds. A `-` anywhere at the start of an element is refused (`-0` too).
+ *
+ * Overflow (a sum >= USEC_INFINITY) is not modelled. The shared TIME_VALUE in Combinators.kt is both
+ * stricter (it needs whitespace between elements and a digit before `.`) and looser (it accepts the
+ * `ns`/`nsec` units parse_sec doesn't know); this one follows the C.
+ */
+val PARSE_SEC_TIMESPAN = AlternativeCombinator(
+  LiteralChoiceTerminal("infinity"),
+  SequenceCombinator(PARSE_SEC_ELEMENT, ZeroOrMore(SequenceCombinator(ZeroOrOne(WhitespaceTerminal()), PARSE_SEC_ELEMENT))),
+)
+
+// ---------------------------------------------------------------------------------------------------
+// Parsers whose accepted syntax depends on the key or section (they test `lvalue` / `section`).
+
+/**
+ * A grammar validator for a (parser, ltype) pair whose C code branches on the key name or the section
+ * name — e.g. config_parse_dhcp6_send_option (`streq(lvalue, "SendVendorOption")`) and
+ * config_parse_uplink (`:none` vs `:self` by section).
+ *
+ * The registration is still per (parser, ltype), but [generateProblemDescriptors] receives the PSI
+ * property, so it asks [select] for the grammar that applies to that (key, section) and validates with
+ * it. [combinator] (the [lenientUnion] of all shapes) is what the key-independent features — value
+ * colouring, completion, the deprecation annotator — see; it should accept the union of the shapes.
+ */
+open class KeyOrSectionDispatchingGrammarOptionValue(
+  validatorName: String,
+  lenientUnion: Combinator,
+  private val select: (key: String, section: String?) -> GrammarOptionValue,
+) : GrammarOptionValue(validatorName, lenientUnion) {
+
+  override fun generateProblemDescriptors(property: UnitFilePropertyType, holder: ProblemsHolder) {
+    val section = PsiTreeUtil.getParentOfType(property, UnitFileSectionGroups::class.java)?.sectionName
+    select(property.key, section).generateProblemDescriptors(property, holder)
+  }
+}

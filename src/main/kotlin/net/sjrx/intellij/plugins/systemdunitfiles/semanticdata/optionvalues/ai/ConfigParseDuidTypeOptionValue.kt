@@ -17,6 +17,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * [DHCP] DUIDType= (.network, config_parse_network_duid_type), and [DHCPv4]/[DHCPv6] DUIDType= in
  * networkd.conf (config_parse_duid_type).
  *
+ * Note: the plugin reports the deprecated [DHCP] section as not allowed in .network files, so this
+ * validator never actually runs for keys there; they are listed only because the gperf shares the parser.
+ *
  * man    https://www.freedesktop.org/software/systemd/man/latest/networkd.conf.html#DUIDType=
  *        https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#DUIDType=
  * parser https://github.com/systemd/systemd/blob/0f0682b773/src/network/networkd-dhcp-common.c#L1195-L1272  config_parse_duid_type (0)

@@ -17,6 +17,10 @@ class ConfigParseDhcpServerIpv6OnlyPreferredOptionValueTest : AbstractUnitFileTe
       IPv6OnlyPreferredSec=5min
       IPv6OnlyPreferredSec=300
       IPv6OnlyPreferredSec=1h 5min
+      IPv6OnlyPreferredSec=1h30min
+      IPv6OnlyPreferredSec=.5h
+      IPv6OnlyPreferredSec=10min5s
+      IPv6OnlyPreferredSec=infinity
       IPv6OnlyPreferredSec=
     """.trimIndent()
 
@@ -35,12 +39,15 @@ class ConfigParseDhcpServerIpv6OnlyPreferredOptionValueTest : AbstractUnitFileTe
       IPv6OnlyPreferredSec=yes
       IPv6OnlyPreferredSec=5 fortnights
       IPv6OnlyPreferredSec=-5min
+      IPv6OnlyPreferredSec=1h.
+      IPv6OnlyPreferredSec=1.2.3
+      IPv6OnlyPreferredSec=Infinity
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(3, highlights)
+    assertSize(6, highlights)
   }
 }
