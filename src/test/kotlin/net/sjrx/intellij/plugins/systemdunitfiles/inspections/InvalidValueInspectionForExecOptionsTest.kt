@@ -67,10 +67,12 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
   }
 
   fun testNoWarningWithAbsolutePathWithAtPrefix() {
+    // With '@' the first argument after the path is argv[0]; without one systemd refuses the line ("Empty executable
+    // name or zeroeth argument"), so the old value "@/sbin/docker-compose" is now an error (#568).
     // Fixture Setup
     val file = """
            [Service]
-           ExecStart=@/sbin/docker-compose
+           ExecStart=@/sbin/docker-compose docker-compose
            
            """.trimIndent()
 
@@ -178,7 +180,7 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
     // Fixture Setup
     val file = """
            [Service]
-           ExecStart=@-:!!/sbin/docker-compose
+           ExecStart=@-:!!/sbin/docker-compose docker-compose
            
            """.trimIndent()
 
@@ -196,7 +198,7 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
     // Fixture Setup
     val file = """
            [Service]
-           ExecStopPost=             @docker-compose
+           ExecStopPost=             @docker-compose docker-compose
            
            """.trimIndent()
 
@@ -322,7 +324,7 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
     // Fixture Setup
     val file = """
            [Service]
-           ExecStopPost=            @-:!!docker-compose
+           ExecStopPost=            @-:!!docker-compose docker-compose
            
            """.trimIndent()
 
@@ -487,5 +489,44 @@ class InvalidValueInspectionForExecOptionsTest : AbstractUnitFileTest() {
 
     // Verification
     assertSize(15, highlights)
+  }
+
+  fun testErrorWhenAtPrefixHasNoArgv0() {
+    // systemd: "Empty executable name or zeroeth argument: @/sbin/docker-compose" (#568)
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L1072-L1077
+    // Fixture Setup
+    val file = """
+           [Service]
+           ExecStart=@/sbin/docker-compose
+
+           """.trimIndent()
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+    assertStringContains("Empty executable name or zeroeth argument", highlights[0]!!.description)
+  }
+
+  fun testErrorWhenPathIsRelativeWithSlash() {
+    // systemd: "Neither a valid executable name nor an absolute path: BINDIR/mdadm" (#568)
+    // Fixture Setup
+    val file = """
+           [Service]
+           ExecStart=BINDIR/mdadm --monitor --scan
+
+           """.trimIndent()
+
+    // Execute SUT
+    setupFileInEditor("file.service", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting()
+
+    // Verification
+    assertSize(1, highlights)
+    assertStringContains("Neither a valid executable name nor an absolute path: BINDIR/mdadm", highlights[0]!!.description)
   }
 }

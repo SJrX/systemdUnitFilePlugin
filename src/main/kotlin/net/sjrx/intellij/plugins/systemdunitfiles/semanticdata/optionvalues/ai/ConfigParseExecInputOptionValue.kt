@@ -6,26 +6,42 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 /**
  * Validator for StandardInput=.
  *
- * C function: config_parse_exec_input in src/core/load-fragment.c. Accepts:
- *   - "fd:NAME" — fdname_is_valid name (alphanumerics-ish, specifier-aware)
- *   - "file:/PATH" — absolute path (specifier-aware)
- *   - one of the bare enum names from exec_input_table in src/core/execute.c:
- *     null, tty, tty-force, tty-fail, socket, data
- *     (fd / file appear as prefixes above; their bare form isn't accepted)
- *
- * The structured branches (fd:/file:) come before the enum so that a literal "fd"/"file"
- * (which aren't in the enum table anyway) wouldn't accidentally match. Order also matters
- * because LiteralChoiceTerminal does first-match-by-length.
+ * C function: config_parse_exec_input,
+ * https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L1136-L1206. Accepts:
+ *   - "fd:NAME" — NAME may be empty, otherwise fdname_is_valid(): printable ASCII except ':', at most 255
+ *     characters (https://github.com/systemd/systemd/blob/0f0682b773/src/basic/fd-util.c#L554-L579). Spaces
+ *     are allowed.
+ *   - "file:PATH" — PATH goes through path_simplify_and_warn(PATH_CHECK_ABSOLUTE|PATH_CHECK_FATAL): absolute
+ *     (spaces allowed) with no ".." component after the leading ones path_simplify() drops
+ *     (https://github.com/systemd/systemd/blob/0f0682b773/src/shared/parse-helpers.c#L34-L80). A path that
+ *     starts with a known specifier is only known once it is expanded, so it is accepted; an unknown specifier
+ *     (https://github.com/systemd/systemd/blob/0f0682b773/src/shared/specifier.c#L33-L105) is refused.
+ *   - any name from exec_input_table, including the bare "fd" and "file"
+ *     (https://github.com/systemd/systemd/blob/0f0682b773/src/core/execute.c#L3242-L3253).
  */
 class ConfigParseExecInputOptionValue : SimpleGrammarOptionValues(
     "config_parse_exec_input",
     SequenceCombinator(
-        AlternativeCombinator(
-            // fd:NAME (NAME is allowed to be empty per the C code's isempty check)
-            SequenceCombinator(LiteralChoiceTerminal("fd:"), RegexTerminal("\\S*", "\\S*")),
-            // file:/PATH
-            SequenceCombinator(LiteralChoiceTerminal("file:"), RegexTerminal("/\\S*", "/\\S*")),
-            LiteralChoiceTerminal("null", "tty", "tty-force", "tty-fail", "socket", "data")
+        // PreferValid: under the legacy engine the bare "file" choice would otherwise be matched out of an invalid
+        // "file:rel" and mislocate the error.
+        PreferValidAlternativeCombinator(
+            // The name goes through unit_fd_printf() first, so an unknown specifier (%Q) is refused.
+            SequenceCombinator(
+                LiteralChoiceTerminal("fd:"),
+                RegexTerminal(".*", "(?=${BatchUnitCoreGrammar.UNIT_TEXT_CHAR}*\$)[\\x20-\\x39\\x3b-\\x7e]{0,255}")
+            ),
+            // unit_path_printf(), then the path checks: a known leading specifier is accepted, an unknown one anywhere
+            // is refused, and "%%/a" is relative. Without a specifier, no ".." component may survive path_simplify().
+            SequenceCombinator(
+                LiteralChoiceTerminal("file:"),
+                RegexTerminal(
+                    ".+",
+                    "%[${BatchUnitCoreGrammar.UNIT_SPECIFIER_LETTERS}]${BatchUnitCoreGrammar.UNIT_TEXT_CHAR}*\$" +
+                        "|/(?=(?:[^%]|%%|%(?![A-Za-z0-9%]))*%[${BatchUnitCoreGrammar.UNIT_SPECIFIER_LETTERS}])${BatchUnitCoreGrammar.UNIT_TEXT_CHAR}*\$" +
+                        "|/(?:\\.{0,2}(?:/|$))*(?!(?:.*/)?\\.\\.(?:/|$))(?:[^%]|%%|%(?![A-Za-z0-9%]))*\$"
+                )
+            ),
+            FlexibleLiteralChoiceTerminal("null", "tty", "tty-force", "tty-fail", "socket", "fd", "data", "file", "broker", "broker-log")
         ),
         EOF()
     )

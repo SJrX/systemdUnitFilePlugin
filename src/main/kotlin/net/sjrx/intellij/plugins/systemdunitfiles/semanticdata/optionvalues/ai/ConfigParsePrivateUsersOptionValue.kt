@@ -31,8 +31,11 @@ class ConfigParsePrivateUsersOptionValue : SimpleGrammarOptionValues(
             ),
             // bare uid
             IntegerTerminal(0, 4_294_967_296L),
-            // string aliases
-            LiteralChoiceTerminal("pick", "identity"),
+            // string aliases. The unit-file PrivateUsers= (load-fragment.c, private_users_table: self, identity,
+            // full, managed, or a boolean) shares this validator name with nspawn's, so both sets are accepted here.
+            // https://github.com/systemd/systemd/blob/0f0682b773/src/core/namespace.c#L4263-L4271
+            // https://github.com/systemd/systemd/blob/0f0682b773/src/nspawn/nspawn-settings.c#L662-L745
+            LiteralChoiceTerminal("pick", "identity", "self", "full", "managed"),
             BOOLEAN
         ),
         EOF()

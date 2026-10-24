@@ -15,7 +15,18 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseExecNiceOptionValue : SimpleGrammarOptionValues(
     "config_parse_exec_nice",
     SequenceCombinator(
-        IntegerTerminal(-20, 20),  // -20 to 19 inclusive (max is exclusive)
+        // parse_nice() is safe_atoi() plus a range check, so "+12", "0x10" and "\v5" are fine.
+        // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L724-L761
+        // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L702-L716
+        SafeAtoTerminal(
+            signed = true,
+            base = 0,
+            flags = emptySet(),
+            minInclusive = -20L,
+            maxInclusive = 19L,
+            acceptsWhitespace = true,
+            acceptsMinus = true,
+        ),
         EOF()
     )
 )

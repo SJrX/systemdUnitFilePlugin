@@ -27,7 +27,9 @@ class ImagePolicyCompletionTest : AbstractUnitFileTest() {
   fun testEmptyValueOffersPartitionsAndDefault() {
     enableNewEngine()
     setupFileInEditor("file.service", "[Service]\nRootImagePolicy=${COMPLETION_POSITION}")
-    assertContainsElements(basicCompletionResultStrings, "root", "usr", "swap", "+")
+    // The default policy is written "=flags" (an empty designator); "+flags" is refused by systemd ("Missing '='"),
+    // so "+" is no longer offered here (#568).
+    assertContainsElements(basicCompletionResultStrings, "root", "usr", "swap", "=")
   }
 
   @Test

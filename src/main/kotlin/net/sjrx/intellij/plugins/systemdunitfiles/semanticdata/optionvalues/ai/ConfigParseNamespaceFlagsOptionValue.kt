@@ -1,6 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
@@ -22,10 +23,17 @@ private val NAMESPACE_TYPE = FlexibleLiteralChoiceTerminal(
   "time"
 )
 
-private val NAMESPACE_LIST = SequenceCombinator(
-  ZeroOrOne(LiteralChoiceTerminal("~")),
-  NAMESPACE_TYPE,
-  ZeroOrMore(SequenceCombinator(WhitespaceTerminal(), NAMESPACE_TYPE))
+// namespace_flags_from_string() splits on whitespace; a leading '~' is cut off first, so whitespace may follow
+// it, and "~" alone is an empty (inverted) list.
+// https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L3579-L3643
+// https://github.com/systemd/systemd/blob/0f0682b773/src/shared/nsflags.c#L10-L41
+private val NAMESPACE_LIST = AlternativeCombinator(
+  SequenceCombinator(
+    LiteralChoiceTerminal("~"),
+    ZeroOrOne(WhitespaceTerminal()),
+    ZeroOrOne(SequenceCombinator(NAMESPACE_TYPE, ZeroOrMore(SequenceCombinator(WhitespaceTerminal(), NAMESPACE_TYPE)))),
+  ),
+  SequenceCombinator(NAMESPACE_TYPE, ZeroOrMore(SequenceCombinator(WhitespaceTerminal(), NAMESPACE_TYPE))),
 )
 
 /**

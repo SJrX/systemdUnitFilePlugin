@@ -9,13 +9,22 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
  * C Function: config_parse_hhf_packet_limit(QDISC_KIND_HHF)
  * Used by Options: HeavyHitterFilter.PacketLimit
  * 
- * Validates that the value is an unsigned integer in the range 0 to 4294967294.
+ * Validates that the value is a safe_atou32() unsigned integer in the range 0 to 4294967295.
  * This specifies the hard limit on the queue size in number of packets.
+ * https://github.com/systemd/systemd/blob/0f0682b773/src/network/tc/hhf.c#L40-L90
  */
 class ConfigParseHhfPacketLimitOptionValue : SimpleGrammarOptionValues(
     "config_parse_hhf_packet_limit",
     SequenceCombinator(
-        IntegerTerminal(0, 4294967295),  // Range is 0 to 4294967294 inclusive (max is exclusive)
+        SafeAtoTerminal(
+            signed = false,
+            base = 0,
+            flags = emptySet(),
+            minInclusive = 0L,
+            maxInclusive = 4_294_967_295L,
+            acceptsWhitespace = true,
+            acceptsMinus = true,
+        ),
         EOF()
     )
 )
