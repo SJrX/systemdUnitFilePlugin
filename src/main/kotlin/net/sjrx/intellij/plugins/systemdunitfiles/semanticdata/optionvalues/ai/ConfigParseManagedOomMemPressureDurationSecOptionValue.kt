@@ -7,7 +7,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * Validator for ManagedOOMMemoryPressureDurationSec=.
  *
  * C function: config_parse_managed_oom_mem_pressure_duration_sec in src/core/load-fragment.c.
- * Empty resets to USEC_INFINITY. Otherwise calls parse_sec(rvalue) and additionally requires
+ * Empty resets to NETWORK_ROUTE_ADDR_USEC_INFINITY. Otherwise calls parse_sec(rvalue) and additionally requires
  * the result to be at least 1s and strictly less than infinity.
  *
  * The grammar matches parse_sec syntax (which is the existing TIME_VALUE: "infinity" or a

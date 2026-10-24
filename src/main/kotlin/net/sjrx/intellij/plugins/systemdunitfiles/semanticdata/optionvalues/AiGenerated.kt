@@ -412,6 +412,61 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_unit_path_strv_printf", "0") to ConfigParseUnitPathStrvPrintfOptionValue() as OptionValueInformation,
     Validator("config_parse_socket_service", "0") to ConfigParseSocketServiceOptionValue() as OptionValueInformation,
     Validator("config_parse_service_sockets", "0") to ConfigParseServiceSocketsOptionValue() as OptionValueInformation,
+    // Batch 2026-10: network-route-addr
+    // Generic word-list / string / match parsers.
+    Validator("config_parse_match_strv", "0") to ConfigParseMatchStrvOptionValue() as OptionValueInformation,
+    Validator("config_parse_strv", "0") to ConfigParseStrvOptionValue() as OptionValueInformation,
+    Validator("config_parse_match_property", "0") to ConfigParseMatchPropertyOptionValue() as OptionValueInformation,
+    Validator("config_parse_string", "CONFIG_PARSE_STRING_SAFE_AND_ASCII") to ConfigParseStringSafeAsciiOptionValue() as OptionValueInformation,
+    Validator("config_parse_nft_set", "NFT_SET_PARSE_NETWORK") to ConfigParseNftSetNetworkOptionValue() as OptionValueInformation,
+    Validator("config_parse_timezone", "0") to ConfigParseTimezoneOptionValue() as OptionValueInformation,
+    Validator("config_parse_in_addr_non_null", "AF_INET6") to ConfigParseInAddrNonNullIpv6OptionValue() as OptionValueInformation,
+    Validator("config_parse_neighbor_proxy_address", "0") to ConfigParseNeighborProxyAddressOptionValue() as OptionValueInformation,
+    // [Network] stacked netdevs: the ltype only records the expected kind; every slot takes netdev names.
+    Validator("config_parse_stacked_netdev", "NETDEV_KIND_IPOIB") to ConfigParseStackedNetdevOptionValue() as OptionValueInformation,
+    Validator("config_parse_stacked_netdev", "NETDEV_KIND_IPVLAN") to ConfigParseStackedNetdevOptionValue() as OptionValueInformation,
+    Validator("config_parse_stacked_netdev", "NETDEV_KIND_IPVTAP") to ConfigParseStackedNetdevOptionValue() as OptionValueInformation,
+    Validator("config_parse_stacked_netdev", "NETDEV_KIND_MACSEC") to ConfigParseStackedNetdevOptionValue() as OptionValueInformation,
+    Validator("config_parse_stacked_netdev", "NETDEV_KIND_MACVLAN") to ConfigParseStackedNetdevOptionValue() as OptionValueInformation,
+    Validator("config_parse_stacked_netdev", "NETDEV_KIND_MACVTAP") to ConfigParseStackedNetdevOptionValue() as OptionValueInformation,
+    Validator("config_parse_stacked_netdev", "NETDEV_KIND_VLAN") to ConfigParseStackedNetdevOptionValue() as OptionValueInformation,
+    Validator("config_parse_stacked_netdev", "NETDEV_KIND_VXLAN") to ConfigParseStackedNetdevOptionValue() as OptionValueInformation,
+    Validator("config_parse_stacked_netdev", "NETDEV_KIND_XFRM") to ConfigParseStackedNetdevOptionValue() as OptionValueInformation,
+    Validator("config_parse_stacked_netdev", "_NETDEV_KIND_TUNNEL") to ConfigParseStackedNetdevOptionValue() as OptionValueInformation,
+    // [IPv6SendRA] / [IPv6Prefix] / [IPv6RoutePrefix] / [IPv6PREF64Prefix] / [IPv6AcceptRA].
+    Validator("config_parse_router_prefix_delegation", "0") to ConfigParseRouterPrefixDelegationOptionValue() as OptionValueInformation,
+    Validator("config_parse_router_uint32_msec_usec", "0") to ConfigParseRouterUint32MsecUsecOptionValue() as OptionValueInformation,
+    Validator("config_parse_router_lifetime", "0") to ConfigParseRouterLifetimeOptionValue() as OptionValueInformation,
+    Validator("config_parse_router_home_agent_lifetime", "0") to ConfigParseRouterHomeAgentLifetimeOptionValue() as OptionValueInformation,
+    Validator("config_parse_route_prefix", "0") to ConfigParseRoutePrefixOptionValue() as OptionValueInformation,
+    Validator("config_parse_route_prefix_lifetime", "0") to ConfigParseRoutePrefixLifetimeOptionValue() as OptionValueInformation,
+    Validator("config_parse_pref64_prefix_lifetime", "0") to ConfigParsePref64PrefixLifetimeOptionValue() as OptionValueInformation,
+    // config_parse_prefix_token hands its value straight to config_parse_address_generation_type.
+    Validator("config_parse_prefix_token", "0") to ConfigParseAddressGenerationTypeOptionValue() as OptionValueInformation,
+    Validator("config_parse_ndisc_route_metric", "0") to ConfigParseNdiscRouteMetricOptionValue() as OptionValueInformation,
+    Validator("config_parse_ndisc_route_metric", "AF_INET6") to ConfigParseNdiscRouteMetricOptionValue() as OptionValueInformation,
+    Validator("config_parse_can_restart_usec", "0") to ConfigParseCanRestartUsecOptionValue() as OptionValueInformation,
+    // [Route] table slots (each ltype mirrors its own ConfigSectionParser entry).
+    Validator("config_parse_route_section", "ROUTE_TABLE") to ConfigParseRouteTableOptionValue() as OptionValueInformation,
+    Validator("config_parse_route_section", "ROUTE_MULTIPATH") to ConfigParseRouteMultiPathOptionValue() as OptionValueInformation,
+    Validator("config_parse_route_section", "ROUTE_METRIC_MTU") to ConfigParseRouteMetricMtuOptionValue() as OptionValueInformation,
+    Validator("config_parse_route_section", "ROUTE_METRIC_ADVMSS") to ConfigParseRouteMetricAdvMssOptionValue() as OptionValueInformation,
+    Validator("config_parse_route_section", "ROUTE_METRIC_INITCWND") to ConfigParseRouteMetricInitCwndOptionValue() as OptionValueInformation,
+    Validator("config_parse_route_section", "ROUTE_METRIC_RTO_MIN") to ConfigParseRouteMetricTcpRtoOptionValue() as OptionValueInformation,
+    // [RoutingPolicyRule] table slots.
+    Validator("config_parse_routing_policy_rule", "ROUTING_POLICY_RULE_TABLE") to ConfigParseRouteTableOptionValue("config_parse_routing_policy_rule") as OptionValueInformation,
+    Validator("config_parse_routing_policy_rule", "ROUTING_POLICY_RULE_FWMARK") to ConfigParseRoutingPolicyRuleFirewallMarkOptionValue() as OptionValueInformation,
+    Validator("config_parse_routing_policy_rule", "ROUTING_POLICY_RULE_IP_PROTOCOL") to ConfigParseRoutingPolicyRuleIpProtocolOptionValue() as OptionValueInformation,
+    Validator("config_parse_routing_policy_rule", "ROUTING_POLICY_RULE_UID_RANGE") to ConfigParseRoutingPolicyRuleUidRangeOptionValue() as OptionValueInformation,
+    // [Address] / [Neighbor] / [IPv6AddressLabel] table slots.
+    Validator("config_parse_address_section", "ADDRESS_LABEL") to ConfigParseAddressLabelOptionValue() as OptionValueInformation,
+    // ADDRESS_NET_LABEL's table entry is config_parse_string with CONFIG_PARSE_STRING_SAFE.
+    Validator("config_parse_address_section", "ADDRESS_NET_LABEL") to ConfigParseStringOptionValue() as OptionValueInformation,
+    // ADDRESS_NFT_SET's table entry is config_parse_nft_set with NFT_SET_PARSE_NETWORK.
+    Validator("config_parse_address_section", "ADDRESS_NFT_SET") to ConfigParseNftSetNetworkOptionValue() as OptionValueInformation,
+    Validator("config_parse_neighbor_section", "NEIGHBOR_DESTINATION_ADDRESS") to ConfigParseNeighborDestinationAddressOptionValue() as OptionValueInformation,
+    Validator("config_parse_ipv6_address_label_section", "IPV6_ADDRESS_LABEL_PREFIX") to ConfigParseIpv6AddressLabelPrefixOptionValue() as OptionValueInformation,
+    Validator("config_parse_ipv6_address_label_section", "IPV6_ADDRESS_LABEL") to ConfigParseIpv6AddressLabelOptionValue() as OptionValueInformation,
 
     // Batch 2026-10: exec
     Validator("config_parse_bind_paths", "0") to ConfigParseBindPathsOptionValue() as OptionValueInformation,
