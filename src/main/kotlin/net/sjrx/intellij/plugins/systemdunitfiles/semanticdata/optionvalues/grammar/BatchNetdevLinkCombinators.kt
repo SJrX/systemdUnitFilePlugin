@@ -84,8 +84,13 @@ class SafeAtouTerminal(
   }
 }
 
-/** Shorthand for a [SafeAtouTerminal] over `[minInclusive, maxExclusive)`. */
-fun safeAtou(maxExclusive: Long, minInclusive: Long = 0L): Combinator = SafeAtouTerminal(minInclusive, maxExclusive)
+/**
+ * A [SafeAtouTerminal] over `[minInclusive, maxExclusive)`, coloured as a literal. The [Labeled] wrapper
+ * is only there because [defaultRole] does not know this terminal class yet (it is transparent to
+ * matching); once the terminal is promoted next to [UnsignedNumberTerminal] it can go.
+ */
+fun safeAtou(maxExclusive: Long, minInclusive: Long = 0L): Combinator =
+  Labeled(Role.LITERAL, SafeAtouTerminal(minInclusive, maxExclusive))
 
 /** Exclusive upper bound of a uint16_t. */
 const val UINT16_LIMIT = 65_536L
@@ -148,7 +153,8 @@ val CPU_SET: Combinator = SequenceCombinator(
 // strtoull(…, 10) after parse_size has skipped whitespace: an optional `+` (a `-` is refused), digits,
 // then an optional `.` and fraction. parse_size steps over the `.` unconditionally and ignores a
 // missing fraction ("E.g. 10.M is valid"), so `10.` and `10.M` are both legal.
-private val SIZE_NUMBER = RegexTerminal("""\+?[0-9]+(?:\.[0-9]*)?""", """\+?[0-9]+(?:\.[0-9]*)?""")
+// Labeled so the number colours as a literal, like ByteSizeTerminal does.
+private val SIZE_NUMBER = Labeled(Role.LITERAL, RegexTerminal("""\+?[0-9]+(?:\.[0-9]*)?""", """\+?[0-9]+(?:\.[0-9]*)?"""))
 
 /**
  * A parse_size() value with base 1000 (the SI table: `E`, `P`, `T`, `G`, `M`, `K`, `B` and bare).
@@ -187,7 +193,10 @@ private fun sizeChain(suffixes: List<String>): Combinator {
 // strtoll(…, 10) as parse_nsec drives it: an optional `+` (a leading `-` is refused), then digits with
 // an optional fraction — or a bare fraction like `.5`, which parse_nsec accepts because it checks for
 // `.` before it checks whether strtoll consumed anything. A trailing `.` with no digits (`3.`) is refused.
-private val DURATION_NUMBER = RegexTerminal("""\+?[0-9]+(?:\.[0-9]+)?|\.[0-9]+""", """\+?[0-9]+(?:\.[0-9]+)?|\.[0-9]+""")
+private val DURATION_NUMBER = Labeled(
+  Role.LITERAL,
+  RegexTerminal("""\+?[0-9]+(?:\.[0-9]+)?|\.[0-9]+""", """\+?[0-9]+(?:\.[0-9]+)?|\.[0-9]+"""),
+)
 
 /** extract_nsec_multiplier's table (minus its empty default entry, which is the bare-number case). */
 private val NSEC_SUFFIX = LiteralChoiceTerminal(
@@ -284,4 +293,19 @@ val ROUTE_TABLE: Combinator = AlternativeCombinator(
   SequenceCombinator(FlexibleLiteralChoiceTerminal("default", "main", "local"), EOF()),
   SequenceCombinator(safeAtou(UINT32_LIMIT, 1), EOF()),
   SequenceCombinator(ROUTE_TABLE_NAME, EOF()),
+)
+
+
+// ---------------------------------------------------------------------------------------------------
+// Address prefixes — in_addr_prefix_from_string_auto_full (src/basic/in-addr-util.c).
+
+/**
+ * An IPv4 or IPv6 address with an optional `/prefixlen`, as in_addr_prefix_from_string_auto (mode
+ * PREFIXLEN_FULL) reads it. Like [IP_ADDR_AND_ANY_PREFIX], but the length goes through
+ * in_addr_parse_prefixlen → safe_atou8, so it is a base-0 number (`/0x18` is 24) up to the family width.
+ * IPv6 is tried first so the IPv4 branch never strands part of an IPv6 literal.
+ */
+val IP_ADDR_AND_SAFE_PREFIX: Combinator = AlternativeCombinator(
+  SequenceCombinator(IPV6_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, safeAtou(129)))),
+  SequenceCombinator(IPV4_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, safeAtou(33)))),
 )

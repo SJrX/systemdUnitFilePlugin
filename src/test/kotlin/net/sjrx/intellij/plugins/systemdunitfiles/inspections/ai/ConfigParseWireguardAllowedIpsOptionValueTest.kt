@@ -19,6 +19,7 @@ class ConfigParseWireguardAllowedIpsOptionValueTest : AbstractUnitFileTest() {
             AllowedIPs=fd8d:4d6d:3ccb:0500:900c:d437:ec27:8822/128
             AllowedIPs=10.0.0.0/8, 192.168.0.0/16
             AllowedIPs=10.0.0.0/8 fd00::/8,
+            AllowedIPs=10.0.0.0/0x8 fd00::/0100
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
@@ -38,12 +39,13 @@ class ConfigParseWireguardAllowedIpsOptionValueTest : AbstractUnitFileTest() {
             AllowedIPs=10.0.0.0/8;192.168.0.0/16
             AllowedIPs=any
             AllowedIPs=10.0.0/8
+            AllowedIPs=10.0.0.0/
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(5, highlights)
+        assertSize(6, highlights)
     }
 }
