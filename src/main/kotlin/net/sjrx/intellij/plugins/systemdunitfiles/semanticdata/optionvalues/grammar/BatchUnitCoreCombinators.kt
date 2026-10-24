@@ -381,8 +381,12 @@ object BatchUnitCoreGrammar {
   // path_is_normalized() (which refuses any `..` component), and with PATH_CHECK_NON_API_VFS also
   // path_below_api_vfs() (refuses /dev, /sys, /proc and anything below them).
 
-  // Rejects a `..` component anywhere: the optional `(?:[\s\S]*/)` swallows any leading directories.
-  const val NO_DOT_DOT_COMPONENT = """(?!(?:[\s\S]*/)?\.\.(?:/|$))"""
+  // Rejects a `..` component anywhere except at the very start of an absolute path: path_simplify_full()
+  // drops `.` and `..` components that directly follow the root, so `/..`, `/../a` and `//./../a` are fine
+  // (https://github.com/systemd/systemd/blob/0f0682b773/src/basic/path-util.c#L384-L386). The atomic group
+  // claims that leading run of `/`, `.` and `..` once and for all; the optional `(?:[\s\S]*/)` then swallows
+  // any directories in front of a later `..`.
+  const val NO_DOT_DOT_COMPONENT = """(?!(?>(?:/+(?:\.{1,2}(?:/+|$))*)?)(?:[\s\S]*/)?\.\.(?:/|$))"""
 
   // path_startswith() is component-aware: /dev and /dev/x are API VFS, /devices is not.
   const val NOT_API_VFS = """(?!/+(?:dev|sys|proc)(?:/|$))"""

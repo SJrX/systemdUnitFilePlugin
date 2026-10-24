@@ -69,7 +69,13 @@ object TimeHelper {
 
   val WHITESPACE = """[ \t\n\r]""".toRegex()
 
-  val NUMBER = """^\d*\.?\d+""".toRegex()
+  // What parse_time() takes as one number: strtoll(…, 10) reads an optional `+` and digits, and a `.` with digits
+  // may follow. With no digits in front, only `.5` style works: `+.5` and `5.` are refused.
+  // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/time-util.c#L1234-L1243
+  val NUMBER = """^(?:\+?\d+(?:\.\d+)?|\.\d+)""".toRegex()
+
+  /** parse_time()'s -ERANGE: the value is well formed but does not fit. */
+  class OutOfRangeException(message: String) : IllegalArgumentException(message)
 
   fun parseSecs(time: String): ULong {
     return parseTime(time,  Multiplier( "sec",     USEC_PER_SEC    ));
@@ -105,7 +111,8 @@ object TimeHelper {
 
       val result = NUMBER.find(p) ?: throw IllegalArgumentException("Could not parse leading number ($p) in $time")
       val numberText = result.value
-      p = p.substring(numberText.length).trim()
+      val afterNumber = p.substring(numberText.length)
+      p = afterNumber.trim()
 
       var multiplier : Multiplier? = null
       for (m in multiplers) {
@@ -117,27 +124,32 @@ object TimeHelper {
       }
 
       if (multiplier == null) {
+        // "Don't allow '12.34.56', but accept '12.34 .56' or '12.34s.56'": with no unit, the next number must be
+        // separated by whitespace.
+        if (p.isNotEmpty() && afterNumber.first() !in " \t\n\r") {
+          throw IllegalArgumentException("Could not parse ($afterNumber) after a number in $time")
+        }
         multiplier = defaultMultiplier
       }
 
       // The overflow checks of parse_time():
       // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/time-util.c#L1233-L1276
       // strtoll() refuses an integer part above LLONG_MAX (ERANGE), and every step must stay below USEC_INFINITY.
-      val integerPart = numberText.substringBefore('.')
+      val integerPart = numberText.substringBefore('.').removePrefix("+")
       val fractionPart = numberText.substringAfter('.', "")
       val l = if (integerPart.isEmpty()) BigInteger.ZERO else BigInteger(integerPart)
       if (l > LLONG_MAX) {
-        throw IllegalArgumentException("Value is out of range in $time")
+        throw OutOfRangeException("Value is out of range in $time")
       }
 
       val usecs = multiplier.usecs.toULong()
       if (l.toLong().toULong() >= ULong.MAX_VALUE / usecs) {
-        throw IllegalArgumentException("Value is out of range in $time")
+        throw OutOfRangeException("Value is out of range in $time")
       }
 
       val k : ULong = usecs * l.toLong().toULong()
       if (k >= ULong.MAX_VALUE - usec) {
-        throw IllegalArgumentException("Value is out of range in $time")
+        throw OutOfRangeException("Value is out of range in $time")
       }
 
       usec += k
@@ -146,7 +158,7 @@ object TimeHelper {
       for (digit in fractionPart) {
         val f = (digit - '0').toULong() * m
         if (f >= ULong.MAX_VALUE - usec) {
-          throw IllegalArgumentException("Value is out of range in $time")
+          throw OutOfRangeException("Value is out of range in $time")
         }
         usec += f
         m /= 10u

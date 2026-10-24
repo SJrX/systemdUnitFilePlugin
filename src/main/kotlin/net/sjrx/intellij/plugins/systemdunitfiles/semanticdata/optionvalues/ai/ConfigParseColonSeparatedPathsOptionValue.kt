@@ -14,7 +14,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * C function: config_parse_colon_separated_paths in src/core/load-fragment.c. Tokenizes with
  * extract_first_word using ":" as the separator (no coalescing, so an empty entry is an error), expands
  * specifiers via unit_path_printf, then requires each path to be absolute and normalized (no `..`
- * component) via path_simplify_and_warn with PATH_CHECK_ABSOLUTE. Any failure drops the rest of the value.
+ * component, except right after the root: `/../a` is simplified to `/a`) via path_simplify_and_warn with
+ * PATH_CHECK_ABSOLUTE. Any failure drops the rest of the value.
  *
  * Spaces are ordinary path characters here (`/a b:/c` is fine). An entry may start with a unit specifier
  * (`%V`, `%h`), since what it expands to is only known when the unit is loaded; every `%X` must be a
@@ -33,7 +34,7 @@ class ConfigParseColonSeparatedPathsOptionValue : SimpleGrammarOptionValues(
 ) {
     private companion object {
         /** One absolute, normalized path (or one starting with a specifier), up to the next `:`. */
-        const val SEARCH_PATH_ENTRY = "(?!(?:[^:]*/)?\\.\\.(?:/|:|$))" +
+        const val SEARCH_PATH_ENTRY = "(?!(?>(?:/+(?:\\.{1,2}(?:/+|(?![^:])))*)?)(?:[^:]*/)?\\.\\.(?:/|:|$))" +
             "(?:/|%[${BatchUnitCoreGrammar.UNIT_SPECIFIER_LETTERS}])" +
             "(?:[^%:]|%%|%[${BatchUnitCoreGrammar.UNIT_SPECIFIER_LETTERS}]|%(?![A-Za-z0-9%]))*"
     }

@@ -21,7 +21,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Time
  * suffixes, and compound forms like "1h 30s". The result (in microseconds) must then fit in a uint32:
  * anything above UINT32_MAX µs (about 71.6 minutes, so `infinity`, `2hour` and `4295s`) is refused
  * with "Too large … value". StatisticsBlockCoalesceSec= and CoalescePacketRateSampleIntervalSec= also
- * refuse 0 µs ("Invalid … value"). The grammar checks the syntax; the range is checked on the parsed sum.
+ * refuse 0 µs ("Invalid … value"). The value is parsed with TimeHelper, a port of parse_time(); the grammar
+ * is only used to locate a syntax error.
  */
 class ConfigParseCoalesceSecOptionValue : SimpleGrammarOptionValues(
     "config_parse_coalesce_sec",
@@ -29,14 +30,28 @@ class ConfigParseCoalesceSecOptionValue : SimpleGrammarOptionValues(
 ) {
     override fun generateProblemDescriptors(property: UnitFilePropertyType, holder: ProblemsHolder) {
         val value = property.valueText ?: return
+        // parse_sec()'s own -ERANGE (e.g. `999999999999999999`) is as much "too large" as a value above UINT32_MAX.
         val usec = try {
             TimeHelper.parseSecs(value)
+        } catch (e: TimeHelper.OutOfRangeException) {
+            ULong.MAX_VALUE
         } catch (e: IllegalArgumentException) {
             null
         }
 
         when {
-            usec == null -> super.generateProblemDescriptors(property, holder)
+            usec == null -> {
+                // The grammar locates the error; TimeHelper (a port of parse_time()) has the last word.
+                val before = holder.resultCount
+                super.generateProblemDescriptors(property, holder)
+                if (holder.resultCount == before) {
+                    holder.registerProblem(
+                        property.valueNode.psi,
+                        "${property.key}'s value is not a valid time span",
+                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                    )
+                }
+            }
             usec > UINT32_MAX -> holder.registerProblem(
                 property.valueNode.psi,
                 "${property.key}'s value is too large, it must be at most $UINT32_MAX µs (about 71 minutes)",
@@ -47,7 +62,8 @@ class ConfigParseCoalesceSecOptionValue : SimpleGrammarOptionValues(
                 "${property.key}'s value must be at least 1 µs",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING
             )
-            else -> super.generateProblemDescriptors(property, holder)
+            // parse_sec() took it (`+5` and `.5` too, which the shared TIME_VALUE grammar does not know).
+            else -> Unit
         }
     }
 

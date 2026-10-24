@@ -84,6 +84,17 @@ class Fix568UnitGrammarVerdictsTest {
   }
 
   @Test
+  fun testDotDotRightAfterTheRootIsSimplifiedAway() {
+    // path_simplify_full() drops `..` components at the start of an absolute path (sd-check accepts all of these).
+    accepted(PathOptionValue(), "/..", "/../a", "//../../a", "/./../a", "/.././..", "/../", "/../%t", "/.. /x")
+    rejected(PathOptionValue(), "/../a/..", "/a/../..", "%t/..", "/../.../..")
+    accepted(ConfigParseUnitMountsForOptionValue(), "/..", "/../a /b", "//./../a")
+    rejected(ConfigParseUnitMountsForOptionValue(), "/b /../a/..", "/../a/.. /b")
+    accepted(ConfigParseColonSeparatedPathsOptionValue(), "/..", "/..:/a", "/a:/..", "/a:/../b", "/./../a")
+    rejected(ConfigParseColonSeparatedPathsOptionValue(), "/../a:/b/..", "/../a/..:/b", "/a:/../a/..")
+  }
+
+  @Test
   fun testUnitMountsFor() {
     accepted(ConfigParseUnitMountsForOptionValue(), "%f", "/tmp /var/log %h", "%t/x", "/a /b")
     rejected(ConfigParseUnitMountsForOptionValue(), "%Z", "a%h", "%%h", "/a/%Z", "/a/..", "/a/.. /b", "/a /b/..")

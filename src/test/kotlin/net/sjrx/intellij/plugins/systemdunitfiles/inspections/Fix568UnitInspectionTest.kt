@@ -195,4 +195,62 @@ class Fix568UnitInspectionTest : AbstractUnitFileTest() {
 
     assertSameElements(highlightTexts("file.socket", file), "tcp", "Both")
   }
+
+  fun testTimeSpanNumbersAsParseTimeReadsThem() {
+    // strtoll() takes a leading `+`; `.5` has no integer part; a unit-less number must be followed by whitespace
+    // (time-util.c#L1234-L1255). All verdicts confirmed with sd-check on RestartSec=.
+    // language="unit file (systemd)"
+    val file = """
+      [Service]
+      RestartSec=+5
+      RestartSec=+5.5
+      RestartSec=+5min +3s
+      RestartSec=.5
+      RestartSec=12.34 .56
+      RestartSec=12.34s.56
+      RestartSec=5 6
+      RestartSec=12.34.56
+      RestartSec=1.5.5s
+      RestartSec=+.5
+      RestartSec=5.
+      RestartSec=++5
+    """.trimIndent()
+
+    assertSize(5, highlightTexts("file.service", file))
+  }
+
+  fun testCoalesceSecUsesParseTime() {
+    // `+5` and `.5` are fine for parse_sec(); `999999999999999999` overflows parse_sec() itself.
+    // language="unit file (systemd)"
+    val file = """
+      [Link]
+      RxCoalesceSec=+5
+      RxCoalesceSec=.5
+      RxCoalesceSec=4294967295us
+      RxCoalesceSec=999999999999999999
+      RxCoalesceSec=9223372036854775808
+      RxCoalesceSec=12.34.56
+      RxCoalesceSec=4294967296us
+    """.trimIndent()
+
+    assertSize(4, highlightTexts("file.link", file))
+  }
+
+  fun testSocketBindPortRangeMustNotEndBelowItsStart() {
+    // parse_ip_port_range() refuses h < l (parse-util.c#L753-L754).
+    // language="unit file (systemd)"
+    val file = """
+      [Service]
+      SocketBindDeny=0--0
+      SocketBindDeny=ipv6:80-80
+      SocketBindDeny=0x10-16
+      SocketBindDeny=5-1
+      SocketBindDeny=ipv4:tcp:90-80
+      SocketBindDeny=0x10-15
+      SocketBindAllow=tcp:2-1
+      SocketBindAllow=1--0
+    """.trimIndent()
+
+    assertSize(5, highlightTexts("file.service", file))
+  }
 }
