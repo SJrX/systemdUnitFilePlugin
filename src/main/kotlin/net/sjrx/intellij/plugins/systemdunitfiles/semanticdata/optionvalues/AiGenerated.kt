@@ -413,6 +413,32 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_socket_service", "0") to ConfigParseSocketServiceOptionValue() as OptionValueInformation,
     Validator("config_parse_service_sockets", "0") to ConfigParseServiceSocketsOptionValue() as OptionValueInformation,
 
+    // Batch 2026-10: qdisc
+    Validator("config_parse_fq_codel_usec", "QDISC_KIND_FQ_CODEL") to ConfigParseFqCodelUsecOptionValue() as OptionValueInformation,
+    Validator("config_parse_tbf_rate", "QDISC_KIND_TBF") to ConfigParseTbfRateOptionValue() as OptionValueInformation,
+    Validator("config_parse_netem_rate", "QDISC_KIND_NETEM") to ConfigParseNetemRateOptionValue() as OptionValueInformation,
+    Validator("config_parse_netem_delay", "QDISC_KIND_NETEM") to ConfigParseNetemDelayOptionValue() as OptionValueInformation,
+    Validator("config_parse_htb_class_rate", "TCLASS_KIND_HTB") to ConfigParseHtbClassRateOptionValue() as OptionValueInformation,
+    Validator("config_parse_gred_u32", "QDISC_KIND_GRED") to ConfigParseGredU32OptionValue() as OptionValueInformation,
+    Validator("config_parse_fq_codel_u32", "QDISC_KIND_FQ_CODEL") to ConfigParseFqCodelU32OptionValue() as OptionValueInformation,
+    Validator("config_parse_teql_id", "QDISC_KIND_TEQL") to ConfigParseTeqlIdOptionValue() as OptionValueInformation,
+    Validator("config_parse_qfq_max_packet", "TCLASS_KIND_QFQ") to ConfigParseQfqMaxPacketOptionValue() as OptionValueInformation,
+    Validator("config_parse_pie_packet_limit", "QDISC_KIND_PIE") to ConfigParsePiePacketLimitOptionValue() as OptionValueInformation,
+    Validator("config_parse_htb_u32", "QDISC_KIND_HTB") to ConfigParseHtbU32OptionValue() as OptionValueInformation,
+    Validator("config_parse_htb_default_class", "QDISC_KIND_HTB") to ConfigParseHtbDefaultClassOptionValue() as OptionValueInformation,
+    Validator("config_parse_htb_class_u32", "TCLASS_KIND_HTB") to ConfigParseHtbClassU32OptionValue() as OptionValueInformation,
+    Validator("config_parse_gred_bool", "QDISC_KIND_GRED") to ConfigParseGredBoolOptionValue() as OptionValueInformation,
+    Validator("config_parse_fq_usec", "QDISC_KIND_FQ") to ConfigParseFqUsecOptionValue() as OptionValueInformation,
+    Validator("config_parse_fq_max_rate", "QDISC_KIND_FQ") to ConfigParseFqMaxRateOptionValue() as OptionValueInformation,
+    Validator("config_parse_fq_codel_bool", "QDISC_KIND_FQ_CODEL") to ConfigParseFqCodelBoolOptionValue() as OptionValueInformation,
+    Validator("config_parse_ets_quanta", "QDISC_KIND_ETS") to ConfigParseEtsQuantaOptionValue() as OptionValueInformation,
+    Validator("config_parse_ets_prio", "QDISC_KIND_ETS") to ConfigParseEtsPrioOptionValue() as OptionValueInformation,
+    Validator("config_parse_drr_size", "TCLASS_KIND_DRR") to ConfigParseDrrSizeOptionValue() as OptionValueInformation,
+    Validator("config_parse_cake_flow_isolation_mode", "QDISC_KIND_CAKE") to ConfigParseCakeFlowIsolationModeOptionValue() as OptionValueInformation,
+    Validator("config_parse_cake_bandwidth", "QDISC_KIND_CAKE") to ConfigParseCakeBandwidthOptionValue() as OptionValueInformation,
+    Validator("config_parse_cake_ack_filter", "QDISC_KIND_CAKE") to ConfigParseCakeAckFilterOptionValue() as OptionValueInformation,
+    Validator("config_parse_bfifo_size", "QDISC_KIND_BFIFO") to ConfigParseBfifoSizeOptionValue() as OptionValueInformation,
+
   )
 
   return allValidators
