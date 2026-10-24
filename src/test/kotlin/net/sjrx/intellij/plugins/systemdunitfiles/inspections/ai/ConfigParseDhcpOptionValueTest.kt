@@ -78,8 +78,10 @@ class ConfigParseDhcpOptionValueTest : AbstractUnitFileTest() {
         assertSize(0, highlights)
     }
 
+    // config_parse_dhcp falls back to dhcp_deprecated_address_family_table (none/both/v4/v6) with a
+    // deprecation warning rather than rejecting the value.
     @Test
-    fun testInvalidValueBoth() {
+    fun testDeprecatedValueBothIsAccepted() {
         // Fixture Setup
         // language="unit file (systemd)"
         val file = """
@@ -93,11 +95,12 @@ class ConfigParseDhcpOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(1, highlights)
+        assertSize(0, highlights)
     }
 
+    // address_family_from_string is DEFINE_STRING_TABLE_LOOKUP_WITH_BOOLEAN, so booleans are accepted.
     @Test
-    fun testInvalidValueTrue() {
+    fun testBooleanTrueIsAccepted() {
         // Fixture Setup
         // language="unit file (systemd)"
         val file = """
@@ -111,11 +114,11 @@ class ConfigParseDhcpOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(1, highlights)
+        assertSize(0, highlights)
     }
 
     @Test
-    fun testInvalidValueV4() {
+    fun testDeprecatedValueV4IsAccepted() {
         // Fixture Setup
         // language="unit file (systemd)"
         val file = """
@@ -129,7 +132,7 @@ class ConfigParseDhcpOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(1, highlights)
+        assertSize(0, highlights)
     }
 
     @Test
@@ -142,6 +145,9 @@ class ConfigParseDhcpOptionValueTest : AbstractUnitFileTest() {
             DHCP=no
             DHCP=ipv4
             DHCP=ipv6
+            DHCP=True
+            DHCP=oFf
+            DHCP=1
         """.trimIndent()
 
         // Execute SUT
@@ -161,7 +167,7 @@ class ConfigParseDhcpOptionValueTest : AbstractUnitFileTest() {
             [Network]
             DHCP=enabled
             DHCP=all
-            DHCP=v6
+            DHCP=IPv4
         """.trimIndent()
 
         // Execute SUT

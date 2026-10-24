@@ -15,6 +15,8 @@ class ConfigParseUsernsOwnershipOptionValueTest : AbstractUnitFileTest() {
             PrivateUsersOwnership=off
             PrivateUsersOwnership=chown
             PrivateUsersOwnership=map
+            PrivateUsersOwnership=foreign
+            PrivateUsersOwnership=auto
         """.trimIndent()
 
         // Execute SUT
@@ -43,6 +45,9 @@ class ConfigParseUsernsOwnershipOptionValueTest : AbstractUnitFileTest() {
             PrivateUsersOwnership=n
             PrivateUsersOwnership=t
             PrivateUsersOwnership=f
+            PrivateUsersOwnership=True
+            PrivateUsersOwnership=OFF
+            PrivateUsersOwnership=nO
         """.trimIndent()
 
         // Execute SUT
@@ -61,7 +66,7 @@ class ConfigParseUsernsOwnershipOptionValueTest : AbstractUnitFileTest() {
         val file = """
             [Files]
             PrivateUsersOwnership=invalid
-            PrivateUsersOwnership=auto
+            PrivateUsersOwnership=Chown
             PrivateUsersOwnership=chmod
             PrivateUsersOwnership=own
         """.trimIndent()

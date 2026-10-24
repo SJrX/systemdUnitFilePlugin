@@ -26,6 +26,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 /**
  * The spellings parse_boolean() accepts (src/basic/parse-util.c). Kept as an array so a caller that
  * needs its *own* boolean terminal can build one without reusing [BOOLEAN] — see [deprecatedBoolean].
+ *
+ * parse_boolean() compares with STRCASE_IN_SET, so any casing is accepted (`Yes`, `TRUE`, `oFf`).
+ * Every terminal built from these spellings must therefore pass `ignoreCase = true`; the lower-case
+ * forms here stay the canonical spelling that quick-fixes suggest.
  */
 val BOOLEAN_SPELLINGS = arrayOf("1", "yes", "y", "true", "t", "on", "0", "no", "n", "false", "f", "off")
 
@@ -41,12 +45,14 @@ val BOOLEAN_SPELLINGS = arrayOf("1", "yes", "y", "true", "t", "on", "0", "no", "
  * Watch the ordering when you do: this terminal matches a *prefix* of the value, so on
  * `ConditionVirtualization=none` it would happily match the leading `no` and strand `ne`. Under the
  * classic engine AlternativeCombinator commits to the first branch that matches and never backtracks,
- * so the names have to come first.
+ * so the names have to come first. Because this terminal ignores case it can prefix-match more than
+ * a lower-case one would (`No` inside `None`), and a lower-case names terminal placed before it can in
+ * turn strand a mixed-case boolean (`t` out of `tRUE`). [namesOrBoolean] handles both; use it.
  *
  * Do NOT call [FlexibleLiteralChoiceTerminal.deprecating] on this instance — it mutates in place and
  * this one is shared across every validator.
  */
-val BOOLEAN = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS)
+val BOOLEAN = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreCase = true)
 
 /**
  * Only the *false* half of [BOOLEAN_SPELLINGS].
@@ -56,7 +62,15 @@ val BOOLEAN = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS)
  * example: `PreferredSource=no` forbids a DHCP-supplied source, while `PreferredSource=yes` is simply
  * not an address.
  */
-val BOOLEAN_FALSE = FlexibleLiteralChoiceTerminal("0", "no", "n", "false", "f", "off")
+val BOOLEAN_FALSE = FlexibleLiteralChoiceTerminal("0", "no", "n", "false", "f", "off", ignoreCase = true)
+
+/**
+ * Only the *true* half of [BOOLEAN_SPELLINGS].
+ *
+ * For settings that run parse_boolean() but reject a false result in some form —
+ * config_parse_protect_hostname accepts `yes:HOSTNAME` but not `no:HOSTNAME`.
+ */
+val BOOLEAN_TRUE = FlexibleLiteralChoiceTerminal("1", "yes", "y", "true", "t", "on", ignoreCase = true)
 
 /**
  * A fresh boolean terminal with every spelling marked deprecated for [reason].
@@ -66,7 +80,26 @@ val BOOLEAN_FALSE = FlexibleLiteralChoiceTerminal("0", "no", "n", "false", "f", 
  * the shared [BOOLEAN] must not be poisoned.
  */
 fun deprecatedBoolean(reason: String): FlexibleLiteralChoiceTerminal =
-  FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS).deprecating(BOOLEAN_SPELLINGS.associateWith { reason })
+  FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreCase = true).deprecating(BOOLEAN_SPELLINGS.associateWith { reason })
+
+/**
+ * "One of these names, or a boolean" — what DEFINE_STRING_TABLE_LOOKUP_WITH_BOOLEAN (and its
+ * _FROM_STRING_ variants) builds. string_table_lookup_from_string_with_boolean (src/basic/string-table.c)
+ * tries parse_boolean() first, which ignores case, and only then falls back to a *case-sensitive*
+ * streq() over the table. So `PrivateTmp=True` is valid but `PrivateTmp=Disconnected` is not: the
+ * [names] stay case-sensitive and the boolean half is [boolean] (case-insensitive [BOOLEAN] unless a
+ * caller needs [BOOLEAN_FALSE] or a deprecated variant).
+ *
+ * The names come first so the boolean cannot take the `no` out of a name like `none`, and the
+ * alternative is a [PreferValidAlternativeCombinator] so the names' lenient shape match cannot strand
+ * a mixed-case boolean like `tRUE` under the classic engine.
+ */
+fun namesOrBoolean(names: FlexibleLiteralChoiceTerminal, boolean: Combinator = BOOLEAN): Combinator =
+  PreferValidAlternativeCombinator(names, boolean)
+
+/** [namesOrBoolean] over plain, non-deprecated table [names]. */
+fun namesOrBoolean(vararg names: String, boolean: Combinator = BOOLEAN): Combinator =
+  namesOrBoolean(FlexibleLiteralChoiceTerminal(*names), boolean)
 val BYTES = RegexTerminal("[0-9]+[a-zA-Z]*\\s*", "[0-9]+[KMGT]?\\s*")
 val DEVICE = RegexTerminal("\\S+\\s*", "/[^\\u0000. ]+\\s*")
 val IOPS = RegexTerminal("[0-9]+[a-zA-Z]*\\s*", "[0-9]+[KMGT]?\\s*")
@@ -460,9 +493,10 @@ val CONDITION_ARCHITECTURE = FlexibleLiteralChoiceTerminal(
 /**
  * A virtualization parameter — condition_test_virtualization. Accepts, in order: `private-users`, a
  * boolean, the categories `vm`/`container`, or any id in virtualization_table (src/basic/virt.c).
- * [BOOLEAN] must follow the names so it cannot strand the `no` inside `none`.
+ * [BOOLEAN] must follow the names so it cannot strand the `no` inside `none`. The boolean ignores case
+ * (parse_boolean) but the names do not (virtualization_from_string is a plain string-table lookup).
  */
-val CONDITION_VIRTUALIZATION = AlternativeCombinator(
+val CONDITION_VIRTUALIZATION = namesOrBoolean(
   FlexibleLiteralChoiceTerminal(
     "vm", "container", "private-users",
     "none", "kvm", "amazon", "qemu", "bochs", "xen", "uml", "vmware", "oracle", "microsoft", "zvm",
