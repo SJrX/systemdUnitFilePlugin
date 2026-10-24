@@ -1,9 +1,9 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COLON
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.OneOrMore
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
@@ -16,7 +16,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  *
  * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#OpenFile=
  * parser https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L6743-L6777   config_parse_open_file (0)
- * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/open-file.c#L12-L68   open_file_parse
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/open-file.c#L12-L68   open_file_parse (a repeated flag is EINVAL, #L48-L49)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/open-file.c#L70   open_file_validate (absolute path, valid fd name, at most one of read-only/append/truncate)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/open-file.c#L134   open_file_flags_table
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/fd-util.c#L554   fdname_is_valid (printable ASCII except ':', at most 255)
@@ -35,7 +35,12 @@ private val OPEN_FILE_PATH = RegexTerminal("""(?:[^:\\]|\\[\s\S]?)+""", """(?:/|
 // The fd name: printable ASCII other than ':'. Empty means "use the file name".
 private val OPEN_FILE_FDNAME = RegexTerminal("""(?:[^:\\]|\\[\s\S]?)+""", """(?:[\x20-\x7E&&[^:\\]]|$C_ESCAPE){1,255}(?=:|$)""")
 
-private val OPEN_FILE_FLAG = FlexibleLiteralChoiceTerminal("read-only", "append", "truncate", "graceful")
+// open_file_parse refuses a flag given twice, and open_file_validate refuses more than one of
+// read-only/append/truncate, so a valid list holds at most one access flag and at most one `graceful`.
+// Exact literals rather than FlexibleLiteralChoiceTerminal: the two choices must not match each other's
+// words syntactically, or the original (greedy, non-backtracking) engine commits to the wrong branch.
+private val OPEN_FILE_ACCESS_FLAG = LiteralChoiceTerminal("read-only", "append", "truncate")
+private val OPEN_FILE_GRACEFUL_FLAG = LiteralChoiceTerminal("graceful")
 private val COMMA = LiteralChoiceTerminal(",")
 
 // extract_first_word(…, ",", 0) coalesces separators, so stray commas anywhere are harmless (even a
@@ -44,8 +49,10 @@ private val OPEN_FILE_OPTIONS = SequenceCombinator(
   ZeroOrMore(COMMA),
   ZeroOrOne(
     SequenceCombinator(
-      OPEN_FILE_FLAG,
-      ZeroOrMore(SequenceCombinator(OneOrMore(COMMA), OPEN_FILE_FLAG)),
+      AlternativeCombinator(
+        SequenceCombinator(OPEN_FILE_ACCESS_FLAG, ZeroOrOne(SequenceCombinator(OneOrMore(COMMA), OPEN_FILE_GRACEFUL_FLAG))),
+        SequenceCombinator(OPEN_FILE_GRACEFUL_FLAG, ZeroOrOne(SequenceCombinator(OneOrMore(COMMA), OPEN_FILE_ACCESS_FLAG))),
+      ),
       ZeroOrMore(COMMA),
     )
   ),
@@ -60,10 +67,11 @@ private val OPEN_FILE_OPTIONS = SequenceCombinator(
  *  - PATH must be absolute;
  *  - FD-NAME, if given, is printable ASCII without `:` (at most 255 characters); an empty one defaults
  *    to the file name;
- *  - OPTIONS is a comma-separated list of `read-only`, `append`, `truncate`, `graceful`.
+ *  - OPTIONS is a comma-separated list of at most one of `read-only`, `append`, `truncate` and at
+ *    most one `graceful`, in either order (a repeated flag, or two of read-only/append/truncate, is
+ *    refused by systemd).
  *
- * Not checked: a flag given twice, or more than one of read-only/append/truncate (both refused by
- * systemd), and a path such as `/` whose file name cannot serve as the default fd name. Unlike most
+ * Not checked: a path such as `/` whose file name cannot serve as the default fd name. Unlike most
  * settings this one performs no specifier expansion, so `%` is an ordinary character.
  *
  * An empty assignment resets the list and is handled before this grammar is consulted.

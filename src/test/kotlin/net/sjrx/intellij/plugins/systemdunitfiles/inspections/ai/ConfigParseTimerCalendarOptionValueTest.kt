@@ -128,6 +128,10 @@ class ConfigParseTimerCalendarOptionValueTest : AbstractUnitFileTest() {
     // Extra spaces before the zone survive only after a weekday list or a bare date (both skip a run of
     // spaces); @EPOCH is read by strtoul, so whitespace and '+' may follow the '@'. CET/-03 stand for the
     // host's tzname abbreviations, posix/ and Etc/ zones are real files under /usr/share/zoneinfo.
+    // Whether systemd accepts the zone depends on the host (sd-check at 0f0682b773): `daily CET` passes
+    // only with TZ=Europe/Berlin (or a tzdata that ships a CET file), `12:00 -03` only with
+    // TZ=America/Sao_Paulo, and posix/Europe/Berlin only where tzdata installs the posix/ tree. The plugin
+    // cannot know the target host, so it accepts these shapes.
     // language="unit file (systemd)"
     val file = """
       [Timer]
@@ -140,6 +144,7 @@ class ConfigParseTimerCalendarOptionValueTest : AbstractUnitFileTest() {
       OnCalendar=12:00 -03
       OnCalendar=Mon 12:00 posix/Europe/Berlin
       OnCalendar=daily Etc/GMT+5
+      OnCalendar=daily Factory
       OnCalendar=Mon,Fri UTC
     """.trimIndent()
 

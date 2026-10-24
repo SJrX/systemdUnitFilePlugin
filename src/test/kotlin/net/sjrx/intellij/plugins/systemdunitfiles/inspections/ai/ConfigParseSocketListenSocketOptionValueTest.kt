@@ -55,6 +55,8 @@ class ConfigParseSocketListenSocketOptionValueTest : AbstractUnitFileTest() {
 
   @Test
   fun testInvalidStreamAndDatagramAddresses() {
+    // `0` and `65536` are ports out of range for ListenStream= (they would be netlink family numbers,
+    // which only ListenNetlink= takes); all 23 confirmed rejected by sd-check at 0f0682b773.
     // language="unit file (systemd)"
     val file = """
       [Socket]
@@ -114,6 +116,9 @@ class ConfigParseSocketListenSocketOptionValueTest : AbstractUnitFileTest() {
 
   @Test
   fun testSequentialPacketIsUnixOnly() {
+    // The last three are refused by config_parse_socket_listen ("Address family not supported"), checked
+    // with sd-check at 0f0682b773. The inspection dispatches on the key; the key-agnostic union grammar
+    // (`combinator`) accepts them, which is why a harness that only reads `combinator` sees them as valid.
     // language="unit file (systemd)"
     val file = """
       [Socket]
