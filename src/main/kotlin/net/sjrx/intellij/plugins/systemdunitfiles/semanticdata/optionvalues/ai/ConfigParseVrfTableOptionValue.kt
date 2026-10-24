@@ -23,6 +23,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * Because table names are user-defined, any word without whitespace or `:` that is not all digits is
  * accepted as a potential name. What is flagged: `0` and out-of-range numbers, values containing
  * whitespace, and `name:number` pairs. An invalid value is logged and ignored by systemd.
+ *
+ * There is no isempty() branch, so an empty `Table=` is a parse error in systemd (logged and ignored), not
+ * a reset. The plugin never runs a grammar on an empty value, so it is not flagged here.
  */
 class ConfigParseVrfTableOptionValue : SimpleGrammarOptionValues(
     "config_parse_vrf_table",

@@ -3,10 +3,12 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ExtractedWordTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WordEnd
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrMore
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
 
@@ -56,12 +58,30 @@ private fun quotedAssignment(quote: String, inner: RegexTerminal) = SequenceComb
   LiteralChoiceTerminal(quote), PROPERTY_NAME, EQUALS, ZeroOrOne(inner), LiteralChoiceTerminal(quote), ZeroOrOne(RAW_VALUE),
 )
 
+// The name check of PROPERTY_NAME, applied to an already unquoted and unescaped word.
+private val UNQUOTED_PROPERTY_NAME = Regex("""$RESERVED_PROPERTY(?:[A-Za-z_]|$SPECIFIER)(?:[A-Za-z0-9_]|$SPECIFIER)*""")
+
+private fun assignmentNameIsValid(word: String): Boolean {
+  val eq = word.indexOf('=')
+  return eq > 0 && UNQUOTED_PROPERTY_NAME.matches(word.substring(0, eq))
+}
+
 // One word: NAME=VALUE, either plain (the value may still contain quoted runs) or with the whole
-// assignment quoted from the start of the name.
+// assignment quoted from the start of the name. Anything else extract_first_word could turn into a valid
+// assignment — a quote or C escape inside the name (`F"OO"=bar`, `"FOO"=bar`, `FOO\x41=1`) — falls
+// through to the ExtractedWordTerminal, which unquotes and unescapes the word first and then applies the
+// same name check. WordEnd stops the classic engine committing to a structured branch that only matched
+// a prefix of the word.
 private val PROPERTY_ASSIGNMENT = AlternativeCombinator(
-  quotedAssignment("\"", DOUBLE_QUOTED_INNER),
-  quotedAssignment("'", SINGLE_QUOTED_INNER),
-  SequenceCombinator(PROPERTY_NAME, EQUALS, ZeroOrOne(RAW_VALUE)),
+  SequenceCombinator(
+    AlternativeCombinator(
+      quotedAssignment("\"", DOUBLE_QUOTED_INNER),
+      quotedAssignment("'", SINGLE_QUOTED_INNER),
+      SequenceCombinator(PROPERTY_NAME, EQUALS, ZeroOrOne(RAW_VALUE)),
+    ),
+    WordEnd("""\s"""),
+  ),
+  ExtractedWordTerminal("""\s""", cunescape = true, "udev property assignment", ::assignmentNameIsValid),
 )
 
 /**
@@ -75,9 +95,14 @@ private val PROPERTY_ASSIGNMENT = AlternativeCombinator(
  * empty — and the name must not be one udev reserves (device_property_can_set: `ACTION`, `DEVPATH`,
  * `INTERFACE`, `TAGS`, …, or anything starting `SYNTH_ARG_`).
  *
- * Lenient corners: the escapes inside a value are not checked against cunescape_one's list (an unknown
- * escape such as `\q` makes systemd ignore the whole assignment), quotes that open in the middle of a
- * name are not modelled, and an unknown `%` specifier is not flagged. An invalid word is logged and
+ * Quotes and C escapes may appear anywhere in the word, including inside the name (`F"OO"=bar`,
+ * `"FOO"=bar`, `FOO\x41=1` are all `FOO…=…` after extract_first_word); such words are unquoted and
+ * unescaped before the name is checked.
+ *
+ * Lenient corners: in the common `NAME=VALUE` spelling the escapes inside the value are not checked
+ * against cunescape_one's list (an unknown escape such as `\q` makes systemd ignore the whole
+ * assignment), the value's UTF-8 validity is not checked, and an unknown `%` specifier in the value is
+ * not flagged. An invalid word is logged and
  * skipped by udev; an empty assignment clears the list.
  */
 class ConfigParseUdevPropertyOptionValue : SimpleGrammarOptionValues(

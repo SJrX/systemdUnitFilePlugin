@@ -17,6 +17,7 @@ class ConfigParseRpsCpuMaskOptionValueTest : AbstractUnitFileTest() {
             ReceivePacketSteeringCPUMask=disable
             ReceivePacketSteeringCPUMask=0-7
             ReceivePacketSteeringCPUMask=1
+            ReceivePacketSteeringCPUMask=0-"3"
         """.trimIndent()
 
         setupFileInEditor("file.link", file)
@@ -35,12 +36,13 @@ class ConfigParseRpsCpuMaskOptionValueTest : AbstractUnitFileTest() {
             ReceivePacketSteeringCPUMask=0 3 8-invalid
             ReceivePacketSteeringCPUMask=all 1
             ReceivePacketSteeringCPUMask=none
+            ReceivePacketSteeringCPUMask=-0
         """.trimIndent()
 
         setupFileInEditor("file.link", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(4, highlights)
+        assertSize(5, highlights)
     }
 }

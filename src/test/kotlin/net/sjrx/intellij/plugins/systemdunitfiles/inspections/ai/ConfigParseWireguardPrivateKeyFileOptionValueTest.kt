@@ -13,6 +13,8 @@ class ConfigParseWireguardPrivateKeyFileOptionValueTest : AbstractUnitFileTest()
             [WireGuard]
             PrivateKeyFile=/run/systemd/network/25-wireguard-private-key.txt
             PrivateKeyFile=/etc/wireguard/my key
+            PrivateKeyFile=/./devices/key
+            PrivateKeyFile=/.dev/key
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
@@ -30,12 +32,14 @@ class ConfigParseWireguardPrivateKeyFileOptionValueTest : AbstractUnitFileTest()
             PrivateKeyFile=wg.key
             PrivateKeyFile=/proc/1/environ
             PrivateKeyFile=/etc/wireguard/../../shadow
+            PrivateKeyFile=/./dev/shm/key
+            PrivateKeyFile=//sys/key
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(3, highlights)
+        assertSize(5, highlights)
     }
 }

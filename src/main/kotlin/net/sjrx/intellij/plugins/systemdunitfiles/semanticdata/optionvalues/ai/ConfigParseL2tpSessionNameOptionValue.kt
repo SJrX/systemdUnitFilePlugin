@@ -20,6 +20,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * C function: config_parse_l2tp_session_name, which requires ifname_valid(): 1…15 printable ASCII
  * characters other than `:`, `/` and `%`, not entirely digits, and not `.`, `..`, `all` or
  * `default`. See [INTERFACE_NAME]. An invalid value is logged and ignored by systemd.
+ *
+ * There is no isempty() branch, so an empty `Name=` is a parse error in systemd (logged and ignored), not
+ * a reset. The plugin never runs a grammar on an empty value, so it is not flagged here.
  */
 class ConfigParseL2tpSessionNameOptionValue : SimpleGrammarOptionValues(
     "config_parse_l2tp_session_name",

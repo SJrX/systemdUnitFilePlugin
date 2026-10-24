@@ -62,12 +62,44 @@ class BatchNetdevLinkCombinatorsTest {
       "8000-8191", "0x0-0x3", ",0")
     // TEST(parse_cpu_set) failures (bar "3-0", a reversed range this grammar does not compare).
     assertAccepts(CPU_SET, false, "0 1 2 3 garbage", "0-3 8-garbage", "0 1 2 3 \"4 5 6 7 ", "8192", "1-", "-1")
+    // EXTRACT_UNQUOTE removes quotes anywhere in a word, and without EXTRACT_CUNESCAPE a backslash just
+    // makes the next character literal.
+    assertAccepts(CPU_SET, true, "0-\"3\"", "'0'-'3'", "\"0\"-3, 4", "0-\\3", "\" 3\"", "1-\"0x3\"")
+    // The lower bound of a range is cut at the first `-`, so `-0` is an empty word there.
+    assertAccepts(CPU_SET, false, "-0", "-0-3", "0-\"9000\"", "\"0-3", "\"3 \"", "0-\"\"", "0-", "0- 3")
+  }
+
+  @Test
+  fun testParseRangeBounds() {
+    assertAccepts(parseRange(100), true, "5", "5-7", "5--0", "0x5-+7", "0")
+    assertAccepts(parseRange(100), false, "-0", "-5", "5-", "5- 7", "5 -7", "100", "5-100")
+    assertAccepts(parseRange(UINT16_LIMIT, 1, spaceAfterDash = true), true, "1000- 2000", "1000-2000")
+    assertAccepts(parseRange(UINT16_LIMIT, 1, spaceAfterDash = true), false, "1000 -2000", "0-5", "5--0")
+  }
+
+  @Test
+  fun testExtractWordUnquotesAndUnescapes() {
+    assertEquals("FOO=bar baz", extractWord("\"FOO=bar baz\"", true))
+    assertEquals("FOO=bar", extractWord("F\"OO\"=bar", true))
+    assertEquals("FOOA=1", extractWord("FOO\\x41=1", true))
+    assertEquals("a b", extractWord("a\\sb", true))
+    assertEquals("a\u00e9", extractWord("a\\u00e9", true))
+    assertEquals("a\u0001", extractWord("a\\001", true))
+    assertEquals(null, extractWord("FOO\\q", true))
+    assertEquals(null, extractWord("a\\x00", true))
+    assertEquals(null, extractWord("a\\400", true))
+    assertEquals(null, extractWord("a\\uD800", true))
+    assertEquals(null, extractWord("\"abc", true))
+    assertEquals(null, extractWord("abc\\", false))
+    assertEquals("aq", extractWord("a\\q", false))
   }
 
   @Test
   fun testKeyFilePathRefusesApiVfsAndDotDot() {
-    assertAccepts(NON_API_VFS_ABSOLUTE_PATH, true, "/etc/key", "/etc/my key", "/devices/x", "/sysroot/key", "/etc//a/./b/")
-    assertAccepts(NON_API_VFS_ABSOLUTE_PATH, false, "key", "/dev", "/dev/null", "//sys/x", "/proc/1/environ", "/a/../b", "/a/..")
+    assertAccepts(NON_API_VFS_ABSOLUTE_PATH, true, "/etc/key", "/etc/my key", "/devices/x", "/sysroot/key", "/etc//a/./b/",
+      "/./devices/x", "/.dev/x", "/..dev/x")
+    assertAccepts(NON_API_VFS_ABSOLUTE_PATH, false, "key", "/dev", "/dev/null", "//sys/x", "/proc/1/environ", "/a/../b", "/a/..",
+      "/./dev/shm/key", "/.//./proc", "//./sys/", "/dev/")
   }
 
   @Test

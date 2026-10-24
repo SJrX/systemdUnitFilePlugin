@@ -5,10 +5,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UINT32_LIMIT
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.extractedRangeWord
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrMore
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.optionallyQuoted
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.parseRange
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtou
 
 /*
  * [VLAN] EgressQOSMaps= / IngressQOSMaps= in a .netdev file.
@@ -20,12 +18,13 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429-L478   safe_atou_full (base 0)
  */
 
-private val QOS_MAPPING = optionallyQuoted(parseRange(safeAtou(UINT32_LIMIT)))
+private val QOS_MAPPING = extractedRangeWord(UINT32_LIMIT, 0L, """\s""", cunescape = true)
 
 /**
  * Validator for `[VLAN] EgressQOSMaps=` and `IngressQOSMaps=` (.netdev).
  *
- * C function: config_parse_vlan_qos_maps. A whitespace-separated list of words (each may be quoted);
+ * C function: config_parse_vlan_qos_maps. A whitespace-separated list of words (each may be quoted, and
+ * may contain C escapes — the quotes and escapes are removed before parsing, see [extractedRangeWord]);
  * every word goes to parse_range(), so it is `from-to` or a single number meaning `from == to`, each
  * side an unsigned int as safe_atou() reads it (decimal, `0x` hex, octal, `0b`/`0o`).
  *

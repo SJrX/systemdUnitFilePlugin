@@ -15,6 +15,7 @@ class ConfigParsePortRangeOptionValueTest : AbstractUnitFileTest() {
             PortRange=4789
             PortRange=0x100-0x200
             PortRange=32768-61000
+            PortRange=1000- 2000
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
@@ -34,12 +35,13 @@ class ConfigParsePortRangeOptionValueTest : AbstractUnitFileTest() {
             PortRange=100:200
             PortRange=-5
             PortRange=5-
+            PortRange=1000 -2000
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(5, highlights)
+        assertSize(6, highlights)
     }
 }

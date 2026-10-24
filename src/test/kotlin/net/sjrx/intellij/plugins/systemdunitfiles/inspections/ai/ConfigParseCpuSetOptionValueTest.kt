@@ -21,6 +21,8 @@ class ConfigParseCpuSetOptionValueTest : AbstractUnitFileTest() {
             IRQAffinity=8000-8191
             IRQAffinity=0x0-0x3
             IRQAffinity=,0
+            IRQAffinity=0-"3"
+            IRQAffinity='0'-'3', 4
         """.trimIndent()
 
         setupFileInEditor("file.link", file)
@@ -41,12 +43,14 @@ class ConfigParseCpuSetOptionValueTest : AbstractUnitFileTest() {
             IRQAffinity=1-
             IRQAffinity=-1
             IRQAffinity=0 1 2 3 "4 5 6 7 
+            IRQAffinity=-0
+            IRQAffinity=0-"9000"
         """.trimIndent()
 
         setupFileInEditor("file.link", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(6, highlights)
+        assertSize(8, highlights)
     }
 }

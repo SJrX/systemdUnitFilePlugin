@@ -22,6 +22,8 @@ class ConfigParseL2tpTunnelLocalAddressOptionValueTest : AbstractUnitFileTest() 
             Local=auto@@eth0
             Local=auto@
             Local=static@a-very-long-alternative-interface-name
+            Local=@auto
+            Local=@@192.168.30.100@eth0
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
@@ -41,12 +43,13 @@ class ConfigParseL2tpTunnelLocalAddressOptionValueTest : AbstractUnitFileTest() 
             Local=auto@eth/0
             Local=192.168.30.256
             Local=auto@123
+            Local=@
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(5, highlights)
+        assertSize(6, highlights)
     }
 }

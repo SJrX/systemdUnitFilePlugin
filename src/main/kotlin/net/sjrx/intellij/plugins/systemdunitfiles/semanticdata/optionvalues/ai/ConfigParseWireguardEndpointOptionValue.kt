@@ -32,9 +32,9 @@ private val ENDPOINT_PORT = safeAtou(UINT16_LIMIT, 1)
 
 // The hostname fallback: everything up to the LAST colon (strrchr), checked with dns_name_is_valid():
 // dot-separated labels of at most 63 characters, each character printable (>= ' ', not DEL) or one of
-// the escapes `\.`, `\\` or `\DDD`. A single trailing dot is allowed, and dns_name_is_valid() also
+// the escapes `\.`, `\\` or `\DDD` with DDD at most 255 (dns_label_unescape refuses `k > 255`). A single trailing dot is allowed, and dns_name_is_valid() also
 // accepts the root name — `.` or nothing at all — so `:51820` passes the parser too.
-private const val DNS_LABEL = """(?:[^.\\\x00-\x1F\x7F]|\\[.\\]|\\[0-9]{3}){1,63}"""
+private const val DNS_LABEL = """(?:[^.\\\x00-\x1F\x7F]|\\[.\\]|\\(?:[01][0-9]{2}|2[0-4][0-9]|25[0-5])){1,63}"""
 private val ENDPOINT_HOST = RegexTerminal(
     """[^\x00-\x1F\x7F]+(?=:[^:]*$)""",
     """(?:$DNS_LABEL(?:\.$DNS_LABEL)*\.?|\.)(?=:[^:]*$)""",
@@ -55,7 +55,9 @@ private val ENDPOINT_HOST = RegexTerminal(
  * The port is a parse_ip_port() number, 1…65535 (safe_atou16 base 0, so hex works). Because the host
  * fallback is so permissive, something like `[fe80::1%eth0]:51820` is accepted (as a hostname), as it
  * is by systemd at parse time. What is flagged: a missing or invalid port, empty labels, over-long labels
- * and control characters. An invalid value is logged and ignored by systemd.
+ * and control characters. Lenient: the overall name length (DNS_HOSTNAME_MAX, enforced by
+ * dns_name_concat) and the 63-byte label limit, which is counted here in characters, not UTF-8 bytes. An
+ * invalid value is logged and ignored by systemd.
  */
 class ConfigParseWireguardEndpointOptionValue : SimpleGrammarOptionValues(
     "config_parse_wireguard_endpoint",

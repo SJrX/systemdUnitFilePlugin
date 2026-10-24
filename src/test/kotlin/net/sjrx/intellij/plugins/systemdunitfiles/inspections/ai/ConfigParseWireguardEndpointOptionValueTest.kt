@@ -20,6 +20,7 @@ class ConfigParseWireguardEndpointOptionValueTest : AbstractUnitFileTest() {
             Endpoint=vpn.example.org.:0x1F90
             Endpoint=[fe80::1%eth0]:51820
             Endpoint=host:65535
+            Endpoint=a\255b.example.com:51820
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
@@ -40,12 +41,13 @@ class ConfigParseWireguardEndpointOptionValueTest : AbstractUnitFileTest() {
             Endpoint=wg..example.com:51820
             Endpoint=[2001:db8::1]:
             Endpoint=wg.example.com:port
+            Endpoint=a\999b:51820
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(6, highlights)
+        assertSize(7, highlights)
     }
 }

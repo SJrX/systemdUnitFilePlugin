@@ -16,7 +16,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/hexdecoct.c#L755-L851   unbase64mem_full
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/hexdecoct.c#L528-L555   unbase64char (also accepts the URL-safe '-' and '_')
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/creds-util.c#L156-L180   read_credential (credential_name_valid)
- * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/test-network/conf/25-wireguard.netdev#L12
+ * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/test-network/conf/25-wireguard-23-peers.netdev#L12   PrivateKey=EEGlnEPYJV//kbvvIqxKkQwOiS+UENyPncC4bF46ong=
+ * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/test-network/conf/25-wireguard.netdev.d/private-key.conf#L2   (same key, drop-in)
  */
 
 /**

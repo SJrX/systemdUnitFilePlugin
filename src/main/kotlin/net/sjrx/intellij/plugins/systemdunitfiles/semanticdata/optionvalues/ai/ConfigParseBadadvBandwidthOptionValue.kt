@@ -26,6 +26,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  *
  * The parser only *warns* when the result divided by 100 kbit exceeds UINT32_MAX and still stores it,
  * so no magnitude bound is applied here. An invalid value is logged and ignored by systemd.
+ *
+ * There is no isempty() branch, so an empty `GatewayBandwidthDown=` or `GatewayBandwidthUp=` is a parse error in systemd (logged and ignored), not
+ * a reset. The plugin never runs a grammar on an empty value, so it is not flagged here.
  */
 class ConfigParseBadadvBandwidthOptionValue : SimpleGrammarOptionValues(
     "config_parse_badadv_bandwidth",

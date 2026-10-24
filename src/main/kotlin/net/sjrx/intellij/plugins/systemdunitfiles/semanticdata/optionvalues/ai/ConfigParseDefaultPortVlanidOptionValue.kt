@@ -26,6 +26,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * The man page says "an integer in the range 1…4094", but vlanid_is_valid only checks `id <= 4094`, so
  * `0` is accepted (and stored as 0, the same as `none`). This follows the C. An invalid value is logged
  * and ignored by systemd.
+ *
+ * There is no isempty() branch, so an empty `DefaultPVID=` is a parse error in systemd (logged and ignored), not
+ * a reset. The plugin never runs a grammar on an empty value, so it is not flagged here.
  */
 class ConfigParseDefaultPortVlanidOptionValue : SimpleGrammarOptionValues(
     "config_parse_default_port_vlanid",

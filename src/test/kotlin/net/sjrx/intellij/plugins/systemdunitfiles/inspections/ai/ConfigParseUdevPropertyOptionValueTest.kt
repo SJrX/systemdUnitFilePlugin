@@ -22,6 +22,10 @@ class ConfigParseUdevPropertyOptionValueTest : AbstractUnitFileTest() {
             Property=_X1=a=b
             Property=DEVPATHX=1
             Property=TAGS_EXTRA=1
+            Property="FOO"=bar
+            Property=F"OO"=bar
+            Property=FOO\x41=1
+            Property='ID_X'=1 "Y"=2
         """.trimIndent()
 
         setupFileInEditor("file.link", file)
@@ -42,12 +46,15 @@ class ConfigParseUdevPropertyOptionValueTest : AbstractUnitFileTest() {
             Property=SYNTH_ARG_X=1
             Property=FOO-BAR=1
             Property=ACTION=add
+            Property="ACTION"=add
+            Property=FOO\q=1
+            Property=F"OO=bar
         """.trimIndent()
 
         setupFileInEditor("file.link", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(6, highlights)
+        assertSize(9, highlights)
     }
 }
