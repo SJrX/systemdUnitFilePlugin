@@ -15,7 +15,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseExecPreserveModeOptionValue : SimpleGrammarOptionValues(
     "config_parse_exec_preserve_mode",
     SequenceCombinator(
-        namesOrBoolean("no", "yes", "restart", "on-success"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("restart", "on-success"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

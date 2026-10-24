@@ -1,7 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.namesOrBoolean
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.PreferValidAlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.deprecatedBoolean
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
@@ -75,10 +75,10 @@ class ConfigParseAddressSectionDadOptionValue : SimpleGrammarOptionValues(
             "yes means none and no means both. Please use 'both', 'ipv4', 'ipv6' or 'none' instead."
 
         // The family names come first: a boolean terminal matches a prefix of the value, so it would
-        // otherwise take the leading "no" out of "none" and strand "ne". namesOrBoolean also stops the
+        // otherwise take the leading "no" out of "none" and strand "ne". PreferValidAlternativeCombinator stops the
         // four-character names' lenient shape from taking "fals" out of "false". The family names are a
         // case-sensitive table lookup; the boolean (parse_boolean) ignores case.
-        val DAD = namesOrBoolean(
+        val DAD = PreferValidAlternativeCombinator(
             FlexibleLiteralChoiceTerminal("none", "both", "ipv4", "ipv6"),
             deprecatedBoolean(HISTORICAL),
         )

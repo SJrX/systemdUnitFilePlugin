@@ -15,7 +15,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseSocketDeferTriggerOptionValue : SimpleGrammarOptionValues(
     "config_parse_socket_defer_trigger",
     SequenceCombinator(
-        namesOrBoolean("no", "yes", "patient"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("patient"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

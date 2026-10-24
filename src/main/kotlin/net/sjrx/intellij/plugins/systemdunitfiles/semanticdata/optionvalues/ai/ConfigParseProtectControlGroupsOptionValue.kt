@@ -15,7 +15,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseProtectControlGroupsOptionValue : SimpleGrammarOptionValues(
     "config_parse_protect_control_groups",
     SequenceCombinator(
-        namesOrBoolean("no", "yes", "private", "strict"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("private", "strict"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

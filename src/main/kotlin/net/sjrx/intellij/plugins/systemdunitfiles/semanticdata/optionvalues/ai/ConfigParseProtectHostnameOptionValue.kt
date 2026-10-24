@@ -23,12 +23,18 @@ class ConfigParseProtectHostnameOptionValue : SimpleGrammarOptionValues(
         AlternativeCombinator(
             // Form: <true-keyword-or-private>:<hostname>
             SequenceCombinator(
-                namesOrBoolean("yes", "private", boolean = BOOLEAN_TRUE),
+                PreferValidAlternativeCombinator(
+                    FlexibleLiteralChoiceTerminal("private"),
+                    BOOLEAN_TRUE,
+                ),
                 COLON_LITERAL,
                 HOSTNAME
             ),
             // Form: standalone keyword (any boolean or "private")
-            namesOrBoolean("no", "yes", "private")
+            PreferValidAlternativeCombinator(
+                FlexibleLiteralChoiceTerminal("private"),
+                BOOLEAN,
+            )
         ),
         EOF()
     )

@@ -15,7 +15,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseTimezoneModeOptionValue : SimpleGrammarOptionValues(
     "config_parse_timezone_mode",
     SequenceCombinator(
-        namesOrBoolean("off", "copy", "bind", "symlink", "delete", "auto"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("copy", "bind", "symlink", "delete", "auto"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

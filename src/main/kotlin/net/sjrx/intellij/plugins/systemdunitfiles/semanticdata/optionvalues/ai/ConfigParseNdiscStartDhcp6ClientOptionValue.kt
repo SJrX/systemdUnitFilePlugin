@@ -15,7 +15,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseNdiscStartDhcp6ClientOptionValue : SimpleGrammarOptionValues(
     "config_parse_ndisc_start_dhcp6_client",
     SequenceCombinator(
-        namesOrBoolean("no", "always", "yes"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("always"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

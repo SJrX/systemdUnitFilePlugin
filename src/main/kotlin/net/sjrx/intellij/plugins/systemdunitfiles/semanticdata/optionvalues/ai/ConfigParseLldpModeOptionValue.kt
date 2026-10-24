@@ -14,7 +14,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseLldpModeOptionValue : SimpleGrammarOptionValues(
     "config_parse_lldp_mode",
     SequenceCombinator(
-        namesOrBoolean("no", "yes", "routers-only"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("routers-only"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

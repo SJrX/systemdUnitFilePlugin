@@ -15,7 +15,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseIpv6PrivacyExtensionsOptionValue : SimpleGrammarOptionValues(
     "config_parse_ipv6_privacy_extensions",
     SequenceCombinator(
-        namesOrBoolean("no", "prefer-public", "yes", "kernel"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("prefer-public", "kernel"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

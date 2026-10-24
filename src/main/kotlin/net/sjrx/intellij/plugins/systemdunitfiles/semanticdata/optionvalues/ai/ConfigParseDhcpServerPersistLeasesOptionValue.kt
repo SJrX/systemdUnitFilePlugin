@@ -15,7 +15,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseDhcpServerPersistLeasesOptionValue : SimpleGrammarOptionValues(
     "config_parse_dhcp_server_persist_leases",
     SequenceCombinator(
-        namesOrBoolean("no", "yes", "runtime"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("runtime"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

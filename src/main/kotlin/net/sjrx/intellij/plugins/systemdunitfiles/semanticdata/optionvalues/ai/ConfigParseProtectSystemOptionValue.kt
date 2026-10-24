@@ -15,7 +15,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseProtectSystemOptionValue : SimpleGrammarOptionValues(
     "config_parse_protect_system",
     SequenceCombinator(
-        namesOrBoolean("no", "yes", "full", "strict"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("full", "strict"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

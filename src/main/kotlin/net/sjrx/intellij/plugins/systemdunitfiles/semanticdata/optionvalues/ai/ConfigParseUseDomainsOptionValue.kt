@@ -14,7 +14,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseUseDomainsOptionValue : SimpleGrammarOptionValues(
     "config_parse_use_domains",
     SequenceCombinator(
-        namesOrBoolean("no", "route", "yes"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("route"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )

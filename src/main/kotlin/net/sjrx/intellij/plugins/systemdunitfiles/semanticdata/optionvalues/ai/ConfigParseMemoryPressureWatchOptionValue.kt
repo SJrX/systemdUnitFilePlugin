@@ -15,7 +15,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 class ConfigParseMemoryPressureWatchOptionValue : SimpleGrammarOptionValues(
     "config_parse_pressure_watch",
     SequenceCombinator(
-        namesOrBoolean("no", "yes", "auto", "skip"),
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("auto", "skip"),
+            BOOLEAN,
+        ),
         EOF()
     )
 )
