@@ -14,9 +14,7 @@ class ConfigParseDhcpSocketPriorityOptionValueTest : AbstractUnitFileTest() {
             [DHCPv4]
             SocketPriority=0
             SocketPriority=6
-            SocketPriority=-1
-            SocketPriority=2147483647
-            SocketPriority=-2147483648
+            SocketPriority=15
         """.trimIndent()
 
         // Execute SUT
@@ -39,6 +37,10 @@ class ConfigParseDhcpSocketPriorityOptionValueTest : AbstractUnitFileTest() {
             SocketPriority=<error descr="Invalid value supplied for option.">abc</error>
             SocketPriority=<error descr="Invalid value supplied for option.">1.5</error>
             SocketPriority=<error descr="Invalid value supplied for option.">2147483648</error>
+            SocketPriority=<error descr="Invalid value supplied for option.">-1</error>
+            SocketPriority=<error descr="Invalid value supplied for option.">16</error>
+            SocketPriority=<error descr="Invalid value supplied for option.">2147483647</error>
+            SocketPriority=<error descr="Invalid value supplied for option.">-2147483648</error>
         """.trimIndent()
 
         // Execute SUT
@@ -47,6 +49,8 @@ class ConfigParseDhcpSocketPriorityOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(5, highlights)
+        // -1, 2147483647 and -2147483648 used to be listed as valid, but systemd refuses anything outside 0…15
+        // ("Invalid socket priority, must be in 0…15").
+        assertSize(9, highlights)
     }
 }

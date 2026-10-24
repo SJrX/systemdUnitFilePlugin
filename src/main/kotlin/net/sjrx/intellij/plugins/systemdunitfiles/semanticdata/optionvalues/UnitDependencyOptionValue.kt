@@ -11,7 +11,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.CollectionFactory
+import com.intellij.psi.util.PsiTreeUtil
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.SemanticDataRepository
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
 import java.io.IOException
@@ -57,41 +59,112 @@ class UnitDependencyOptionValue : OptionValueInformation {
     throw IllegalStateException("Not supported")
   }
 
+  /**
+   * Checks every whitespace-separated word the way systemd does.
+   *
+   * For [Unit] dependencies,
+   * [config_parse_unit_deps](https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L261-L316)
+   * runs [unit_name_printf](https://github.com/systemd/systemd/blob/0f0682b773/src/core/unit-printf.c#L147-L177) on
+   * each word and then adds the dependency, which requires
+   * [unit_name_is_valid](https://github.com/systemd/systemd/blob/0f0682b773/src/basic/unit-name.c#L36-L82). A
+   * template such as `foo@.service` is fine: it gets this unit's instance filled in by
+   * [resolve_template](https://github.com/systemd/systemd/blob/0f0682b773/src/core/unit.c#L3320-L3350).
+   *
+   * The [Install] keys are read by systemctl, not PID 1. Also= is checked with unit_name_is_valid while the file is
+   * parsed ([install_info_add](https://github.com/systemd/systemd/blob/0f0682b773/src/shared/install.c#L1194-L1218)),
+   * and WantedBy=/RequiredBy= when the unit is enabled
+   * ([install_info_symlink_wants](https://github.com/systemd/systemd/blob/0f0682b773/src/shared/install.c#L2090-L2117)).
+   * Both expand the same specifiers through
+   * [install_name_printf](https://github.com/systemd/systemd/blob/0f0682b773/src/shared/install-printf.c#L89-L114).
+   *
+   * PID 1 also refuses an instance or template of a type that cannot be templated
+   * ([unit_add_name](https://github.com/systemd/systemd/blob/0f0682b773/src/core/unit.c#L282-L283),
+   * [unit_type_may_template](https://github.com/systemd/systemd/blob/0f0682b773/src/shared/unit-file.h#L35-L42)), so
+   * `After=foo@bar.mount` is dropped. systemctl does not check that for the [Install] keys, so neither does this.
+   *
+   * A word that uses a specifier (`foo@%i.service`, `notify@%n`) is accepted as long as every specifier is known,
+   * because what it expands to depends on the unit's own name. An unknown one (`%f`, `%T`, `%Z`) makes
+   * [specifier_printf](https://github.com/systemd/systemd/blob/0f0682b773/src/shared/specifier.c#L78-L80) fail
+   * with EBADSLT, and the word is dropped.
+   */
   override fun generateProblemDescriptors(property: UnitFilePropertyType, holder: ProblemsHolder) {
-    // Valid unit names consist of a "name prefix" and a dot and a suffix specifying the unit type.
-    // The "unit prefix" must consist of one or more valid characters (ASCII letters, digits, ":", "-", "_", ".", and "\").
-    // The total length of the unit name including the suffix must not exceed 256 characters.
-    // The type suffix must be one of ".service", ".socket", ".device", ".mount", ".automount", ".swap", ".target", ".path", ".timer", ".slice", or ".scope".
-    val values = property.valueNode.text
-    var processedCharactersInString = 0
-    while (processedCharactersInString < values.length) {
-      val indexOfNextSpace = values.indexOf(" ", processedCharactersInString)
-      var endOfWord = values.length
-      if (indexOfNextSpace > -1) {
-        endOfWord = indexOfNextSpace
-      }
-      val word = values.substring(processedCharactersInString, endOfWord)
-      if (word.length == 0) {
-        processedCharactersInString += 1
-        continue
-      }
-      val lastDot = word.lastIndexOf('.')
-      val range = TextRange(processedCharactersInString + lastDot + 1, endOfWord)
-      if (lastDot > -1) {
-        // Valid unit name
-        val unitType = word.substring(lastDot + 1)
-        if (!validUnitTypes.contains(unitType)) {
-          holder.registerProblem(
-                  property.valueNode.psi, range,
-                  "Unit type " + unitType + " is unsupported, valid types are: " + Strings.join(validUnitTypes, ", ")
-          )
+    // A line continuation separates words just like whitespace does. Blank it out with the same number of
+    // characters, so that offsets still line up with the raw value text.
+    val values = LINE_CONTINUATION.replace(property.valueNode.text) { " ".repeat(it.value.length) }
+    val inInstallSection = PsiTreeUtil.getParentOfType(property, UnitFileSectionGroups::class.java)?.sectionName == "Install"
+
+    for (match in WORD.findAll(values)) {
+      val word = match.value
+      val wordStart = match.range.first
+      val problem = problemForWord(word, checkTemplateType = !inInstallSection) ?: continue
+      holder.registerProblem(
+        property.valueNode.psi,
+        TextRange(wordStart + problem.first.first, wordStart + problem.first.last + 1),
+        problem.second
+      )
+    }
+  }
+
+  /** The range within [word] to highlight and the message, or null if systemd accepts the word. */
+  private fun problemForWord(word: String, checkTemplateType: Boolean): Pair<IntRange, String>? {
+    var hasSpecifier = false
+    var i = 0
+    while (i < word.length) {
+      if (word[i] == '%' && i + 1 < word.length) {
+        val next = word[i + 1]
+        when {
+          next == '%' -> i += 2
+          next in UNIT_NAME_PRINTF_SPECIFIERS -> {
+            hasSpecifier = true
+            i += 2
+          }
+          next in 'a'..'z' || next in 'A'..'Z' || next in '0'..'9' ->
+            return Pair(i..i + 1, "Unknown specifier %$next, systemd ignores this unit name")
+          else -> i += 1
         }
       } else {
-        holder.registerProblem(property.valueNode.psi, range, "Invalid unit name detected, all units must end with a . and then a unit type suffix")
+        i += 1
       }
-      processedCharactersInString += word.length
     }
-    return
+
+    if (hasSpecifier) {
+      // What the specifiers expand to is only known when the unit is loaded.
+      return null
+    }
+
+    if (word.length >= UNIT_NAME_MAX) {
+      return Pair(word.indices, "Unit name is too long, it must be shorter than $UNIT_NAME_MAX characters")
+    }
+
+    val lastDot = word.lastIndexOf('.')
+    if (lastDot == -1) {
+      return Pair(word.indices, "Invalid unit name detected, all units must end with a . and then a unit type suffix")
+    }
+
+    val unitType = word.substring(lastDot + 1)
+    if (!validUnitTypes.contains(unitType)) {
+      return Pair(lastDot + 1 until word.length, "Unit type " + unitType + " is unsupported, valid types are: " + Strings.join(validUnitTypes, ", "))
+    }
+
+    if (lastDot == 0) {
+      return Pair(word.indices, "Invalid unit name detected, the name in front of the unit type suffix must not be empty")
+    }
+
+    for (index in 0 until lastDot) {
+      if (word[index] !in VALID_UNIT_NAME_CHARS) {
+        return Pair(index..index, "Invalid character '${word[index]}' in unit name, allowed are ASCII letters, digits, ':', '-', '_', '.', '\\' and '@'")
+      }
+    }
+
+    if (word[0] == '@') {
+      return Pair(0..0, "Invalid unit name detected, a unit name must not start with '@'")
+    }
+
+    if (checkTemplateType && word.indexOf('@') in 0 until lastDot && unitType !in TEMPLATABLE_UNIT_TYPES) {
+      return Pair(word.indices, "Units of type $unitType cannot be templates or instances, only these can: " + Strings.join(TEMPLATABLE_UNIT_TYPES, ", "))
+    }
+
+    return null
   }
 
   override val validatorName: String
@@ -146,6 +219,22 @@ class UnitDependencyOptionValue : OptionValueInformation {
     @Volatile
     private var unitNames: Set<String>? = null
     private val validUnitTypes = setOf("service", "socket", "device", "mount", "automount", "swap", "target", "path", "timer", "slice", "scope")
+
+    /** unit_type_may_template() in src/shared/unit-file.h. */
+    private val TEMPLATABLE_UNIT_TYPES = setOf("service", "socket", "target", "timer", "path")
+
+    /** UNIT_NAME_MAX: a unit name must be shorter than this. */
+    private const val UNIT_NAME_MAX = 256
+
+    /** VALID_CHARS_WITH_AT in src/basic/unit-name.c. */
+    private val VALID_UNIT_NAME_CHARS = (('a'..'z') + ('A'..'Z') + ('0'..'9') + listOf(':', '-', '_', '.', '\\', '@')).toSet()
+
+    /** The specifiers unit_name_printf() and install_name_printf() know: their own five plus COMMON_SYSTEM and COMMON_CREDS. */
+    private const val UNIT_NAME_PRINTF_SPECIFIERS = "ijnNpaAbBHlqmMovwWgGuU"
+
+    private val LINE_CONTINUATION = Regex("\\\\[ \\t]*\\r?\\n")
+
+    private val WORD = Regex("\\S+")
 
     const val VALIDATOR_NAME = "config_parse_unit_deps"
     val validators = mapOf(

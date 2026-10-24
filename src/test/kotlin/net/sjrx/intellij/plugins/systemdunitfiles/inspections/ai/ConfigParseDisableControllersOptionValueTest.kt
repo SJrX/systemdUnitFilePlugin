@@ -99,7 +99,7 @@ class ConfigParseDisableControllersOptionValueTest : AbstractUnitFileTest() {
     }
 
     @Test
-    fun testMixedValidAndInvalidControllers() {
+    fun testUnknownControllerNextToKnownOnesIsSkipped() {
         // Fixture Setup
         // language="unit file (systemd)"
         val file = """
@@ -112,8 +112,9 @@ class ConfigParseDisableControllersOptionValueTest : AbstractUnitFileTest() {
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        // Verification
-        assertSize(1, highlights)
+        // Verification: this used to expect one warning, but cg_mask_from_string() skips unknown words and only
+        // refuses a value with no known controller at all.
+        assertSize(0, highlights)
     }
 
     @Test
