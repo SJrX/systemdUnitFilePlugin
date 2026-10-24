@@ -9,8 +9,9 @@ class ConfigParseRouteTableOptionValueTest : AbstractUnitFileTest() {
 
   @Test
   fun testValidValues() {
-    // custom-table, my_table and 0x0 are deliberate leniencies: they are legal networkd.conf RouteTable= names
-    // (only all-digit names are refused), which the plugin cannot see. systemd without such a definition rejects them.
+    // custom-table, my_table, 0x0 and `main table` are deliberate leniencies: they are legal networkd.conf RouteTable=
+    // names (only all-digit names and names with `:` are refused; `main\ table:100` defines one with a space), which the
+    // plugin cannot see. systemd without such a definition rejects them. 0b 1 is safe_atou32 = 1 (sd-check accepts it).
     // language="unit file (systemd)"
     val file = """
             [Route]
@@ -25,6 +26,8 @@ class ConfigParseRouteTableOptionValueTest : AbstractUnitFileTest() {
             Table=7
             Table=my_table
             Table=0x10
+            Table=0b 1
+            Table=main table
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -43,7 +46,7 @@ class ConfigParseRouteTableOptionValueTest : AbstractUnitFileTest() {
             Table=a:b
             [RoutingPolicyRule]
             Table=00
-            Table=main table
+            Table=08
         """.trimIndent()
 
     setupFileInEditor("file.network", file)

@@ -9,6 +9,8 @@ class ConfigParseStackedNetdevOptionValueTest : AbstractUnitFileTest() {
 
   @Test
   fun testValidValues() {
+    // +0b1 is not an ifindex (safe_atoi gives EINVAL because systemd turns off glibc's C23 0b parsing), so it is a
+    // valid name; 0b-1 is the ifindex -1, which is not positive. sd-check accepts both names.
     // language="unit file (systemd)"
     val file = """
             [Network]
@@ -27,6 +29,8 @@ class ConfigParseStackedNetdevOptionValueTest : AbstractUnitFileTest() {
             VLAN=0x0
             VLAN=-5
             VLAN=0xvlan
+            VLAN=+0b1
+            VLAN=0b-1
         """.trimIndent()
 
     setupFileInEditor("file.network", file)

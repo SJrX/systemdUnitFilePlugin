@@ -4,9 +4,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.Checked
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IPV6_PREFIX_SAFE_LEN
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ipLiteralBytes
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtouValue
 
 /*
  * [IPv6AddressLabel] Prefix= (.network).
@@ -24,7 +24,20 @@ private fun isMappedTooLong(text: String): Boolean {
   val slash = text.indexOf('/')
   val bytes = ipLiteralBytes(if (slash >= 0) text.substring(0, slash) else text) ?: return false
   val mapped = (0 until 10).all { bytes[it].toInt() == 0 } && bytes[10].toInt() == -1 && bytes[11].toInt() == -1
-  val length = if (slash >= 0) safeAtouValue(text.substring(slash + 1))?.toInt() ?: return false else 128
+  // The same safe_atou8 reading as the length in IPV6_PREFIX_SAFE_LEN, so `/0b1100001` counts as 97.
+  val length = if (slash >= 0) {
+    SafeAtoTerminal(
+      signed = false,
+      base = 0,
+      flags = emptySet(),
+      minInclusive = 0L,
+      maxInclusive = 128L,
+      acceptsWhitespace = true,
+      acceptsMinus = true,
+    ).valueOf(text.substring(slash + 1))?.toInt() ?: return false
+  } else {
+    128
+  }
   return mapped && length > 96
 }
 

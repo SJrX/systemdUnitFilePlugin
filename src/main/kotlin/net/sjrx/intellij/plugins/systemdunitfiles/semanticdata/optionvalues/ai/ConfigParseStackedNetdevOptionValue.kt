@@ -3,9 +3,8 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.Checked
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.INTERFACE_NAME
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.plainNameList
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtouValue
-import java.math.BigInteger
 
 /*
  * [Network] IPoIB= / IPVLAN= / IPVTAP= / MACsec= / MACVLAN= / MACVTAP= / Tunnel= / VLAN= / VXLAN= /
@@ -22,10 +21,18 @@ import java.math.BigInteger
 
 // ifname_valid() first refuses anything parse_ifindex() accepts: safe_atoi() with base 0 (so hex, `0b`,
 // `0o` and a leading `+` count) giving a value in 1…INT_MAX. INTERFACE_NAME only refuses all-digit names.
-private val INT_MAX = BigInteger.valueOf(Int.MAX_VALUE.toLong())
+// The name is a whole word handed to safe_atoi, so leading whitespace that survived the split (`\v`) is
+// skipped as C does.
 private val NOT_AN_IFINDEX_NAME = Checked(INTERFACE_NAME) { name ->
-  val v = safeAtouValue(name)
-  v == null || v.signum() <= 0 || v > INT_MAX
+  SafeAtoTerminal(
+    signed = true,
+    base = 0,
+    flags = emptySet(),
+    minInclusive = 1L,
+    maxInclusive = Int.MAX_VALUE.toLong(),
+    acceptsWhitespace = true,
+    acceptsMinus = true,
+  ).valueOf(name) == null
 }
 
 /**

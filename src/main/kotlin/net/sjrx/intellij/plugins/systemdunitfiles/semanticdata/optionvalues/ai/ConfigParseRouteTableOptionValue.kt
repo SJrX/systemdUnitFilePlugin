@@ -1,12 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkRouteAddrSafeAtouTerminal
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_ROUTE_ADDR_UINT32_LIMIT
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ROUTE_TABLE_FROM_STRING
 
 /*
  * [Route] Table= and [RoutingPolicyRule] Table= (.network).
@@ -21,30 +16,18 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429-L478             safe_atou_full (base 0)
  */
 
-// A route table *name*: `default`, `main`, `local`, or one defined with RouteTable=NAME:NUMBER in
-// networkd.conf. config_parse_route_table_names splits RouteTable= on whitespace and on the first `:`,
-// and refuses an all-digit name — so a name has no whitespace or `:` and is not purely digits.
-private val ROUTE_TABLE_NAME = RegexTerminal("""\S+""", """(?![0-9]+(?:\s|$))[^\s:]+""")
-
 /**
- * Validator for `[Route] Table=` and `[RoutingPolicyRule] Table=` (.network). Both table slots end in
- * manager_get_route_table_from_string(), so they share this grammar.
+ * Validator for `[Route] Table=` and `[RoutingPolicyRule] Table=` (.network). Both table slots hand the whole
+ * value to manager_get_route_table_from_string(), so they use the shared [ROUTE_TABLE_FROM_STRING] grammar.
  *
- * That tries, in order: the predefined names `default`, `main`, `local`; the names defined by
- * `RouteTable=` in networkd.conf; and finally safe_atou32(), refusing 0. The user-defined names live in
- * a different file, so any well-formed name is accepted (a name cannot contain whitespace or `:` and
- * cannot be all digits). An all-digit value must be a table number in 1…4294967295; `0`, an
- * out-of-range number, or a value containing whitespace or `:` is flagged.
- *
- * Lenient corner: a non-decimal number such as `0x0` is indistinguishable from a possible user-defined
- * name and is accepted.
+ * That tries, in order: the predefined names `default`, `main`, `local`; the names defined by `RouteTable=` in
+ * networkd.conf; and finally safe_atou32(), refusing 0. The user-defined names live in a file the plugin cannot
+ * see, so every value that could be such a name is accepted: anything non-empty without a `:` that is not all
+ * digits. That includes `0x0`, `-0`, and names with whitespace such as `main table` (networkd.conf can define
+ * `main\ table:100`). An all-digit value must be a table number in 1…4294967295, so `0`, `00`, `08` and
+ * `4294967296` are flagged, as is any value containing `:`.
  */
 class ConfigParseRouteTableOptionValue(parserName: String = "config_parse_route_section") : SimpleGrammarOptionValues(
     parserName,
-    SequenceCombinator(
-        // The name branch must come first: its lenient shape matches digits too but only *validates*
-        // non-numeric names, so under the classic matcher a number falls through to the second branch.
-        AlternativeCombinator(ROUTE_TABLE_NAME, NetworkRouteAddrSafeAtouTerminal(1, NETWORK_ROUTE_ADDR_UINT32_LIMIT)),
-        EOF()
-    )
+    ROUTE_TABLE_FROM_STRING,
 )

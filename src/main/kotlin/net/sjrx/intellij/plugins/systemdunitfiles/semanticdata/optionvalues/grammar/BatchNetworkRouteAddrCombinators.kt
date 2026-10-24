@@ -59,94 +59,6 @@ class Checked(private val inner: Combinator, private val predicate: (String) -> 
 
 
 // ---------------------------------------------------------------------------------------------------
-// safe_atou* (src/basic/parse-util.c, safe_atou_full / mangle_base).
-
-/**
- * The value [text] denotes when read by systemd's `safe_atou*()` helpers with base 0, or null if they
- * would reject it.
- *
- * Those helpers skip leading whitespace, tolerate a single `+` (and `-0`), understand the Python-style
- * `0b`/`0o` prefixes via mangle_base(), and otherwise hand the string to `strtoul(…, 0)`, which reads
- * `0x…` as hex and a leading `0` as octal. The whole string must be consumed.
- */
-fun safeAtouValue(text: String): BigInteger? {
-  var s = text.trimStart(' ', '\t', '\n', '\r')
-  var negative = false
-  if (s.startsWith("+")) {
-    s = s.substring(1)
-  } else if (s.startsWith("-")) {
-    negative = true
-    s = s.substring(1)
-  }
-  val (digits, radix) = when {
-    s.length > 2 && (s.startsWith("0b") || s.startsWith("0B")) -> s.substring(2) to 2
-    s.length > 2 && (s.startsWith("0o") || s.startsWith("0O")) -> s.substring(2) to 8
-    s.length > 2 && (s.startsWith("0x") || s.startsWith("0X")) -> s.substring(2) to 16
-    s.length > 1 && s.startsWith("0") -> s.substring(1) to 8
-    else -> s to 10
-  }
-  if (digits.isEmpty() || !digits.all { Character.digit(it, radix) >= 0 }) return null
-  val v = BigInteger(digits, radix)
-  // strtoul() happily negates; safe_atou_full() only lets "-0" through.
-  if (negative && v.signum() != 0) return null
-  return v
-}
-
-/**
- * An unsigned number in `[minInclusive, maxExclusive)` as `safe_atou*()` reads it: decimal, `0x` hex,
- * `0o`/leading-zero octal, `0b` binary, with an optional leading `+`.
- *
- * Wider than [UnsignedNumberTerminal], which predates the `0b`/`0o`/`+` spellings. The syntactic shape
- * is any run starting with a digit (or sign) and continuing with alphanumerics, so a malformed number
- * like `12abc` is located as one token; use it only where the number is followed by a separator
- * (whitespace, `/`, `-`, `:`, `@`) or the end of the value.
- *
- * safe_atou*() skip leading whitespace themselves. Pass [allowLeadingWhitespace] where the number comes
- * straight after a non-whitespace separator that systemd splits on itself (`100: 200` in a `:` list,
- * `::/ 64` after a prefix slash), so that whitespace is part of the number token. Leave it off where the
- * value was already split into words on whitespace, or where whitespace is the separator.
- */
-class NetworkRouteAddrSafeAtouTerminal(
-  private val minInclusive: Long,
-  private val maxExclusive: Long,
-  private val allowLeadingWhitespace: Boolean = false,
-) : TerminalCombinator {
-
-  private fun span(value: String, offset: Int): String? = (if (allowLeadingWhitespace) SHAPE_WS else SHAPE).matchAt(value, offset)?.value
-
-  private fun inRange(text: String): Boolean {
-    val v = safeAtouValue(text) ?: return false
-    return v >= BigInteger.valueOf(minInclusive) && v < BigInteger.valueOf(maxExclusive)
-  }
-
-  override fun SyntacticMatch(value: String, offset: Int): MatchResult {
-    val text = span(value, offset) ?: return NoMatch
-    return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
-  }
-
-  override fun SemanticMatch(value: String, offset: Int): MatchResult {
-    val text = span(value, offset) ?: return NoMatch
-    if (!inRange(text)) return NoMatch.copy(longestMatch = offset)
-    return MatchResult(listOf(text), offset + text.length, listOf(this), offset + text.length)
-  }
-
-  override fun parse(value: String, offset: Int): Sequence<ParseStep> {
-    val text = span(value, offset) ?: return sequenceOf(Stuck(offset, setOf(this)))
-    return sequenceOf(Parse(offset + text.length, listOf(ParsedToken(offset, offset + text.length, text, this, inRange(text)))))
-  }
-
-  override fun toString(): String = "SafeAtou($minInclusive,$maxExclusive)"
-
-  private companion object {
-    val SHAPE = Regex("""[+-]?[0-9][0-9a-zA-Z]*""")
-    val SHAPE_WS = Regex("""[ \t]*[+-]?[0-9][0-9a-zA-Z]*""")
-  }
-}
-
-const val NETWORK_ROUTE_ADDR_UINT32_LIMIT = 4_294_967_296L
-
-
-// ---------------------------------------------------------------------------------------------------
 // parse_sec() — parse_time(t, &usec, USEC_PER_SEC) in src/basic/time-util.c.
 //
 // The grammar mirrors parse_time()'s loop: a run of `NUMBER [whitespace] [UNIT]` elements, where
@@ -432,6 +344,22 @@ fun ipIsMulticast(bytes: ByteArray): Boolean =
 // ---------------------------------------------------------------------------------------------------
 // IPv6 prefixes — in_addr_prefix_from_string(…, AF_INET6, …) (src/basic/in-addr-util.c): an IPv6 literal
 // and an optional `/LEN`, where LEN goes through in_addr_parse_prefixlen → safe_atou8 (base 0) and must
-// be ≤ 128 (safe_atou8 skips whitespace, so `::/ 64` is fine). Without a slash the prefix length is 128.
-// Not followed by EOF.
-val IPV6_PREFIX_SAFE_LEN: Combinator = SequenceCombinator(IPV6_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, NetworkRouteAddrSafeAtouTerminal(0, 129, allowLeadingWhitespace = true))))
+// be ≤ 128. The length is everything after the `/`, so whitespace reaches safe_atou8 (`::/ 64` and
+// `::/0b 1` are fine). Without a slash the prefix length is 128. Not followed by EOF.
+val IPV6_PREFIX_SAFE_LEN: Combinator = SequenceCombinator(
+  IPV6_ADDR,
+  ZeroOrOne(
+    SequenceCombinator(
+      CIDR_SEPARATOR,
+      SafeAtoTerminal(
+        signed = false,
+        base = 0,
+        flags = emptySet(),
+        minInclusive = 0L,
+        maxInclusive = 128L,
+        acceptsWhitespace = true,
+        acceptsMinus = true,
+      ),
+    )
+  ),
+)

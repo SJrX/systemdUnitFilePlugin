@@ -16,6 +16,8 @@ class ConfigParseIpv6AddressLabelOptionValueTest : AbstractUnitFileTest() {
             Label=100
             Label=4294967294
             Label=0xfffffffe
+            Label=0b 1
+            Label=0b+1
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -25,7 +27,7 @@ class ConfigParseIpv6AddressLabelOptionValueTest : AbstractUnitFileTest() {
 
   @Test
   fun testInvalidValues() {
-    // One highlight per line.
+    // One highlight per line. sd-check rejects +0b1 and -0b0 (EINVAL) and accepts 0b 1 and 0b+1.
     // language="unit file (systemd)"
     val file = """
             [IPv6AddressLabel]
@@ -33,10 +35,12 @@ class ConfigParseIpv6AddressLabelOptionValueTest : AbstractUnitFileTest() {
             Label=0xffffffff
             Label=-1
             Label=label
+            Label=+0b1
+            Label=-0b0
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
-    assertSize(4, myFixture.doHighlighting())
+    assertSize(6, myFixture.doHighlighting())
   }
 }

@@ -18,6 +18,7 @@ class ConfigParseRoutePrefixOptionValueTest : AbstractUnitFileTest() {
             Route=2001:db8::1
             Route=2001:db8::/0x40
             Route=2001:db8::/ 64
+            Route=2001:db8::/0b 1
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -34,10 +35,11 @@ class ConfigParseRoutePrefixOptionValueTest : AbstractUnitFileTest() {
             Route=192.168.0.0/24
             Route=2001:db8::/129
             Route=2001:db8::/
+            Route=2001:db8::/+0b1
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
-    assertSize(3, myFixture.doHighlighting())
+    assertSize(4, myFixture.doHighlighting())
   }
 }

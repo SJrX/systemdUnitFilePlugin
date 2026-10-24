@@ -19,6 +19,8 @@ class ConfigParseRoutingPolicyRuleFirewallMarkOptionValueTest : AbstractUnitFile
             FirewallMark=4294967295/4294967295
             FirewallMark=0b101
             FirewallMark=7/ 255
+            FirewallMark=0b 1
+            FirewallMark=1/0b 1
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -28,7 +30,7 @@ class ConfigParseRoutingPolicyRuleFirewallMarkOptionValueTest : AbstractUnitFile
 
   @Test
   fun testInvalidValues() {
-    // One highlight per line.
+    // One highlight per line. sd-check rejects +0b1, 1/+0b1 and 1 /2, and accepts 0b 1 and 1/0b 1.
     // language="unit file (systemd)"
     val file = """
             [RoutingPolicyRule]
@@ -37,10 +39,13 @@ class ConfigParseRoutingPolicyRuleFirewallMarkOptionValueTest : AbstractUnitFile
             FirewallMark=/255
             FirewallMark=mark
             FirewallMark=-1
+            FirewallMark=+0b1
+            FirewallMark=1/+0b1
+            FirewallMark=1 /2
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
-    assertSize(5, myFixture.doHighlighting())
+    assertSize(8, myFixture.doHighlighting())
   }
 }

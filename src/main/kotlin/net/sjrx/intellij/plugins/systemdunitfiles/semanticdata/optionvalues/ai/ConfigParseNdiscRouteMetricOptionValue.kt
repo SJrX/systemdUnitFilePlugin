@@ -5,11 +5,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COLON
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.Checked
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkRouteAddrSafeAtouTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_ROUTE_ADDR_UINT32_LIMIT
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtouValue
 
 /*
  * [IPv6AcceptRA] RouteMetric= and the legacy [DHCPv6] RouteMetric= (.network).
@@ -20,16 +18,24 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/test-network/systemd-networkd-tests.py#L8124   (RouteMetric=100:200:300)
  */
 
-private val METRIC = NetworkRouteAddrSafeAtouTerminal(0, NETWORK_ROUTE_ADDR_UINT32_LIMIT)
-
-// high < medium < low, compared on the parsed numbers.
-// safe_atou32 skips leading whitespace, so `100: 200: 300` is fine.
-private val NEXT_METRIC = NetworkRouteAddrSafeAtouTerminal(0, NETWORK_ROUTE_ADDR_UINT32_LIMIT, allowLeadingWhitespace = true)
+// safe_atou32() on the whole value, or on one field of the `:`-separated triple. Either way whitespace
+// inside the text reaches safe_atou32, which skips it at the start (`100: 200: 300`) and after a
+// `0b`/`0o` prefix (`0b 1`).
+private val METRIC = SafeAtoTerminal(
+    signed = false,
+    base = 0,
+    flags = emptySet(),
+    minInclusive = 0L,
+    maxInclusive = 4_294_967_295L,
+    acceptsWhitespace = true,
+    acceptsMinus = true,
+)
 
 // extract_many_words(…, EXTRACT_DONT_COALESCE_SEPARATORS) leaves p at "" after a single trailing `:`,
 // which passes the isempty(p) check, so `100:200:300:` is accepted too.
-private val METRIC_TRIPLE = Checked(SequenceCombinator(METRIC, COLON, NEXT_METRIC, COLON, NEXT_METRIC, ZeroOrOne(COLON))) { text ->
-  val v = text.removeSuffix(":").split(':').map { safeAtouValue(it) }
+// high < medium < low, compared on the parsed numbers.
+private val METRIC_TRIPLE = Checked(SequenceCombinator(METRIC, COLON, METRIC, COLON, METRIC, ZeroOrOne(COLON))) { text ->
+  val v = text.removeSuffix(":").split(':').map { METRIC.valueOf(it) }
   v.size == 3 && v.all { it != null } && v[0]!! < v[1]!! && v[1]!! < v[2]!!
 }
 

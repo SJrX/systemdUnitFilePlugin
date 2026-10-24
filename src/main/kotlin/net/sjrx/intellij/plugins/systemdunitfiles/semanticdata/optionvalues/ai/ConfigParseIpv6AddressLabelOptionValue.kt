@@ -2,7 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkRouteAddrSafeAtouTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
 /*
@@ -16,9 +16,21 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 
 /**
  * Validator for `[IPv6AddressLabel] Label=` (.network): safe_atou32() — decimal, `0x` hex, `0o`/leading
- * zero octal, `0b` binary — in 0…4294967294. 4294967295 (0xffffffff) is reserved and refused.
+ * zero octal, `0b` binary — in 0…4294967294. 4294967295 (0xffffffff) is reserved and refused. The value is
+ * whole, so whitespace after a `0b`/`0o` prefix (`0b 1`) and a leading `\v` reach safe_atou32 and are fine.
  */
 class ConfigParseIpv6AddressLabelOptionValue : SimpleGrammarOptionValues(
     "config_parse_ipv6_address_label_section",
-    SequenceCombinator(NetworkRouteAddrSafeAtouTerminal(0, 4_294_967_295L), EOF())
+    SequenceCombinator(
+        SafeAtoTerminal(
+            signed = false,
+            base = 0,
+            flags = emptySet(),
+            minInclusive = 0L,
+            maxInclusive = 4_294_967_294L,
+            acceptsWhitespace = true,
+            acceptsMinus = true,
+        ),
+        EOF()
+    )
 )

@@ -6,9 +6,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IP_ADDR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkRouteAddrSafeAtouTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_ROUTE_ADDR_UINT32_LIMIT
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
 
@@ -30,7 +29,20 @@ private val AT = LiteralChoiceTerminal("@")
 // After `@`: parse_ifindex() (a positive int) or, failing that, an alternative-length interface name.
 // The name branch comes first because its lenient shape also matches digits but it only *validates*
 // non-numeric names; under the classic matcher a number then falls through to the index branch.
-private val DEVICE = AlternativeCombinator(ALTERNATIVE_INTERFACE_NAME, NetworkRouteAddrSafeAtouTerminal(1, 2_147_483_648L))
+// parse_ifindex() is safe_atoi() refusing anything below 1. The device is part of the first word, which
+// extract_first_word() cut at whitespace, so no whitespace may follow the `@`.
+private val DEVICE = AlternativeCombinator(
+    ALTERNATIVE_INTERFACE_NAME,
+    SafeAtoTerminal(
+        signed = true,
+        base = 0,
+        flags = emptySet(),
+        minInclusive = 1L,
+        maxInclusive = Int.MAX_VALUE.toLong(),
+        acceptsWhitespace = false,
+        acceptsMinus = true,
+    ),
+)
 
 /**
  * Validator for `[Route] MultiPathRoute=` (.network) — the ROUTE_MULTIPATH slot, whose table entry is
@@ -41,7 +53,8 @@ private val DEVICE = AlternativeCombinator(ALTERNATIVE_INTERFACE_NAME, NetworkRo
  *  - DEVICE, after the first `@`, is an interface index (parse_ifindex: a positive integer) or an
  *    interface name valid with IFNAME_VALID_ALTERNATIVE (up to 127 characters, not all digits).
  * Anything after that word is the weight, read as a whole with safe_atou32() and accepted in 1…256 —
- * a second word, or anything else trailing, is an error.
+ * a second word, or anything else trailing, is an error. Because the weight is the whole rest of the value,
+ * `@eth0 0b 1` is weight 1.
  *
  * Examples from systemd's own unit test: `@wg0 10`, `@1 15`, `10.0.0.1@eth0 20`,
  * `2001:db8::1@wg0 15`, `192.168.1.1 100`, `fe80::1`, `@999999 10`.
@@ -53,7 +66,20 @@ class ConfigParseRouteMultiPathOptionValue : SimpleGrammarOptionValues(
             SequenceCombinator(IP_ADDR, ZeroOrOne(SequenceCombinator(AT, DEVICE))),
             SequenceCombinator(AT, DEVICE),
         ),
-        ZeroOrOne(SequenceCombinator(WhitespaceTerminal(), NetworkRouteAddrSafeAtouTerminal(1, 257))),
+        ZeroOrOne(
+            SequenceCombinator(
+                WhitespaceTerminal(),
+                SafeAtoTerminal(
+                    signed = false,
+                    base = 0,
+                    flags = emptySet(),
+                    minInclusive = 1L,
+                    maxInclusive = 256L,
+                    acceptsWhitespace = true,
+                    acceptsMinus = true,
+                ),
+            )
+        ),
         EOF()
     )
 )

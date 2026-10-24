@@ -17,6 +17,8 @@ class ConfigParseIpv6AddressLabelPrefixOptionValueTest : AbstractUnitFileTest() 
             Prefix=::ffff:0:0/96
             Prefix=fe80::1
             Prefix=2001:db8::/ 32
+            Prefix=::/0b 1
+            Prefix=::ffff:0:0/0b1100000
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -26,7 +28,7 @@ class ConfigParseIpv6AddressLabelPrefixOptionValueTest : AbstractUnitFileTest() 
 
   @Test
   fun testInvalidValues() {
-    // One highlight per line.
+    // One highlight per line. sd-check rejects ::/+0b1 (EINVAL) and ::ffff:0:0/0b1100001 (97 > 96), and accepts ::/0b 1.
     // language="unit file (systemd)"
     val file = """
             [IPv6AddressLabel]
@@ -34,10 +36,12 @@ class ConfigParseIpv6AddressLabelPrefixOptionValueTest : AbstractUnitFileTest() 
             Prefix=::ffff:1.2.3.4
             Prefix=10.0.0.0/8
             Prefix=2001:db8::/200
+            Prefix=::/+0b1
+            Prefix=::ffff:0:0/0b1100001
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
-    assertSize(4, myFixture.doHighlighting())
+    assertSize(6, myFixture.doHighlighting())
   }
 }

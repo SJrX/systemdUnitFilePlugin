@@ -19,6 +19,8 @@ class ConfigParseNdiscRouteMetricOptionValueTest : AbstractUnitFileTest() {
             RouteMetric=0x10:0x20:0x30
             RouteMetric=100: 200:	300
             RouteMetric=100:200:300:
+            RouteMetric=0b 1
+            RouteMetric=0b1:0b 10:0b11
             [DHCPv6]
             RouteMetric=1024
         """.trimIndent()
@@ -30,7 +32,7 @@ class ConfigParseNdiscRouteMetricOptionValueTest : AbstractUnitFileTest() {
 
   @Test
   fun testInvalidValues() {
-    // One highlight per line.
+    // One highlight per line. sd-check rejects +0b1 and 1:+0b10:3, and accepts 0b 1 and 0b1:0b 10:0b11.
     // language="unit file (systemd)"
     val file = """
             [IPv6AcceptRA]
@@ -42,10 +44,12 @@ class ConfigParseNdiscRouteMetricOptionValueTest : AbstractUnitFileTest() {
             RouteMetric=1::3
             RouteMetric=1:2:3::
             RouteMetric=100 :200:300
+            RouteMetric=+0b1
+            RouteMetric=1:+0b10:3
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
-    assertSize(8, myFixture.doHighlighting())
+    assertSize(10, myFixture.doHighlighting())
   }
 }

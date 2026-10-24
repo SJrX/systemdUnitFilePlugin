@@ -2,7 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkRouteAddrSafeAtouTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
 /*
@@ -19,12 +19,23 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 /**
  * Validator for `[Route] InitialCongestionWindow=` (.network) — ROUTE_METRIC_INITCWND, which
  * config_parse_route_metric dispatches to config_parse_tcp_window: safe_atou32() (so `0x10`, `0o20`,
- * `020` are numbers too) and then 1…1023.
+ * `020` are numbers too, and so are `0b 1` and `0b+1`, since safe_atou32 sees the whole value) and then 1…1023.
  *
  * (`InitialAdvertisedReceiveWindow=` uses the same leaf and is already covered by
  * ConfigParseRouteSectionInitRwndOptionValue.)
  */
 class ConfigParseRouteMetricInitCwndOptionValue : SimpleGrammarOptionValues(
     "config_parse_route_section",
-    SequenceCombinator(NetworkRouteAddrSafeAtouTerminal(1, 1024), EOF())
+    SequenceCombinator(
+        SafeAtoTerminal(
+            signed = false,
+            base = 0,
+            flags = emptySet(),
+            minInclusive = 1L,
+            maxInclusive = 1023L,
+            acceptsWhitespace = true,
+            acceptsMinus = true,
+        ),
+        EOF()
+    )
 )

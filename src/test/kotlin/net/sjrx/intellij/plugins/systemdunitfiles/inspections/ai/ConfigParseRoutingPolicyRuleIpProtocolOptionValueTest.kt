@@ -28,6 +28,8 @@ class ConfigParseRoutingPolicyRuleIpProtocolOptionValueTest : AbstractUnitFileTe
             IPProtocol=TcP
             IPProtocol=IcMpV6
             IPProtocol=L2TP
+            IPProtocol=0b 110
+            IPProtocol=-0
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -37,7 +39,7 @@ class ConfigParseRoutingPolicyRuleIpProtocolOptionValueTest : AbstractUnitFileTe
 
   @Test
   fun testInvalidValues() {
-    // One highlight per line.
+    // One highlight per line. sd-check rejects +0b110 (EINVAL) and 0b-1 (-1: ERANGE), and accepts 0b 110 (tcp) and -0.
     // language="unit file (systemd)"
     val file = """
             [RoutingPolicyRule]
@@ -49,10 +51,12 @@ class ConfigParseRoutingPolicyRuleIpProtocolOptionValueTest : AbstractUnitFileTe
             IPProtocol=200
             IPProtocol=TcPx
             IPProtocol=Yes
+            IPProtocol=+0b110
+            IPProtocol=0b-1
         """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
-    assertSize(8, myFixture.doHighlighting())
+    assertSize(10, myFixture.doHighlighting())
   }
 }

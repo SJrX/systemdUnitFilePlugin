@@ -3,9 +3,8 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.CIDR_SEPARATOR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkRouteAddrSafeAtouTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_ROUTE_ADDR_UINT32_LIMIT
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
 
 /*
@@ -24,13 +23,35 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  *
  * `MARK` or `MARK/MASK`, split at the first `/`, each read with safe_atou32() — so decimal, `0x` hex,
  * leading-zero / `0o` octal and `0b` binary are all accepted, up to 4294967295. A missing number on
- * either side of the slash is an error.
+ * either side of the slash is an error. Both parts reach safe_atou32 with any whitespace they contain, so a
+ * leading `\v` or `0b 1` is fine, but whitespace before the slash (`1 /2`) is trailing junk for the mark.
  */
 class ConfigParseRoutingPolicyRuleFirewallMarkOptionValue : SimpleGrammarOptionValues(
     "config_parse_routing_policy_rule",
     SequenceCombinator(
-        NetworkRouteAddrSafeAtouTerminal(0, NETWORK_ROUTE_ADDR_UINT32_LIMIT),
-        ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, NetworkRouteAddrSafeAtouTerminal(0, NETWORK_ROUTE_ADDR_UINT32_LIMIT, allowLeadingWhitespace = true))),
+        SafeAtoTerminal(
+            signed = false,
+            base = 0,
+            flags = emptySet(),
+            minInclusive = 0L,
+            maxInclusive = 4_294_967_295L,
+            acceptsWhitespace = true,
+            acceptsMinus = true,
+        ),
+        ZeroOrOne(
+            SequenceCombinator(
+                CIDR_SEPARATOR,
+                SafeAtoTerminal(
+                    signed = false,
+                    base = 0,
+                    flags = emptySet(),
+                    minInclusive = 0L,
+                    maxInclusive = 4_294_967_295L,
+                    acceptsWhitespace = true,
+                    acceptsMinus = true,
+                ),
+            )
+        ),
         EOF()
     )
 )

@@ -6,6 +6,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.HYPHEN
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
 
@@ -22,27 +23,57 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/test-network/conf/25-fibrule-uidrange.network
  */
 
-private const val UID_LIMIT = 4_294_967_296L
+// parse_uid: safe_atou32_full(s, 10 | SAFE_ATO_REFUSE_PLUS_MINUS | SAFE_ATO_REFUSE_LEADING_ZERO |
+// SAFE_ATO_REFUSE_LEADING_WHITESPACE), so strict decimal, no `+`/`-`, no leading zero (except `0` itself) and
+// no leading " \t\n\r" (a leading `\v` still gets through, as in C). 4294967295 is refused by uid_is_valid().
+// The lower bound is the text before the first `-` (extract_first_word with "-"), so it cannot contain one.
+private val UID_LOWER = SafeAtoTerminal(
+    signed = false,
+    base = 10,
+    flags = setOf(
+        SafeAtoTerminal.Flag.REFUSE_PLUS_MINUS,
+        SafeAtoTerminal.Flag.REFUSE_LEADING_ZERO,
+        SafeAtoTerminal.Flag.REFUSE_LEADING_WHITESPACE,
+    ),
+    minInclusive = 0L,
+    maxInclusive = 4_294_967_294L,
+    acceptsWhitespace = true,
+    acceptsMinus = false,
+)
 
-private fun uidIsValid(text: String): Boolean {
-  val v = text.toLongOrNull() ?: return false
-  return v < UID_LIMIT && v != 65_535L && v != 4_294_967_295L
-}
+// The upper bound is the rest of the value after that `-`.
+private val UID_UPPER = SafeAtoTerminal(
+    signed = false,
+    base = 10,
+    flags = setOf(
+        SafeAtoTerminal.Flag.REFUSE_PLUS_MINUS,
+        SafeAtoTerminal.Flag.REFUSE_LEADING_ZERO,
+        SafeAtoTerminal.Flag.REFUSE_LEADING_WHITESPACE,
+    ),
+    minInclusive = 0L,
+    maxInclusive = 4_294_967_294L,
+    acceptsWhitespace = true,
+    acceptsMinus = true,
+)
 
-// parse_uid: strict decimal, no `+`/`-`, no leading zero (except `0` itself), and uid_is_valid().
-private val UID = Checked(RegexTerminal("""[0-9]+""", """0|[1-9][0-9]*""")) { uidIsValid(it) }
-
-private val UID_RANGE = Checked(SequenceCombinator(UID, ZeroOrOne(SequenceCombinator(HYPHEN, UID)))) { text ->
-  val bounds = text.split('-')
-  // toLongOrNull: an over-long digit run is already rejected by UID; do not crash on it here.
-  val lo = bounds[0].toLongOrNull()
-  val hi = bounds.getOrNull(1)?.toLongOrNull()
-  bounds.size == 1 || lo == null || hi == null || lo <= hi
+// uid_is_valid() also refuses the 16-bit -1, 65535.
+private val UID_RANGE = Checked(
+    SequenceCombinator(
+        Checked(UID_LOWER) { UID_LOWER.valueOf(it)?.toLong() != 65_535L },
+        ZeroOrOne(SequenceCombinator(HYPHEN, Checked(UID_UPPER) { UID_UPPER.valueOf(it)?.toLong() != 65_535L })),
+    )
+) { text ->
+  val dash = text.indexOf('-')
+  val lo = if (dash >= 0) UID_LOWER.valueOf(text.substring(0, dash)) else null
+  val hi = if (dash >= 0) UID_UPPER.valueOf(text.substring(dash + 1)) else null
+  dash < 0 || lo == null || hi == null || lo <= hi
 }
 
 // A user name for getpwnam(): NSS is the judge, so anything without whitespace or `:` is accepted, as
-// long as it does not look like a UID or UID range (those are judged by the numeric branch).
-private val USER_NAME = RegexTerminal("""\S+""", """(?![0-9][0-9-]*(?:\s|$))[^\s:]+""")
+// long as it does not look like a UID or UID range (those are judged by the numeric branch). The lenient
+// shape stops only at systemd's WHITESPACE (" \t\n\r"), so under the classic engine a range such as
+// `5-\v6` (a `\v` that parse_uid lets through) is not cut short at the `\v` and falls through to UID_RANGE.
+private val USER_NAME = RegexTerminal("""[^ \t\n\r]+""", """(?![0-9][0-9-]*(?:\s|$))[^\s:]+""")
 
 /**
  * Validator for `[RoutingPolicyRule] User=` (.network) — the ROUTING_POLICY_RULE_UID_RANGE slot.

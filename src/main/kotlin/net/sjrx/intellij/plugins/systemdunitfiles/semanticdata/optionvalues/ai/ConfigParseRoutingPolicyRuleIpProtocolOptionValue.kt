@@ -4,10 +4,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.Checked
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkRouteAddrSafeAtouTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.PreferValidAlternativeCombinator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtouValue
 
 /*
  * [RoutingPolicyRule] IPProtocol= (.network).
@@ -43,6 +42,19 @@ private val IP_PROTOCOL_NUMBERS = setOf(
     132, 135, 136, 137, 143, 144, 255,
 )
 
+// parse_ip_protocol_full reads a number with safe_atoi() and refuses a negative one with -ERANGE;
+// config_parse_ip_protocol then refuses anything above UINT8_MAX. The value is whole, so `\v6` and
+// `0b 110` reach safe_atoi too.
+private val IP_PROTOCOL_NUMBER = SafeAtoTerminal(
+    signed = true,
+    base = 0,
+    flags = emptySet(),
+    minInclusive = 0L,
+    maxInclusive = 255L,
+    acceptsWhitespace = true,
+    acceptsMinus = true,
+)
+
 /**
  * Validator for `[RoutingPolicyRule] IPProtocol=` (.network) — the ROUTING_POLICY_RULE_IP_PROTOCOL slot,
  * whose table entry is config_parse_ip_protocol with ltype 0.
@@ -58,7 +70,7 @@ class ConfigParseRoutingPolicyRuleIpProtocolOptionValue : SimpleGrammarOptionVal
     SequenceCombinator(
         PreferValidAlternativeCombinator(
             FlexibleLiteralChoiceTerminal(*IP_PROTOCOL_NAMES, ignoreCase = true),
-            Checked(NetworkRouteAddrSafeAtouTerminal(0, 256)) { text -> safeAtouValue(text)?.toInt() in IP_PROTOCOL_NUMBERS },
+            Checked(IP_PROTOCOL_NUMBER) { text -> IP_PROTOCOL_NUMBER.valueOf(text)?.toInt() in IP_PROTOCOL_NUMBERS },
         ),
         EOF()
     )
