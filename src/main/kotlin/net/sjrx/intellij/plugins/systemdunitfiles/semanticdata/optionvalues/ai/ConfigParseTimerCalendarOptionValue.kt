@@ -8,7 +8,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * [Timer] OnCalendar=
  *
  * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.timer.html#OnCalendar=
- * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.time.html#Calendar%20Events
+ * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.time.html (section "Calendar Events")
  * parser https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L2043-L2114   config_parse_timer (TIMER_CALENDAR)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/core/unit-printf.c#L179   unit_full_printf_full (specifiers expanded first)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/calendarspec.c#L870-L1103   calendar_spec_from_string_full

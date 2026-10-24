@@ -8,7 +8,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * [Timer] OnActiveSec= / OnBootSec= / OnStartupSec= / OnUnitActiveSec= / OnUnitInactiveSec=
  *
  * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.timer.html#OnActiveSec=
- * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.time.html#Parsing%20Time%20Spans
+ * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.time.html (section "Parsing Time Spans")
  * parser https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L2043-L2114   config_parse_timer (TIMER_ACTIVE, TIMER_BOOT, TIMER_STARTUP, TIMER_UNIT_ACTIVE, TIMER_UNIT_INACTIVE)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/core/unit-printf.c#L179   unit_full_printf_full (specifiers expanded first)
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/time-util.c#L1198-L1287   parse_time (via parse_sec, default unit seconds)
