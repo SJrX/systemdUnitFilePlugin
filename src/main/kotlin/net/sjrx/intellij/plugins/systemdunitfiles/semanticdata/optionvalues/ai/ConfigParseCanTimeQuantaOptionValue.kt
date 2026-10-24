@@ -39,11 +39,15 @@ private val NSEC_MULTIPLIERS: Map<String, BigInteger> = run {
   ).mapValues { BigInteger.valueOf(it.value) }
 }
 
+/** Stands for a parse_nsec() -EINVAL that the grammar cannot see; below the 1…UINT32_MAX range. */
+private val NSEC_REFUSED: BigInteger = BigInteger.valueOf(-1)
+
 /**
  * What parse_nsec() gives a finite [text], in nanoseconds, or null if it cannot be evaluated. Like the C,
  * each fractional digit adds digit × (multiplier / 10^k) with integer division, so `1.5` (nanoseconds) is 1.
  * Values parse_nsec() would refuse with -ERANGE come out larger than UINT32_MAX, so the range check below
- * refuses them too.
+ * refuses them too. Text parse_nsec() refuses with -EINVAL although [NSEC_DURATION_FINITE] matches it gives
+ * [NSEC_REFUSED], which the range check also refuses.
  */
 private fun parseNsecValue(text: String): BigInteger? {
   var pos = 0
@@ -54,6 +58,11 @@ private fun parseNsecValue(text: String): BigInteger? {
     val m = NSEC_ELEMENT.matchAt(text, pos) ?: return null
     if (m.value.isBlank()) return null
     pos += m.value.length
+    // parse_nsec refuses a unit-less number that is followed by more text without whitespace in between
+    // (`s == p && *s != '\0'`): `12.34.56` and `1+2` are -EINVAL, while `12.34 .56` and `1s.5` are fine
+    // (sd-check at 0f0682b773). NSEC_DURATION_FINITE lets these through, so refuse them here.
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/time-util.c#L1427-L1430
+    if (m.groupValues[3].isEmpty() && !m.value.last().isWhitespace() && pos < text.length) return NSEC_REFUSED
     val multiplier = m.groupValues[3].takeIf { it.isNotEmpty() }?.let { NSEC_MULTIPLIERS[it] } ?: BigInteger.ONE
     total += BigInteger(m.groupValues[1].ifEmpty { "0" }) * multiplier
     var step = multiplier / BigInteger.TEN
@@ -72,7 +81,7 @@ private fun parseNsecValue(text: String): BigInteger? {
  * `number[unit]` elements, a bare number meaning nanoseconds; see [NSEC_DURATION_FINITE]) and must then
  * satisfy `0 < val <= UINT32_MAX` nanoseconds. So `infinity` (NSEC_INFINITY), `0` and `4294967296` are
  * refused ("Time quanta out of permitted range 1...4294967295"), while `4.2s` and `1ms 500us` are accepted
- * (sd-check at 0f0682b773).
+ * (sd-check at 0f0682b773). A unit-less number glued to the next one (`12.34.56`, `1+2`) is -EINVAL too.
  */
 class ConfigParseCanTimeQuantaOptionValue : SimpleGrammarOptionValues(
   "config_parse_can_time_quanta",

@@ -9,7 +9,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
  * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.netdev.html#ERSPANHardwareId=
  * parser https://github.com/systemd/systemd/blob/0f0682b773/src/network/netdev/tunnel.c#L1103-L1129   config_parse_erspan_hwid
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/conf-parser.h#L473-L498   config_parse_uint16_bounded
- * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/conf-parser.c#L2151-L2181   config_parse_unsigned_bounded
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/conf-parser.c#L2151-L2182   config_parse_unsigned_bounded
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L480-L495   safe_atou_bounded
  */
 

@@ -445,6 +445,9 @@ class Issue568NetworkValidatorsTest : AbstractUnitFileTest() {
       DataTimeQuantaNSec=5ns
       DataTimeQuantaNSec=1ms 500us
       DataTimeQuantaNSec=1.5
+      DataTimeQuantaNSec=12.34 .56
+      DataTimeQuantaNSec=1s.5
+      DataTimeQuantaNSec=1 2
     """.trimIndent()
     assertHighlights("file.network", file, 0)
   }
@@ -459,8 +462,11 @@ class Issue568NetworkValidatorsTest : AbstractUnitFileTest() {
       DataTimeQuantaNSec=4294967296
       DataTimeQuantaNSec=4.3s
       DataTimeQuantaNSec=5s
+      DataTimeQuantaNSec=12.34.56
+      DataTimeQuantaNSec=1+2
+      DataTimeQuantaNSec=1.5+2
     """.trimIndent()
-    assertHighlights("file.network", file, 5)
+    assertHighlights("file.network", file, 8)
   }
 
   @Test
