@@ -19,6 +19,9 @@ class ConfigParseVlanQosMapsOptionValueTest : AbstractUnitFileTest() {
             IngressQOSMaps=1-7  2-6
             EgressQOSMaps=1-"2" "1"-2 3
             IngressQOSMaps=5--0
+            EgressQOSMaps=0-7
+            IngressQOSMaps=1-5
+            EgressQOSMaps=4294967295-1
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)

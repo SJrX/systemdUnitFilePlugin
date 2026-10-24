@@ -21,6 +21,7 @@ class ConfigParseWireguardEndpointOptionValueTest : AbstractUnitFileTest() {
             Endpoint=[fe80::1%eth0]:51820
             Endpoint=host:65535
             Endpoint=a\255b.example.com:51820
+            Endpoint=:51820
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)

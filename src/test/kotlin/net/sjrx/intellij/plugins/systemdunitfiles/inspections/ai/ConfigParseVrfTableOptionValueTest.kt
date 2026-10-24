@@ -18,6 +18,9 @@ class ConfigParseVrfTableOptionValueTest : AbstractUnitFileTest() {
             Table=0x2a
             Table=custom-table
             Table=4294967295
+            Table=yes
+            Table=0x0
+            Table=mian
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)

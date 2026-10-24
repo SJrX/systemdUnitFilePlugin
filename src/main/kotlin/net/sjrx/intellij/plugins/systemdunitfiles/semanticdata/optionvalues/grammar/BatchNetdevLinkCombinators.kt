@@ -513,3 +513,81 @@ val IP_ADDR_AND_SAFE_PREFIX: Combinator = AlternativeCombinator(
   SequenceCombinator(IPV6_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, netdevLinkSafeAtou(129)))),
   SequenceCombinator(IPV4_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, netdevLinkSafeAtou(33)))),
 )
+
+
+// ---------------------------------------------------------------------------------------------------
+// Checks on a whole matched span — for rules systemd applies to the parsed value rather than its shape.
+
+/**
+ * Matches exactly what [inner] matches, but the match is only semantically valid when [check] accepts
+ * the matched text. For limits systemd applies after parsing, which a grammar cannot spell out: a
+ * magnitude bound on a parse_size() total, or "must (not) be a multicast address".
+ *
+ * Under the parse engine a rejected span marks its first token invalid; under the classic engine the
+ * semantic match fails with no progress at the span's start. Either way the first token of the span is
+ * highlighted, and the value keeps the structured grammar's colouring.
+ */
+class NetdevLinkCheckedSpan(
+  private val inner: Combinator,
+  private val description: String,
+  private val check: (String) -> Boolean,
+) : Combinator {
+
+  override fun SyntacticMatch(value: String, offset: Int): MatchResult = inner.SyntacticMatch(value, offset)
+
+  override fun SemanticMatch(value: String, offset: Int): MatchResult {
+    val match = inner.SemanticMatch(value, offset)
+    if (match.matchResult == -1 || check(value.substring(offset, match.matchResult))) return match
+    return NoMatch.copy(longestMatch = offset)
+  }
+
+  override fun parse(value: String, offset: Int): Sequence<ParseStep> =
+    inner.parse(value, offset).map { step ->
+      if (step is Parse && step.tokens.isNotEmpty() && !check(value.substring(offset, step.end))) {
+        step.copy(tokens = listOf(step.tokens.first().copy(valid = false)) + step.tokens.drop(1))
+      } else {
+        step
+      }
+    }
+
+  override fun toString(): String = "Checked($description)"
+
+  override fun toStringIndented(indent: Int): String = "  ".repeat(indent) + "Checked($description,\n" + inner.toStringIndented(indent + 1) + ")"
+}
+
+/**
+ * in_addr_is_multicast() (src/basic/in-addr-util.c) on an address literal [IP_ADDR] has matched: IPv4
+ * in 224.0.0.0/4 (IN_MULTICAST), IPv6 in ff00::/8 (IN6_IS_ADDR_MULTICAST). The first IPv6 byte is 0xff
+ * only when the first group is written with four hex digits starting `ff` — `ff::1` is 0x00ff::1, and an
+ * address starting `::` (including IPv4-mapped `::ffff:239.1.1.1`) has a zero first byte.
+ */
+fun netdevLinkIsMulticast(address: String): Boolean {
+  if (':' in address) {
+    val first = address.substringBefore(':')
+    return first.length == 4 && first.startsWith("ff", ignoreCase = true)
+  }
+  return address.substringBefore('.').toIntOrNull() in 224..239
+}
+
+/**
+ * The total parse_size(text, 1000, …) (src/basic/parse-util.c) computes for a value [siSize] has
+ * matched: each element contributes `l * factor + (unsigned long long) (frac * factor)`. Exact decimal
+ * arithmetic stands in for the C double, which only matters within a unit of the truncated fraction.
+ * Null if [text] does not have [siSize]'s shape.
+ */
+fun netdevLinkParseSizeSi(text: String): BigInteger? {
+  val factors = mapOf("E" to 18, "P" to 15, "T" to 12, "G" to 9, "M" to 6, "K" to 3, "B" to 0, "" to 0)
+  val element = Regex("""\s*\+?([0-9]+)(?:\.([0-9]*))?\s*([EPTGMKB]?)""")
+  var total = BigInteger.ZERO
+  var pos = 0
+  while (pos < text.length) {
+    val m = element.matchAt(text, pos) ?: return null
+    if (m.value.isEmpty()) return null
+    val factor = BigInteger.TEN.pow(factors.getValue(m.groupValues[3]))
+    val fraction = m.groupValues[2].takeIf { it.isNotEmpty() }
+      ?.let { java.math.BigDecimal("0.$it").multiply(java.math.BigDecimal(factor)).toBigInteger() } ?: BigInteger.ZERO
+    total += BigInteger(m.groupValues[1]) * factor + fraction
+    pos = m.range.last + 1
+  }
+  return total
+}

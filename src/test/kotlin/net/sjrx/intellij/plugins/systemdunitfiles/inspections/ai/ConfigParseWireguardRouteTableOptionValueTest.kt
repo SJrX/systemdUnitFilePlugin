@@ -23,6 +23,7 @@ class ConfigParseWireguardRouteTableOptionValueTest : AbstractUnitFileTest() {
             RouteTable=4294967295
             RouteTable=custom
             RouteTable=vpn-table
+            RouteTable=yes
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)

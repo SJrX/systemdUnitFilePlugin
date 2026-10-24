@@ -115,4 +115,22 @@ class BatchNetdevLinkCombinatorsTest {
     assertAccepts(ROUTE_TABLE, true, "main", "local", "default", "1", "0x10", "4294967295", "custom", "1abc", "-1")
     assertAccepts(ROUTE_TABLE, false, "0", "00", "4294967296", "a b", "name:1")
   }
+
+  @Test
+  fun testCheckedSpanRejectsWhatItsCheckRefusesOnBothEngines() {
+    val multicast = NetdevLinkCheckedSpan(IP_ADDR, "multicast") { netdevLinkIsMulticast(it) }
+    assertAccepts(multicast, true, "224.0.0.1", "239.255.255.255", "ff02::1", "FF05::2")
+    assertAccepts(multicast, false, "223.255.255.255", "240.0.0.1", "ff::1", "::ffff:239.1.1.1", "10.0.0.1", "239.1.1")
+  }
+
+  @Test
+  fun testParseSizeSiTotals() {
+    assertEquals(java.math.BigInteger("12000000000000000"), netdevLinkParseSizeSi("12P"))
+    assertEquals(java.math.BigInteger("3002000000000000000"), netdevLinkParseSizeSi("3E 2P"))
+    assertEquals(java.math.BigInteger("4011500"), netdevLinkParseSizeSi("4 M 11.5K"))
+    assertEquals(java.math.BigInteger("10000000"), netdevLinkParseSizeSi("10.M"))
+    assertEquals(java.math.BigInteger("111"), netdevLinkParseSizeSi("111.4"))
+    assertEquals(java.math.BigInteger("5000"), netdevLinkParseSizeSi("+5K"))
+    assertEquals(null, netdevLinkParseSizeSi("5k"))
+  }
 }

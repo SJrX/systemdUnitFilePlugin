@@ -13,6 +13,9 @@ class ConfigParseGeneveAddressOptionValueTest : AbstractUnitFileTest() {
             [GENEVE]
             Remote=10.0.0.2
             Remote=2001:db8::1
+            Remote=223.255.255.255
+            Remote=240.0.0.1
+            Remote=ff::1
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
@@ -30,12 +33,14 @@ class ConfigParseGeneveAddressOptionValueTest : AbstractUnitFileTest() {
             Remote=10.0.0
             Remote=geneve.example.com
             Remote=10.0.0.2/24
+            Remote=239.1.1.1
+            Remote=ff02::1
         """.trimIndent()
 
         setupFileInEditor("file.netdev", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(3, highlights)
+        assertSize(5, highlights)
     }
 }

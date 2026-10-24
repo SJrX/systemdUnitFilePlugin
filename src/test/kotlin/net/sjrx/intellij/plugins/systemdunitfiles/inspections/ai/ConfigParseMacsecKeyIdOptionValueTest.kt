@@ -36,6 +36,7 @@ class ConfigParseMacsecKeyIdOptionValueTest : AbstractUnitFileTest() {
             [MACsecTransmitAssociation]
             KeyId=1
             KeyId=255
+            KeyId=0
             KeyId=0x01
             KeyId=00112233445566778899aabbccddeeff00
             [MACsecReceiveAssociation]
@@ -46,6 +47,6 @@ class ConfigParseMacsecKeyIdOptionValueTest : AbstractUnitFileTest() {
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(5, highlights)
+        assertSize(6, highlights)
     }
 }
