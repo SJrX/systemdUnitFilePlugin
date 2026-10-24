@@ -96,4 +96,45 @@ class Fix568ConditionMarkerVerdictsTest : AbstractUnitFileTest() {
     assertRejected("AssertControlGroupController=|| cpu")
     assertRejected("AssertControlGroupController=invalid")
   }
+
+  @Test
+  fun testCpusNumberIsReadExactlyAsSafeAtou() {
+    // condition_test_cpus reads the count with safe_atou() (base 0, no flags), which takes a sign, `-0`
+    // and mangle_base()'s 0b/0o prefixes as well as 0x/leading-zero octal:
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/shared/condition.c#L417-L441
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L403-L478
+    assertAccepted(
+      "ConditionCPUs=+4",
+      "ConditionCPUs=0b101",
+      "ConditionCPUs=0o7",
+      "ConditionCPUs=-0",
+      "ConditionCPUs=0x4",
+      "ConditionCPUs=010",
+      "ConditionCPUs=>=+2",
+      "ConditionCPUs=4294967295",
+      "AssertCPUs=| ! 0B11",
+    )
+    assertRejected("ConditionCPUs=-1")          // -ERANGE
+    assertRejected("ConditionCPUs=4294967296")  // does not fit `unsigned`
+    assertRejected("ConditionCPUs=08")          // not octal
+    assertRejected("ConditionCPUs=0b2")
+    assertRejected("ConditionCPUs=+-1")
+  }
+
+  @Test
+  fun testCapabilityNumberIsReadExactlyAsSafeAtoi() {
+    // capability_from_name tries safe_atoi() first and refuses numbers outside 0..CAP_LIMIT (62):
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/capability-list.c#L45-L58
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/capability-util.h#L17
+    assertAccepted(
+      "ConditionCapability=+3",
+      "ConditionCapability=0b11",
+      "ConditionCapability=0o3",
+      "ConditionCapability=-0",
+      "ConditionCapability=0x3e",
+    )
+    assertRejected("ConditionCapability=-1")
+    assertRejected("ConditionCapability=0x3f")
+    assertRejected("ConditionCapability=0b2")
+  }
 }
