@@ -15,11 +15,23 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * an invalid entry localizes to that entry rather than invalidating the whole value.
  */
 private val UNSET_ENVIRON_ENTRY = SequenceCombinator(
-    // A name with a specifier (e.g. X%b) is only known once unit_env_printf() expands it, which depends on the
-    // machine, so it is accepted.
+    // A name with a known specifier (e.g. X%b) is only known once unit_env_printf() expands it, which depends on the
+    // machine, so it is accepted. An unknown specifier (e.g. %Q), in the name or the value, makes unit_env_printf()
+    // fail, so the entry is ignored.
     // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L2905-L2972
-    RegexTerminal("[^=\\s]+", "[^=\\s]*%[^=\\s]*|[A-Za-z_][A-Za-z0-9_]*"),
-    ZeroOrOne(SequenceCombinator(LiteralChoiceTerminal("="), RegexTerminal("[^\\s]*", "[^\\s]*")))
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/shared/specifier.c#L33-L105
+    RegexTerminal(
+        "[^=\\s]+",
+        "(?=(?:[^=\\s%]|%%|%(?![A-Za-z0-9%]))*%[${BatchUnitCoreGrammar.UNIT_SPECIFIER_LETTERS}])" +
+            "(?:[^=\\s%]|%%|%[${BatchUnitCoreGrammar.UNIT_SPECIFIER_LETTERS}]|%(?![A-Za-z0-9%]))+" +
+            "|[A-Za-z_][A-Za-z0-9_]*"
+    ),
+    ZeroOrOne(
+        SequenceCombinator(
+            LiteralChoiceTerminal("="),
+            RegexTerminal("[^\\s]*", "(?:[^\\s%]|%%|%[${BatchUnitCoreGrammar.UNIT_SPECIFIER_LETTERS}]|%(?![A-Za-z0-9%]))*")
+        )
+    )
 )
 
 class ConfigParseUnsetEnvironOptionValue : SimpleGrammarOptionValues(

@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar
 import java.util.regex.Pattern
 
 /**
@@ -58,9 +59,11 @@ class ExecOptionValue : OptionValueInformation {
   /**
    * Returns why systemd's config_parse_exec() would refuse this command line, or null if it loads it.
    *
-   * Paths that contain a specifier (%) are not checked, because what they expand to depends on the unit name and
-   * the machine. Warnings that systemd logs while still loading the command (unknown escape sequences, the
-   * obsolete `!!` prefix) are not reported.
+   * An unknown specifier (a '%' followed by a letter or digit that unit_full_printf() does not know) in the path or
+   * an argument is an error. A path that uses a known specifier is not checked further, because what it expands to
+   * depends on the unit name and the machine; a path whose only '%'s are literal (`%%`, or '%' before a character
+   * that is not a letter or digit) is checked after expanding them. Warnings that systemd logs while still loading
+   * the command (unknown escape sequences, the obsolete `!!` prefix) are not reported.
    */
   override fun getErrorMessage(value: String): String? {
     val rvalue = value.trim(' ', '\t', '\n', '\r')
@@ -109,13 +112,20 @@ class ExecOptionValue : OptionValueInformation {
         }
         f++
       }
-      val path = firstWord.substring(f)
+      val rawPath = firstWord.substring(f)
+      val unknownInPath = firstUnknownSpecifier(rawPath)
+      // null when the path uses a real specifier
+      val path = expandLiteralSpecifiers(rawPath)
 
       var argCount = 0
       if (viaShell) {
         // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L980-L990
-        argCount = if (path.isEmpty()) 1 else 2
-      } else if (!path.contains('%')) {
+        argCount = if (rawPath.isEmpty()) 1 else 2
+      } else if (unknownInPath != null) {
+        // unit_path_printf() fails with -EBADSLT,
+        // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L992-L998
+        return "Unknown specifier %$unknownInPath in executable path: $rawPath"
+      } else if (path != null) {
         // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L992-L1028
         if (path.isEmpty()) {
           return "Empty path in command line"
@@ -160,6 +170,12 @@ class ExecOptionValue : OptionValueInformation {
           break
         }
         p = arg.next
+        // unit_full_printf() fails with -EBADSLT,
+        // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L1060-L1066
+        val unknown = firstUnknownSpecifier(arg.word)
+        if (unknown != null) {
+          return "Unknown specifier %$unknown in argument: ${arg.word}"
+        }
         argCount++
       }
 
@@ -198,7 +214,7 @@ class ExecOptionValue : OptionValueInformation {
     // https://github.com/systemd/systemd/blob/0f0682b773/src/fundamental/string-util.h#L15
     private const val WHITESPACE = " \t\n\r"
 
-    // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L251-L253
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L226-L228
     private const val UNBALANCED_QUOTING = "Unbalanced quoting"
 
     // Marks a \xNN or octal escape above 0x7F: systemd copies it as a raw byte, which is not valid UTF-8 on its own.
@@ -212,6 +228,55 @@ class ExecOptionValue : OptionValueInformation {
 
     val validators = mapOf(Validator(VALIDATOR_NAME, "*") to ExecOptionValue())
 
+    /**
+     * The first '%' + letter/digit pair in [s] that specifier_printf() does not know (it then fails with -EBADSLT),
+     * or null. `%%` is a literal '%', and '%' before any other character (or at the end) is kept as it is.
+     * https://github.com/systemd/systemd/blob/0f0682b773/src/shared/specifier.c#L33-L105
+     */
+    private fun firstUnknownSpecifier(s: String): Char? {
+      var i = 0
+      while (i < s.length) {
+        if (s[i] == '%' && i + 1 < s.length) {
+          val c = s[i + 1]
+          if (c != '%' && c.isAsciiLetterOrDigit() && c !in BatchUnitCoreGrammar.UNIT_SPECIFIER_LETTERS) {
+            return c
+          }
+          i += 2
+        } else {
+          i++
+        }
+      }
+      return null
+    }
+
+    /**
+     * What specifier_printf() makes of [s] if it uses no real specifier (only `%%` and literal '%'s), or null if it
+     * uses one, in which case the result depends on the unit and the machine.
+     */
+    private fun expandLiteralSpecifiers(s: String): String? {
+      val out = StringBuilder()
+      var i = 0
+      while (i < s.length) {
+        if (s[i] == '%' && i + 1 < s.length) {
+          val c = s[i + 1]
+          if (c == '%') {
+            out.append('%')
+          } else if (c.isAsciiLetterOrDigit()) {
+            return null
+          } else {
+            out.append('%').append(c)
+          }
+          i += 2
+        } else {
+          out.append(s[i])
+          i++
+        }
+      }
+      return out.toString()
+    }
+
+    private fun Char.isAsciiLetterOrDigit(): Boolean = this in 'a'..'z' || this in 'A'..'Z' || this in '0'..'9'
+
     private fun skipWhitespace(s: String, from: Int): Int? {
       var i = from
       while (i < s.length && s[i] in WHITESPACE) {
@@ -224,7 +289,7 @@ class ExecOptionValue : OptionValueInformation {
      * extract_first_word_and_warn(…, EXTRACT_UNQUOTE|EXTRACT_CUNESCAPE): an invalid escape sequence is only a
      * warning (systemd retries with EXTRACT_UNESCAPE_RELAX and keeps the backslash), so this returns null only for
      * unbalanced quoting.
-     * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L223-L257
+     * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L190-L233
      */
     private fun extractFirstWordAndWarn(s: String, from: Int?): Word? {
       return extractFirstWord(s, from, false) ?: extractFirstWord(s, from, true)

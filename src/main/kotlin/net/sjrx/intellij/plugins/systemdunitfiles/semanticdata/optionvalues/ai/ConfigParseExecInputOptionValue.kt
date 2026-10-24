@@ -14,7 +14,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  *   - "file:PATH" — PATH goes through path_simplify_and_warn(PATH_CHECK_ABSOLUTE|PATH_CHECK_FATAL): absolute
  *     (spaces allowed) with no ".." component after the leading ones path_simplify() drops
  *     (https://github.com/systemd/systemd/blob/0f0682b773/src/shared/parse-helpers.c#L34-L80). A path that
- *     starts with a specifier is only known once it is expanded, so it is accepted.
+ *     starts with a known specifier is only known once it is expanded, so it is accepted; an unknown specifier
+ *     (https://github.com/systemd/systemd/blob/0f0682b773/src/shared/specifier.c#L33-L105) is refused.
  *   - any name from exec_input_table, including the bare "fd" and "file"
  *     (https://github.com/systemd/systemd/blob/0f0682b773/src/core/execute.c#L3242-L3253).
  */
@@ -24,10 +25,21 @@ class ConfigParseExecInputOptionValue : SimpleGrammarOptionValues(
         // PreferValid: under the legacy engine the bare "file" choice would otherwise be matched out of an invalid
         // "file:rel" and mislocate the error.
         PreferValidAlternativeCombinator(
-            SequenceCombinator(LiteralChoiceTerminal("fd:"), RegexTerminal(".*", "[\\x20-\\x39\\x3b-\\x7e]{0,255}")),
+            // The name goes through unit_fd_printf() first, so an unknown specifier (%Q) is refused.
+            SequenceCombinator(
+                LiteralChoiceTerminal("fd:"),
+                RegexTerminal(".*", "(?=${BatchUnitCoreGrammar.UNIT_TEXT_CHAR}*\$)[\\x20-\\x39\\x3b-\\x7e]{0,255}")
+            ),
+            // unit_path_printf(), then the path checks: a known leading specifier is accepted, an unknown one anywhere
+            // is refused, and "%%/a" is relative. Without a specifier, no ".." component may survive path_simplify().
             SequenceCombinator(
                 LiteralChoiceTerminal("file:"),
-                RegexTerminal(".+", "%.*|/(?:\\.{0,2}(?:/|$))*(?!(?:.*/)?\\.\\.(?:/|$)).*")
+                RegexTerminal(
+                    ".+",
+                    "%[${BatchUnitCoreGrammar.UNIT_SPECIFIER_LETTERS}]${BatchUnitCoreGrammar.UNIT_TEXT_CHAR}*\$" +
+                        "|/(?=(?:[^%]|%%|%(?![A-Za-z0-9%]))*%[${BatchUnitCoreGrammar.UNIT_SPECIFIER_LETTERS}])${BatchUnitCoreGrammar.UNIT_TEXT_CHAR}*\$" +
+                        "|/(?:\\.{0,2}(?:/|$))*(?!(?:.*/)?\\.\\.(?:/|$))(?:[^%]|%%|%(?![A-Za-z0-9%]))*\$"
+                )
             ),
             FlexibleLiteralChoiceTerminal("null", "tty", "tty-force", "tty-fail", "socket", "fd", "data", "file", "broker", "broker-log")
         ),

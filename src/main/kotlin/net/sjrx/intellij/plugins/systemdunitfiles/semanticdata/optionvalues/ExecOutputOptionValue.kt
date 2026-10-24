@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues
 
 import com.intellij.openapi.project.Project
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar
 
 /**
  * StandardOutput= / StandardError=, config_parse_exec_output():
@@ -17,7 +18,12 @@ class ExecOutputOptionValue() : OptionValueInformation {
     if (value.startsWith("fd:")) {
       // An empty name is fine; otherwise fdname_is_valid(): printable ASCII except ':', at most 255 characters.
       // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/fd-util.c#L554-L579
+      // The name goes through unit_fd_printf() first, so an unknown specifier (%Q) is refused.
+      // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L1354-L1367
       val name = value.removePrefix("fd:")
+      if (!KNOWN_SPECIFIERS_ONLY.matches(name)) {
+        return "fd: name contains an unknown specifier."
+      }
       if (name.length > FDNAME_MAX || name.any { it.code < 0x20 || it.code >= 0x7f || it == ':' }) {
         return "fd: name may only contain printable ASCII characters other than ':' and be at most $FDNAME_MAX characters long."
       }
@@ -26,14 +32,19 @@ class ExecOutputOptionValue() : OptionValueInformation {
 
     if (value.startsWith("file:") || value.startsWith("append:") || value.startsWith("truncate:")) {
       // The path goes through path_simplify_and_warn(PATH_CHECK_ABSOLUTE|PATH_CHECK_FATAL): it must be absolute and
-      // must not contain a ".." component (other than leading ones, which path_simplify() drops). A path that starts
-      // with a specifier is only known once the specifier is expanded.
+      // must not contain a ".." component (other than leading ones, which path_simplify() drops). It goes through
+      // unit_path_printf() first: an unknown specifier (%Q) is refused, "%%" is a literal '%', and a path that starts
+      // with a known specifier, or uses one later on, is only known once the specifier is expanded.
       // https://github.com/systemd/systemd/blob/0f0682b773/src/shared/parse-helpers.c#L34-L80
+      // https://github.com/systemd/systemd/blob/0f0682b773/src/shared/specifier.c#L33-L105
       val path = value.split(":", limit = 2)[1]
       if (path.isEmpty()) {
         return "path must be specified after the colon."
       }
-      if (!ABSOLUTE_NORMALIZED_PATH.matches(path) && !path.startsWith("%")) {
+      if (!KNOWN_SPECIFIERS_ONLY.matches(path)) {
+        return "path after the colon contains an unknown specifier."
+      }
+      if (!ABSOLUTE_NORMALIZED_PATH.matches(path) && !SPECIFIED_ABSOLUTE_PATH.matches(path)) {
         return "path after the colon must be an absolute, normalized path (no '..' components)."
       }
       return null
@@ -61,7 +72,15 @@ class ExecOutputOptionValue() : OptionValueInformation {
 
     // An absolute path whose components after any leading "", "." and ".." ones (dropped by path_simplify()) are
     // never "..".
-    private val ABSOLUTE_NORMALIZED_PATH = """/(?:\.{0,2}(?:/|$))*(?!(?:.*/)?\.\.(?:/|$)).*""".toRegex()
+    private val ABSOLUTE_NORMALIZED_PATH = """/(?:\.{0,2}(?:/|$))*(?!(?:.*/)?\.\.(?:/|$))(?:[^%]|%%|%(?![A-Za-z0-9%]))*""".toRegex()
+
+    // Text whose every '%' is "%%", a known specifier, or a '%' that specifier_printf() keeps as it is.
+    private val KNOWN_SPECIFIERS_ONLY = "${BatchUnitCoreGrammar.UNIT_TEXT_CHAR}*".toRegex()
+
+    // A path that starts with a known specifier, or starts with '/' and uses a known specifier later on.
+    private val SPECIFIED_ABSOLUTE_PATH =
+      "(?:%[${BatchUnitCoreGrammar.UNIT_SPECIFIER_LETTERS}]|/(?=(?:[^%]|%%|%(?![A-Za-z0-9%]))*%[${BatchUnitCoreGrammar.UNIT_SPECIFIER_LETTERS}])).*"
+        .toRegex()
 
     val validators = mapOf(Validator(VALIDATOR_NAME, "0") to ExecOutputOptionValue())
   }

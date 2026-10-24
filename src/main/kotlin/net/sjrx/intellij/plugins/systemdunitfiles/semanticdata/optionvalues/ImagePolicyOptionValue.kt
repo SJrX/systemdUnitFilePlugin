@@ -15,7 +15,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * logged at debug level and skipped, so systemd's parser accepts any word in either place, including an empty flag
  * after a trailing '+' (https://github.com/systemd/systemd/blob/0f0682b773/src/shared/image-policy.c#L237-L269).
  * The known names are kept in the grammar for completion. What systemd does refuse is a rule without '=' and a
- * designator given twice (the latter is not checked here).
+ * designator given twice (architecture-specific designator aliases are not resolved for that check).
  */
 class ImagePolicyOptionValue : GrammarOptionValue(validatorName, IMAGE_POLICY_COMBINATOR) {
 
@@ -58,10 +58,38 @@ class ImagePolicyOptionValue : GrammarOptionValue(validatorName, IMAGE_POLICY_CO
     val IMAGE_POLICY_COMBINATOR = SequenceCombinator(
       AlternativeCombinator(
         SequenceCombinator(LiteralChoiceTerminal("-", "*", "~"), EOF()),
-        SequenceCombinator(SINGLE_EXPLICIT_IMAGE_POLICY, ZeroOrMore(SequenceCombinator(IMAGE_POLICY_SEPARATOR, SINGLE_EXPLICIT_IMAGE_POLICY))),
+        // A designator given twice, or two default rules (empty designator), is -ENOTUNIQ.
+        // https://github.com/systemd/systemd/blob/0f0682b773/src/shared/image-policy.c#L413-L432
+        ValueChecked(
+          SequenceCombinator(SINGLE_EXPLICIT_IMAGE_POLICY, ZeroOrMore(SequenceCombinator(IMAGE_POLICY_SEPARATOR, SINGLE_EXPLICIT_IMAGE_POLICY)))
+        ) { text -> noDuplicateDesignators(text) },
       ),
       EOF(),
     )
+
+    // partition_designator_table, https://github.com/systemd/systemd/blob/0f0682b773/src/shared/gpt.c#L156-L170
+    private val KNOWN_DESIGNATORS = setOf(
+      "root", "usr", "home", "srv", "esp", "xbootldr", "swap", "root-verity", "root-verity-sig", "usr-verity", "usr-verity-sig", "tmp", "var",
+    )
+
+    /**
+     * False if a rule repeats a designator from partition_designator_table, or the default rule (empty designator),
+     * as image_policy_from_string() checks it after strstrip(). Unknown designators are skipped by graceful parsing,
+     * and architecture-specific aliases (root-x86-64, ...) depend on the build, so neither is counted.
+     */
+    private fun noDuplicateDesignators(text: String): Boolean {
+      val seen = mutableSetOf<String>()
+      for (rule in text.split(':')) {
+        val designator = rule.substringBefore('=').trim(' ', '\t', '\n', '\r')
+        if (designator.isNotEmpty() && designator !in KNOWN_DESIGNATORS) {
+          continue
+        }
+        if (!seen.add(designator)) {
+          return false
+        }
+      }
+      return true
+    }
 
     val validators = mapOf(
       Validator(validatorName, "0") to ImagePolicyOptionValue()

@@ -14,7 +14,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  *   - something parse_uid() accepts is fine: decimal, no sign, no leading zero, below 2^32-1, and not 65535;
  *   - otherwise the RELAX checks apply: no leading/trailing space, no control characters, no ':' or '/', not
  *     all digits, not '-' followed by only digits (so not "-1000" and not "-"), and not "." or "..".
- * '%' is allowed (specifier syntax). The empty value resets the field.
+ * '%' is allowed (specifier syntax), but an unknown specifier (e.g. %Q) makes unit_full_printf() fail
+ * (https://github.com/systemd/systemd/blob/0f0682b773/src/shared/specifier.c#L33-L105). The empty value resets the
+ * field.
  */
 class ConfigParseUserGroupCompatOptionValue : SimpleGrammarOptionValues(
     "config_parse_user_group_compat",
@@ -22,7 +24,7 @@ class ConfigParseUserGroupCompatOptionValue : SimpleGrammarOptionValues(
         PreferValidAlternativeCombinator(
             RegexTerminal(
                 ".+",
-                "(?!-?[0-9]*$)(?!\\.\\.?$)[^\\s:/\\x00-\\x1F\\x7F](?:[^:/\\x00-\\x1F\\x7F]*[^\\s:/\\x00-\\x1F\\x7F])?"
+                "(?=${BatchUnitCoreGrammar.UNIT_TEXT_CHAR}*\$)(?!-?[0-9]*$)(?!\\.\\.?$)[^\\s:/\\x00-\\x1F\\x7F](?:[^:/\\x00-\\x1F\\x7F]*[^\\s:/\\x00-\\x1F\\x7F])?"
             ),
             // uid_is_valid() also refuses 65535, the 16-bit -1.
             ValueChecked(SafeAtoTerminal(
