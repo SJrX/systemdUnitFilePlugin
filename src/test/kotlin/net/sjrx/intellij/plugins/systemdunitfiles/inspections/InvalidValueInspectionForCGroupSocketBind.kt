@@ -68,7 +68,8 @@ class InvalidValueInspectionForCGroupSocketBindOptionValue : AbstractUnitFileTes
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    assertStringContains("SocketBindAllow's value does not match the expected format.", info!!.description)
+    // Both engines read "ipv5" as a misspelt address family.
+    assertStringContains("SocketBindAllow's value is correctly formatted but seems invalid.", info!!.description)
     TestCase.assertEquals("ipv5", info.text)
   }
 
@@ -90,7 +91,7 @@ class InvalidValueInspectionForCGroupSocketBindOptionValue : AbstractUnitFileTes
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    assertStringContains("SocketBindAllow's value does not match the expected format.", info!!.description)
+    assertStringContains("SocketBindAllow's value is correctly formatted but seems invalid.", info!!.description)
     TestCase.assertEquals("icmp", info.text)
   }
 
@@ -134,9 +135,8 @@ class InvalidValueInspectionForCGroupSocketBindOptionValue : AbstractUnitFileTes
     assertSize(1, highlights)
     val info = highlights[0]
     assertStringContains("SocketBindAllow's value does not match the expected format.", info!!.description)
-    // The two engines localize this differently: the original highlights from after "ipv6"; the
-    // list-of-successes engine consumes "ipv6:" before getting stuck, so it highlights from there.
-    TestCase.assertEquals(if (GrammarOptionValue.FORCE_PARSE_ENGINE) ":tcp" else "::tcp", info.text)
+    // Both engines consume "ipv6:" before getting stuck on the empty field.
+    TestCase.assertEquals(":tcp", info.text)
   }
 
   fun testWeakWarningWhenInvalidPortRangeSpecified() {
@@ -156,9 +156,13 @@ class InvalidValueInspectionForCGroupSocketBindOptionValue : AbstractUnitFileTes
     // Verification
     assertSize(1, highlights)
     val info = highlights[0]
-    assertStringContains("SocketBindAllow's value is correctly formatted but seems invalid.", info!!.description)
-    // The original engine gives up at the first "-"; the list-of-successes engine parses the whole
-    // range form and points at the out-of-range port "-21485".
-    TestCase.assertEquals(if (GrammarOptionValue.FORCE_PARSE_ENGINE) "-21485" else "-", info.text)
+    // Both engines point at the upper bound "-21485" (safe_atou refuses a negative number); the original engine
+    // reports it as malformed, the list-of-successes engine as out of range.
+    if (GrammarOptionValue.FORCE_PARSE_ENGINE) {
+      assertStringContains("SocketBindAllow's value is correctly formatted but seems invalid.", info!!.description)
+    } else {
+      assertStringContains("SocketBindAllow's value does not match the expected format.", info!!.description)
+    }
+    TestCase.assertEquals("-21485", info!!.text)
   }
 }

@@ -1,14 +1,34 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues
 
 import com.google.common.collect.ImmutableSet
+import com.intellij.openapi.project.Project
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.PreferValidAlternativeCombinator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
 
 
+/**
+ * FailureAction=, SuccessAction=, JobTimeoutAction=, StartLimitAction= and friends.
+ *
+ * Every name in systemd's
+ * [emergency_action_table](https://github.com/systemd/systemd/blob/0f0682b773/src/core/emergency-action.c#L15-L32),
+ * looked up case-sensitively by
+ * [parse_emergency_action](https://github.com/systemd/systemd/blob/0f0682b773/src/core/emergency-action.c#L245-L263).
+ * In the user manager everything after `exit-force` is refused with EOPNOTSUPP, but the plugin cannot tell the
+ * scope of a unit file, so it accepts the full system-manager table.
+ */
 class EmergencyActionOptionValue : AbstractGrammarEnumOptionValue(validOptions, VALIDATOR_NAME){
 
   companion object {
-    private val validOptions : Set<String> = ImmutableSet.of("none", "reboot", "reboot-force", "reboot-immediate", "poweroff", "poweroff-force", "poweroff-immediate", "exit", "exit-force")
+    private val validOptions : Set<String> = ImmutableSet.of(
+      "none", "reboot", "reboot-force", "reboot-immediate", "poweroff", "poweroff-force", "poweroff-immediate", "exit", "exit-force",
+      "soft-reboot", "soft-reboot-force", "kexec", "kexec-force", "halt", "halt-force", "halt-immediate",
+    )
     const val VALIDATOR_NAME = "config_parse_emergency_action"
   }
 }
@@ -80,7 +100,15 @@ class CpuSchedulingPolicyOptionValue : AbstractGrammarEnumOptionValue(ImmutableS
   }
 }
 
-class NumaPolicyOptionValue : AbstractGrammarEnumOptionValue(ImmutableSet.of("default", "bind", "interleave", "local"), VALIDATOR_NAME) {
+/**
+ * NUMAPolicy=: every name in
+ * [mpol_table](https://github.com/systemd/systemd/blob/0f0682b773/src/shared/numa-util.c#L253-L261), parsed by
+ * [DEFINE_CONFIG_PARSE_ENUM_WITH_DEFAULT](https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L174).
+ */
+class NumaPolicyOptionValue : AbstractGrammarEnumOptionValue(
+  ImmutableSet.of("default", "preferred", "bind", "interleave", "local", "preferred-many", "weighted-interleave"),
+  VALIDATOR_NAME
+) {
   companion object {
     const val VALIDATOR_NAME = "config_parse_numa_policy"
   }
@@ -152,13 +180,51 @@ class SocketTimestampingOptionValue : AbstractGrammarEnumOptionValue(ImmutableSe
   }
 }
 
-class SocketProtocolOptionValue : AbstractGrammarEnumOptionValue(ImmutableSet.of("udplite", "sctp"), VALIDATOR_NAME) {
+/**
+ * [Socket] SocketProtocol=.
+ *
+ * [parse_socket_protocol](https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L87-L97) runs
+ * [parse_ip_protocol_full](https://github.com/systemd/systemd/blob/0f0682b773/src/shared/ip-protocol-list.c#L36-L70)
+ * (a protocol name in any case, or a safe_atoi number that has a name) and then keeps only IPPROTO_UDPLITE (136),
+ * IPPROTO_SCTP (132) and IPPROTO_MPTCP (262). So `mptcp`, `SCTP`, `136` and `0x84` are all accepted.
+ */
+class SocketProtocolOptionValue : SimpleGrammarOptionValues(
+  VALIDATOR_NAME,
+  SequenceCombinator(
+    PreferValidAlternativeCombinator(
+      FlexibleLiteralChoiceTerminal("udplite", "sctp", "mptcp", ignoreCase = true),
+      SafeAtoTerminal(signed = true, base = 0, flags = emptySet(), minInclusive = 136L, maxInclusive = 136L, acceptsWhitespace = true, acceptsMinus = true),
+      SafeAtoTerminal(signed = true, base = 0, flags = emptySet(), minInclusive = 132L, maxInclusive = 132L, acceptsWhitespace = true, acceptsMinus = true),
+      SafeAtoTerminal(signed = true, base = 0, flags = emptySet(), minInclusive = 262L, maxInclusive = 262L, acceptsWhitespace = true, acceptsMinus = true),
+    ),
+    EOF()
+  )
+) {
+  override fun getAutoCompleteOptions(project: Project): Set<String> = setOf("udplite", "sctp", "mptcp")
+
   companion object {
     const val VALIDATOR_NAME = "config_parse_socket_protocol"
   }
 }
 
-class SocketBindOptionValue : AbstractGrammarEnumOptionValue(ImmutableSet.of("default", "both", "ipv6-only"), VALIDATOR_NAME) {
+/**
+ * [Socket] BindIPv6Only=.
+ *
+ * [socket_address_bind_ipv6_only_or_bool_from_string](https://github.com/systemd/systemd/blob/0f0682b773/src/shared/socket-label.c#L21-L39)
+ * first tries parse_boolean (true means `ipv6-only`, false means `both`) and then the case-sensitive table
+ * `default`, `both`, `ipv6-only`.
+ */
+class SocketBindOptionValue : SimpleGrammarOptionValues(
+  VALIDATOR_NAME,
+  SequenceCombinator(
+    PreferValidAlternativeCombinator(
+      FlexibleLiteralChoiceTerminal("default", "both", "ipv6-only"),
+      BOOLEAN,
+    ),
+    EOF()
+  )
+) {
+  override fun getAutoCompleteOptions(project: Project): Set<String> = setOf("default", "both", "ipv6-only")
 
   companion object {
     const val VALIDATOR_NAME = "config_parse_socket_bind"

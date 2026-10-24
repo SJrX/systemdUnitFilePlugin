@@ -12,7 +12,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * therefore NO constraint on the resulting value beyond it being an ordinary (UTF-8) string -- so
  * the only thing we can meaningfully validate is the specifier syntax: every '%' must be either a
  * literal "%%" or a known unit specifier. unit_full_printf() returns an error (and the assignment
- * is dropped) on an unknown specifier, so flagging those is faithful to systemd.
+ * is dropped) on an unknown specifier, so flagging those is faithful to systemd. Only a letter or
+ * digit after '%' is a specifier
+ * (https://github.com/systemd/systemd/blob/0f0682b773/src/shared/specifier.c#L78-L84): a '%' before
+ * anything else, or at the very end ("Ends with a percent %"), is copied through verbatim.
  *
  * Valid specifiers are the unit table plus COMMON_SYSTEM/CREDS/TMP_SPECIFIERS from
  * src/core/unit-printf.c and src/shared/specifier.h:
@@ -24,7 +27,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 class ConfigParseUnitStringPrintfOptionValue : SimpleGrammarOptionValues(
     "config_parse_unit_string_printf",
     SequenceCombinator(
-        RegexTerminal(".*", "(?:[^%]|%%|%[iIjJnNpPfyYcrRCdDELSthsaAbBHlqmMovwWgGuUTV])*"),
+        RegexTerminal(".*", "(?:[^%]|%%|%[iIjJnNpPfyYcrRCdDELSthsaAbBHlqmMovwWgGuUTV]|%(?![A-Za-z0-9%]))*"),
         EOF()
     )
 )

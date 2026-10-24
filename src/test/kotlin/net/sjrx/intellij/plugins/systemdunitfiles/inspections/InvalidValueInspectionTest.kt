@@ -268,7 +268,6 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
            UMask=0A548
            UMask=0897
            UMask=71777
-           UMask=71
            
            """.trimIndent()
 
@@ -281,9 +280,10 @@ class InvalidValueInspectionTest : AbstractUnitFileTest() {
 
 
     // Verification
-    assertSize(6, highlights)
+    // UMask=71 used to be expected here, but parse_mode() takes any octal number up to 07777.
+    assertSize(5, highlights)
     for (info in highlights) {
-      assertStringContains("Value is expected to be a 3 or 4 digit octal number not:", info!!.description)
+      assertStringContains("Value is expected to be an octal number between 0 and 7777 not:", info!!.description)
       TestCase.assertEquals(HighlightInfoType.WARNING, info.type)
       val highlightElement = myFixture.file.findElementAt(info.getStartOffset())
       TestCase.assertNotNull(highlightElement)

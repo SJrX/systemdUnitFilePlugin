@@ -23,8 +23,6 @@ class ConfigParseCoalesceSecOptionValueTest : AbstractUnitFileTest() {
             CoalescePacketRateSampleIntervalSec=1
             RxCoalesceSec=1.5s
             TxCoalesceSec=1min 30sec
-            RxCoalesceSec=infinity
-            TxCoalesceSec=2hour
         """.trimIndent()
 
         setupFileInEditor("file.link", file)
@@ -40,10 +38,14 @@ class ConfigParseCoalesceSecOptionValueTest : AbstractUnitFileTest() {
             RxCoalesceSec=-1
             TxCoalesceSec=abc
             TxCoalesceIrqSec=5z
+            RxCoalesceSec=infinity
+            TxCoalesceSec=2hour
         """.trimIndent()
 
+        // infinity and 2hour used to be listed as valid, but the result must fit in a uint32 of microseconds
+        // ("Too large RxCoalesceSec= value").
         setupFileInEditor("file.link", file)
         enableInspection(InvalidValueInspection::class.java)
-        assertSize(3, myFixture.doHighlighting())
+        assertSize(5, myFixture.doHighlighting())
     }
 }
