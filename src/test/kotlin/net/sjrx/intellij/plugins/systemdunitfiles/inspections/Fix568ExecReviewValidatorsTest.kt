@@ -148,6 +148,17 @@ class Fix568ExecReviewValidatorsTest : AbstractUnitFileTest() {
     )
   }
 
+  fun testLimitNiceRawFormAfterWhitespace() {
+    // rlimit_parse_nice() only looks at the first character of a field, so " +5" after the ':' is the raw limit 5
+    // (safe_atou64() skips the whitespace and takes the sign). The first review pass listed "+0: +5" as a strictness
+    // corner, but systemd refuses that one too (soft 20 > hard 5); the others below were wrongly flagged.
+    assertVerdicts(
+      "file.service", "Service", "LimitNICE",
+      valid = listOf("0: +5", "0: -0", "0: +0x5", "1: +40", "0:  +5", "+5: 30", "-5: 30"),
+      invalid = listOf("+0: +5", "0: +41", "0: + 5", "0: -5", "+5 :10", "5: +0"),
+    )
+  }
+
   fun testRootImagePolicyDuplicateRules() {
     assertVerdicts(
       "file.service", "Service", "RootImagePolicy",

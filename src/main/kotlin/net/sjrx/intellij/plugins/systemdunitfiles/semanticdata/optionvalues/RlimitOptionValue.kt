@@ -87,7 +87,10 @@ class RlimitOptionValue(grammar : Combinator) : GrammarOptionValue("config_parse
     ) { text -> parseTime(text, BigInteger.ONE) != null }
 
     // rlimit_parse_nice(): "+n" is the nice level n (0…19), "-n" the nice level -n (0…20), and an unprefixed
-    // value is the raw limit (0…40).
+    // value is the raw limit (0…40). Only the very first character selects the form, so a field that starts with
+    // whitespace (" +5" after the ':') is the raw form, and safe_atou64() then skips the whitespace and takes the
+    // sign: " +5" is the raw limit 5 and " -0" is 0.
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/rlimit-util.c#L169-L218
     val NICE_SEQ = PreferValidAlternativeCombinator(
       SequenceCombinator(
         LiteralChoiceTerminal("+"),
@@ -105,6 +108,10 @@ class RlimitOptionValue(grammar : Combinator) : GrammarOptionValue("config_parse
         maxInclusive = 40L,
         acceptsWhitespace = true,
         acceptsMinus = true,
+      ),
+      SequenceCombinator(
+        WhitespaceTerminal(),
+        SafeAtoTerminal(signed = false, base = 0, flags = emptySet(), minInclusive = 0L, maxInclusive = 40L, acceptsWhitespace = true, acceptsMinus = true),
       ),
     )
 
