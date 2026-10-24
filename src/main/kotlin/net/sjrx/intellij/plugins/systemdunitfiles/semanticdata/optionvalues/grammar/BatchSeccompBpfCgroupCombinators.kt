@@ -107,9 +107,12 @@ val SYSCALL_GROUP_NAME = FlexibleLiteralChoiceTerminal(
  * "known" depends on the machine; an unknown name is logged and ignored. The set is therefore not
  * enumerated here: the only check is the shape every libseccomp name has (lower case letters, digits
  * and underscores — `_llseek`, `epoll_wait`, `s390_pci_mmio_read`). The lenient syntactic side takes
- * anything up to a separator or `:`, so `DONOTEXIST` is located and flagged as a single token.
+ * anything up to a separator or `:`, so `DONOTEXIST` is located and flagged as a single token. It does not
+ * start at `@` or `~`, which belong to the `@group` and literal-`~` alternatives: otherwise each such word
+ * would also get a second (invalid) parse here, and a long invalid list would explode into 2^n parses on the
+ * new engine.
  */
-val SYSCALL_NAME = RegexTerminal("[^\\s,:]+", "[a-z_][a-z0-9_]*")
+val SYSCALL_NAME = RegexTerminal("[^\\s,:@~][^\\s,:]*", "[a-z_][a-z0-9_]*")
 
 /** `@group` or a bare system call name. */
 val SYSCALL_OR_GROUP = AlternativeCombinator(
@@ -123,8 +126,11 @@ val SYSCALL_OR_GROUP = AlternativeCombinator(
 /**
  * The file system names fs_type_from_string() resolves: the keys of NAME_TO_MAGIC in
  * src/basic/filesystem-sets.py, compiled into a case-sensitive gperf table. A name outside this set is
- * accepted by the unit-file parser but logged and skipped when the BPF map is filled
- * ("bpf-restrict-fs: Invalid filesystem name '%s', ignoring.", src/core/bpf-restrict-fs.c#L117-L121).
+ * accepted by the unit-file parser and only logged and skipped when the unit starts and the BPF map is
+ * filled ("bpf-restrict-fs: Invalid filesystem name '%s', ignoring.", src/core/bpf-restrict-fs.c#L117-L121).
+ * Validators must therefore accept such names too (RestrictFileSystems= uses these choices as exact
+ * literals next to a lenient word); issue #565 tracks a separate warning for them. The list is kept for
+ * completion and coloring.
  */
 val FILESYSTEM_NAME = FlexibleLiteralChoiceTerminal(
   "apparmorfs", "adfs", "affs", "afs", "anon_inodefs", "autofs", "balloon-kvm", "bcachefs", "bdev", "binder",
@@ -141,8 +147,8 @@ val FILESYSTEM_NAME = FlexibleLiteralChoiceTerminal(
 
 /**
  * The file system groups, without the leading `@` (FILESYSTEM_SETS in src/basic/filesystem-sets.py,
- * looked up by exact compare in filesystem_set_find, src/basic/filesystems.c#L21). An unknown group is
- * logged ("Unknown filesystem group, ignoring") and dropped.
+ * looked up by exact compare in filesystem_set_find, src/basic/filesystems.c#L21). The unit-file parser
+ * refuses an unknown group ("Unknown filesystem group, ignoring"), so validators flag it.
  */
 val FILESYSTEM_GROUP_NAME = FlexibleLiteralChoiceTerminal(
   "basic-api", "anonymous", "application", "auxiliary-api", "common-block", "historical-block", "network",

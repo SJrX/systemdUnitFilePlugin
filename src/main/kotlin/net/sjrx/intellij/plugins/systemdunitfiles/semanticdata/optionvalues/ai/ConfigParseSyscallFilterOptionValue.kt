@@ -6,6 +6,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ERRNO_OR_SECCOMP_ACTION
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SYSCALL_NAME
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SYSCALL_OR_GROUP
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WHITESPACE_OR_COMMA_SEPARATOR
@@ -30,27 +32,49 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/src/test/test-parse-util.c#L729   TEST(parse_errno)
  * linux  https://man7.org/linux/man-pages/man2/syscalls.2.html
  * linux  https://man7.org/linux/man-pages/man3/errno.3.html
+ *
+ * sd-check at 0f0682b773 (one value per file), a `~` word after the first position:
+ *   .nspawn  `@system-service ~@mount`, `@system-service ~@bogus`, `~~@mount`, `@system-service ~@mount:EPERM`: accepted
+ *            (nspawn's parser stores every word unchecked).
+ *   .service `@system-service ~@mount`, `read ~write`, `~~@mount`, `@system-service ~@bogus`: "System call ~@mount is not
+ *            known, ignoring." (the same libseccomp-lookup warning as `madeupcall`); `@system-service ~@mount:EPERM`:
+ *            "Allow-listed system calls cannot take error number"; `~@bogus` (marker + unknown group): "Unknown system
+ *            call group".
  */
 
-/** One allow-list entry: a system call or `@group`, with no `:errno`. */
-private val ALLOW_ENTRY: Combinator = SYSCALL_OR_GROUP
+/** `@group` or a bare system call name. */
+private val NAME: Combinator = SYSCALL_OR_GROUP
 
-/** One deny-list entry: a system call or `@group`, optionally `:errno`/`:kill`. */
-private val DENY_ENTRY: Combinator = SequenceCombinator(
-    SYSCALL_OR_GROUP,
-    ZeroOrOne(SequenceCombinator(LiteralChoiceTerminal(":"), ERRNO_OR_SECCOMP_ACTION)),
+/**
+ * A word starting with `~` after the first position of the value (`@system-service ~@mount`). Only
+ * `rvalue[0]` is the deny-list marker in both parsers, so this word is taken literally as the name `~@mount`.
+ *
+ *  - nspawn's parser stores it unchecked; at container start seccomp_add_syscall_filter_item() cannot resolve
+ *    it and drops it with a debug message. That is a runtime-only rejection, so it is accepted here; issue #565
+ *    tracks a separate warning for it.
+ *  - the unit-file parser hands it to libseccomp, which does not know it ("System call ~@mount is not known,
+ *    ignoring."). That is the same unknown-name warning this grammar already leaves to the shape check for
+ *    `madeupcall`.
+ *
+ * The validator registry is keyed only by (parser, ltype), and both files register (config_parse_syscall_filter,
+ * 0), so the two cannot be told apart; the lenient nspawn behaviour wins. After the `~` the name is not looked
+ * up as a group by either parser, so any group-shaped word is accepted (`~@bogus`).
+ */
+private val TILDE_NAME: Combinator = SequenceCombinator(
+    LiteralChoiceTerminal("~"),
+    AlternativeCombinator(
+        SequenceCombinator(LiteralChoiceTerminal("@"), RegexTerminal("[^\\s,:]+", "[a-z0-9_-]+")),
+        SYSCALL_NAME,
+    ),
 )
 
-/** A possibly-empty separator-delimited list of [entry], with stray separators allowed at either end. */
-private fun list(entry: Combinator): Combinator = SequenceCombinator(
-    ZeroOrOne(WHITESPACE_OR_COMMA_SEPARATOR),
-    ZeroOrOne(
-        SequenceCombinator(
-            entry,
-            ZeroOrMore(SequenceCombinator(WHITESPACE_OR_COMMA_SEPARATOR, entry)),
-            ZeroOrOne(WHITESPACE_OR_COMMA_SEPARATOR),
-        )
-    ),
+/** One allow-list entry after the first position: a name or a literal `~` word, with no `:errno`. */
+private val ALLOW_ENTRY: Combinator = AlternativeCombinator(TILDE_NAME, NAME)
+
+/** One deny-list entry: a name or a literal `~` word, optionally `:errno`/`:kill`. */
+private val DENY_ENTRY: Combinator = SequenceCombinator(
+    AlternativeCombinator(TILDE_NAME, NAME),
+    ZeroOrOne(SequenceCombinator(LiteralChoiceTerminal(":"), ERRNO_OR_SECCOMP_ACTION)),
 )
 
 /**
@@ -64,20 +88,23 @@ private fun list(entry: Combinator): Combinator = SequenceCombinator(
  * (empty) deny list. Each entry is
  *
  *  - `@group` — one of the predefined sets in syscall_filter_sets[] (`@system-service`, `@mount`, …).
- *    An unknown group is logged and ignored, so it is flagged.
+ *    The parser refuses an unknown group ("Unknown system call group, ignoring"), so it is flagged.
  *  - a system call name, resolved by libseccomp for the native architecture. Unknown names are only
  *    logged and the set is architecture-dependent, so names are only checked for shape (lower-case
  *    letters, digits, `_`); `DONOTEXIST` is flagged, `madeupcall` is not.
- *  - in deny-list mode only, either of those followed by `:` and an errno name (case-insensitive,
+ *  - a word starting with `~` after the first position (`@system-service ~@mount`), which both parsers take
+ *    as a literal, never-matching name. nspawn only drops it at container start, so it is accepted (see
+ *    [TILDE_NAME]; issue #565 tracks a warning for it).
+ *  - in deny-list mode only, any of those followed by `:` and an errno name (case-insensitive,
  *    `EPERM`), a number 0…4095 (decimal, `0x` hex or `0` octal) or `kill`. parse_syscall_and_errno
  *    rejects an empty name (`:EPERM`), an empty or junk errno (`uname:`, `uname:EINVALaaa`) and an
  *    out-of-range number (`uname:4096`). Without the `~`, config_parse_syscall_filter refuses any
  *    errno suffix ("Allow-listed system calls cannot take error number, ignoring").
  *
- * nspawn: the same `~` and separators, but each word is handed verbatim to libseccomp / the group
- * table at container start (an unknown group fails the filter setup). nspawn does not understand
- * `:errno` at all (`uname:EPERM` is just an unresolvable name there); this grammar still accepts the
- * suffix after `~` for nspawn files, since the two parsers share one registration — lenient.
+ * nspawn: the same `~` and separators, but each word is stored verbatim and only handed to libseccomp /
+ * the group table at container start. nspawn does not understand `:errno` at all (`uname:EPERM` is just an
+ * unresolvable name there). Because the two parsers share one registration, this grammar applies the core
+ * rules above to nspawn files too, except for the non-first `~` word, where nspawn's lenient behaviour wins.
  *
  * Covers: Service.SystemCallFilter, Socket.SystemCallFilter, Mount.SystemCallFilter,
  * Swap.SystemCallFilter (load-fragment-gperf) and Exec.SystemCallFilter (nspawn-gperf).
@@ -87,7 +114,37 @@ private fun list(entry: Combinator): Combinator = SequenceCombinator(
 class ConfigParseSyscallFilterOptionValue : SimpleGrammarOptionValues(
     "config_parse_syscall_filter",
     AlternativeCombinator(
-        SequenceCombinator(LiteralChoiceTerminal("~"), list(DENY_ENTRY), EOF()),
-        SequenceCombinator(list(ALLOW_ENTRY), EOF()),
+        // Deny list: `rvalue[0] == '~'`; a further `~` word (`~~@mount`) is a literal name.
+        SequenceCombinator(
+            LiteralChoiceTerminal("~"),
+            ZeroOrOne(WHITESPACE_OR_COMMA_SEPARATOR),
+            ZeroOrOne(
+                SequenceCombinator(
+                    DENY_ENTRY,
+                    ZeroOrMore(SequenceCombinator(WHITESPACE_OR_COMMA_SEPARATOR, DENY_ENTRY)),
+                    ZeroOrOne(WHITESPACE_OR_COMMA_SEPARATOR),
+                )
+            ),
+            EOF(),
+        ),
+        // Allow list starting with a word: the first word cannot start with `~` (it would be the marker).
+        SequenceCombinator(
+            NAME,
+            ZeroOrMore(SequenceCombinator(WHITESPACE_OR_COMMA_SEPARATOR, ALLOW_ENTRY)),
+            ZeroOrOne(WHITESPACE_OR_COMMA_SEPARATOR),
+            EOF(),
+        ),
+        // Allow list starting with separators (`,~read`): every word may start with `~`.
+        SequenceCombinator(
+            WHITESPACE_OR_COMMA_SEPARATOR,
+            ZeroOrOne(
+                SequenceCombinator(
+                    ALLOW_ENTRY,
+                    ZeroOrMore(SequenceCombinator(WHITESPACE_OR_COMMA_SEPARATOR, ALLOW_ENTRY)),
+                    ZeroOrOne(WHITESPACE_OR_COMMA_SEPARATOR),
+                )
+            ),
+            EOF(),
+        ),
     )
 )

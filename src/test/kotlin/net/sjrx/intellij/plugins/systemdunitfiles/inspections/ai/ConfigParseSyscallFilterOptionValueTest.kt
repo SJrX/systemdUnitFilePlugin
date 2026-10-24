@@ -104,11 +104,41 @@ class ConfigParseSyscallFilterOptionValueTest : AbstractUnitFileTest() {
             SystemCallFilter=~@clock add_key
         """.trimIndent()
         setupFileInEditor("file.nspawn", nspawn)
-        // "@system-service ~@mount": nspawn only honours `~` as the first character, so the second word goes
-        // into the allow list verbatim as "~@mount". sd-check is silent (nspawn's parser stores words
-        // unchecked), but at container start seccomp_add_syscall_filter_item() can never resolve it and
-        // drops it with only a debug message, so the entry is a guaranteed no-op. Flagged on purpose.
-        assertSize(1, myFixture.doHighlighting())
+        assertSize(0, myFixture.doHighlighting())
+    }
+
+    @Test
+    fun testTildeWordAfterTheFirstPositionIsAccepted() {
+        // nspawn only honours `~` as the first character, so "~@mount" below is stored verbatim as a name.
+        // sd-check at 0f0682b773 accepts all of these in a .nspawn file (nspawn's parser stores words
+        // unchecked); the word is only dropped at container start by seccomp_add_syscall_filter_item(), a
+        // runtime-only rejection that issue #565 will warn about.
+        // language="unit file (systemd)"
+        val nspawn = """
+            [Exec]
+            SystemCallFilter=@system-service ~@mount
+            SystemCallFilter=@system-service ~@bogus
+            SystemCallFilter=~~@mount
+            SystemCallFilter=,~read
+        """.trimIndent()
+        setupFileInEditor("file.nspawn", nspawn)
+        enableInspection(InvalidValueInspection::class.java)
+        assertSize(0, myFixture.doHighlighting())
+
+        // In a unit file sd-check says "System call ~@mount is not known, ignoring." for the same words: the
+        // libseccomp lookup warning that this grammar already leaves unflagged for names like "madeupcall".
+        // Both files share the (config_parse_syscall_filter, 0) registration, so the lenient nspawn
+        // behaviour applies here as well. Documented leniency.
+        // language="unit file (systemd)"
+        val service = """
+            [Service]
+            SystemCallFilter=@system-service ~@mount
+            SystemCallFilter=read ~write
+            SystemCallFilter=~~@mount
+            SystemCallFilter=~read ~write:EPERM
+        """.trimIndent()
+        setupFileInEditor("file.service", service)
+        assertSize(0, myFixture.doHighlighting())
     }
 
     @Test
@@ -133,12 +163,14 @@ class ConfigParseSyscallFilterOptionValueTest : AbstractUnitFileTest() {
             SystemCallFilter=~uname:+0b1
             SystemCallFilter=~uname:08
             SystemCallFilter=~uname:0x
+            SystemCallFilter=@system-service ~@mount:EPERM
+            SystemCallFilter=~@bogus
         """.trimIndent()
 
         setupFileInEditor("file.service", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(17, highlights)
+        assertSize(19, highlights)
     }
 }
