@@ -1,0 +1,56 @@
+package net.sjrx.intellij.plugins.systemdunitfiles.inspections.ai
+
+import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
+import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
+import org.junit.Test
+
+/** [Route] Table= and [RoutingPolicyRule] Table=. */
+class ConfigParseRouteTableOptionValueTest : AbstractUnitFileTest() {
+
+  @Test
+  fun testValidValues() {
+    // custom-table, my_table, 0x0 and `main table` are deliberate leniencies: they are legal networkd.conf RouteTable=
+    // names (only all-digit names and names with `:` are refused; `main\ table:100` defines one with a space), which the
+    // plugin cannot see. systemd without such a definition rejects them. 0b 1 is safe_atou32 = 1 (sd-check accepts it).
+    // language="unit file (systemd)"
+    val file = """
+            [Route]
+            Table=main
+            Table=local
+            Table=default
+            Table=1011
+            Table=4294967295
+            Table=custom-table
+            Table=0x0
+            [RoutingPolicyRule]
+            Table=7
+            Table=my_table
+            Table=0x10
+            Table=0b 1
+            Table=main table
+        """.trimIndent()
+
+    setupFileInEditor("file.network", file)
+    enableInspection(InvalidValueInspection::class.java)
+    assertSize(0, myFixture.doHighlighting())
+  }
+
+  @Test
+  fun testInvalidValues() {
+    // One highlight per line.
+    // language="unit file (systemd)"
+    val file = """
+            [Route]
+            Table=0
+            Table=4294967296
+            Table=a:b
+            [RoutingPolicyRule]
+            Table=00
+            Table=08
+        """.trimIndent()
+
+    setupFileInEditor("file.network", file)
+    enableInspection(InvalidValueInspection::class.java)
+    assertSize(5, myFixture.doHighlighting())
+  }
+}

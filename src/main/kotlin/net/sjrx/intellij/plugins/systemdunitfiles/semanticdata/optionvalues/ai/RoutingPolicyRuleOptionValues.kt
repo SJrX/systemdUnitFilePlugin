@@ -33,9 +33,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * actually reads the value. The classes below mirror that table entry by entry, so each one is
  * registered under the matching ROUTING_POLICY_RULE_* ltype.
  *
- * Not covered here: ROUTING_POLICY_RULE_TABLE (route table names are user-defined via RouteTable= in
- * networkd.conf, so there is no closed set to check), ROUTING_POLICY_RULE_FWMARK and
- * ROUTING_POLICY_RULE_IP_PROTOCOL.
+ * Covered in their own files instead: ROUTING_POLICY_RULE_TABLE (ConfigParseRouteTableOptionValue),
+ * ROUTING_POLICY_RULE_FWMARK (ConfigParseRoutingPolicyRuleFirewallMarkOptionValue),
+ * ROUTING_POLICY_RULE_IP_PROTOCOL (ConfigParseRoutingPolicyRuleIpProtocolOptionValue) and
+ * ROUTING_POLICY_RULE_UID_RANGE (ConfigParseRoutingPolicyRuleUidRangeOptionValue).
  */
 
 private const val RULE = "config_parse_routing_policy_rule"
