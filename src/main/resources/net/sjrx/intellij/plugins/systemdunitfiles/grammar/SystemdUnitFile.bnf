@@ -19,13 +19,21 @@
 
 unitFile ::= section_items* section_groups*
 
-section_groups ::= section_ section_items* { name="section header" pin=1 }
+section_groups ::= section_ section_items* { name="section header" pin=1 recoverWhile=section_recover }
 
 private section_items ::= property | comment_
 
-property ::= key_ separator_ value? { pin=1 }
+property ::= key_ separator_ value? { pin=1 recoverWhile=property_recover }
 
 value ::= (CONTINUING_VALUE| comment_ )* COMPLETED_VALUE
+
+// Error recovery (#562). A line that is not a section, comment or key=value (e.g. "some free text") lexes as a KEY
+// followed by BAD_CHARACTERs. Without recovery the parser gave up there and the rest of the file became one error
+// element, so nothing after it was validated. systemd itself logs "Missing '='" and carries on with the next line.
+// After a (possibly broken) property, skip to the next token that can start a line item; if junk appears where an
+// item should start, skip to the next section header.
+private property_recover ::= !(KEY | SECTION | COMMENT)
+private section_recover ::= !SECTION
 
 // Single rules for tokens so that I can alias them for better error handling shown above.
 private comment_ ::= COMMENT {name="comment" }
