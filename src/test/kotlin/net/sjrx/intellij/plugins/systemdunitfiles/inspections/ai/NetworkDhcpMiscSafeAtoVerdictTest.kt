@@ -3,6 +3,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections.ai
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.ConfigParseBridgeVlanIdOptionValue
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.ConfigParseDhcp6SendOptionOptionValue
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.ConfigParseDhcpOptionTlvOptionValue
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.ConfigParseDhcpOrRaRouteTableOptionValue
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.ConfigParseDhcpPdSubnetIdOptionValue
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.ConfigParseDhcpRequestOptionsOptionValue
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai.ConfigParseDhcpServerAddressOptionValue
@@ -50,6 +51,7 @@ class NetworkDhcpMiscSafeAtoVerdictTest {
     accepted(ConfigParseLinkGroupOptionValue().combinator, "${vt}5", "0b${vt}1")
     accepted(ConfigParseDhcpPdSubnetIdOptionValue().combinator, "${vt}5", "-0", "0b1")
     accepted(ConfigParseDuidTypeOptionValue().combinator, "${vt}5", "0b 1:2000-01-01")
+    accepted(ConfigParseDhcpOrRaRouteTableOptionValue().combinator, "${vt}5", "0b 1")
   }
 
   @Test

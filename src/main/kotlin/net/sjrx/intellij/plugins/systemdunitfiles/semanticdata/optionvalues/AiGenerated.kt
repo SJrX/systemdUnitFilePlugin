@@ -450,6 +450,9 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_network_duid_type", "0") to ConfigParseDuidTypeOptionValue("config_parse_network_duid_type") as OptionValueInformation,
     Validator("config_parse_duid_rawdata", "0") to ConfigParseDuidRawdataOptionValue("config_parse_duid_rawdata") as OptionValueInformation,
     Validator("config_parse_network_duid_rawdata", "0") to ConfigParseDuidRawdataOptionValue("config_parse_network_duid_rawdata") as OptionValueInformation,
+    Validator("config_parse_dhcp_or_ra_route_table", "NETWORK_CONFIG_SOURCE_DHCP4") to ConfigParseDhcpOrRaRouteTableOptionValue() as OptionValueInformation,
+    Validator("config_parse_dhcp_or_ra_route_table", "NETWORK_CONFIG_SOURCE_DHCP6") to ConfigParseDhcpOrRaRouteTableOptionValue() as OptionValueInformation,
+    Validator("config_parse_dhcp_or_ra_route_table", "NETWORK_CONFIG_SOURCE_NDISC") to ConfigParseDhcpOrRaRouteTableOptionValue() as OptionValueInformation,
 
   )
 
