@@ -122,14 +122,16 @@ spec:
     - sleep
     args:
     - 99d
-    # Gradle (build + IntelliJ test JVM + Kotlin daemon) peaked at ~5.5Gi with no limit, because every JVM
-    # sized its default heap from the node's RAM. With a limit, the JVMs size from the container instead,
-    # and a runaway build is OOM-killed in its own cgroup rather than thrashing the node (#559).
+    # Without a limit every JVM sized its default heap from the node's RAM (peak ~3.4Gi RSS, ~5.5Gi incl.
+    # page cache). Under a limit the JVMs size from the container: full builds and test runs measured
+    # 2.2-3.1Gi RSS with the limit never hit. The request leaves ~1Gi of headroom and is small enough
+    # (with jnlp) to fit the 8 GB nodes too; the limit is kept roomy because it also sets the JVMs'
+    # default max heap. A runaway build is OOM-killed in its own cgroup, not the node (#559).
     resources:
       requests:
-        memory: "6Gi"
+        memory: "4Gi"
       limits:
-        memory: "7Gi"
+        memory: "6Gi"
     volumeMounts:
     - name: github-ssh-host-key
       mountPath:  /github-ssh-host-key   
