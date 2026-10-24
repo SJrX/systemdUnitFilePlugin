@@ -116,7 +116,7 @@ val RETAINED_FREE_FIELD = retainedField("")
  * split WITHOUT EXTRACT_DONT_COALESCE_SEPARATORS, so `a::b` is the same as `a:b` and leading/trailing
  * colons are skipped.
  */
-val COALESCED_COLONS = RegexTerminal(":+", ":+")
+val EXEC_COALESCED_COLONS = RegexTerminal(":+", ":+")
 
 /**
  * A partition designator — partition_designator_from_string (src/shared/gpt.c#L156-L183). The table
@@ -137,9 +137,9 @@ fun partitionDesignator() = FlexibleLiteralChoiceTerminal(
  * a pair whose first word is not a partition designator is logged and skipped.
  */
 fun imageMountOptionsTail(): Combinator = SequenceCombinator(
-  ZeroOrMore(SequenceCombinator(COALESCED_COLONS, partitionDesignator(), COALESCED_COLONS, RETAINED_FREE_FIELD)),
-  optionalNoReprobe(SequenceCombinator(COALESCED_COLONS, RETAINED_FREE_FIELD)),
-  ZeroOrOne(COALESCED_COLONS),
+  ZeroOrMore(SequenceCombinator(EXEC_COALESCED_COLONS, partitionDesignator(), EXEC_COALESCED_COLONS, RETAINED_FREE_FIELD)),
+  optionalNoReprobe(SequenceCombinator(EXEC_COALESCED_COLONS, RETAINED_FREE_FIELD)),
+  ZeroOrOne(EXEC_COALESCED_COLONS),
 )
 
 private val EMPTY = RegexTerminal("", "")

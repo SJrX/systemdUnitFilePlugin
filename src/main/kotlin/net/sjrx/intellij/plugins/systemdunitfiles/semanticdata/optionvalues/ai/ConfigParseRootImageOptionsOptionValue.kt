@@ -2,7 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COALESCED_COLONS
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EXEC_COALESCED_COLONS
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RETAINED_FREE_FIELD
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
@@ -38,12 +38,12 @@ class ConfigParseRootImageOptionsOptionValue : SimpleGrammarOptionValues(
   "config_parse_root_image_options",
   whitespaceList(
     SequenceCombinator(
-      ZeroOrOne(COALESCED_COLONS),
+      ZeroOrOne(EXEC_COALESCED_COLONS),
       AlternativeCombinator(
-        SequenceCombinator(partitionDesignator(), COALESCED_COLONS, RETAINED_FREE_FIELD),
+        SequenceCombinator(partitionDesignator(), EXEC_COALESCED_COLONS, RETAINED_FREE_FIELD),
         RETAINED_FREE_FIELD,
       ),
-      ZeroOrOne(COALESCED_COLONS),
+      ZeroOrOne(EXEC_COALESCED_COLONS),
     )
   )
 )

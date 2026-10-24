@@ -1,7 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COALESCED_COLONS
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EXEC_COALESCED_COLONS
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EXTENSION_IMAGE_SOURCE_FIELD
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
@@ -36,7 +36,7 @@ class ConfigParseExtensionImagesOptionValue : SimpleGrammarOptionValues(
   "config_parse_extension_images",
   whitespaceList(
     SequenceCombinator(
-      ZeroOrOne(COALESCED_COLONS),
+      ZeroOrOne(EXEC_COALESCED_COLONS),
       EXTENSION_IMAGE_SOURCE_FIELD,
       imageMountOptionsTail(),
     )
