@@ -24,6 +24,8 @@ class ConfigParseVolatileModeOptionValueTest : AbstractUnitFileTest() {
             Volatile=off
             Volatile=Yes
             Volatile=TRUE
+            Volatile=oFf
+            Volatile=NO
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
@@ -42,12 +44,14 @@ class ConfigParseVolatileModeOptionValueTest : AbstractUnitFileTest() {
             Volatile=State
             Volatile=overlayfs
             Volatile=maybe
+            Volatile=OVERLAY
+            Volatile=stateful
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(3, highlights)
+        assertSize(5, highlights)
     }
 }

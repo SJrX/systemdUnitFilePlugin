@@ -29,6 +29,7 @@ class ConfigParseRestrictAddressFamiliesOptionValueTest : AbstractUnitFileTest()
             RestrictAddressFamilies=~ AF_UNIX
             RestrictAddressFamilies="AF_INET" 'inet6'
             RestrictAddressFamilies=AF_DECnet decnet
+            RestrictAddressFamilies=Unix INET6 Af_Netlink
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
@@ -40,7 +41,7 @@ class ConfigParseRestrictAddressFamiliesOptionValueTest : AbstractUnitFileTest()
 
     @Test
     fun testInvalidValues() {
-        // Unknown family, `~` only allowed at the start, `none` only allowed on its own.
+        // Unknown family, `~` only allowed at the start, `none` only allowed on its own (and compared with streq()).
         // language="unit file (systemd)"
         val file = """
             [Exec]
@@ -49,13 +50,14 @@ class ConfigParseRestrictAddressFamiliesOptionValueTest : AbstractUnitFileTest()
             RestrictAddressFamilies=~none
             RestrictAddressFamilies=none inet
             RestrictAddressFamilies=AF-INET
+            RestrictAddressFamilies=None
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(5, highlights)
+        assertSize(6, highlights)
     }
 
     @Test

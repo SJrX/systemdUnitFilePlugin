@@ -1,7 +1,11 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.enumWithBoolean
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.PreferValidAlternativeCombinator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
 /*
  * [Exec] ResolvConf= (.nspawn).
@@ -23,14 +27,22 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * table names, matched case-sensitively: `off`, `copy-host`, `copy-static`, `copy-uplink`, `copy-stub`,
  * `replace-host`, `replace-static`, `replace-uplink`, `replace-stub`, `bind-host`, `bind-static`,
  * `bind-uplink`, `bind-stub`, `delete`, `auto`.
+ *
+ * Table entry 0 is `off`, a parse_boolean() spelling, so it is left to [BOOLEAN] (which also takes
+ * `OFF`) rather than listed with the names.
  */
 class ConfigParseResolvConfOptionValue : SimpleGrammarOptionValues(
     "config_parse_resolv_conf",
-    enumWithBoolean(
-        "off",
-        "copy-host", "copy-static", "copy-uplink", "copy-stub",
-        "replace-host", "replace-static", "replace-uplink", "replace-stub",
-        "bind-host", "bind-static", "bind-uplink", "bind-stub",
-        "delete", "auto",
+    SequenceCombinator(
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal(
+                "copy-host", "copy-static", "copy-uplink", "copy-stub",
+                "replace-host", "replace-static", "replace-uplink", "replace-stub",
+                "bind-host", "bind-static", "bind-uplink", "bind-stub",
+                "delete", "auto",
+            ),
+            BOOLEAN,
+        ),
+        EOF(),
     ),
 )

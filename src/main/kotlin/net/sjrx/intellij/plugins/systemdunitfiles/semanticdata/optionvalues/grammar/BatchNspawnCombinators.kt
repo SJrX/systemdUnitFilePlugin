@@ -7,9 +7,9 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gra
  * Everything here is pinned to systemd 0f0682b773, the commit recorded in
  * systemd-build/build/last_commit_hash. Browse it at https://github.com/systemd/systemd/blob/0f0682b773.
  *
- * Several of these are general-purpose (the safe_ato* number terminal, the case-insensitive boolean,
- * the colon-delimited interface name, the address-family list) and are candidates for promotion into
- * Combinators.kt; they live here only so this batch does not collide with parallel edits there.
+ * Several of these are general-purpose (the safe_ato* number terminal, the colon-delimited interface
+ * name, the address-family list) and are candidates for promotion into Combinators.kt; they live here
+ * only so this batch does not collide with parallel edits there. Booleans use the shared [BOOLEAN].
  */
 
 // ---------------------------------------------------------------------------------------------------
@@ -100,23 +100,6 @@ private fun isPositiveIfindex(text: String): Boolean =
 /** A [NspawnSafeAtoNumberTerminal] coloured as a literal, like the other number terminals. */
 fun safeAtoNumber(minInclusive: Long, maxExclusive: Long, spaceAfterPrefix: Boolean = false): Combinator =
   Labeled(Role.LITERAL, NspawnSafeAtoNumberTerminal(minInclusive, maxExclusive, spaceAfterPrefix))
-
-
-// ---------------------------------------------------------------------------------------------------
-// Booleans — parse_boolean() (src/basic/parse-util.c) compares with STRCASE_IN_SET, so `Yes`, `TRUE`
-// and `Off` are as good as their lower-case spellings. The shared [BOOLEAN] is case-sensitive; this
-// one is not.
-
-/** parse_boolean(), case-insensitively. */
-val CASE_INSENSITIVE_BOOLEAN = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreCase = true)
-
-/**
- * A DEFINE_STRING_TABLE_LOOKUP_WITH_BOOLEAN enum: string_table_lookup_from_string_with_boolean()
- * (src/basic/string-table.c) tries parse_boolean() first and then the table with a case-sensitive
- * streq(). The names come first so that [CASE_INSENSITIVE_BOOLEAN] cannot strand part of a name.
- */
-fun enumWithBoolean(vararg names: String): Combinator =
-  SequenceCombinator(AlternativeCombinator(FlexibleLiteralChoiceTerminal(*names), CASE_INSENSITIVE_BOOLEAN), EOF())
 
 
 // ---------------------------------------------------------------------------------------------------

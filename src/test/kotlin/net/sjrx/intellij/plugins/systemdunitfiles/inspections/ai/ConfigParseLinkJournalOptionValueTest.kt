@@ -22,6 +22,9 @@ class ConfigParseLinkJournalOptionValueTest : AbstractUnitFileTest() {
             LinkJournal=false
             LinkJournal=0
             LinkJournal=On
+            LinkJournal=Yes
+            LinkJournal=TRUE
+            LinkJournal=oFf
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
@@ -40,12 +43,15 @@ class ConfigParseLinkJournalOptionValueTest : AbstractUnitFileTest() {
             LinkJournal=try-auto
             LinkJournal=Guest
             LinkJournal=persistent
+            LinkJournal=AUTO
+            LinkJournal=Try-Host
+            LinkJournal=nothing
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(3, highlights)
+        assertSize(6, highlights)
     }
 }

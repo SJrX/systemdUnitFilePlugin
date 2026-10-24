@@ -1,7 +1,11 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.enumWithBoolean
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.PreferValidAlternativeCombinator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
 /*
  * [Exec] LinkJournal= (.nspawn).
@@ -19,9 +23,16 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  *
  * parse_link_journal() compares with streq() against `auto`, `guest`, `host`, `try-guest` and
  * `try-host` (case-sensitive), and otherwise falls back to parse_boolean() (case-insensitive; true is
- * treated as `auto`, false as `no`). Invalid input is logged and ignored.
+ * treated as `auto`, false as `no`). Invalid input is logged and ignored. The names come first so that
+ * the case-insensitive [BOOLEAN] cannot strand part of one.
  */
 class ConfigParseLinkJournalOptionValue : SimpleGrammarOptionValues(
     "config_parse_link_journal",
-    enumWithBoolean("auto", "guest", "host", "try-guest", "try-host"),
+    SequenceCombinator(
+        PreferValidAlternativeCombinator(
+            FlexibleLiteralChoiceTerminal("auto", "guest", "host", "try-guest", "try-host"),
+            BOOLEAN,
+        ),
+        EOF(),
+    ),
 )

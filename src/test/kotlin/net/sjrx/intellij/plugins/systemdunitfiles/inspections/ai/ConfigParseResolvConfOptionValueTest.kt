@@ -31,6 +31,9 @@ class ConfigParseResolvConfOptionValueTest : AbstractUnitFileTest() {
             ResolvConf=no
             ResolvConf=True
             ResolvConf=OFF
+            ResolvConf=Yes
+            ResolvConf=TRUE
+            ResolvConf=oFf
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
@@ -49,12 +52,14 @@ class ConfigParseResolvConfOptionValueTest : AbstractUnitFileTest() {
             ResolvConf=copy
             ResolvConf=Copy-Host
             ResolvConf=bind-hosts
+            ResolvConf=AUTO
+            ResolvConf=offline
         """.trimIndent()
 
         setupFileInEditor("file.nspawn", file)
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting()
 
-        assertSize(3, highlights)
+        assertSize(5, highlights)
     }
 }
