@@ -19,17 +19,41 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gra
  *  2. each word into ':'-separated fields with EXTRACT_CUNESCAPE|EXTRACT_UNESCAPE_SEPARATORS — so a
  *     backslash must start a valid C escape (cunescape_one) or escape the ':' separator (`\:`).
  *
- * Deliberate leniencies, shared by every grammar built from these pieces:
+ * Deliberate approximations, shared by every grammar built from these pieces:
  *  - a quoted run ("…" or '…') is treated as opaque field text. systemd unquotes BEFORE splitting on
- *    ':', so a ':' inside quotes is really a separator; the grammar keeps it inside the field and so
- *    cannot check what follows it. Escapes inside quotes are not checked either.
+ *    ':', so a ':' inside quotes is really a separator. The grammar keeps it inside the field, which is
+ *    usually lenient, but NOT always: when such a run is followed by more ':'-fields outside the quotes
+ *    (`BindPaths="/a:/b":rbind`, `MountImages="/a.raw:/mnt":ro`), or a literal field such as rbind or
+ *    a partition designator is itself quoted (`BindPaths=/a:/b:"rbind"`, `RootImageOptions="root":ro`),
+ *    the field count shifts and a value systemd accepts is flagged. None of these spellings occurs in
+ *    the corpus; modelling them needs a combinator that matches against the unquoted text.
+ *    Escapes inside quotes are not checked.
+ *  - under EXTRACT_RETAIN_ESCAPE a backslash is not special in the outer split, so a raw `\"` keeps the
+ *    backslash and then opens a quote. The grammar therefore does not treat `\"` / `\'` as escapes
+ *    outside quotes (an unbalanced quote is refused by systemd, and is flagged here too).
  *  - '%' specifiers are accepted wherever a path may start, without checking that the specifier exists
  *    or that it expands to an absolute path.
  */
 
-/** A valid C escape for cunescape_one, minus the leading backslash. NUL bytes and octal > 0377 are refused. */
-internal const val C_ESCAPE_BODY =
-  """(?:[abfnrtv\\"'s]|x(?!00)[0-9a-fA-F]{2}|u(?!0000)[0-9a-fA-F]{4}|U(?!00000000)[0-9a-fA-F]{8}|(?!000)[0-3][0-7]{2})"""
+// `\uXXXX`: not NUL, not a UTF-16 surrogate (D800-DFFF). Noncharacters such as FFFE are deliberately allowed.
+private const val ESCAPE_U16 = """u(?!0000)(?![dD][89abAB])[0-9a-fA-F]{4}"""
+
+// `\UXXXXXXXX`: not NUL, and unichar_is_valid(): below 0x110000, not a surrogate, not FDD0-FDEF, and the
+// low 16 bits not FFFE/FFFF.
+private const val ESCAPE_U32 = "U(?!0{8})(?=00(?:0[0-9a-fA-F]|10)[0-9a-fA-F]{4})(?!0000[dD][89abAB])" +
+  "(?!0000[fF][dD][dDeE])(?![0-9a-fA-F]{4}[fF]{3}[eEfF])[0-9a-fA-F]{8}"
+
+private const val C_ESCAPE_COMMON = """x(?!00)[0-9a-fA-F]{2}|$ESCAPE_U16|$ESCAPE_U32|(?!000)[0-3][0-7]{2}"""
+
+/**
+ * A valid C escape for cunescape_one, minus the leading backslash. NUL bytes, octal > 0377, UTF-16
+ * surrogates in `\u` and invalid code points in `\U` (unichar_is_valid) are refused.
+ */
+internal const val C_ESCAPE_BODY = """(?:[abfnrtv\\"'s]|$C_ESCAPE_COMMON)"""
+
+// As C_ESCAPE_BODY but without `\"` / `\'`, which under EXTRACT_RETAIN_ESCAPE are not escapes in the outer
+// split (the backslash is kept and the quote opens a quoted run).
+private const val RETAINED_ESCAPE_BODY = """(?:[abfnrtv\\s]|$C_ESCAPE_COMMON)"""
 
 // ---------------------------------------------------------------------------------------------------
 // ':'-separated fields of a word that was split with EXTRACT_RETAIN_ESCAPE and is then re-split with
@@ -39,10 +63,12 @@ internal const val C_ESCAPE_BODY =
 // Lenient shape: any run of non-blank, non-':' characters, quoted runs, and backslash + non-blank.
 // A backslash followed by whitespace is never valid here: the outer split keeps the backslash and cuts
 // the word at the blank, leaving a trailing backslash that the inner split refuses with -EINVAL.
-private const val RETAINED_FIELD_SYNTAX = """(?:[^\s:"'\\]|"[^"]*"|'[^']*'|\\\S)+"""
+private const val RETAINED_FIELD_SYNTAX = """(?:[^\s:"'\\]|"[^"]*"|'[^']*'|\\[^\s"']|\\(?=["']))+"""
 
-// Strict body: as above, but a backslash must start a C escape or escape ':' itself.
-private const val RETAINED_FIELD_BODY = """(?:[^\s:"'\\]|"[^"]*"|'[^']*'|\\(?:$C_ESCAPE_BODY|:))+"""
+// Strict body: as above, but a backslash must start a C escape or escape ':' itself. A backslash before a
+// quote is kept verbatim by the outer split and the quote then opens a quoted run, which must be closed;
+// the escape the backslash forms with the run's first character is not checked.
+private const val RETAINED_FIELD_BODY = """(?:[^\s:"'\\]|"[^"]*"|'[^']*'|\\(?:$RETAINED_ESCAPE_BODY|:|(?=["'])))+"""
 
 // The unquoted field must start with '/' (absolute) or a specifier. Quotes are skipped over first.
 private const val ABSOLUTE_HEAD = """(?=["']*[/%])"""
@@ -155,19 +181,27 @@ val NON_EMPTY_BASE64_DATA = RegexTerminal("""[\s\S]+""", """(?=\s*\S)$B64_GROUPS
 // ---------------------------------------------------------------------------------------------------
 // Unsigned numbers as safe_atou() reads them: strtoul(…, base 0) plus mangle_base()'s Python-style
 // "0b"/"0o" prefixes — decimal, 0x hex, leading-zero octal, 0b binary, 0o octal — and an optional '+'
-// (strtoul accepts a sign; only a non-zero negative is refused).
+// (strtoul accepts a sign; only a non-zero negative is refused). mangle_base() looks for 0b/0o BEFORE
+// strtoul has consumed a sign, so "+0b1" is refused (strtoul reads "+0" and stops at 'b').
 
 private val PLUS_SIGN = LiteralChoiceTerminal("+")
+
+// "-0", "-00", "-0x0": strtoul accepts the sign and the result is 0, which `l != 0 && s[0] == '-'` lets
+// through. ("-0b0"/"-0o0" are refused: mangle_base does not see past the '-'.)
+private val NEGATIVE_ZERO = RegexTerminal("""-[0-9a-zA-Z]+""", """-(?:0[xX]0+|0+)(?![0-9a-zA-Z])""")
 
 /**
  * An unsigned number in `[0, maxExclusive)` spelled any way safe_atou() accepts. The 0b/0o forms are
  * tried first (UnsignedNumberTerminal would otherwise read their leading 0 and strand the rest); their
- * upper bound is only enforced by [binaryOrOctalSemantic], which the caller supplies.
+ * upper bound is only enforced by [binaryOrOctalSemantic], which the caller supplies. With
+ * [allowNegativeZero], a negative zero (`-0`, `-0x0`) is accepted too — only for callers where a
+ * leading '-' cannot mean anything else (not NUMAMask=, where '-' is the range separator).
  */
-fun safeAtouNumber(maxExclusive: Long, binaryOrOctalSemantic: String): Combinator = SequenceCombinator(
-  ZeroOrOne(PLUS_SIGN),
-  AlternativeCombinator(
-    RegexTerminal("""0[bBoO][0-9a-zA-Z]+""", """(?:$binaryOrOctalSemantic)(?![0-9a-zA-Z])"""),
-    UnsignedNumberTerminal(0, maxExclusive),
-  ),
-)
+fun safeAtouNumber(maxExclusive: Long, binaryOrOctalSemantic: String, allowNegativeZero: Boolean = false): Combinator {
+  val alternatives = mutableListOf<Combinator>(
+    RegexTerminal("""0[bB][0-9a-zA-Z]+|0[oO][0-9a-zA-Z]+""", """(?:$binaryOrOctalSemantic)(?![0-9a-zA-Z])"""),
+  )
+  if (allowNegativeZero) alternatives += NEGATIVE_ZERO
+  alternatives += SequenceCombinator(ZeroOrOne(PLUS_SIGN), UnsignedNumberTerminal(0, maxExclusive))
+  return AlternativeCombinator(*alternatives.toTypedArray())
+}

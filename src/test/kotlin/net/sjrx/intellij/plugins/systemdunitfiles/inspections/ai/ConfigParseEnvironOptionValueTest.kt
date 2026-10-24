@@ -28,6 +28,7 @@ class ConfigParseEnvironOptionValueTest : AbstractUnitFileTest() {
       Environment=TAB=a\tb NL=x\ny HEX=\x41 OCT=\101 UNI=é SP=a\sb
       Environment="QUOTED=say \"hi\""
       Environment="FOO"=bar
+      Environment=U=\uFFFE V=\U0010FFFD W=\U0001F600
       Environment=
     """.trimIndent()
 
@@ -81,12 +82,16 @@ class ConfigParseEnvironOptionValueTest : AbstractUnitFileTest() {
       Environment="=bar"
       Environment="NOEQUALS"
       Environment=FOO.BAR=1
+      Environment=FOO=\ud800
+      Environment=FOO=\U00110000
+      Environment=FOO=\U0000FDD0
+      Environment=FOO=\U0001FFFF
     """.trimIndent()
 
     setupFileInEditor("file.service", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(10, highlights)
+    assertSize(14, highlights)
   }
 }

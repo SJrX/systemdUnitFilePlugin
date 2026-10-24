@@ -44,12 +44,13 @@ class ConfigParseNumaMaskOptionValueTest : AbstractUnitFileTest() {
       NUMAMask=ALL
       NUMAMask=foo
       NUMAMask=08
+      NUMAMask=+0b1
     """.trimIndent()
 
     setupFileInEditor("file.service", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(8, highlights)
+    assertSize(9, highlights)
   }
 }

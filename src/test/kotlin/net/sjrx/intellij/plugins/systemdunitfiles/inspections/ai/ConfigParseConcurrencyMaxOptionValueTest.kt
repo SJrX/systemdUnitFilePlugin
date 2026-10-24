@@ -21,6 +21,9 @@ class ConfigParseConcurrencyMaxOptionValueTest : AbstractUnitFileTest() {
       ConcurrencyHardMax=0o17
       ActivatingConcurrencyMax=+5
       ConcurrencySoftMax=
+      ConcurrencyHardMax=-0
+      ActivatingConcurrencyMax=-0x0
+      ConcurrencySoftMax=+0x10
     """.trimIndent()
 
     setupFileInEditor("file.slice", file)
@@ -42,12 +45,15 @@ class ConfigParseConcurrencyMaxOptionValueTest : AbstractUnitFileTest() {
       ConcurrencyHardMax=08
       ActivatingConcurrencyMax=10 20
       ConcurrencySoftMax=1.5
+      ConcurrencyHardMax=+0b1
+      ActivatingConcurrencyMax=+0o7
+      ConcurrencySoftMax=-0b0
     """.trimIndent()
 
     setupFileInEditor("file.slice", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(7, highlights)
+    assertSize(10, highlights)
   }
 }

@@ -19,11 +19,13 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  */
 
 // A raw mask: strtoull(…, 16) — an optional 0x prefix, at most 16 significant hex digits (uint64_t).
+// strtoull also takes a sign: '+' is fine, and '-' is only refused when the value is non-zero, so "-0"
+// and "-0x00" are accepted (safe_atollu_full: `l != 0 && s[0] == '-'`).
 // The trailing lookahead keeps this from matching a hex-looking prefix of a longer word (the "de" of
 // "default"), so it and the names never claim the same word.
 private val COREDUMP_FILTER_MASK = RegexTerminal(
-  """\+?[0-9a-fA-FxX]+(?![a-zA-Z0-9-])""",
-  """\+?(?:0[xX])?0*[0-9a-fA-F]{1,16}(?![a-zA-Z0-9-])""",
+  """[+-]?[0-9a-fA-FxX]+(?![a-zA-Z0-9-])""",
+  """(?:\+?(?:0[xX])?0*[0-9a-fA-F]{1,16}|-(?:0[xX])?0+)(?![a-zA-Z0-9-])""",
 )
 
 /**

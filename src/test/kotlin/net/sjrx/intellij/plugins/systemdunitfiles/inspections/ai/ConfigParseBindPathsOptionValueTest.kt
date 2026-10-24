@@ -26,6 +26,7 @@ class ConfigParseBindPathsOptionValueTest : AbstractUnitFileTest() {
       BindReadOnlyPaths=/dev/log:/var/lib/haproxy/dev/log
       BindReadOnlyPaths='/srv/a b':/srv/c
       BindPaths=
+      BindPaths=/a\"b":/c
     """.trimIndent()
 
     setupFileInEditor("file.service", file)
@@ -82,12 +83,14 @@ class ConfigParseBindPathsOptionValueTest : AbstractUnitFileTest() {
       BindPaths=/a\qb
       BindReadOnlyPaths=/usr/bin foo
       BindReadOnlyPaths=/usr/bin /a:/b:recursive
+      BindPaths=/a\"
+      BindPaths=/a\ud800
     """.trimIndent()
 
     setupFileInEditor("file.service", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(11, highlights)
+    assertSize(13, highlights)
   }
 }

@@ -22,14 +22,16 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * `ConcurrencyHardMax=`, `ConcurrencySoftMax=` and `ActivatingConcurrencyMax=`.
  *
  * `infinity` (exact, streq), or an unsigned int as safe_atou() reads it — decimal, `0x` hex,
- * leading-zero octal, `0b`/`0o` — up to UINT_MAX (4294967295). `0` is legal (it blocks all activation).
+ * leading-zero octal, `0b`/`0o`, optionally `+`-signed (but not `+0b…`/`+0o…`, which mangle_base misses) —
+ * up to UINT_MAX (4294967295). `0` is legal (it blocks all activation), and so is a negative zero such
+ * as `-0` (strtoul accepts it and safe_atou only refuses a non-zero negative).
  */
 class ConfigParseConcurrencyMaxOptionValue : SimpleGrammarOptionValues(
   "config_parse_concurrency_max",
   SequenceCombinator(
     AlternativeCombinator(
       FlexibleLiteralChoiceTerminal("infinity"),
-      safeAtouNumber(4_294_967_296L, """0[bB]0*[01]{1,32}|0[oO]0*(?:[0-3][0-7]{10}|[0-7]{1,10})"""),
+      safeAtouNumber(4_294_967_296L, """0[bB]0*[01]{1,32}|0[oO]0*(?:[0-3][0-7]{10}|[0-7]{1,10})""", allowNegativeZero = true),
     ),
     EOF(),
   )

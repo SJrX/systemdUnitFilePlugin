@@ -20,6 +20,8 @@ class ConfigParseExecCoredumpFilterOptionValueTest : AbstractUnitFileTest() {
       CoredumpFilter=0x1101
       CoredumpFilter=0
       CoredumpFilter=ff deadbeef FFFFFFFFFFFFFFFF
+      CoredumpFilter=-0
+      CoredumpFilter=-0x00 +1f
       CoredumpFilter=
     """.trimIndent()
 
@@ -42,12 +44,13 @@ class ConfigParseExecCoredumpFilterOptionValueTest : AbstractUnitFileTest() {
       CoredumpFilter=0x
       CoredumpFilter=1FFFFFFFFFFFFFFFF
       CoredumpFilter=12g
+      CoredumpFilter=-1
     """.trimIndent()
 
     setupFileInEditor("file.service", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(7, highlights)
+    assertSize(8, highlights)
   }
 }
