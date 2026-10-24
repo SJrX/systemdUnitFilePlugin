@@ -17,6 +17,8 @@ class ConfigParseBridgeVlanIdOptionValueTest : AbstractUnitFileTest() {
       PVID=0x10
       PVID=no
       PVID=False
+      PVID=oFf
+      PVID=FALSE
       PVID=
     """.trimIndent()
 
@@ -36,12 +38,14 @@ class ConfigParseBridgeVlanIdOptionValueTest : AbstractUnitFileTest() {
       PVID=yes
       PVID=-1
       PVID=10-20
+      PVID=TRUE
+      PVID=Yes
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(4, highlights)
+    assertSize(6, highlights)
   }
 }

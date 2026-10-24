@@ -14,6 +14,9 @@ class ConfigParseIgnoreCarrierLossOptionValueTest : AbstractUnitFileTest() {
       IgnoreCarrierLoss=true
       IgnoreCarrierLoss=false
       IgnoreCarrierLoss=No
+      IgnoreCarrierLoss=Yes
+      IgnoreCarrierLoss=TRUE
+      IgnoreCarrierLoss=oFf
       IgnoreCarrierLoss=5s
       IgnoreCarrierLoss=1min 30s
       IgnoreCarrierLoss=infinity
@@ -53,12 +56,13 @@ class ConfigParseIgnoreCarrierLossOptionValueTest : AbstractUnitFileTest() {
       IgnoreCarrierLoss=5ns
       IgnoreCarrierLoss=infinity .7
       IgnoreCarrierLoss=5+5
+      IgnoreCarrierLoss=Infinity
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(11, highlights)
+    assertSize(12, highlights)
   }
 }

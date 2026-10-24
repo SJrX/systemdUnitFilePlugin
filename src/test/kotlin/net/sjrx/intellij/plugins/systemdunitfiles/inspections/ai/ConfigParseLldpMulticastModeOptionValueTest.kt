@@ -17,6 +17,9 @@ class ConfigParseLldpMulticastModeOptionValueTest : AbstractUnitFileTest() {
       EmitLLDP=yes
       EmitLLDP=no
       EmitLLDP=On
+      EmitLLDP=Yes
+      EmitLLDP=TRUE
+      EmitLLDP=oFf
       EmitLLDP=
     """.trimIndent()
 
@@ -35,12 +38,13 @@ class ConfigParseLldpMulticastModeOptionValueTest : AbstractUnitFileTest() {
       EmitLLDP=nearest
       EmitLLDP=Customer-Bridge
       EmitLLDP=routers-only
+      EmitLLDP=Nearest-Bridge
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(3, highlights)
+    assertSize(4, highlights)
   }
 }

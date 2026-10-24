@@ -28,16 +28,6 @@ import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFileSectionGroups
  */
 
 /**
- * A boolean as parse_boolean() actually reads it: the twelve spellings of [BOOLEAN_SPELLINGS], compared
- * with STRCASE_IN_SET, i.e. case-insensitively (`Yes`, `TRUE` and `Off` are all accepted). The shared
- * [BOOLEAN] is case-sensitive and therefore flags those; this one doesn't.
- */
-val NETWORK_DHCP_MISC_BOOLEAN_ANY_CASE = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreCase = true)
-
-/** Only the false half of parse_boolean(), case-insensitively — see [BOOLEAN_FALSE] and [NETWORK_DHCP_MISC_BOOLEAN_ANY_CASE]. */
-val BOOLEAN_FALSE_ANY_CASE = FlexibleLiteralChoiceTerminal("0", "no", "n", "false", "f", "off", ignoreCase = true)
-
-/**
  * An integer spelled the way systemd's `safe_ato*` helpers read one, range-checked in the base it is
  * actually written in.
  *

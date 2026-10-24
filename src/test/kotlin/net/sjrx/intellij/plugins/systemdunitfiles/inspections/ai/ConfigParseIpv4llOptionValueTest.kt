@@ -17,6 +17,7 @@ class ConfigParseIpv4llOptionValueTest : AbstractUnitFileTest() {
       IPv4LL=Yes
       IPv4LL=TRUE
       IPv4LL=Off
+      IPv4LL=oFf
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -33,12 +34,13 @@ class ConfigParseIpv4llOptionValueTest : AbstractUnitFileTest() {
       [Network]
       IPv4LL=ipv4
       IPv4LL=both
+      IPv4LL=Yess
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(2, highlights)
+    assertSize(3, highlights)
   }
 }

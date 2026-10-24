@@ -19,6 +19,8 @@ class ConfigParseResolveSupportOptionValueTest : AbstractUnitFileTest() {
       MulticastDNS=resolve
       MulticastDNS=true
       MulticastDNS=OFF
+      MulticastDNS=TRUE
+      MulticastDNS=oFf
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -34,6 +36,7 @@ class ConfigParseResolveSupportOptionValueTest : AbstractUnitFileTest() {
     val file = """
       [Network]
       LLMNR=Resolve
+      MulticastDNS=RESOLVE
       LLMNR=maybe
       MulticastDNS=allow-downgrade
       MulticastDNS=yes no
@@ -43,6 +46,6 @@ class ConfigParseResolveSupportOptionValueTest : AbstractUnitFileTest() {
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(4, highlights)
+    assertSize(5, highlights)
   }
 }

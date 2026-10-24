@@ -15,6 +15,9 @@ class ConfigParseRequiredForOnlineOptionValueTest : AbstractUnitFileTest() {
       RequiredForOnline=no
       RequiredForOnline=yes
       RequiredForOnline=False
+      RequiredForOnline=Yes
+      RequiredForOnline=TRUE
+      RequiredForOnline=oFf
       RequiredForOnline=degraded-carrier
       RequiredForOnline=carrier:routable
       RequiredForOnline=off:
@@ -41,12 +44,13 @@ class ConfigParseRequiredForOnlineOptionValueTest : AbstractUnitFileTest() {
       RequiredForOnline=routable:bogus
       RequiredForOnline=carrier:routable:off
       RequiredForOnline=Routable
+      RequiredForOnline=No-Carrier
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(5, highlights)
+    assertSize(6, highlights)
   }
 }

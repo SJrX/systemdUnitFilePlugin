@@ -2,7 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_DHCP_MISC_BOOLEAN_ANY_CASE
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.PARSE_SEC_TIMESPAN
@@ -27,7 +27,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 class ConfigParseIgnoreCarrierLossOptionValue : SimpleGrammarOptionValues(
     "config_parse_ignore_carrier_loss",
     AlternativeCombinator(
-        SequenceCombinator(NETWORK_DHCP_MISC_BOOLEAN_ANY_CASE, EOF()),
+        SequenceCombinator(BOOLEAN, EOF()),
         SequenceCombinator(PARSE_SEC_TIMESPAN, EOF()),
     )
 )

@@ -16,6 +16,8 @@ class ConfigParseDnsOverTlsModeOptionValueTest : AbstractUnitFileTest() {
       DNSOverTLS=no
       DNSOverTLS=TRUE
       DNSOverTLS=1
+      DNSOverTLS=Yes
+      DNSOverTLS=oFf
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
@@ -33,12 +35,13 @@ class ConfigParseDnsOverTlsModeOptionValueTest : AbstractUnitFileTest() {
       DNSOverTLS=Opportunistic
       DNSOverTLS=strict
       DNSOverTLS=allow-downgrade
+      DNSOverTLS=OPPORTUNISTIC
     """.trimIndent()
 
     setupFileInEditor("file.network", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(3, highlights)
+    assertSize(4, highlights)
   }
 }
