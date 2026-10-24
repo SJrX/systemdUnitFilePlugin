@@ -428,6 +428,20 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_environ", "0") to ConfigParseEnvironOptionValue() as OptionValueInformation,
     Validator("config_parse_concurrency_max", "0") to ConfigParseConcurrencyMaxOptionValue() as OptionValueInformation,
     Validator("config_parse_luo_sessions", "0") to ConfigParseLuoSessionsOptionValue() as OptionValueInformation,
+    // Batch 2026-10: seccomp-bpf-cgroup
+    Validator("config_parse_syscall_filter", "0") to ConfigParseSyscallFilterOptionValue() as OptionValueInformation,
+    Validator("config_parse_syscall_log", "0") to ConfigParseSyscallLogOptionValue() as OptionValueInformation,
+    Validator("config_parse_restrict_filesystems", "0") to ConfigParseRestrictFilesystemsOptionValue() as OptionValueInformation,
+    Validator("config_parse_private_bpf", "0") to ConfigParsePrivateBpfOptionValue() as OptionValueInformation,
+    Validator("config_parse_bpf_delegate_commands", "0") to ConfigParseBpfDelegateCommandsOptionValue() as OptionValueInformation,
+    Validator("config_parse_bpf_delegate_maps", "0") to ConfigParseBpfDelegateMapsOptionValue() as OptionValueInformation,
+    Validator("config_parse_bpf_delegate_programs", "0") to ConfigParseBpfDelegateProgramsOptionValue() as OptionValueInformation,
+    Validator("config_parse_bpf_delegate_attachments", "0") to ConfigParseBpfDelegateAttachmentsOptionValue() as OptionValueInformation,
+    Validator("config_parse_cgroup_nft_set", "NFT_SET_PARSE_CGROUP") to ConfigParseCgroupNftSetOptionValue() as OptionValueInformation,
+    Validator("config_parse_bpf_foreign_program", "0") to ConfigParseBpfForeignProgramOptionValue() as OptionValueInformation,
+    Validator("config_parse_xattr", "0") to ConfigParseXattrOptionValue() as OptionValueInformation,
+    Validator("config_parse_socket_bindtodevice", "0") to ConfigParseSocketBindtodeviceOptionValue() as OptionValueInformation,
+    // END Batch 2026-10: seccomp-bpf-cgroup
 
   )
 
