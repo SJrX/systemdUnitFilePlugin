@@ -42,6 +42,9 @@ class ConfigParseInAddrNonNullOptionValueTest : AbstractUnitFileTest() {
             RelayTarget=192.168.-1.1
             RelayTarget=192.168.1.1/24
             RelayTarget=::1
+            # The ANY address is refused (sd-check: "RelayTarget= cannot be the ANY address"); it was asserted
+            # valid before #568.
+            RelayTarget=0.0.0.0
         """.trimIndent()
 
         // Execute SUT
@@ -50,7 +53,7 @@ class ConfigParseInAddrNonNullOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(7, highlights)
+        assertSize(8, highlights)
     }
 
     @Test
@@ -59,7 +62,6 @@ class ConfigParseInAddrNonNullOptionValueTest : AbstractUnitFileTest() {
         // language="unit file (systemd)"
         val file = """
             [DHCPServer]
-            RelayTarget=0.0.0.0
             RelayTarget=127.0.0.1
             RelayTarget=255.0.0.0
             RelayTarget=0.0.0.1

@@ -19,6 +19,9 @@ class ConfigParsePrefixOptionValueTest : AbstractUnitFileTest() {
             Prefix=::/0
             Prefix=fd00::/8
             Prefix=2001:db8::1/64
+            # Without a prefix length in_addr_prefix_from_string uses 128 (sd-check accepts it; asserted invalid
+            # before #568).
+            Prefix=2001:db8::
         """.trimIndent()
 
         // Execute SUT
@@ -36,7 +39,6 @@ class ConfigParsePrefixOptionValueTest : AbstractUnitFileTest() {
         // language="unit file (systemd)"
         val file = """
             [IPv6Prefix]
-            Prefix=2001:db8::
             Prefix=fe80::/
             Prefix=2001:db8::/129
             Prefix=192.168.1.0/24
@@ -50,7 +52,7 @@ class ConfigParsePrefixOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(6, highlights)
+        assertSize(5, highlights)
     }
 
     @Test

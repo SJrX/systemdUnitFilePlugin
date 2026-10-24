@@ -15,6 +15,10 @@ class ConfigParseAddressSectionAddressScopeOptionValueTest : AbstractUnitFileTes
             Scope=global
             Scope=link
             Scope=host
+            # route_scope_table also has site and nowhere (sd-check accepts both; site was asserted invalid
+            # before #568).
+            Scope=site
+            Scope=nowhere
         """.trimIndent()
 
         // Execute SUT
@@ -54,7 +58,6 @@ class ConfigParseAddressSectionAddressScopeOptionValueTest : AbstractUnitFileTes
             [Address]
             Scope=invalid
             Scope=localhost
-            Scope=site
         """.trimIndent()
 
         // Execute SUT
@@ -63,7 +66,7 @@ class ConfigParseAddressSectionAddressScopeOptionValueTest : AbstractUnitFileTes
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(3, highlights)
+        assertSize(2, highlights)
     }
 
     @Test

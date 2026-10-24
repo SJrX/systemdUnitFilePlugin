@@ -15,6 +15,9 @@ class ConfigParseQfqWeightOptionValueTest : AbstractUnitFileTest() {
             Weight=1
             Weight=500
             Weight=1023
+            # QFQ_MAX_WEIGHT is 1 << 10, and the check is v > QFQ_MAX_WEIGHT (sd-check accepts 1024; asserted
+            # invalid before #568).
+            Weight=1024
         """.trimIndent()
 
         // Execute SUT
@@ -33,7 +36,7 @@ class ConfigParseQfqWeightOptionValueTest : AbstractUnitFileTest() {
         val file = """
             [QuickFairQueueingClass]
             Weight=0
-            Weight=1024
+            Weight=1025
             Weight=-1
             Weight=abc
         """.trimIndent()

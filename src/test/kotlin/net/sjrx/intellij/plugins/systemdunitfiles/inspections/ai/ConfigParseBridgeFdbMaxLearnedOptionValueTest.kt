@@ -18,6 +18,8 @@ class ConfigParseBridgeFdbMaxLearnedOptionValueTest : AbstractUnitFileTest() {
             FDBMaxLearned=1000
             FDBMaxLearned=65535
             FDBMaxLearned=4294967295
+            # safe_atou() takes base prefixes (sd-check accepts it; asserted invalid before #568).
+            FDBMaxLearned=0x100
         """.trimIndent()
 
         // Execute SUT
@@ -39,7 +41,6 @@ class ConfigParseBridgeFdbMaxLearnedOptionValueTest : AbstractUnitFileTest() {
             FDBMaxLearned=4294967296
             FDBMaxLearned=abc
             FDBMaxLearned=1.5
-            FDBMaxLearned=0x100
         """.trimIndent()
 
         // Execute SUT
@@ -48,7 +49,7 @@ class ConfigParseBridgeFdbMaxLearnedOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(5, highlights)
+        assertSize(4, highlights)
     }
 
     @Test

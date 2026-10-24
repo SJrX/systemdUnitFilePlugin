@@ -18,8 +18,12 @@ class ConfigParseFairQueueingSizeOptionValueTest : AbstractUnitFileTest() {
             InitialQuantumBytes=64K
             QuantumBytes=1M
             InitialQuantumBytes=2G
-            QuantumBytes=1T
             InitialQuantumBytes=0
+            # parse_size() takes fractions and several elements (sd-check accepts these; 10.5M was asserted
+            # invalid before #568).
+            QuantumBytes=10.5M
+            QuantumBytes=1G 512M
+            QuantumBytes=4294967295
         """.trimIndent()
 
         // Execute SUT
@@ -39,9 +43,11 @@ class ConfigParseFairQueueingSizeOptionValueTest : AbstractUnitFileTest() {
             [FairQueueing]
             QuantumBytes=abc
             InitialQuantumBytes=1024L
-            QuantumBytes=10.5M
             InitialQuantumBytes=0x1000
             QuantumBytes=K
+            # More than UINT32_MAX bytes is "too large" (sd-check); 1T was asserted valid before #568.
+            QuantumBytes=1T
+            InitialQuantumBytes=4G
         """.trimIndent()
 
         // Execute SUT
@@ -50,6 +56,6 @@ class ConfigParseFairQueueingSizeOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(5, highlights)
+        assertSize(6, highlights)
     }
 }

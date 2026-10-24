@@ -15,6 +15,10 @@ class ConfigParseRoutePrefixPreferenceOptionValueTest : AbstractUnitFileTest() {
             Preference=high
             Preference=medium
             Preference=low
+            # config_parse_router_preference also takes normal and default for medium (sd-check accepts
+            # both; normal was asserted invalid before #568).
+            Preference=normal
+            Preference=default
         """.trimIndent()
 
         // Execute SUT
@@ -33,7 +37,6 @@ class ConfigParseRoutePrefixPreferenceOptionValueTest : AbstractUnitFileTest() {
         val file = """
             [IPv6RoutePrefix]
             Preference=invalid
-            Preference=normal
             Preference=highest
             Preference=lowest
             Preference=1
@@ -46,6 +49,6 @@ class ConfigParseRoutePrefixPreferenceOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(6, highlights)
+        assertSize(5, highlights)
     }
 }

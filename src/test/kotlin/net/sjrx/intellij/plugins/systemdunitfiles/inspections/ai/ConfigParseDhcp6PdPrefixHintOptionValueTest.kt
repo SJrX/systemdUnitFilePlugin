@@ -19,6 +19,9 @@ class ConfigParseDhcp6PdPrefixHintOptionValueTest : AbstractUnitFileTest() {
             PrefixDelegationHint=2001:db8::1/48
             PrefixDelegationHint=fd00::/8
             PrefixDelegationHint=::/1
+            # Without a prefix length in_addr_prefix_from_string uses 128 (sd-check accepts it; asserted invalid
+            # before #568).
+            PrefixDelegationHint=2001:db8::
         """.trimIndent()
 
         // Execute SUT
@@ -39,7 +42,6 @@ class ConfigParseDhcp6PdPrefixHintOptionValueTest : AbstractUnitFileTest() {
             PrefixDelegationHint=2001:db8::/0
             PrefixDelegationHint=fe80::1/129
             PrefixDelegationHint=192.168.1.0/24
-            PrefixDelegationHint=2001:db8::
             PrefixDelegationHint=not-an-address/64
             PrefixDelegationHint=2001:db8::/
             PrefixDelegationHint=2001:db8::/256
@@ -51,7 +53,7 @@ class ConfigParseDhcp6PdPrefixHintOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(7, highlights)
+        assertSize(6, highlights)
     }
 
     @Test
