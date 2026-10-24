@@ -468,6 +468,31 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_path", "0") to ConfigParsePathOptionValue() as OptionValueInformation,
     Validator("config_parse_long", "0") to ConfigParseLongOptionValue() as OptionValueInformation,
     Validator("config_parse_iec_size_long", "0") to ConfigParseIecSizeLongOptionValue() as OptionValueInformation,
+    // Batch 2026-10: nspawn
+    // .nspawn settings (src/nspawn/nspawn-settings.c at 0f0682b773). None of these parsers is used by
+    // any other gperf table, and every (parser, ltype) below is shared only by keys of one value type.
+    Validator("config_parse_capability", "0") to ConfigParseCapabilityOptionValue() as OptionValueInformation,
+    Validator("config_parse_volatile_mode", "0") to ConfigParseVolatileModeOptionValue() as OptionValueInformation,
+    Validator("config_parse_veth_extra", "0") to ConfigParseVethExtraOptionValue() as OptionValueInformation,
+    Validator("config_parse_tmpfs", "0") to ConfigParseTmpfsOptionValue() as OptionValueInformation,
+    Validator("config_parse_restrict_address_families", "0") to ConfigParseRestrictAddressFamiliesOptionValue() as OptionValueInformation,
+    Validator("config_parse_resolv_conf", "0") to ConfigParseResolvConfOptionValue() as OptionValueInformation,
+    Validator("config_parse_pivot_root", "0") to ConfigParsePivotRootOptionValue() as OptionValueInformation,
+    // ltype only selects read-only for Overlay=/OverlayReadOnly= and Bind=/BindReadOnly=.
+    Validator("config_parse_overlay", "0") to ConfigParseOverlayOptionValue() as OptionValueInformation,
+    Validator("config_parse_overlay", "1") to ConfigParseOverlayOptionValue() as OptionValueInformation,
+    Validator("config_parse_oom_score_adjust", "0") to ConfigParseOomScoreAdjustOptionValue() as OptionValueInformation,
+    Validator("config_parse_network_zone", "0") to ConfigParseNetworkZoneOptionValue() as OptionValueInformation,
+    Validator("config_parse_network_iface_pair", "0") to ConfigParseNetworkIfacePairOptionValue() as OptionValueInformation,
+    Validator("config_parse_macvlan_iface_pair", "0") to ConfigParseMacvlanIfacePairOptionValue() as OptionValueInformation,
+    Validator("config_parse_ipvlan_iface_pair", "0") to ConfigParseIpvlanIfacePairOptionValue() as OptionValueInformation,
+    Validator("config_parse_link_journal", "0") to ConfigParseLinkJournalOptionValue() as OptionValueInformation,
+    Validator("config_parse_inaccessible", "0") to ConfigParseInaccessibleOptionValue() as OptionValueInformation,
+    Validator("config_parse_id128", "0") to ConfigParseId128OptionValue() as OptionValueInformation,
+    Validator("config_parse_expose_port", "0") to ConfigParseExposePortOptionValue() as OptionValueInformation,
+    Validator("config_parse_bind_user", "0") to ConfigParseBindUserOptionValue() as OptionValueInformation,
+    Validator("config_parse_bind", "0") to ConfigParseBindOptionValue() as OptionValueInformation,
+    Validator("config_parse_bind", "1") to ConfigParseBindOptionValue() as OptionValueInformation,
 
   )
 
