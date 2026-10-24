@@ -6,9 +6,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IP_ADDR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtouTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkRouteAddrSafeAtouTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UINT32_LIMIT
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_ROUTE_ADDR_UINT32_LIMIT
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.WhitespaceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
 
@@ -30,7 +30,7 @@ private val AT = LiteralChoiceTerminal("@")
 // After `@`: parse_ifindex() (a positive int) or, failing that, an alternative-length interface name.
 // The name branch comes first because its lenient shape also matches digits but it only *validates*
 // non-numeric names; under the classic matcher a number then falls through to the index branch.
-private val DEVICE = AlternativeCombinator(ALTERNATIVE_INTERFACE_NAME, SafeAtouTerminal(1, 2_147_483_648L))
+private val DEVICE = AlternativeCombinator(ALTERNATIVE_INTERFACE_NAME, NetworkRouteAddrSafeAtouTerminal(1, 2_147_483_648L))
 
 /**
  * Validator for `[Route] MultiPathRoute=` (.network) — the ROUTE_MULTIPATH slot, whose table entry is
@@ -53,7 +53,7 @@ class ConfigParseRouteMultiPathOptionValue : SimpleGrammarOptionValues(
             SequenceCombinator(IP_ADDR, ZeroOrOne(SequenceCombinator(AT, DEVICE))),
             SequenceCombinator(AT, DEVICE),
         ),
-        ZeroOrOne(SequenceCombinator(WhitespaceTerminal(), SafeAtouTerminal(1, 257))),
+        ZeroOrOne(SequenceCombinator(WhitespaceTerminal(), NetworkRouteAddrSafeAtouTerminal(1, 257))),
         EOF()
     )
 )

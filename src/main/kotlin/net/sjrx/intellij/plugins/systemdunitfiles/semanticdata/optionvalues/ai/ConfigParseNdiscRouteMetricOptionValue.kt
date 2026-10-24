@@ -5,9 +5,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COLON
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.Checked
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtouTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkRouteAddrSafeAtouTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UINT32_LIMIT
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_ROUTE_ADDR_UINT32_LIMIT
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtouValue
 
@@ -20,11 +20,11 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/test-network/systemd-networkd-tests.py#L8124   (RouteMetric=100:200:300)
  */
 
-private val METRIC = SafeAtouTerminal(0, UINT32_LIMIT)
+private val METRIC = NetworkRouteAddrSafeAtouTerminal(0, NETWORK_ROUTE_ADDR_UINT32_LIMIT)
 
 // high < medium < low, compared on the parsed numbers.
 // safe_atou32 skips leading whitespace, so `100: 200: 300` is fine.
-private val NEXT_METRIC = SafeAtouTerminal(0, UINT32_LIMIT, allowLeadingWhitespace = true)
+private val NEXT_METRIC = NetworkRouteAddrSafeAtouTerminal(0, NETWORK_ROUTE_ADDR_UINT32_LIMIT, allowLeadingWhitespace = true)
 
 // extract_many_words(…, EXTRACT_DONT_COALESCE_SEPARATORS) leaves p at "" after a single trailing `:`,
 // which passes the isempty(p) check, so `100:200:300:` is accepted too.

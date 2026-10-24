@@ -4,9 +4,9 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtouTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkRouteAddrSafeAtouTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UINT32_LIMIT
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_ROUTE_ADDR_UINT32_LIMIT
 
 /*
  * [Route] Table= and [RoutingPolicyRule] Table= (.network).
@@ -44,7 +44,7 @@ class ConfigParseRouteTableOptionValue(parserName: String = "config_parse_route_
     SequenceCombinator(
         // The name branch must come first: its lenient shape matches digits too but only *validates*
         // non-numeric names, so under the classic matcher a number falls through to the second branch.
-        AlternativeCombinator(ROUTE_TABLE_NAME, SafeAtouTerminal(1, UINT32_LIMIT)),
+        AlternativeCombinator(ROUTE_TABLE_NAME, NetworkRouteAddrSafeAtouTerminal(1, NETWORK_ROUTE_ADDR_UINT32_LIMIT)),
         EOF()
     )
 )

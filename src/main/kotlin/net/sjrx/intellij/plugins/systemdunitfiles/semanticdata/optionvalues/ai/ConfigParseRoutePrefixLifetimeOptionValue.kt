@@ -3,7 +3,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.USEC_INFINITY
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_ROUTE_ADDR_USEC_INFINITY
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.USEC_PER_SEC
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.divRoundUp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.timeSpan
@@ -30,5 +30,5 @@ private val UINT32_MAX: BigInteger = BigInteger.valueOf(4_294_967_295L)
  */
 class ConfigParseRoutePrefixLifetimeOptionValue : SimpleGrammarOptionValues(
     "config_parse_route_prefix_lifetime",
-    SequenceCombinator(timeSpan { it == USEC_INFINITY || divRoundUp(it, USEC_PER_SEC) < UINT32_MAX }, EOF())
+    SequenceCombinator(timeSpan { it == NETWORK_ROUTE_ADDR_USEC_INFINITY || divRoundUp(it, USEC_PER_SEC) < UINT32_MAX }, EOF())
 )

@@ -5,7 +5,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.Checked
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtouTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkRouteAddrSafeAtouTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtouValue
 
@@ -58,7 +58,7 @@ class ConfigParseRoutingPolicyRuleIpProtocolOptionValue : SimpleGrammarOptionVal
     SequenceCombinator(
         AlternativeCombinator(
             FlexibleLiteralChoiceTerminal(*IP_PROTOCOL_NAMES, ignoreCase = true),
-            Checked(SafeAtouTerminal(0, 256)) { text -> safeAtouValue(text)?.toInt() in IP_PROTOCOL_NUMBERS },
+            Checked(NetworkRouteAddrSafeAtouTerminal(0, 256)) { text -> safeAtouValue(text)?.toInt() in IP_PROTOCOL_NUMBERS },
         ),
         EOF()
     )

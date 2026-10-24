@@ -4,7 +4,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN_ANY_CASE
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_ROUTE_ADDR_BOOLEAN_ANY_CASE
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
@@ -37,7 +37,7 @@ class ConfigParseRouterPrefixDelegationOptionValue : SimpleGrammarOptionValues(
     SequenceCombinator(
         AlternativeCombinator(
             FlexibleLiteralChoiceTerminal("static", "dhcpv6"),
-            BOOLEAN_ANY_CASE,
+            NETWORK_ROUTE_ADDR_BOOLEAN_ANY_CASE,
         ),
         EOF()
     )
@@ -55,7 +55,7 @@ class ConfigParseRouterPrefixDelegationOptionValue : SimpleGrammarOptionValues(
     // streq(lvalue, "IPv6SendRA") → parse_boolean() only.
     val SEND_RA_BOOLEAN_ONLY = SimpleGrammarOptionValues(
         "config_parse_router_prefix_delegation",
-        SequenceCombinator(BOOLEAN_ANY_CASE, EOF())
+        SequenceCombinator(NETWORK_ROUTE_ADDR_BOOLEAN_ANY_CASE, EOF())
     )
   }
 }

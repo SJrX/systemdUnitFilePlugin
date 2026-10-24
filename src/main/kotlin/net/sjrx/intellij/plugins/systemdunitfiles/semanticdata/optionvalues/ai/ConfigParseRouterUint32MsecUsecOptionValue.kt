@@ -3,7 +3,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.USEC_INFINITY
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_ROUTE_ADDR_USEC_INFINITY
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.USEC_PER_MSEC
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.timeSpan
 import java.math.BigInteger
@@ -32,5 +32,5 @@ private val RADV_MAX_UINT32_MSEC_USEC: BigInteger = BigInteger.valueOf(4_294_967
  */
 class ConfigParseRouterUint32MsecUsecOptionValue : SimpleGrammarOptionValues(
     "config_parse_router_uint32_msec_usec",
-    SequenceCombinator(timeSpan { it == USEC_INFINITY || it <= RADV_MAX_UINT32_MSEC_USEC }, EOF())
+    SequenceCombinator(timeSpan { it == NETWORK_ROUTE_ADDR_USEC_INFINITY || it <= RADV_MAX_UINT32_MSEC_USEC }, EOF())
 )

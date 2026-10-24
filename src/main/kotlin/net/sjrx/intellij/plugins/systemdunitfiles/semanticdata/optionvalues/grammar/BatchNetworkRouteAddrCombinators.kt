@@ -106,7 +106,7 @@ fun safeAtouValue(text: String): BigInteger? {
  * `::/ 64` after a prefix slash), so that whitespace is part of the number token. Leave it off where the
  * value was already split into words on whitespace, or where whitespace is the separator.
  */
-class SafeAtouTerminal(
+class NetworkRouteAddrSafeAtouTerminal(
   private val minInclusive: Long,
   private val maxExclusive: Long,
   private val allowLeadingWhitespace: Boolean = false,
@@ -143,7 +143,7 @@ class SafeAtouTerminal(
   }
 }
 
-const val UINT32_LIMIT = 4_294_967_296L
+const val NETWORK_ROUTE_ADDR_UINT32_LIMIT = 4_294_967_296L
 
 
 // ---------------------------------------------------------------------------------------------------
@@ -182,8 +182,8 @@ private val TIME_UNIT_USEC: Map<String, BigInteger> = run {
   )
 }
 
-/** USEC_INFINITY, i.e. UINT64_MAX. */
-val USEC_INFINITY: BigInteger = BigInteger.ONE.shiftLeft(64).subtract(BigInteger.ONE)
+/** NETWORK_ROUTE_ADDR_USEC_INFINITY, i.e. UINT64_MAX. */
+val NETWORK_ROUTE_ADDR_USEC_INFINITY: BigInteger = BigInteger.ONE.shiftLeft(64).subtract(BigInteger.ONE)
 val USEC_PER_SEC: BigInteger = BigInteger.valueOf(1_000_000L)
 val USEC_PER_MSEC: BigInteger = BigInteger.valueOf(1_000L)
 
@@ -198,7 +198,7 @@ private val TIME_ELEMENT = AlternativeCombinator(
 )
 
 /** Every spelling parse_sec() accepts, structurally; not range-checked. Not followed by EOF. */
-val PARSE_SEC = AlternativeCombinator(
+val NETWORK_ROUTE_ADDR_PARSE_SEC = AlternativeCombinator(
   TIME_INFINITY,
   OneOrMore(SequenceCombinator(TIME_ELEMENT, ZeroOrOne(WhitespaceTerminal()))),
 )
@@ -206,13 +206,13 @@ val PARSE_SEC = AlternativeCombinator(
 private val TIME_ELEMENT_REGEX = Regex("""\s*(?:\+(?=[0-9]))?([0-9]*)(?:\.([0-9]+))?\s*(seconds|second|sec|s|minutes|minute|min|months|month|M|msec|ms|m|hours|hour|hr|h|days|day|d|weeks|week|w|years|year|y|usec|us|μs|µs)?""")
 
 /**
- * The value parse_sec() gives [text] in microseconds — [USEC_INFINITY] for `infinity` — or null if
+ * The value parse_sec() gives [text] in microseconds — [NETWORK_ROUTE_ADDR_USEC_INFINITY] for `infinity` — or null if
  * parse_sec() would fail (including its -ERANGE overflow checks). [text] is expected to be something
- * [PARSE_SEC] matched.
+ * [NETWORK_ROUTE_ADDR_PARSE_SEC] matched.
  */
 fun parseSecUsec(text: String): BigInteger? {
   val t = text.trim()
-  if (t == "infinity") return USEC_INFINITY
+  if (t == "infinity") return NETWORK_ROUTE_ADDR_USEC_INFINITY
   var pos = 0
   var usec = BigInteger.ZERO
   var something = false
@@ -224,14 +224,14 @@ fun parseSecUsec(text: String): BigInteger? {
     if (whole.isEmpty() && frac.isEmpty()) return null
     val multiplier = TIME_UNIT_USEC[m.groupValues[3]] ?: USEC_PER_SEC
     val l = if (whole.isEmpty()) BigInteger.ZERO else BigInteger(whole)
-    if (l >= USEC_INFINITY.divide(multiplier)) return null
+    if (l >= NETWORK_ROUTE_ADDR_USEC_INFINITY.divide(multiplier)) return null
     usec = usec.add(l.multiply(multiplier))
     var scale = multiplier.divide(BigInteger.TEN)
     for (c in frac) {
       usec = usec.add(BigInteger.valueOf((c - '0').toLong()).multiply(scale))
       scale = scale.divide(BigInteger.TEN)
     }
-    if (usec >= USEC_INFINITY) return null
+    if (usec >= NETWORK_ROUTE_ADDR_USEC_INFINITY) return null
     something = true
     pos = m.range.last + 1
   }
@@ -239,11 +239,11 @@ fun parseSecUsec(text: String): BigInteger? {
 }
 
 /**
- * A parse_sec() value whose microsecond count must satisfy [accept] (which receives [USEC_INFINITY] for
+ * A parse_sec() value whose microsecond count must satisfy [accept] (which receives [NETWORK_ROUTE_ADDR_USEC_INFINITY] for
  * `infinity`). Not followed by EOF.
  */
 fun timeSpan(accept: (BigInteger) -> Boolean = { true }): Combinator =
-  Checked(PARSE_SEC) { text -> parseSecUsec(text)?.let(accept) ?: false }
+  Checked(NETWORK_ROUTE_ADDR_PARSE_SEC) { text -> parseSecUsec(text)?.let(accept) ?: false }
 
 /** DIV_ROUND_UP(a, b) for non-negative a. */
 fun divRoundUp(a: BigInteger, b: BigInteger): BigInteger = a.add(b).subtract(BigInteger.ONE).divide(b)
@@ -432,7 +432,7 @@ fun ipIsMulticast(bytes: ByteArray): Boolean =
 // ---------------------------------------------------------------------------------------------------
 // parse_boolean() (src/basic/parse-util.c) compares with STRCASE_IN_SET, so `Yes`, `TRUE` and `Off` are
 // all booleans. The shared [BOOLEAN] terminal is case-sensitive; this one is not.
-val BOOLEAN_ANY_CASE = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreCase = true)
+val NETWORK_ROUTE_ADDR_BOOLEAN_ANY_CASE = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreCase = true)
 
 
 // ---------------------------------------------------------------------------------------------------
@@ -440,4 +440,4 @@ val BOOLEAN_ANY_CASE = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreC
 // and an optional `/LEN`, where LEN goes through in_addr_parse_prefixlen → safe_atou8 (base 0) and must
 // be ≤ 128 (safe_atou8 skips whitespace, so `::/ 64` is fine). Without a slash the prefix length is 128.
 // Not followed by EOF.
-val IPV6_PREFIX_SAFE_LEN: Combinator = SequenceCombinator(IPV6_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, SafeAtouTerminal(0, 129, allowLeadingWhitespace = true))))
+val IPV6_PREFIX_SAFE_LEN: Combinator = SequenceCombinator(IPV6_ADDR, ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, NetworkRouteAddrSafeAtouTerminal(0, 129, allowLeadingWhitespace = true))))

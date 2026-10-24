@@ -3,9 +3,9 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.CIDR_SEPARATOR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtouTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NetworkRouteAddrSafeAtouTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.UINT32_LIMIT
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_ROUTE_ADDR_UINT32_LIMIT
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
 
 /*
@@ -29,8 +29,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 class ConfigParseRoutingPolicyRuleFirewallMarkOptionValue : SimpleGrammarOptionValues(
     "config_parse_routing_policy_rule",
     SequenceCombinator(
-        SafeAtouTerminal(0, UINT32_LIMIT),
-        ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, SafeAtouTerminal(0, UINT32_LIMIT, allowLeadingWhitespace = true))),
+        NetworkRouteAddrSafeAtouTerminal(0, NETWORK_ROUTE_ADDR_UINT32_LIMIT),
+        ZeroOrOne(SequenceCombinator(CIDR_SEPARATOR, NetworkRouteAddrSafeAtouTerminal(0, NETWORK_ROUTE_ADDR_UINT32_LIMIT, allowLeadingWhitespace = true))),
         EOF()
     )
 )

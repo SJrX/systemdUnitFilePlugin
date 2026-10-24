@@ -3,7 +3,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.USEC_INFINITY
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_ROUTE_ADDR_USEC_INFINITY
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.USEC_PER_SEC
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.timeSpan
 import java.math.BigInteger
@@ -30,5 +30,5 @@ private val RADV_HOME_AGENT_MAX_LIFETIME_USEC: BigInteger = BigInteger.valueOf(6
  */
 class ConfigParseRouterHomeAgentLifetimeOptionValue : SimpleGrammarOptionValues(
     "config_parse_router_home_agent_lifetime",
-    SequenceCombinator(timeSpan { it.signum() > 0 && it != USEC_INFINITY && it <= RADV_HOME_AGENT_MAX_LIFETIME_USEC }, EOF())
+    SequenceCombinator(timeSpan { it.signum() > 0 && it != NETWORK_ROUTE_ADDR_USEC_INFINITY && it <= RADV_HOME_AGENT_MAX_LIFETIME_USEC }, EOF())
 )

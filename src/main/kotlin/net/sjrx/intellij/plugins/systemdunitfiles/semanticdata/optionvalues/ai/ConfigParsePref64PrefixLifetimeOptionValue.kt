@@ -3,7 +3,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.USEC_INFINITY
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.NETWORK_ROUTE_ADDR_USEC_INFINITY
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.USEC_PER_SEC
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.divRoundUp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.timeSpan
@@ -31,5 +31,5 @@ private val SCALED_LIFETIME_LIMIT: BigInteger = BigInteger.valueOf(1L shl 13)
  */
 class ConfigParsePref64PrefixLifetimeOptionValue : SimpleGrammarOptionValues(
     "config_parse_pref64_prefix_lifetime",
-    SequenceCombinator(timeSpan { it != USEC_INFINITY && divRoundUp(it, EIGHT_SECONDS) < SCALED_LIFETIME_LIMIT }, EOF())
+    SequenceCombinator(timeSpan { it != NETWORK_ROUTE_ADDR_USEC_INFINITY && divRoundUp(it, EIGHT_SECONDS) < SCALED_LIFETIME_LIMIT }, EOF())
 )
