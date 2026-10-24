@@ -56,7 +56,25 @@ open class SimpleGrammarOptionValues(validatorName: String, grammar: Combinator)
     )
 
     val validators = mapOf(
-      Validator("config_parse_ip_port", "0") to SimpleGrammarOptionValues("config_parse_ip_port", SequenceCombinator(IntegerTerminal(0, 65536 ), EOF())),
+      // config_parse_ip_port → parse_ip_port: safe_atou16_full(…, SAFE_ATO_REFUSE_LEADING_WHITESPACE), then 0 is
+      // refused (sd-check: `FooOverUDP.Port=0` is "Invalid argument"; `0x10` is fine).
+      // https://github.com/systemd/systemd/blob/0f0682b773/src/shared/conf-parser.c#L1704-L1735
+      // https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L718-L734
+      Validator("config_parse_ip_port", "0") to SimpleGrammarOptionValues(
+        "config_parse_ip_port",
+        SequenceCombinator(
+          SafeAtoTerminal(
+            signed = false,
+            base = 0,
+            flags = setOf(SafeAtoTerminal.Flag.REFUSE_LEADING_WHITESPACE),
+            minInclusive = 1L,
+            maxInclusive = 65_535L,
+            acceptsWhitespace = true,
+            acceptsMinus = true,
+          ),
+          EOF(),
+        ),
+      ),
       Validator("config_parse_coalesce_u32", "0") to SimpleGrammarOptionValues("config_parse_coalesce_u32",
                                                                                SequenceCombinator(
                                                                                  AlternativeCombinator(

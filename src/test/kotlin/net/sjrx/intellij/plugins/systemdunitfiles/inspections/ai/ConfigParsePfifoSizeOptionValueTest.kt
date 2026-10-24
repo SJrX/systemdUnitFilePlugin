@@ -18,6 +18,8 @@ class ConfigParsePfifoSizeOptionValueTest : AbstractUnitFileTest() {
             PacketLimit=1000
             PacketLimit=65535
             PacketLimit=4294967295
+            # safe_atou32 takes base prefixes (sd-check accepts it; asserted invalid before #568).
+            PacketLimit=0x100
         """.trimIndent()
 
         // Execute SUT
@@ -39,7 +41,6 @@ class ConfigParsePfifoSizeOptionValueTest : AbstractUnitFileTest() {
             PacketLimit=4294967296
             PacketLimit=abc
             PacketLimit=10.5
-            PacketLimit=0x100
         """.trimIndent()
 
         // Execute SUT
@@ -48,7 +49,7 @@ class ConfigParsePfifoSizeOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(5, highlights)
+        assertSize(4, highlights)
     }
     
     @Test

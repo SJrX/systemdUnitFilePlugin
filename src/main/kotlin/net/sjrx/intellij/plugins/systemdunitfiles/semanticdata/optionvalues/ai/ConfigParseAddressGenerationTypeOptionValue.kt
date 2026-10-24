@@ -3,12 +3,14 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.COLON
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.Checked
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IPV6_ADDR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ipLiteralBytes
 
 /*
  * The IPv6 address-generation tokens: [Network] IPv6Token=, [IPv6AcceptRA] Token= and
@@ -16,6 +18,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  *
  * man    https://www.freedesktop.org/software/systemd/man/latest/systemd.network.html#IPv6Token=
  * parser https://github.com/systemd/systemd/blob/a8e93919c3/src/network/networkd-address-generation.c  config_parse_address_generation_type
+ * static https://github.com/systemd/systemd/blob/0f0682b773/src/network/networkd-address-generation.c#L523-L533   static mode: only the low 64 bits are used and must not be all zero
  * secret https://github.com/systemd/systemd/blob/a8e93919c3/src/libsystemd/sd-id128/id128-util.c       id128_from_string_nonzero
  *
  * systemd's own test/test-network/conf/25-ipv6-prefix-veth-token-prefixstable.network doubles as the
@@ -34,9 +37,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * ADDRESS is always parsed as IPv6, and SECRET_KEY goes through id128_from_string_nonzero, i.e. 32
  * hex digits or the dashed UUID spelling, and not all-zero.
  *
- * One divergence: for the static mode systemd also rejects an address whose low 64 bits are zero
- * (`static:::`), since only those bits are used. That is a property of the parsed value rather than
- * of its shape, so this grammar accepts it.
+ * For the static mode systemd also rejects an address whose low 64 bits are zero (`static:::`, `::`,
+ * `static:2001:db8::`: "cannot be the ANY address"), since only those bits are used; `static:::1` and
+ * `::1:0:0:0` are fine (sd-check at 0f0682b773). prefixstable keeps the high 64 bits instead and has no
+ * such check, so `prefixstable:::` is accepted.
  */
 class ConfigParseAddressGenerationTypeOptionValue : SimpleGrammarOptionValues(
     "config_parse_address_generation_type",
@@ -48,8 +52,11 @@ class ConfigParseAddressGenerationTypeOptionValue : SimpleGrammarOptionValues(
                 ZeroOrOne(SequenceCombinator(LiteralChoiceTerminal(","), SECRET_KEY)),
             ),
             LiteralChoiceTerminal("eui64"),
-            SequenceCombinator(LiteralChoiceTerminal("static:"), IPV6_ADDR),
-            IPV6_ADDR,
+            SequenceCombinator(
+                LiteralChoiceTerminal("static:"),
+                Checked(IPV6_ADDR) { text -> ipLiteralBytes(text)?.let { bytes -> bytes.drop(8).any { it.toInt() != 0 } } ?: true },
+            ),
+            Checked(IPV6_ADDR) { text -> ipLiteralBytes(text)?.let { bytes -> bytes.drop(8).any { it.toInt() != 0 } } ?: true },
         ),
         EOF()
     )

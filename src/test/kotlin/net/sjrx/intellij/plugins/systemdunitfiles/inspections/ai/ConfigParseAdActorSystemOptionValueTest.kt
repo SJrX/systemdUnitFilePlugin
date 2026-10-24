@@ -14,8 +14,11 @@ class ConfigParseAdActorSystemOptionValueTest : AbstractUnitFileTest() {
             [Bond]
             AdActorSystem=00:11:22:33:44:55
             AdActorSystem=AA:BB:CC:DD:EE:FF
-            AdActorSystem=01:23:45:67:89:ab
             AdActorSystem=FE:DC:BA:98:76:54
+            # parse_ether_addr() also takes the hyphen form and 1-digit fields (sd-check accepts both); these
+            # were asserted invalid before #568.
+            AdActorSystem=00-11-22-33-44-55
+            AdActorSystem=0:1:2:3:4:5
         """.trimIndent()
 
         // Execute SUT
@@ -35,9 +38,8 @@ class ConfigParseAdActorSystemOptionValueTest : AbstractUnitFileTest() {
             [Bond]
             AdActorSystem=<error descr="Invalid value">00:11:22:33:44</error>
             AdActorSystem=<error descr="Invalid value">00:11:22:33:44:55:66</error>
-            AdActorSystem=<error descr="Invalid value">00-11-22-33-44-55</error>
             AdActorSystem=<error descr="Invalid value">GG:HH:II:JJ:KK:LL</error>
-            AdActorSystem=<error descr="Invalid value">0:1:2:3:4:5</error>
+            AdActorSystem=<error descr="Invalid value">01:23:45:67:89:ab</error>
             AdActorSystem=<error descr="Invalid value">001122334455</error>
         """.trimIndent()
 
@@ -47,7 +49,7 @@ class ConfigParseAdActorSystemOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         // Verification
-        assertSize(6, highlights)
+        assertSize(5, highlights)
     }
 
     @Test
