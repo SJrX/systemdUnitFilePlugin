@@ -9,7 +9,6 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gra
  * escape https://github.com/systemd/systemd/blob/0f0682b773/src/basic/escape.c#L104             cunescape_one
  * path   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/parse-helpers.c#L34      path_simplify_and_warn
  * b64    https://github.com/systemd/systemd/blob/0f0682b773/src/basic/hexdecoct.c#L755          unbase64mem_full
- * uint   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L429         safe_atou_full (+ mangle_base L403)
  *
  * The grammar sees the RAW value text, before systemd unquotes or unescapes anything, so the terminals
  * below model the raw spelling of a word. Most of these settings split their value twice:
@@ -177,31 +176,3 @@ val BASE64_DATA = RegexTerminal("""[\s\S]*""", """$B64_GROUPS$B64_TAIL(?![\s\S])
 
 /** Base64 as unbase64mem() accepts it, at least one group. */
 val NON_EMPTY_BASE64_DATA = RegexTerminal("""[\s\S]+""", """(?=\s*\S)$B64_GROUPS$B64_TAIL(?![\s\S])""")
-
-// ---------------------------------------------------------------------------------------------------
-// Unsigned numbers as safe_atou() reads them: strtoul(…, base 0) plus mangle_base()'s Python-style
-// "0b"/"0o" prefixes — decimal, 0x hex, leading-zero octal, 0b binary, 0o octal — and an optional '+'
-// (strtoul accepts a sign; only a non-zero negative is refused). mangle_base() looks for 0b/0o BEFORE
-// strtoul has consumed a sign, so "+0b1" is refused (strtoul reads "+0" and stops at 'b').
-
-private val PLUS_SIGN = LiteralChoiceTerminal("+")
-
-// "-0", "-00", "-0x0": strtoul accepts the sign and the result is 0, which `l != 0 && s[0] == '-'` lets
-// through. ("-0b0"/"-0o0" are refused: mangle_base does not see past the '-'.)
-private val NEGATIVE_ZERO = RegexTerminal("""-[0-9a-zA-Z]+""", """-(?:0[xX]0+|0+)(?![0-9a-zA-Z])""")
-
-/**
- * An unsigned number in `[0, maxExclusive)` spelled any way safe_atou() accepts. The 0b/0o forms are
- * tried first (UnsignedNumberTerminal would otherwise read their leading 0 and strand the rest); their
- * upper bound is only enforced by [binaryOrOctalSemantic], which the caller supplies. With
- * [allowNegativeZero], a negative zero (`-0`, `-0x0`) is accepted too — only for callers where a
- * leading '-' cannot mean anything else (not NUMAMask=, where '-' is the range separator).
- */
-fun safeAtouNumber(maxExclusive: Long, binaryOrOctalSemantic: String, allowNegativeZero: Boolean = false): Combinator {
-  val alternatives = mutableListOf<Combinator>(
-    RegexTerminal("""0[bB][0-9a-zA-Z]+|0[oO][0-9a-zA-Z]+""", """(?:$binaryOrOctalSemantic)(?![0-9a-zA-Z])"""),
-  )
-  if (allowNegativeZero) alternatives += NEGATIVE_ZERO
-  alternatives += SequenceCombinator(ZeroOrOne(PLUS_SIGN), UnsignedNumberTerminal(0, maxExclusive))
-  return AlternativeCombinator(*alternatives.toTypedArray())
-}

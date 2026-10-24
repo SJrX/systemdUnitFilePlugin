@@ -6,10 +6,10 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.HYPHEN
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrMore
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtouNumber
 
 /*
  * [Service]/[Socket]/[Mount]/[Swap] NUMAMask=.
@@ -24,10 +24,34 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/units/TEST-36-NUMAPOLICY.sh#L166
  */
 
-// 0b/0o spellings of a value below CPU_SET_MAX_NCPU (8192 = 2^13 = 0o20000).
-private val NODE_INDEX = safeAtouNumber(8192, """0[bB]0*[01]{1,13}|0[oO]0*(?:1[0-7]{4}|[0-7]{1,4})""")
-
-private val NODE_RANGE = SequenceCombinator(NODE_INDEX, ZeroOrOne(SequenceCombinator(HYPHEN, NODE_INDEX)))
+// parse_range() cuts the word at its first '-', so the lower bound never sees a '-' (`-0` is an empty lower
+// word, refused) while the upper bound is the rest of the word and may itself start with one (`0--0` is 0-0).
+// Both are below CPU_SET_MAX_NCPU (8192). The word was split on whitespace, so no whitespace reaches either.
+private val NODE_RANGE = SequenceCombinator(
+  SafeAtoTerminal(
+    signed = false,
+    base = 0,
+    flags = emptySet(),
+    minInclusive = 0L,
+    maxInclusive = 8191L,
+    acceptsWhitespace = false,
+    acceptsMinus = false,
+  ),
+  ZeroOrOne(
+    SequenceCombinator(
+      HYPHEN,
+      SafeAtoTerminal(
+        signed = false,
+        base = 0,
+        flags = emptySet(),
+        minInclusive = 0L,
+        maxInclusive = 8191L,
+        acceptsWhitespace = false,
+        acceptsMinus = true,
+      ),
+    ),
+  ),
+)
 
 private val DOUBLE_QUOTE = LiteralChoiceTerminal("\"")
 private val SINGLE_QUOTE = LiteralChoiceTerminal("'")
@@ -52,8 +76,9 @@ private val NODE_SEPARATOR = RegexTerminal("""[\s,]+""", """[\s,]+""")
  *
  * Either exactly `all` (compared with streq before anything else) or a CPU-set style list: node
  * indexes `N` or ranges `N-M`, separated by whitespace and/or commas. Each number is read by
- * safe_atou(), so `0x10`, `010` (octal), `0b11` and `0o7` are all legal spellings, and must be below
- * CPU_SET_MAX_NCPU (8192). systemd does not check against the machine's actual NUMA node count at
+ * safe_atou() (see [SafeAtoTerminal]), so `0x10`, `010` (octal), `0b11`, `0o7` and `0b+1` are all legal
+ * spellings, and must be below CPU_SET_MAX_NCPU (8192). The upper bound may be a negative zero (`0--0`);
+ * the lower bound may not, because parse_range() cuts at the first `-`. systemd does not check against the machine's actual NUMA node count at
  * parse time.
  *
  * Not checked: a reversed range such as `3-1` (systemd logs "Invalid CPU range" and skips that word —

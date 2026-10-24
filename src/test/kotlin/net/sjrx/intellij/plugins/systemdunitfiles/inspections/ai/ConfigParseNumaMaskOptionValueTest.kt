@@ -6,6 +6,9 @@ import org.junit.Test
 
 class ConfigParseNumaMaskOptionValueTest : AbstractUnitFileTest() {
 
+  // Every value below was checked with sd-check (systemd 0f0682b773). parse_range() cuts each word at its first
+  // '-', so the upper bound may be "-0" or "+1" ("0--0", "0-+1") while "-0" alone has an empty lower bound and
+  // "0b-0" has the lower bound "0b" (both "Failed to parse CPU range").
   @Test
   fun testValidValues() {
     // language="unit file (systemd)"
@@ -22,6 +25,12 @@ class ConfigParseNumaMaskOptionValueTest : AbstractUnitFileTest() {
       NUMAMask="0-3"
       NUMAMask=%i
       NUMAMask=
+      NUMAMask=0b+1
+      NUMAMask=0-0b+1
+      NUMAMask=0--0
+      NUMAMask=0-+1
+      NUMAMask=+1
+      NUMAMask=0-0b-0
     """.trimIndent()
 
     setupFileInEditor("file.service", file)
@@ -45,12 +54,15 @@ class ConfigParseNumaMaskOptionValueTest : AbstractUnitFileTest() {
       NUMAMask=foo
       NUMAMask=08
       NUMAMask=+0b1
+      NUMAMask=-0
+      NUMAMask=0b-0
+      NUMAMask=1-2-3
     """.trimIndent()
 
     setupFileInEditor("file.service", file)
     enableInspection(InvalidValueInspection::class.java)
     val highlights = myFixture.doHighlighting()
 
-    assertSize(9, highlights)
+    assertSize(12, highlights)
   }
 }

@@ -4,8 +4,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.FlexibleLiteralChoiceTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.safeAtouNumber
 
 /*
  * [Slice] ConcurrencyHardMax= / ConcurrencySoftMax= / ActivatingConcurrencyMax=.
@@ -21,17 +21,25 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * Validator for the [Slice] concurrency limits (config_parse_concurrency_max, ltype 0):
  * `ConcurrencyHardMax=`, `ConcurrencySoftMax=` and `ActivatingConcurrencyMax=`.
  *
- * `infinity` (exact, streq), or an unsigned int as safe_atou() reads it — decimal, `0x` hex,
- * leading-zero octal, `0b`/`0o`, optionally `+`-signed (but not `+0b…`/`+0o…`, which mangle_base misses) —
- * up to UINT_MAX (4294967295). `0` is legal (it blocks all activation), and so is a negative zero such
- * as `-0` (strtoul accepts it and safe_atou only refuses a non-zero negative).
+ * `infinity` (exact, streq), or an unsigned int as safe_atou() reads it (see [SafeAtoTerminal]), up to
+ * UINT_MAX (4294967295). The value is the whole (stripped) setting, so whitespace can still reach the parser:
+ * `0b 1` and a leading `\v` are accepted, as are `0b+1`, `0b-0`, a negative zero such as `-0`, and `+`-signed
+ * numbers (but not `+0b1`/`-0b0`, which mangle_base misses). `0` is legal (it blocks all activation).
  */
 class ConfigParseConcurrencyMaxOptionValue : SimpleGrammarOptionValues(
   "config_parse_concurrency_max",
   SequenceCombinator(
     AlternativeCombinator(
       FlexibleLiteralChoiceTerminal("infinity"),
-      safeAtouNumber(4_294_967_296L, """0[bB]0*[01]{1,32}|0[oO]0*(?:[0-3][0-7]{10}|[0-7]{1,10})""", allowNegativeZero = true),
+      SafeAtoTerminal(
+        signed = false,
+        base = 0,
+        flags = emptySet(),
+        minInclusive = 0L,
+        maxInclusive = 4_294_967_295L,
+        acceptsWhitespace = true,
+        acceptsMinus = true,
+      ),
     ),
     EOF(),
   )
