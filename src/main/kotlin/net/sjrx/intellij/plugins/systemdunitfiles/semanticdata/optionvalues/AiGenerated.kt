@@ -413,6 +413,47 @@ fun getAllAIGeneratedValidators(): Map<Validator, OptionValueInformation> {
     Validator("config_parse_socket_service", "0") to ConfigParseSocketServiceOptionValue() as OptionValueInformation,
     Validator("config_parse_service_sockets", "0") to ConfigParseServiceSocketsOptionValue() as OptionValueInformation,
 
+    // Batch 2026-10: netdev-link
+    // systemd-networkd .netdev (src/network/netdev/) and udev .link (src/udev/net/) settings, pinned to
+    // systemd 0f0682b773. Every key using each (parser, ltype) pair was checked in the gperf files; where
+    // a parser branches on the key name (vxlan_address) the grammar is the union and says so.
+    Validator("config_parse_badadv_bandwidth", "0") to ConfigParseBadadvBandwidthOptionValue() as OptionValueInformation,
+    Validator("config_parse_vxlan_address", "0") to ConfigParseVxlanAddressOptionValue() as OptionValueInformation,
+    Validator("config_parse_wireguard_peer_key_file", "0") to ConfigParseWireguardPeerKeyFileOptionValue() as OptionValueInformation,
+    Validator("config_parse_vlanprotocol", "0") to ConfigParseVlanprotocolOptionValue() as OptionValueInformation,
+    Validator("config_parse_vlan_qos_maps", "0") to ConfigParseVlanQosMapsOptionValue() as OptionValueInformation,
+    Validator("config_parse_macsec_key_id", "0") to ConfigParseMacsecKeyIdOptionValue() as OptionValueInformation,
+    Validator("config_parse_macsec_key_file", "0") to ConfigParseMacsecKeyFileOptionValue() as OptionValueInformation,
+    Validator("config_parse_cpu_set", "0") to ConfigParseCpuSetOptionValue() as OptionValueInformation,
+    Validator("config_parse_wol_password", "0") to ConfigParseWolPasswordOptionValue() as OptionValueInformation,
+    Validator("config_parse_wireguard_route_table", "0") to ConfigParseWireguardRouteTableOptionValue() as OptionValueInformation,
+    Validator("config_parse_wireguard_private_key_file", "0") to ConfigParseWireguardPrivateKeyFileOptionValue() as OptionValueInformation,
+    Validator("config_parse_wireguard_private_key", "0") to ConfigParseWireguardPrivateKeyOptionValue() as OptionValueInformation,
+    Validator("config_parse_wireguard_peer_route_table", "0") to ConfigParseWireguardPeerRouteTableOptionValue() as OptionValueInformation,
+    Validator("config_parse_wireguard_endpoint", "0") to ConfigParseWireguardEndpointOptionValue() as OptionValueInformation,
+    Validator("config_parse_wireguard_allowed_ips", "0") to ConfigParseWireguardAllowedIpsOptionValue() as OptionValueInformation,
+    Validator("config_parse_vrf_table", "0") to ConfigParseVrfTableOptionValue() as OptionValueInformation,
+    Validator("config_parse_udev_property", "0") to ConfigParseUdevPropertyOptionValue() as OptionValueInformation,
+    Validator("config_parse_rps_cpu_mask", "0") to ConfigParseRpsCpuMaskOptionValue() as OptionValueInformation,
+    Validator("config_parse_port_range", "0") to ConfigParsePortRangeOptionValue() as OptionValueInformation,
+    Validator("config_parse_port", "0") to ConfigParsePortOptionValue() as OptionValueInformation,
+    Validator("config_parse_mac_address_policy", "0") to ConfigParseMacAddressPolicyOptionValue() as OptionValueInformation,
+    Validator("config_parse_l2tp_tunnel_remote_address", "0") to ConfigParseL2tpTunnelRemoteAddressOptionValue() as OptionValueInformation,
+    Validator("config_parse_l2tp_tunnel_local_address", "0") to ConfigParseL2tpTunnelLocalAddressOptionValue() as OptionValueInformation,
+    Validator("config_parse_l2tp_session_name", "0") to ConfigParseL2tpSessionNameOptionValue() as OptionValueInformation,
+    Validator("config_parse_irq_affinity_policy", "0") to ConfigParseIrqAffinityPolicyOptionValue() as OptionValueInformation,
+    Validator("config_parse_irq_affinity_numa", "0") to ConfigParseIrqAffinityNumaOptionValue() as OptionValueInformation,
+    Validator("config_parse_ipv6_flowlabel", "0") to ConfigParseIpv6FlowlabelOptionValue() as OptionValueInformation,
+    Validator("config_parse_ipoib_pkey", "0") to ConfigParseIpoibPkeyOptionValue() as OptionValueInformation,
+    Validator("config_parse_ifnames", "IFNAME_VALID_ALTERNATIVE") to ConfigParseIfnamesOptionValue() as OptionValueInformation,
+    Validator("config_parse_ifalias", "0") to ConfigParseIfaliasOptionValue() as OptionValueInformation,
+    Validator("config_parse_geneve_address", "0") to ConfigParseGeneveAddressOptionValue() as OptionValueInformation,
+    Validator("config_parse_default_port_vlanid", "0") to ConfigParseDefaultPortVlanidOptionValue() as OptionValueInformation,
+    Validator("config_parse_advertise", "0") to ConfigParseAdvertiseOptionValue() as OptionValueInformation,
+    // RxCoalesceCQENSec= registers config_parse_coalesce_sec with ltype `true` (parse_nsec instead of
+    // parse_sec); the `0` entry above (ConfigParseCoalesceSecOptionValue) covers the parse_sec keys.
+    Validator("config_parse_coalesce_sec", "true") to ConfigParseCoalesceNsecOptionValue() as OptionValueInformation,
+
   )
 
   return allValidators
