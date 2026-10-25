@@ -33,6 +33,7 @@ plugins {
   id("org.jetbrains.intellij.platform") version "2.19.0"
   id("org.jetbrains.grammarkit") version "2023.3.0.4"
   id("checkstyle")
+  id("jacoco")
   id("com.avast.gradle.docker-compose") version "0.17.21"
   id("org.jetbrains.kotlin.jvm") version "2.4.21"
   id("idea")
@@ -147,6 +148,26 @@ tasks {
      // Forward the experimental grammar-engine flag so CI can run the whole suite twice: once on the
      // original engine and once with -Dsystemd.unit.grammarParseEngine=true (see GrammarOptionValue).
      systemProperty("systemd.unit.grammarParseEngine", System.getProperty("systemd.unit.grammarParseEngine", "false"))
+     // Coverage for CI trends. The IntelliJ test framework loads classes through its own class loaders, which
+     // JaCoCo only records with includeNoLocationClasses; jdk.internal is excluded because instrumenting it
+     // breaks the JVM.
+     configure<JacocoTaskExtension> {
+       isIncludeNoLocationClasses = true
+       excludes = listOf("jdk.internal.*")
+     }
+   }
+
+   jacocoTestReport {
+     // Only reports on existing execution data (run `test` first); CI publishes the XML with the Coverage plugin.
+     reports {
+       xml.required = true
+       html.required = true
+       csv.required = false
+     }
+     // Generated lexer/parser/PSI code would only dilute the numbers.
+     classDirectories.setFrom(files(classDirectories.files.map {
+       fileTree(it) { exclude("**/generated/**", "**/psi/impl/**") }
+     }))
    }
 }
 

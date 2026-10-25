@@ -414,7 +414,7 @@ pipeline {
             sh("""
               mkdir -p ./build
               ./generate-changelog  > build/CHANGELOG
-              ./gradlew --no-daemon -I ./build-cache-init.gradle.kts -I ./repo-cache-init.gradle.kts --build-cache build buildPlugin -PbuildScan
+              ./gradlew --no-daemon -I ./build-cache-init.gradle.kts -I ./repo-cache-init.gradle.kts --build-cache build buildPlugin jacocoTestReport -PbuildScan
               """)
             script {
               if (env.BRANCH_NAME ==~ /^([0-9][0-9][0-9]\.x)$/) {
@@ -453,6 +453,22 @@ pipeline {
           }
         }
       }
+      post {
+        // Runs even when tests fail, so failing tests and coverage still land in the trends.
+        always {
+          junit testResults: 'build/test-results/test/*.xml', allowEmptyResults: true
+          // Coverage is informational: a reporting problem marks the build unstable rather than failing it
+          // (and blocking the release).
+          catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+            script {
+              if (fileExists('build/reports/jacoco/test/jacocoTestReport.xml')) {
+                recordCoverage(tools: [[parser: 'JACOCO', pattern: 'build/reports/jacoco/test/jacocoTestReport.xml']],
+                               sourceDirectories: [[path: 'src/main/kotlin'], [path: 'src/main/java']])
+              }
+            }
+          }
+        }
+      }
         }
         stage("Unit Tests (new grammar engine)") {
           agent {
@@ -471,6 +487,11 @@ pipeline {
             sh("""
               ./gradlew --no-daemon -I ./build-cache-init.gradle.kts -I ./repo-cache-init.gradle.kts --build-cache test -Dsystemd.unit.grammarParseEngine=true
               """)
+          }
+          post {
+            always {
+              junit testResults: 'build/test-results/test/*.xml', allowEmptyResults: true
+            }
           }
         }
       }
