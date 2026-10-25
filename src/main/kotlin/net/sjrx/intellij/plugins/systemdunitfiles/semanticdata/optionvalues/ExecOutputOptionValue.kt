@@ -1,14 +1,17 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.project.Project
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarning
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarnings
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar
 
 /**
  * StandardOutput= / StandardError=, config_parse_exec_output():
  * https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L1329-L1453
  */
-class ExecOutputOptionValue() : OptionValueInformation {
+class ExecOutputOptionValue() : OptionValueInformation, ValueWarnings {
   override fun getAutoCompleteOptions(project: Project): Set<String> {
     return emptySet()
   }
@@ -61,6 +64,16 @@ class ExecOutputOptionValue() : OptionValueInformation {
     }
   }
 
+  /**
+   * syslog and syslog+console are rewritten to journal and journal+console with an "obsolete" notice.
+   * https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L1371-L1377
+   * https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L1428-L1431
+   */
+  override fun valueWarnings(key: String, value: String): List<ValueWarning> {
+    val replacement = OBSOLETE_OUTPUTS[value] ?: return emptyList()
+    return listOf(ValueWarning(0, value.length, "$key=$value is obsolete; systemd treats it as $replacement. Use $replacement instead.", ProblemHighlightType.GENERIC_ERROR_OR_WARNING))
+  }
+
   override val validatorName: String
     get() = VALIDATOR_NAME
 
@@ -69,6 +82,8 @@ class ExecOutputOptionValue() : OptionValueInformation {
     private val VALIDATOR_NAME = "config_parse_exec_output"
 
     private const val FDNAME_MAX = 255
+
+    private val OBSOLETE_OUTPUTS = mapOf("syslog" to "journal", "syslog+console" to "journal+console")
 
     // An absolute path whose components after any leading "", "." and ".." ones (dropped by path_simplify()) are
     // never "..".

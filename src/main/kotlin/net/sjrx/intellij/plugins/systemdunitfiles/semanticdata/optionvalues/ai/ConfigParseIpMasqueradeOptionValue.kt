@@ -22,16 +22,12 @@ class ConfigParseIpMasqueradeOptionValue : SimpleGrammarOptionValues(
     )
 ) {
     private companion object {
-        // systemd.network(5): the boolean forms "are now deprecated. Please use one of the values
-        // above" (ipv4/ipv6/both/no). Still accepted; the truthy forms map to ipv4.
+        // Only a true boolean draws a warning: systemd maps it to ipv4 (not both) and says it is deprecated. A false
+        // boolean silently means "no", which is also a table value, so it is not flagged.
+        // https://github.com/systemd/systemd/blob/0f0682b773/src/network/networkd-util.c#L176-L185
         val DEPRECATED_BOOLEAN = FlexibleLiteralChoiceTerminal(*BOOLEAN_SPELLINGS, ignoreCase = true).deprecating(
-            buildMap {
-                for (t in listOf("1", "yes", "y", "true", "t", "on")) {
-                    put(t, "Boolean values for IPMasquerade= are deprecated; use \"ipv4\" (or \"ipv6\"/\"both\") instead.")
-                }
-                for (f in listOf("0", "n", "false", "f", "off")) {
-                    put(f, "Boolean values for IPMasquerade= are deprecated; use \"no\" instead.")
-                }
+            listOf("1", "yes", "y", "true", "t", "on").associateWith {
+                "IPMasquerade= with a true boolean is deprecated; systemd treats it as ipv4, not both. Use ipv4 or both."
             }
         )
     }

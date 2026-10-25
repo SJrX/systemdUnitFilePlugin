@@ -1,5 +1,8 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
+import com.intellij.codeInspection.ProblemHighlightType
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarning
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarnings
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.*
 
@@ -43,4 +46,24 @@ class ConfigParseUserGroupCompatOptionValue : SimpleGrammarOptionValues(
         ),
         EOF()
     )
-)
+),
+    ValueWarnings {
+
+    /**
+     * For a key whose name contains "User" (User=, SocketUser=) the literal name "nobody" is accepted with the notice
+     * "Special user nobody configured, this is not safe!". Group=nogroup, Group=nobody and the numeric 65534 pass
+     * silently. https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L2587-L2594
+     */
+    override fun valueWarnings(key: String, value: String): List<ValueWarning> {
+        if (!key.contains("User") || value != "nobody") return emptyList()
+        return listOf(
+            ValueWarning(
+                0, value.length,
+                "$key=nobody is not safe: the service shares every file and process owned by nobody, including files " +
+                    "whose owner cannot be mapped on NFS or in user namespaces. Use DynamicUser=yes or a dedicated system " +
+                    "user instead.",
+                highlightType = ProblemHighlightType.WEAK_WARNING,
+            )
+        )
+    }
+}

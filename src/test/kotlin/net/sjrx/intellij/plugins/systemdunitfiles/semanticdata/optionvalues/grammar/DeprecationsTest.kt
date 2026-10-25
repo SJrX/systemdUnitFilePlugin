@@ -38,11 +38,12 @@ class DeprecationsTest {
 
   @Test
   fun testIpMasqueradeBooleanValuesAreDeprecated() {
-    // A second, unrelated user of the same layer: the legacy boolean forms of IPMasquerade= are
-    // accepted but deprecated in favour of ipv4/ipv6/both/no.
+    // A second, unrelated user of the same layer: a true boolean for IPMasquerade= is accepted but
+    // deprecated in favour of ipv4/both. A false boolean is silent: systemd only warns when r > 0.
+    // https://github.com/systemd/systemd/blob/0f0682b773/src/network/networkd-util.c#L176-L185
     val ipMasquerade = ConfigParseIpMasqueradeOptionValue().combinator
     assertTrue(ipMasquerade.deprecatedTokens("true").single().message.contains("ipv4"))
-    assertTrue(ipMasquerade.deprecatedTokens("off").single().message.contains("no"))
+    assertTrue(ipMasquerade.deprecatedTokens("off").isEmpty())
     assertTrue(ipMasquerade.deprecatedTokens("ipv4").isEmpty())
     assertTrue(ipMasquerade.deprecatedTokens("both").isEmpty())
   }
