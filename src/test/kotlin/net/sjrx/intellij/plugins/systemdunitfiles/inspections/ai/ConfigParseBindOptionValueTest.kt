@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
+import com.intellij.lang.annotation.HighlightSeverity
 import org.junit.Test
 
 class ConfigParseBindOptionValueTest : AbstractUnitFileTest() {
@@ -60,11 +61,11 @@ class ConfigParseBindOptionValueTest : AbstractUnitFileTest() {
     }
 
     @Test
-    fun testOptionsRejectedOnlyAtContainerStart() {
-        // Accepted: bind_mount_parse() stores the option string verbatim, so the settings parser (sd-check /
-        // fuzz-nspawn-settings at 0f0682b773) accepts all of these. parse_mount_bind_options() fails the container
-        // start with "Invalid bind mount option" (`ro` is not an option, read-only is BindReadOnly=; `rbind:x` is one
-        // word), but that is not a parse error. Issue #565 tracks a separate warning for them.
+    fun testUnknownOptionsFailTheContainerStart() {
+        // The settings parser (sd-check / fuzz-nspawn-settings at 0f0682b773) stores the option string verbatim and
+        // accepts all of these, but parse_mount_bind_options() refuses them with "Invalid bind mount option"
+        // (src/nspawn/nspawn-mount.c#L789-L791) and mount_bind()/mount_custom() abort the container start
+        // (#L813-L816, #L1076-L1101). `ro` is not an option (read-only is BindReadOnly=); `rbind:x` is one word (#565).
         // language="unit file (systemd)"
         val file = """
             [Files]
@@ -79,8 +80,12 @@ class ConfigParseBindOptionValueTest : AbstractUnitFileTest() {
 
         setupFileInEditor("file.nspawn", file)
         enableInspection(InvalidValueInspection::class.java)
-        val highlights = myFixture.doHighlighting()
+        val highlights = myFixture.doHighlighting().filter { it.severity == HighlightSeverity.WARNING }
 
-        assertSize(0, highlights)
+        assertSize(7, highlights)
+        val bogus = highlights.first { it.text == "bogus" }.description
+        assertStringContains("Bind: 'bogus' is not a bind mount option, so systemd-nspawn refuses to start the container", bogus)
+        assertStringContains("rbind, norbind, idmap, noidmap, rootidmap, owneridmap", bogus)
+        assertStringContains("For a read-only mount use BindReadOnly= instead.", highlights.single { it.text == "ro" }.description)
     }
 }

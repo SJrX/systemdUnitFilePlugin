@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
+import com.intellij.lang.annotation.HighlightSeverity
 import org.junit.Test
 
 class ConfigParseSyscallFilterOptionValueTest : AbstractUnitFileTest() {
@@ -100,7 +101,7 @@ class ConfigParseSyscallFilterOptionValueTest : AbstractUnitFileTest() {
         // language="unit file (systemd)"
         val nspawn = """
             [Exec]
-            SystemCallFilter=@system-service ~@mount
+            SystemCallFilter=@system-service add_key
             SystemCallFilter=~@clock add_key
         """.trimIndent()
         setupFileInEditor("file.nspawn", nspawn)
@@ -108,11 +109,12 @@ class ConfigParseSyscallFilterOptionValueTest : AbstractUnitFileTest() {
     }
 
     @Test
-    fun testTildeWordAfterTheFirstPositionIsAccepted() {
+    fun testTildeWordAfterTheFirstPositionWarnsInNspawn() {
         // nspawn only honours `~` as the first character, so "~@mount" below is stored verbatim as a name.
-        // sd-check at 0f0682b773 accepts all of these in a .nspawn file (nspawn's parser stores words
-        // unchecked); the word is only dropped at container start by seccomp_add_syscall_filter_item(), a
-        // runtime-only rejection that issue #565 will warn about.
+        // sd-check at 0f0682b773 accepts all of these in a .nspawn file (nspawn's parser stores words unchecked),
+        // but at container start seccomp_add_syscall_filter_item() cannot resolve the name and drops it with only a
+        // debug message (src/shared/seccomp-util.c#L1069-L1075), so the entry silently does nothing: a weak
+        // warning, not an error (#565).
         // language="unit file (systemd)"
         val nspawn = """
             [Exec]
@@ -123,12 +125,16 @@ class ConfigParseSyscallFilterOptionValueTest : AbstractUnitFileTest() {
         """.trimIndent()
         setupFileInEditor("file.nspawn", nspawn)
         enableInspection(InvalidValueInspection::class.java)
-        assertSize(0, myFixture.doHighlighting())
+        val highlights = myFixture.doHighlighting()
+        assertSize(0, highlights.filter { it.severity == HighlightSeverity.WARNING })
+        val warnings = highlights.filter { it.severity == HighlightSeverity.WEAK_WARNING }
+        assertEquals(listOf("~@mount", "~@bogus", "~@mount", "~read"), warnings.map { it.text })
+        assertStringContains("SystemCallFilter: '~@mount' is ignored by systemd-nspawn. '~' is only honoured as the first character",
+            warnings[0].description)
 
         // In a unit file sd-check says "System call ~@mount is not known, ignoring." for the same words: the
         // libseccomp lookup warning that this grammar already leaves unflagged for names like "madeupcall".
-        // Both files share the (config_parse_syscall_filter, 0) registration, so the lenient nspawn
-        // behaviour applies here as well. Documented leniency.
+        // Unit files keep that behaviour; the nspawn warning is chosen by file type.
         // language="unit file (systemd)"
         val service = """
             [Service]

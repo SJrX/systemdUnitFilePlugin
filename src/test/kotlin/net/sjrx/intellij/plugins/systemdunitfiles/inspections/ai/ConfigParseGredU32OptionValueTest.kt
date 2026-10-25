@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
+import com.intellij.lang.annotation.HighlightSeverity
 import org.junit.Test
 
 class ConfigParseGredU32OptionValueTest : AbstractUnitFileTest() {
@@ -17,21 +18,20 @@ class ConfigParseGredU32OptionValueTest : AbstractUnitFileTest() {
       DefaultVirtualQueue=12
       VirtualQueues=10
       DefaultVirtualQueue=10
-      VirtualQueues=0
+      VirtualQueues=1
       DefaultVirtualQueue=0
       VirtualQueues=16
-      DefaultVirtualQueue=16
+      DefaultVirtualQueue=15
       VirtualQueues=0x10
-      DefaultVirtualQueue=0x10
+      DefaultVirtualQueue=0xf
       VirtualQueues=0b1
       DefaultVirtualQueue=0b1
       VirtualQueues=020
-      DefaultVirtualQueue=020
+      DefaultVirtualQueue=017
       VirtualQueues=+3
       DefaultVirtualQueue=+3
       VirtualQueues=0b+1
       DefaultVirtualQueue=0b+1
-      VirtualQueues=0b-0
       DefaultVirtualQueue=0b-0
       VirtualQueues=0b 1
       DefaultVirtualQueue=0b 1
@@ -39,7 +39,6 @@ class ConfigParseGredU32OptionValueTest : AbstractUnitFileTest() {
       DefaultVirtualQueue=0o 7
       VirtualQueues=0b +1
       DefaultVirtualQueue=0b +1
-      VirtualQueues=0b -0
       DefaultVirtualQueue=0b -0
       VirtualQueues=
       DefaultVirtualQueue=
@@ -85,4 +84,25 @@ class ConfigParseGredU32OptionValueTest : AbstractUnitFileTest() {
     assertSize(18, highlights)
   }
 
+  @Test
+  fun testValuesThatAlwaysFailVerify() {
+    // The parser takes 0…16 for both keys, but generic_random_early_detection_verify() drops the section unless
+    // DefaultVirtualQueue= < VirtualQueues= (src/network/tc/gred.c#L56-L65), so these can never work (#565).
+    // language="unit file (systemd)"
+    val file = """
+      [GenericRandomEarlyDetection]
+      VirtualQueues=0
+      VirtualQueues=0b-0
+      DefaultVirtualQueue=16
+      DefaultVirtualQueue=0x10
+    """.trimIndent()
+
+    setupFileInEditor("file.network", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting().filter { it.severity == HighlightSeverity.WARNING }
+
+    assertSize(4, highlights)
+    assertStringContains("VirtualQueues must be 1…16.", highlights[0].description)
+    assertStringContains("DefaultVirtualQueue must be 0…15 and below VirtualQueues=", highlights[2].description)
+  }
 }

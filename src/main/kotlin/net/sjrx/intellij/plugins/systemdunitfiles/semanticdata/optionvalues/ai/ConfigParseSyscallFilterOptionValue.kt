@@ -1,5 +1,11 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.util.TextRange
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.FileClass
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.fileClass
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.Combinator
@@ -27,7 +33,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/basic/parse-util.c#L342   parse_errno
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/seccomp-util.c#L1293   seccomp_parse_syscall_filter
  * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/seccomp-util.c#L334   syscall_filter_sets[] (group names)
- * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/seccomp-util.c#L1035   seccomp_add_syscall_filter_item (nspawn's consumer)
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/shared/seccomp-util.c#L1035   seccomp_add_syscall_filter_item (nspawn's consumer; unknown names dropped with log_debug, #L1069-L1075)
+ * leaf   https://github.com/systemd/systemd/blob/0f0682b773/src/nspawn/nspawn-seccomp.c#L152-L156   nspawn applies the allow list at container start
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/src/test/test-seccomp.c#L56   TEST(parse_syscall_and_errno)
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/src/test/test-parse-util.c#L729   TEST(parse_errno)
  * linux  https://man7.org/linux/man-pages/man2/syscalls.2.html
@@ -50,14 +57,14 @@ private val NAME: Combinator = SYSCALL_OR_GROUP
  * `rvalue[0]` is the deny-list marker in both parsers, so this word is taken literally as the name `~@mount`.
  *
  *  - nspawn's parser stores it unchecked; at container start seccomp_add_syscall_filter_item() cannot resolve
- *    it and drops it with a debug message. That is a runtime-only rejection, so it is accepted here; issue #565
- *    tracks a separate warning for it.
+ *    it and drops it with only a debug message, so the entry silently does nothing. The grammar accepts it and
+ *    [ConfigParseSyscallFilterOptionValue.generateProblemDescriptors] adds a weak warning in .nspawn files (#565).
  *  - the unit-file parser hands it to libseccomp, which does not know it ("System call ~@mount is not known,
  *    ignoring."). That is the same unknown-name warning this grammar already leaves to the shape check for
  *    `madeupcall`.
  *
  * The validator registry is keyed only by (parser, ltype), and both files register (config_parse_syscall_filter,
- * 0), so the two cannot be told apart; the lenient nspawn behaviour wins. After the `~` the name is not looked
+ * 0), so the grammar takes the lenient nspawn behaviour; the file type decides about the warning. After the `~` the name is not looked
  * up as a group by either parser, so any group-shaped word is accepted (`~@bogus`).
  */
 private val TILDE_NAME: Combinator = SequenceCombinator(
@@ -94,7 +101,7 @@ private val DENY_ENTRY: Combinator = SequenceCombinator(
  *    letters, digits, `_`); `DONOTEXIST` is flagged, `madeupcall` is not.
  *  - a word starting with `~` after the first position (`@system-service ~@mount`), which both parsers take
  *    as a literal, never-matching name. nspawn only drops it at container start, so it is accepted (see
- *    [TILDE_NAME]; issue #565 tracks a warning for it).
+ *    [TILDE_NAME]); in .nspawn files it gets a weak warning, because the entry is silently ignored (#565).
  *  - in deny-list mode only, any of those followed by `:` and an errno name (case-insensitive,
  *    `EPERM`), a number 0…4095 (decimal, `0x` hex or `0` octal) or `kill`. parse_syscall_and_errno
  *    rejects an empty name (`:EPERM`), an empty or junk errno (`uname:`, `uname:EINVALaaa`) and an
@@ -147,4 +154,34 @@ class ConfigParseSyscallFilterOptionValue : SimpleGrammarOptionValues(
             EOF(),
         ),
     )
-)
+) {
+    /**
+     * In a .nspawn file, also warns about each word that starts with `~` after the first character of the value:
+     * nspawn's parser stores it as the literal name `~@mount`, which seccomp_add_syscall_filter_item() cannot
+     * resolve at container start and drops with only a debug message (seccomp-util.c#L1069-L1075), so the entry
+     * silently does nothing. Unit files are left to the grammar alone (the same name check as `madeupcall`).
+     */
+    override fun generateProblemDescriptors(property: UnitFilePropertyType, holder: ProblemsHolder) {
+        val before = holder.resultCount
+        super.generateProblemDescriptors(property, holder)
+        if (holder.resultCount != before || property.containingFile.fileClass() != FileClass.NSPAWN) return
+        val value = property.valueText ?: return
+        // Words as extract_first_word(WHITESPACE ","); `rvalue[0] == '~'` is the deny-list marker, not part of a word.
+        val start = if (value.startsWith("~")) 1 else 0
+        for (word in NSPAWN_WORD.findAll(value, start)) {
+            if (!word.value.startsWith("~")) continue
+            holder.registerProblem(
+                property.valueNode.psi,
+                "${property.key}: '${word.value}' is ignored by systemd-nspawn. '~' is only honoured as the first character " +
+                    "of the value (making the whole line a deny list); here it is part of the name, which matches no system " +
+                    "call. Put the calls to deny on their own ${property.key}=~... line.",
+                ProblemHighlightType.WEAK_WARNING,
+                TextRange(word.range.first, word.range.last + 1),
+            )
+        }
+    }
+
+    private companion object {
+        val NSPAWN_WORD = Regex("[^\\s,]+")
+    }
+}

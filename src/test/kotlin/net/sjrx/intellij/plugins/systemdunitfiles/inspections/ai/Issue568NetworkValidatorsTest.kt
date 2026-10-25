@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
+import com.intellij.lang.annotation.HighlightSeverity
 import org.junit.Test
 
 /**
@@ -10,8 +11,8 @@ import org.junit.Test
  * file: the "valid" ones produce no complaint (or, for Address=, only the "specified without prefix length"
  * advice), the "invalid" ones are refused by the parser.
  *
- * Accepted on purpose although systemd refuses them later: `[Xfrm] InterfaceId=0` (netdev verify: "Xfrm
- * interface ID cannot be zero"). Validators flag only what the config parser rejects (#565 covers the rest).
+ * `[Xfrm] InterfaceId=0` passes the parser but is refused by xfrm_verify() ("Xfrm interface ID cannot be zero",
+ * src/network/netdev/xfrm.c#L30-L39), which drops the netdev, so it is flagged too (#565).
  */
 class Issue568NetworkValidatorsTest : AbstractUnitFileTest() {
 
@@ -62,7 +63,7 @@ class Issue568NetworkValidatorsTest : AbstractUnitFileTest() {
       [Xfrm]
       InterfaceId=0x98
       InterfaceId=0x99
-      InterfaceId=0
+      InterfaceId=1
       InterfaceId=4294967295
       InterfaceId=0xffffffff
       InterfaceId=077
@@ -83,6 +84,33 @@ class Issue568NetworkValidatorsTest : AbstractUnitFileTest() {
       InterfaceId=abc
     """.trimIndent()
     assertHighlights("file.netdev", file, 5)
+  }
+
+  @Test
+  fun testXfrmInterfaceIdZeroIsRefusedByVerify() {
+    // xfrm_verify() refuses 0 and netdev_load_one() then drops the netdev (src/network/netdev/netdev.c#L1110-L1114).
+    // language="unit file (systemd)"
+    val file = """
+      [Xfrm]
+      InterfaceId=0
+      InterfaceId=0x0
+    """.trimIndent()
+    setupFileInEditor("file.netdev", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting().filter { it.severity == HighlightSeverity.WARNING }
+    assertSize(2, highlights)
+    assertStringContains("InterfaceId must be 1…4294967295; systemd-networkd refuses 0", highlights[0].description)
+  }
+
+  @Test
+  fun testUint32ZeroStillValidForOtherKeys() {
+    // Only [Xfrm] InterfaceId= in a .netdev has the extra rule; other config_parse_uint32 keys keep 0.
+    // language="unit file (systemd)"
+    val file = """
+      [DHCPServer]
+      PoolOffset=0
+    """.trimIndent()
+    assertHighlights("file.network", file, 0)
   }
 
   @Test
