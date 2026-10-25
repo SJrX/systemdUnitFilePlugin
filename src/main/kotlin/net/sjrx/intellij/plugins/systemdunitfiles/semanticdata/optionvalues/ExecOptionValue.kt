@@ -91,7 +91,8 @@ class ExecOptionValue : OptionValueInformation, ValueWarnings {
       warnings += ValueWarning(
         lead + at, lead + at + 2,
         "$escape is not a valid escape sequence; systemd keeps the backslash and logs \"Ignoring unknown escape sequences\". " +
-          "Write \\\\ for a literal backslash."
+          // "\$" is usually meant to stop variable expansion, which "$$" does in an Exec*= line.
+          (if (escape == "\\$") "Write $$ for a literal $, or \\\\ for a literal backslash." else "Write \\\\ for a literal backslash.")
       )
     }
     return warnings

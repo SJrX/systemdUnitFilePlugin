@@ -13,6 +13,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.canonicalizeIpv6
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.validate
 import java.math.BigInteger
+import java.net.Inet4Address
 import java.net.Inet6Address
 import java.net.InetAddress
 
@@ -78,7 +79,12 @@ private fun maskedPrefix(entry: String): String? {
     val address = entry.substring(0, slash)
     val prefixLength = parseSafeAtou8(entry.substring(slash + 1)) ?: return null
     val bytes = if (address.contains(':')) {
-        (InetAddress.getByName(address) as? Inet6Address)?.address ?: return null
+        // An IPv4-mapped literal (::ffff:a.b.c.d) comes back as an Inet4Address; rebuild its 16 bytes.
+        when (val parsed = InetAddress.getByName(address)) {
+            is Inet6Address -> parsed.address
+            is Inet4Address -> ByteArray(10) + byteArrayOf(-1, -1) + parsed.address
+            else -> return null
+        }
     } else {
         val octets = address.split('.').map { it.toIntOrNull() ?: return null }
         if (octets.size != 4 || octets.any { it !in 0..255 }) return null
@@ -94,6 +100,9 @@ private fun maskedPrefix(entry: String): String? {
     val raw = ByteArray(bytes.size) { i -> masked.shiftRight(8 * (bytes.size - 1 - i)).toInt().toByte() }
     val text = if (bytes.size == 4) {
         raw.joinToString(".") { (it.toInt() and 0xff).toString() }
+    } else if ((0 until 10).all { raw[it] == 0.toByte() } && raw[10] == (-1).toByte() && raw[11] == (-1).toByte()) {
+        // inet_ntop() prints IPv4-mapped addresses with a dotted tail, as systemd's warning does.
+        "::ffff:" + (12 until 16).joinToString(".") { (raw[it].toInt() and 0xff).toString() }
     } else {
         val groups = (0 until 8).joinToString(":") { i ->
             Integer.toHexString(((raw[2 * i].toInt() and 0xff) shl 8) or (raw[2 * i + 1].toInt() and 0xff))

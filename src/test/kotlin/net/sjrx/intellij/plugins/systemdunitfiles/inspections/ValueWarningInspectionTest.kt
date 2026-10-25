@@ -62,7 +62,9 @@ class ValueWarningInspectionTest : AbstractUnitFileTest() {
         "Write \\\\ for a literal backslash.",
       message
     )
-    assertEquals("\\$", single("a.service", "[Service]\nExecStart=/bin/sh -c \"echo \\\$x\"").first)
+    val dollar = single("a.service", "[Service]\nExecStart=/bin/sh -c \"echo \\\$x\"")
+    assertEquals("\\$", dollar.first)
+    assertTrue(dollar.second, dollar.second.endsWith("Write \$\$ for a literal \$, or \\\\ for a literal backslash."))
     // \x00 is refused by cunescape (NUL), so "\x" is kept verbatim.
     assertEquals("\\x", single("a.service", "[Service]\nExecStart=/bin/echo \\x0").first)
     assertEquals("\\8", single("a.service", "[Service]\nExecStart=/bin/echo \\8").first)
@@ -167,6 +169,21 @@ class ValueWarningInspectionTest : AbstractUnitFileTest() {
       assertEquals("v4", single("a.network", "[Network]\nDHCP=v4").first)
       assertSilent("a.service", "Service", "RestrictAddressFamilies=AF_INET AF_INET6")
     }
+  }
+
+  fun testHighlightFollowsWhitespaceAndContinuationLines() {
+    // valueText trims and joins continuation lines; the highlight must still land on the offending characters.
+    assertEquals("none", single("a.service", "[Service]\nKillMode = none").first)
+    assertEquals("\\q", single("a.service", "[Service]\nExecStart =   /bin/echo \\q").first)
+    assertEquals("\\\$", single("a.service", "[Service]\nExecStart=/bin/sh -c \"foo \\\n     bar \\\$x\"").first)
+    assertEquals("\\\$", single("a.service", "[Service]\nExecStart=/bin/sh -c \"foo \\\n# comment\n     bar \\\$x\"").first)
+    assertEquals("\\q", single("a.service", "[Service]\nExecStart=/bin/echo \\\n    \\q").first)
+  }
+
+  fun testWireGuardAllowedIpsIpv4Mapped() {
+    // sd-check: "Specified address '::ffff:10.0.0.1/100' is not properly masked, assuming '::ffff:0.0.0.0/100'."
+    assertTrue(single("a.netdev", "[WireGuardPeer]\nAllowedIPs=::ffff:10.0.0.1/100").second.contains("systemd uses ::ffff:0.0.0.0/100"))
+    assertSilent("a.netdev", "WireGuardPeer", "AllowedIPs=::ffff:10.0.0.0/104")
   }
 
   fun testInvalidValueIsNotAlsoWarned() {
