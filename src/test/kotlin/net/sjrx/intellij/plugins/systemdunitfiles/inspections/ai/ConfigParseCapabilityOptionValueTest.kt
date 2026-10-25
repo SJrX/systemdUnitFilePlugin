@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
+import com.intellij.lang.annotation.HighlightSeverity
 import org.junit.Test
 
 class ConfigParseCapabilityOptionValueTest : AbstractUnitFileTest() {
@@ -53,5 +54,29 @@ class ConfigParseCapabilityOptionValueTest : AbstractUnitFileTest() {
         val highlights = myFixture.doHighlighting()
 
         assertSize(7, highlights)
+    }
+
+    @Test
+    fun testAmbientCapabilityAllFailsTheContainerStart() {
+        // The settings parser stores `all` for every key (sd-check silent), but verify_arguments() refuses it for
+        // AmbientCapability= only ("AmbientCapability= does not support the value all.", src/nspawn/nspawn.c#L1559-L1561),
+        // so the container does not start (#565). Capability=all and DropCapability=all stay valid (testValidValues).
+        // language="unit file (systemd)"
+        val file = """
+            [Exec]
+            AmbientCapability=all
+            AmbientCapability=CAP_BPF all
+        """.trimIndent()
+
+        setupFileInEditor("file.nspawn", file)
+        enableInspection(InvalidValueInspection::class.java)
+        val highlights = myFixture.doHighlighting().filter { it.severity == HighlightSeverity.WARNING }
+
+        assertSize(2, highlights)
+        for (highlight in highlights) {
+            assertEquals("all", highlight.text)
+            assertStringContains("AmbientCapability=all is refused by systemd-nspawn", highlight.description)
+            assertStringContains("List the capabilities explicitly", highlight.description)
+        }
     }
 }

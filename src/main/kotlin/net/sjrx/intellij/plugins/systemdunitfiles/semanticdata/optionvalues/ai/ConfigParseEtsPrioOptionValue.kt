@@ -24,7 +24,8 @@ private val ETS_BAND = SafeAtoTerminal(
   base = 0,
   flags = emptySet(),
   minInclusive = BigInteger.ZERO,
-  maxInclusive = SafeAtoTerminal.UINT8_MAX,
+  // safe_atou8 allows up to 255, but see the class comment: only 0…15 can ever be below the band count.
+  maxInclusive = BigInteger.valueOf(15),
   acceptsWhitespace = false,
   acceptsMinus = true,
 )
@@ -40,12 +41,32 @@ private val ETS_BAND = SafeAtoTerminal(
  * cannot contain a blank: `0b+1` is 1, but `0b 1` is the words `0b` (invalid) and `1`. Out-of-range or unparsable entries are logged and skipped by
  * the C, and so are flagged here; so is a 17th entry.
  *
- * Lenient: enhanced_transmission_selection_verify later rejects the whole section if any entry is not
- * below the number of bands (at most 16), so values 16…255 can never actually work; they are accepted
- * here because the man page documents 0…255 and that is what the parser itself checks. The 16-entry
- * cap is cumulative across lines; only the per-line count is checked.
+ * The parser itself takes 0…255 (and the man page says so), but enhanced_transmission_selection_verify()
+ * drops the whole section when an entry is not below the number of bands (src/network/tc/ets.c#L325-L330),
+ * and an ETS qdisc has at most 16 bands (Bands= is capped at TCQ_ETS_MAX_BANDS, ets.c#L131, and the kernel
+ * refuses more), so 16…255 never work and are flagged (#565). The 16-entry cap is cumulative across lines;
+ * only the per-line count is checked.
  */
 class ConfigParseEtsPrioOptionValue : SimpleGrammarOptionValues(
   "config_parse_ets_prio",
   SequenceCombinator(ETS_BAND, Repeat(SequenceCombinator(WhitespaceTerminal(), ETS_BAND), 0, 15), EOF()),
-)
+) {
+  // Only a well-formed number above 15 gets the band message; other bad words (`-1`, `0b`) keep the generic one.
+  override fun invalidValueMessage(key: String, badValue: String): String =
+    if ((etsNumber(badValue) ?: 0) > 15) {
+      "$key: band '$badValue' is out of range. Bands are numbered 0…15 (an ETS qdisc has at most 16), and systemd-networkd " +
+        "ignores the whole [EnhancedTransmissionSelection] section when a PriorityMap= entry is not below the number of bands."
+    } else {
+      super.invalidValueMessage(key, badValue)
+    }
+}
+
+/** The value of a plain unsigned safe_atou8 word in C base-0 notation (`16`, `0x10`, `020`), or null for anything else. */
+private fun etsNumber(word: String): Long? {
+  val digits = word.removePrefix("+")
+  return when {
+    digits.startsWith("0x") || digits.startsWith("0X") -> digits.substring(2).toLongOrNull(16)
+    digits.length > 1 && digits.startsWith("0") -> digits.substring(1).toLongOrNull(8)
+    else -> digits.toLongOrNull(10)
+  }?.takeIf { it >= 0 && digits.none { c -> c == '-' || c == '+' } }
+}
