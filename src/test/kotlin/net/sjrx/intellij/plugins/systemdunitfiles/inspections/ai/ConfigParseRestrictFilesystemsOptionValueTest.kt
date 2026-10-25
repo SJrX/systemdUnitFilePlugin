@@ -81,7 +81,7 @@ class ConfigParseRestrictFilesystemsOptionValueTest : AbstractUnitFileTest() {
         // sd-check at 0f0682b773 is silent for every one of these at load time (the parser stores plain names
         // unchecked), but when the unit starts the BPF code drops each unknown name with "bpf-restrict-fs:
         // Invalid filesystem name '…', ignoring." (src/core/bpf-restrict-fs.c#L116-L121, called from
-        // src/core/exec-invoke.c#L2123), so the unit runs without that restriction (#565). The kf6 autotest
+        // src/core/exec-invoke.c#L2123), so the entry has no effect (#565). The kf6 autotest
         // values ("invalid", "temporary", "@auxiliary-api btrfs  nfs @temporary unknown") are here. A `~` word
         // after the first position is the literal name `~proc` / `~@foo`, which no file system has.
         // language="unit file (systemd)"
@@ -110,7 +110,7 @@ class ConfigParseRestrictFilesystemsOptionValueTest : AbstractUnitFileTest() {
         enableInspection(InvalidValueInspection::class.java)
         val highlights = myFixture.doHighlighting().filter { it.severity == HighlightSeverity.WARNING }
         assertSize(17, highlights)
-        assertStringContains("unknown file system or group 'ext5'; systemd ignores it, so the unit runs without this restriction",
+        assertStringContains("unknown file system or group 'ext5'; systemd ignores this entry, so it neither allows nor denies anything",
             highlights.single { it.text == "ext5" }.description)
         assertStringContains("'~proc' is not a file system. '~' only means \"deny list\" as the very first character",
             highlights.first { it.text == "~proc" }.description)

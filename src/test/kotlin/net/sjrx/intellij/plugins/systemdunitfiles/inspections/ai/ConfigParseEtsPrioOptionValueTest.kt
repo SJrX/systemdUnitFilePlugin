@@ -73,6 +73,26 @@ class ConfigParseEtsPrioOptionValueTest : AbstractUnitFileTest() {
 
     assertSize(2, highlights)
     assertStringContains("PriorityMap: band '255' is out of range. Bands are numbered 0…15", highlights[0].description)
+    assertStringContains("PriorityMap: band '16' is out of range.", highlights[1].description)
+  }
+
+  @Test
+  fun testOtherBadWordsKeepTheGenericMessage() {
+    // Only numbers above 15 get the band message; `-1` and a negative-binary word are not "bands out of range".
+    // language="unit file (systemd)"
+    val file = """
+      [EnhancedTransmissionSelection]
+      PriorityMap=-1
+      PriorityMap=0x10
+    """.trimIndent()
+
+    setupFileInEditor("file.network", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting().filter { it.severity == HighlightSeverity.WARNING }
+
+    assertSize(2, highlights)
+    assertFalse(highlights[0].description.contains("out of range. Bands are numbered"))
+    assertStringContains("PriorityMap: band '0x10' is out of range.", highlights[1].description)
   }
 
 }

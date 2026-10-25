@@ -172,7 +172,7 @@ private val ENTRY = AlternativeCombinator(TILDE_WORD, ENTRY_NOT_TILDE)
  *    group, ignoring"), so it is flagged. The lookup is exact and case-sensitive.
  *  - Any other word is a file system name. The parser stores it unchecked, but an unknown name (`EXT4`,
  *    `ext5`, `foo`, a literal `~proc` after the first word) is dropped when the unit starts ("Invalid
- *    filesystem name, ignoring"), so the unit runs without that restriction: flagged (#565). The lookup is
+ *    filesystem name, ignoring"), so the entry has no effect: flagged (#565). The lookup is
  *    exact and case-sensitive. Known names stay a separate alternative for completion and coloring.
  *
  * Known over-rejection: a word that only becomes `@group` through escaping or partial quoting
@@ -231,7 +231,7 @@ class ConfigParseRestrictFilesystemsOptionValue : SimpleGrammarOptionValues(
             "$key: '$badValue' is not a file system. '~' only means \"deny list\" as the very first character of the value; " +
                 "here it is part of the name, so systemd ignores this entry when the unit starts."
         } else {
-            "$key: unknown file system or group '${unquote(badValue)}'; systemd ignores it, so the unit runs without this restriction. " +
+            "$key: unknown file system or group '${unquote(badValue)}'; systemd ignores this entry, so it neither allows nor denies anything. " +
                 "Names are case-sensitive kernel file system types (ext4, btrfs, tmpfs, ...); " +
                 "groups are ${FILESYSTEM_GROUP_NAME.choices.sorted().joinToString(", ") { "@$it" }}."
         }

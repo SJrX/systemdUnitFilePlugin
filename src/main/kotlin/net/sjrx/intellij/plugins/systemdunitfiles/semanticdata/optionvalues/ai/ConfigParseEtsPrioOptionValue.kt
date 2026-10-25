@@ -51,7 +51,22 @@ class ConfigParseEtsPrioOptionValue : SimpleGrammarOptionValues(
   "config_parse_ets_prio",
   SequenceCombinator(ETS_BAND, Repeat(SequenceCombinator(WhitespaceTerminal(), ETS_BAND), 0, 15), EOF()),
 ) {
+  // Only a well-formed number above 15 gets the band message; other bad words (`-1`, `0b`) keep the generic one.
   override fun invalidValueMessage(key: String, badValue: String): String =
-    "$key: band '$badValue' is out of range. Bands are numbered 0…15 (an ETS qdisc has at most 16), and systemd-networkd " +
-      "ignores the whole [EnhancedTransmissionSelection] section when a PriorityMap= entry is not below the number of bands."
+    if ((etsNumber(badValue) ?: 0) > 15) {
+      "$key: band '$badValue' is out of range. Bands are numbered 0…15 (an ETS qdisc has at most 16), and systemd-networkd " +
+        "ignores the whole [EnhancedTransmissionSelection] section when a PriorityMap= entry is not below the number of bands."
+    } else {
+      super.invalidValueMessage(key, badValue)
+    }
+}
+
+/** The value of a plain unsigned safe_atou8 word in C base-0 notation (`16`, `0x10`, `020`), or null for anything else. */
+private fun etsNumber(word: String): Long? {
+  val digits = word.removePrefix("+")
+  return when {
+    digits.startsWith("0x") || digits.startsWith("0X") -> digits.substring(2).toLongOrNull(16)
+    digits.length > 1 && digits.startsWith("0") -> digits.substring(1).toLongOrNull(8)
+    else -> digits.toLongOrNull(10)
+  }?.takeIf { it >= 0 && digits.none { c -> c == '-' || c == '+' } }
 }
