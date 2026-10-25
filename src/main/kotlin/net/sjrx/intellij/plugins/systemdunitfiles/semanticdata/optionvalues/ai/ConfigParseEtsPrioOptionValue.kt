@@ -24,7 +24,8 @@ private val ETS_BAND = SafeAtoTerminal(
   base = 0,
   flags = emptySet(),
   minInclusive = BigInteger.ZERO,
-  maxInclusive = SafeAtoTerminal.UINT8_MAX,
+  // safe_atou8 allows up to 255, but see the class comment: only 0…15 can ever be below the band count.
+  maxInclusive = BigInteger.valueOf(15),
   acceptsWhitespace = false,
   acceptsMinus = true,
 )
@@ -40,12 +41,17 @@ private val ETS_BAND = SafeAtoTerminal(
  * cannot contain a blank: `0b+1` is 1, but `0b 1` is the words `0b` (invalid) and `1`. Out-of-range or unparsable entries are logged and skipped by
  * the C, and so are flagged here; so is a 17th entry.
  *
- * Lenient: enhanced_transmission_selection_verify later rejects the whole section if any entry is not
- * below the number of bands (at most 16), so values 16…255 can never actually work; they are accepted
- * here because the man page documents 0…255 and that is what the parser itself checks. The 16-entry
- * cap is cumulative across lines; only the per-line count is checked.
+ * The parser itself takes 0…255 (and the man page says so), but enhanced_transmission_selection_verify()
+ * drops the whole section when an entry is not below the number of bands (src/network/tc/ets.c#L325-L330),
+ * and an ETS qdisc has at most 16 bands (Bands= is capped at TCQ_ETS_MAX_BANDS, ets.c#L131, and the kernel
+ * refuses more), so 16…255 never work and are flagged (#565). The 16-entry cap is cumulative across lines;
+ * only the per-line count is checked.
  */
 class ConfigParseEtsPrioOptionValue : SimpleGrammarOptionValues(
   "config_parse_ets_prio",
   SequenceCombinator(ETS_BAND, Repeat(SequenceCombinator(WhitespaceTerminal(), ETS_BAND), 0, 15), EOF()),
-)
+) {
+  override fun invalidValueMessage(key: String, badValue: String): String =
+    "$key: band '$badValue' is out of range. Bands are numbered 0…15 (an ETS qdisc has at most 16), and systemd-networkd " +
+      "ignores the whole [EnhancedTransmissionSelection] section when a PriorityMap= entry is not below the number of bands."
+}

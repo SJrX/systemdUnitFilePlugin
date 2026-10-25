@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
+import com.intellij.lang.annotation.HighlightSeverity
 import org.junit.Test
 
 class ConfigParseEtsPrioOptionValueTest : AbstractUnitFileTest() {
@@ -17,7 +18,7 @@ class ConfigParseEtsPrioOptionValueTest : AbstractUnitFileTest() {
       PriorityMap=3 4 5
       PriorityMap=6 7
       PriorityMap=0
-      PriorityMap=255
+      PriorityMap=15
       PriorityMap=0x0f 017 0b1
       PriorityMap=0b+1
       PriorityMap=1 0b-0 2
@@ -53,6 +54,25 @@ class ConfigParseEtsPrioOptionValueTest : AbstractUnitFileTest() {
     val highlights = myFixture.doHighlighting()
 
     assertSize(8, highlights)
+  }
+
+  @Test
+  fun testBandsAboveFifteenNeverWork() {
+    // The parser (safe_atou8) takes 16…255, but enhanced_transmission_selection_verify() drops the section when an
+    // entry is not below the band count (src/network/tc/ets.c#L325-L330), which is at most 16 (#565).
+    // language="unit file (systemd)"
+    val file = """
+      [EnhancedTransmissionSelection]
+      PriorityMap=255
+      PriorityMap=0 1 16
+    """.trimIndent()
+
+    setupFileInEditor("file.network", file)
+    enableInspection(InvalidValueInspection::class.java)
+    val highlights = myFixture.doHighlighting().filter { it.severity == HighlightSeverity.WARNING }
+
+    assertSize(2, highlights)
+    assertStringContains("PriorityMap: band '255' is out of range. Bands are numbered 0…15", highlights[0].description)
   }
 
 }

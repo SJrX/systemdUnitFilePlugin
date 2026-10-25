@@ -1,5 +1,7 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
+import com.intellij.codeInspection.ProblemsHolder
+import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.*
 
@@ -17,6 +19,34 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * tests  https://github.com/systemd/systemd/blob/0f0682b773/test/test-network/conf/25-qdisc-gred.network#L12-L13   VirtualQueues=12, DefaultVirtualQueue=10
  */
 
+/** A safe_atou32 number in [min]…[max]. */
+private fun gredNumber(min: Long, max: Long) = SequenceCombinator(
+  SafeAtoTerminal(
+    signed = false,
+    base = 0,
+    flags = emptySet(),
+    minInclusive = min,
+    maxInclusive = max,
+    acceptsWhitespace = true,
+    acceptsMinus = true,
+  ),
+  EOF(),
+)
+
+/** VirtualQueues=: 0 always fails verify (DefaultVirtualQueue= is at least 0 and must be below it). */
+private val GRED_VIRTUAL_QUEUES = object : GrammarOptionValue("config_parse_gred_u32", gredNumber(1L, 16L)) {
+  override fun invalidValueMessage(key: String, badValue: String): String =
+    "$key must be 1…16. systemd-networkd ignores values above 16, and with 0 DefaultVirtualQueue= can never be below " +
+      "VirtualQueues=, so the whole [GenericRandomEarlyDetection] section is ignored."
+}
+
+/** DefaultVirtualQueue=: must be below VirtualQueues=, which is at most 16. */
+private val GRED_DEFAULT_VIRTUAL_QUEUE = object : GrammarOptionValue("config_parse_gred_u32", gredNumber(0L, 15L)) {
+  override fun invalidValueMessage(key: String, badValue: String): String =
+    "$key must be 0…15 and below VirtualQueues= (at most 16); otherwise systemd-networkd ignores the whole " +
+      "[GenericRandomEarlyDetection] section."
+}
+
 /**
  * Validator for [GenericRandomEarlyDetection] VirtualQueues=, DefaultVirtualQueue=.
  *
@@ -28,22 +58,19 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * assignment" (although, at 0f0682b773, it still stores the value — a C bug; the kernel refuses more than
  * 16 DPs anyway), so it is flagged here.
  *
- * Lenient: both keys share the parser, so 0..16 is accepted for both, although VirtualQueues=0 and
- * DefaultVirtualQueue=16 always fail generic_random_early_detection_verify (DefaultVirtualQueue= must
- * be less than VirtualQueues=). The man page documents VirtualQueues= as 1…16.
+ * generic_random_early_detection_verify() then drops the whole section unless DefaultVirtualQueue= is below
+ * VirtualQueues= (src/network/tc/gred.c#L56-L65), so `VirtualQueues=0` and `DefaultVirtualQueue=16` can never
+ * work and are flagged per key (#565). Whether the two values fit together is not checked (that needs both lines).
  */
 class ConfigParseGredU32OptionValue : SimpleGrammarOptionValues(
   "config_parse_gred_u32",
-  SequenceCombinator(
-    SafeAtoTerminal(
-      signed = false,
-      base = 0,
-      flags = emptySet(),
-      minInclusive = 0L,
-      maxInclusive = 16L,
-      acceptsWhitespace = true,
-      acceptsMinus = true,
-    ),
-    EOF(),
-  ),
-)
+  gredNumber(0L, 16L),
+) {
+  override fun generateProblemDescriptors(property: UnitFilePropertyType, holder: ProblemsHolder) {
+    when (property.key) {
+      "VirtualQueues" -> GRED_VIRTUAL_QUEUES.generateProblemDescriptors(property, holder)
+      "DefaultVirtualQueue" -> GRED_DEFAULT_VIRTUAL_QUEUE.generateProblemDescriptors(property, holder)
+      else -> super.generateProblemDescriptors(property, holder)
+    }
+  }
+}
