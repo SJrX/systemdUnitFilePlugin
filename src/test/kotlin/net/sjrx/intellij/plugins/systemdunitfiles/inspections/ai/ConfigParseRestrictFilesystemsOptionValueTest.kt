@@ -2,6 +2,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections.ai
 
 import net.sjrx.intellij.plugins.systemdunitfiles.AbstractUnitFileTest
 import net.sjrx.intellij.plugins.systemdunitfiles.inspections.InvalidValueInspection
+import com.intellij.lang.annotation.HighlightSeverity
 import org.junit.Test
 
 class ConfigParseRestrictFilesystemsOptionValueTest : AbstractUnitFileTest() {
@@ -59,14 +60,30 @@ class ConfigParseRestrictFilesystemsOptionValueTest : AbstractUnitFileTest() {
     }
 
     @Test
-    fun testRuntimeOnlyRejectionsAreAccepted() {
-        // sd-check at 0f0682b773 accepts every one of these (one value per probe file). The unit-file parser
-        // stores any word that does not unquote to `@group` unchecked; unknown names are only logged and
-        // skipped when the unit starts ("bpf-restrict-fs: Invalid filesystem name '…', ignoring.",
-        // src/core/bpf-restrict-fs.c#L117-L121). Issue #565 tracks a separate warning for them. The kf6
-        // autotest values ("invalid", "temporary", "@auxiliary-api btrfs  nfs @temporary unknown") are here.
-        // A `~` word after the first position is the literal name `~proc` / `~@foo`, and quotes and
-        // backslash escapes are removed anywhere in a word (EXTRACT_UNQUOTE).
+    fun testQuotedKnownNamesAreAccepted() {
+        // EXTRACT_UNQUOTE removes quotes and backslash escapes anywhere in a word, so these all name ext4/xfs.
+        // language="unit file (systemd)"
+        val file = """
+            [Service]
+            RestrictFileSystems=ext"4"
+            RestrictFileSystems=ext4""
+            RestrictFileSystems=\ext4 'x'fs
+            RestrictFileSystems="@basic-api" '@network'
+        """.trimIndent()
+
+        setupFileInEditor("file.service", file)
+        enableInspection(InvalidValueInspection::class.java)
+        assertSize(0, myFixture.doHighlighting())
+    }
+
+    @Test
+    fun testUnknownNamesAreFlagged() {
+        // sd-check at 0f0682b773 is silent for every one of these at load time (the parser stores plain names
+        // unchecked), but when the unit starts the BPF code drops each unknown name with "bpf-restrict-fs:
+        // Invalid filesystem name '…', ignoring." (src/core/bpf-restrict-fs.c#L116-L121, called from
+        // src/core/exec-invoke.c#L2123), so the unit runs without that restriction (#565). The kf6 autotest
+        // values ("invalid", "temporary", "@auxiliary-api btrfs  nfs @temporary unknown") are here. A `~` word
+        // after the first position is the literal name `~proc` / `~@foo`, which no file system has.
         // language="unit file (systemd)"
         val file = """
             [Service]
@@ -84,17 +101,30 @@ class ConfigParseRestrictFilesystemsOptionValueTest : AbstractUnitFileTest() {
             RestrictFileSystems=~~proc
             RestrictFileSystems="~@bogus"
             RestrictFileSystems=\~proc
-            RestrictFileSystems=ext"4"
-            RestrictFileSystems=ext4""
             RestrictFileSystems=""
             RestrictFileSystems="a\"b"
             RestrictFileSystems='a\'b'
-            RestrictFileSystems="@basic-api" '@network'
         """.trimIndent()
 
         setupFileInEditor("file.service", file)
         enableInspection(InvalidValueInspection::class.java)
-        assertSize(0, myFixture.doHighlighting())
+        val highlights = myFixture.doHighlighting().filter { it.severity == HighlightSeverity.WARNING }
+        assertSize(17, highlights)
+        assertStringContains("unknown file system or group 'ext5'; systemd ignores it, so the unit runs without this restriction",
+            highlights.single { it.text == "ext5" }.description)
+        assertStringContains("'~proc' is not a file system. '~' only means \"deny list\" as the very first character",
+            highlights.first { it.text == "~proc" }.description)
+    }
+
+    @Test
+    fun testLongListOfUnknownNamesStaysOneProblem() {
+        // Each word has a single parse, so a long list of unknown names does not blow up the new engine (and fail open).
+        val words = (1..30).joinToString(" ") { "unknownfs$it" }
+        setupFileInEditor("file.service", "[Service]\nRestrictFileSystems=ext4 $words\n")
+        enableInspection(InvalidValueInspection::class.java)
+        val highlights = myFixture.doHighlighting().filter { it.severity == HighlightSeverity.WARNING }
+        assertSize(1, highlights)
+        assertStringContains("unknown file system or group 'unknownfs", highlights[0].description)
     }
 
     @Test
