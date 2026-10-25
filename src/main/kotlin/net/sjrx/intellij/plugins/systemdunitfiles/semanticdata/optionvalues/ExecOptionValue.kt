@@ -6,6 +6,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarning
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarnings
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar
 import java.util.regex.Pattern
 
@@ -19,7 +21,7 @@ import java.util.regex.Pattern
  * otherwise a weak warning recommending an absolute path:
  * https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L882-L1094
  */
-class ExecOptionValue : OptionValueInformation {
+class ExecOptionValue : OptionValueInformation, ValueWarnings {
   override fun getAutoCompleteOptions(project: Project): Set<String> {
     return emptySet()
   }
@@ -63,18 +65,55 @@ class ExecOptionValue : OptionValueInformation {
    * an argument is an error. A path that uses a known specifier is not checked further, because what it expands to
    * depends on the unit name and the machine; a path whose only '%'s are literal (`%%`, or '%' before a character
    * that is not a letter or digit) is checked after expanding them. Warnings that systemd logs while still loading
-   * the command (unknown escape sequences, the obsolete `!!` prefix) are not reported.
+   * the command (unknown escape sequences, the obsolete `!!` prefix) are [valueWarnings] instead.
    */
-  override fun getErrorMessage(value: String): String? {
+  override fun getErrorMessage(value: String): String? = analyze(value).error
+
+  /**
+   * What systemd warns about while still loading the command line: the `!!` prefix, which it ignores, and escape
+   * sequences cunescape does not know, which it keeps verbatim. Empty when [getErrorMessage] reports an error.
+   * https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L960-L970
+   * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L204-L222
+   */
+  override fun valueWarnings(key: String, value: String): List<ValueWarning> {
+    val analysis = analyze(value)
+    if (analysis.error != null) return emptyList()
+    val lead = value.length - value.trimStart(' ', '\t', '\n', '\r').length
+    val warnings = mutableListOf<ValueWarning>()
+    for (range in analysis.ignoredPrefixes) {
+      warnings += ValueWarning(
+        lead + range.first, lead + range.last + 1,
+        "The !! prefix is no longer supported; systemd ignores it and runs the command as if it had no ! prefix. Remove !!."
+      )
+    }
+    for (at in analysis.unknownEscapes) {
+      val escape = value.substring(lead + at, lead + at + 2)
+      warnings += ValueWarning(
+        lead + at, lead + at + 2,
+        "$escape is not a valid escape sequence; systemd keeps the backslash and logs \"Ignoring unknown escape sequences\". " +
+          "Write \\\\ for a literal backslash."
+      )
+    }
+    return warnings
+  }
+
+  /** The verdict of one pass over a command line: an error, or the spans systemd warns about. */
+  private class Analysis(val error: String?, val ignoredPrefixes: List<IntRange> = emptyList(), val unknownEscapes: List<Int> = emptyList())
+
+  private fun analyze(value: String): Analysis {
     val rvalue = value.trim(' ', '\t', '\n', '\r')
     var p: Int? = 0
+    val ignoredPrefixes = mutableListOf<IntRange>()
+    val unknownEscapes = mutableListOf<Int>()
+    fun error(message: String) = Analysis(message)
 
     // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L913-L1091
     do {
       var semicolon = false
 
-      val first = extractFirstWordAndWarn(rvalue, p) ?: return UNBALANCED_QUOTING
-      val firstWord = first.word ?: return null
+      val firstStart = p?.let { skipWhitespace(rvalue, it) }
+      val first = extractFirstWordAndWarn(rvalue, p, unknownEscapes) ?: return error(UNBALANCED_QUOTING)
+      val firstWord = first.word ?: return Analysis(null, ignoredPrefixes, unknownEscapes)
       p = first.next
 
       if (firstWord == ";") {
@@ -112,6 +151,9 @@ class ExecOptionValue : OptionValueInformation {
         }
         f++
       }
+      if (ambientHack && firstStart != null) {
+        ignoredPrefixes += firstStart until firstStart + f
+      }
       val rawPath = firstWord.substring(f)
       val unknownInPath = firstUnknownSpecifier(rawPath)
       // null when the path uses a real specifier
@@ -124,20 +166,20 @@ class ExecOptionValue : OptionValueInformation {
       } else if (unknownInPath != null) {
         // unit_path_printf() fails with -EBADSLT,
         // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L992-L998
-        return "Unknown specifier %$unknownInPath in executable path: $rawPath"
+        return error("Unknown specifier %$unknownInPath in executable path: $rawPath")
       } else if (path != null) {
         // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L992-L1028
         if (path.isEmpty()) {
-          return "Empty path in command line"
+          return error("Empty path in command line")
         }
         if (!stringIsSafe(path)) {
-          return "Executable path contains special characters (control characters, quotes, backslashes or *?[): $path"
+          return error("Executable path contains special characters (control characters, quotes, backslashes or *?[): $path")
         }
         if (pathImpliesDirectory(path)) {
-          return "Executable path specifies a directory: $path"
+          return error("Executable path specifies a directory: $path")
         }
         if (!filenameOrAbsolutePathIsValid(path)) {
-          return "Neither a valid executable name nor an absolute path: $path"
+          return error("Neither a valid executable name nor an absolute path: $path")
         }
         if (!separateArgv0) {
           argCount++
@@ -165,7 +207,7 @@ class ExecOptionValue : OptionValueInformation {
           continue
         }
 
-        val arg = extractFirstWordAndWarn(rvalue, p) ?: return UNBALANCED_QUOTING
+        val arg = extractFirstWordAndWarn(rvalue, p, unknownEscapes) ?: return error(UNBALANCED_QUOTING)
         if (arg.word == null) {
           break
         }
@@ -174,18 +216,18 @@ class ExecOptionValue : OptionValueInformation {
         // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L1060-L1066
         val unknown = firstUnknownSpecifier(arg.word)
         if (unknown != null) {
-          return "Unknown specifier %$unknown in argument: ${arg.word}"
+          return error("Unknown specifier %$unknown in argument: ${arg.word}")
         }
         argCount++
       }
 
       // https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L1072-L1077
       if (argCount == 0) {
-        return "Empty executable name or zeroeth argument: with the '@' prefix the first argument after the path is argv[0]"
+        return error("Empty executable name or zeroeth argument: with the '@' prefix the first argument after the path is argv[0]")
       }
     } while (semicolon || firstWord == ";")
 
-    return null
+    return Analysis(null, ignoredPrefixes, unknownEscapes)
   }
 
   override val validatorName: String
@@ -288,19 +330,21 @@ class ExecOptionValue : OptionValueInformation {
     /**
      * extract_first_word_and_warn(…, EXTRACT_UNQUOTE|EXTRACT_CUNESCAPE): an invalid escape sequence is only a
      * warning (systemd retries with EXTRACT_UNESCAPE_RELAX and keeps the backslash), so this returns null only for
-     * unbalanced quoting.
+     * unbalanced quoting. When the relaxed retry is what succeeds, the offsets of the backslashes it kept are added to
+     * [unknownEscapes] (systemd logs "Ignoring unknown escape sequences").
      * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L190-L233
      */
-    private fun extractFirstWordAndWarn(s: String, from: Int?): Word? {
-      return extractFirstWord(s, from, false) ?: extractFirstWord(s, from, true)
+    private fun extractFirstWordAndWarn(s: String, from: Int?, unknownEscapes: MutableList<Int>): Word? {
+      return extractFirstWord(s, from, false, null) ?: extractFirstWord(s, from, true, unknownEscapes)
     }
 
     /**
      * extract_first_word() with WHITESPACE separators and EXTRACT_UNQUOTE|EXTRACT_CUNESCAPE (plus
-     * EXTRACT_UNESCAPE_RELAX when [unescapeRelax]). Returns null for -EINVAL.
+     * EXTRACT_UNESCAPE_RELAX when [unescapeRelax]). Returns null for -EINVAL. In relaxed mode the offset of each
+     * backslash kept verbatim is added to [keptBackslashes].
      * https://github.com/systemd/systemd/blob/0f0682b773/src/basic/extract-word.c#L10-L188
      */
-    private fun extractFirstWord(s: String, from: Int?, unescapeRelax: Boolean): Word? {
+    private fun extractFirstWord(s: String, from: Int?, unescapeRelax: Boolean, keptBackslashes: MutableList<Int>?): Word? {
       var i = from ?: return Word(null, null)
       while (i < s.length && s[i] in WHITESPACE) {
         i++
@@ -328,6 +372,7 @@ class ExecOptionValue : OptionValueInformation {
             i += consumed - 1
           } else if (unescapeRelax) {
             out.append('\\').append(c)
+            keptBackslashes?.add(i - 1)
           } else {
             return null
           }

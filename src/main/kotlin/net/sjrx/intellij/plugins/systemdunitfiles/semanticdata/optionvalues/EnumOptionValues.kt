@@ -3,6 +3,8 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues
 import com.google.common.collect.ImmutableSet
 import com.intellij.openapi.project.Project
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarning
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarnings
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
@@ -34,7 +36,22 @@ class EmergencyActionOptionValue : AbstractGrammarEnumOptionValue(validOptions, 
   }
 }
 
-class KillModeOptionValue : AbstractGrammarEnumOptionValue(validOptions, VALIDATOR_NAME) {
+class KillModeOptionValue : AbstractGrammarEnumOptionValue(validOptions, VALIDATOR_NAME), ValueWarnings {
+
+  /**
+   * KillMode=none is accepted with a warning that it is unsafe and deprecated.
+   * https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L871-L876
+   */
+  override fun valueWarnings(key: String, value: String): List<ValueWarning> {
+    if (value != "none") return emptyList()
+    return listOf(
+      ValueWarning(
+        0, value.length,
+        "$key=none is unsafe and deprecated: systemd stops managing the service's processes, so they keep running after " +
+          "the service is stopped or restarted. Use mixed or control-group instead."
+      )
+    )
+  }
 
   companion object {
     private val validOptions: Set<String> = ImmutableSet.of("control-group", "process", "mixed", "none")

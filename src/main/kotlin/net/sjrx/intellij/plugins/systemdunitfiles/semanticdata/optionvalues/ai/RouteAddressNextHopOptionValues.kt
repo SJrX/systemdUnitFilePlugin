@@ -1,6 +1,11 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarning
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarnings
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.missingPrefixLengthWarning
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ParseOutcome
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.validate
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BOOLEAN_FALSE
@@ -95,7 +100,18 @@ class ConfigParseRouteScopeOptionValue : SimpleGrammarOptionValues(
  */
 class ConfigParseAddressSectionPeerOptionValue : SimpleGrammarOptionValues(
     ADDRESS, SequenceCombinator(IP_ADDR_AND_ANY_PREFIX, EOF())
-)
+), ValueWarnings {
+
+    /**
+     * Peer= goes through the same config_parse_address() as Address=, so a bare peer address gets the full-width
+     * prefix and a warning.
+     * https://github.com/systemd/systemd/blob/0f0682b773/src/network/networkd-address.c#L2159
+     */
+    override fun valueWarnings(key: String, value: String): List<ValueWarning> {
+        if (combinator.validate(value) != ParseOutcome.Valid) return emptyList()
+        return listOfNotNull(missingPrefixLengthWarning(key, value))
+    }
+}
 
 /**
  * `[Address] Broadcast=` — table entry config_parse_broadcast: a boolean (asking systemd to derive

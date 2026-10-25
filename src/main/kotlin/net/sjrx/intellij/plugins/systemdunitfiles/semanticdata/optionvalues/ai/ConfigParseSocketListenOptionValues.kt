@@ -2,6 +2,9 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
 import com.intellij.codeInspection.ProblemsHolder
 import net.sjrx.intellij.plugins.systemdunitfiles.psi.UnitFilePropertyType
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarning
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarnings
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.legacyVarRunWarning
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ALTERNATIVE_INTERFACE_NAME
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
@@ -12,6 +15,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IPV4_ADDR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IPV6_ADDR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.LiteralChoiceTerminal
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ParseOutcome
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
@@ -20,6 +24,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.UNIT_SPECIFIER_LETTERS
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.UNIT_TEXT_CHAR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.validate
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.withUnitSpecifiers
 
 /*
@@ -210,7 +215,7 @@ private val NETLINK_ADDRESS = withUnitSpecifiers(
 class ConfigParseSocketListenSocketOptionValue : SimpleGrammarOptionValues(
   "config_parse_socket_listen",
   AlternativeCombinator(SOCKET_ADDRESS, NETLINK_ADDRESS)
-) {
+), ValueWarnings {
   private val byKey: Map<String, SimpleGrammarOptionValues> = mapOf(
     "ListenStream" to SimpleGrammarOptionValues("config_parse_socket_listen", SOCKET_ADDRESS),
     "ListenDatagram" to SimpleGrammarOptionValues("config_parse_socket_listen", SOCKET_ADDRESS),
@@ -224,6 +229,16 @@ class ConfigParseSocketListenSocketOptionValue : SimpleGrammarOptionValues(
   override fun generateProblemDescriptors(property: UnitFilePropertyType, holder: ProblemsHolder) {
     val delegate = byKey[property.key]
     if (delegate != null) delegate.generateProblemDescriptors(property, holder) else super.generateProblemDescriptors(property, holder)
+  }
+
+  /**
+   * ListenStream=, ListenDatagram= and ListenSequentialPacket= run patch_var_run() on an absolute (AF_UNIX) path;
+   * ListenNetlink= never takes a path.
+   * https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L690-L694
+   */
+  override fun valueWarnings(key: String, value: String): List<ValueWarning> {
+    if (key == "ListenNetlink" || combinatorForKey(key).validate(value) != ParseOutcome.Valid) return emptyList()
+    return listOfNotNull(legacyVarRunWarning(key, value))
   }
 }
 
@@ -239,7 +254,17 @@ class ConfigParseSocketListenSocketOptionValue : SimpleGrammarOptionValues(
 class ConfigParseSocketListenFileOptionValue : SimpleGrammarOptionValues(
   "config_parse_socket_listen",
   SequenceCombinator(UNIT_ABSOLUTE_NON_API_VFS_PATH, EOF())
-)
+), ValueWarnings {
+
+  /**
+   * Only ListenFIFO= (SOCKET_FIFO) runs patch_var_run(); ListenMessageQueue= and ListenUSBFunction= keep /var/run/.
+   * https://github.com/systemd/systemd/blob/0f0682b773/src/core/load-fragment.c#L655-L659
+   */
+  override fun valueWarnings(key: String, value: String): List<ValueWarning> {
+    if (key != "ListenFIFO" || combinator.validate(value) != ParseOutcome.Valid) return emptyList()
+    return listOfNotNull(legacyVarRunWarning(key, value))
+  }
+}
 
 /**
  * Validator for `[Socket] ListenSpecial=` (ltype SOCKET_SPECIAL): as

@@ -1,0 +1,12 @@
+<html>
+<body>
+<p>
+  Detects values that systemd accepts but warns about when it loads the unit.
+</p>
+<!-- tooltip end -->
+<p>Examples are obsolete spellings that systemd rewrites (<var>StandardOutput=syslog</var>, paths below
+<var>/var/run/</var>), settings systemd calls unsafe (<var>KillMode=none</var>, <var>User=nobody</var>), and values it
+silently corrects (an address without a prefix length, a WireGuard <var>AllowedIPs=</var> entry with host bits set).
+Each message says what systemd does with the value and what to write instead.</p>
+</body>
+</html>
