@@ -1,15 +1,20 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues
 
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.Validator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarning
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarnings
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.missingPrefixLengthWarning
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.CIDR_SEPARATOR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.GrammarOptionValue
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IPV4_ADDR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.IPV6_ADDR
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ParseOutcome
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SafeAtoTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ZeroOrOne
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.validate
 
 /*
  * [Address] Address= (and the [Network] Address= shorthand) in a .network file.
@@ -31,7 +36,8 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  * > Please specify the prefix length explicitly.
  *
  * That is advice, not a rejection: the address is used with the full-width prefix. So a bare address is
- * accepted for both families (`Address=2001:db8::1` used to be flagged for IPv6; issue #568).
+ * accepted for both families (`Address=2001:db8::1` used to be flagged for IPv6; issue #568), and the
+ * ValueWarning inspection repeats systemd's warning (#565).
  *
  * The prefix length goes through in_addr_parse_prefixlen → safe_atou8 (base 0, so `/0x40` works, and
  * whitespace after the slash reaches it: `/ 8`), and is refused only when wider than the address, so the
@@ -40,7 +46,13 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
  *
  * `Peer=` is the same ConfigSectionParser slot; see ConfigParseAddressSectionPeerOptionValue.
  */
-class NetworkAddressOptionValue() : GrammarOptionValue("config_parse_address_section", GRAMMAR) {
+class NetworkAddressOptionValue() : GrammarOptionValue("config_parse_address_section", GRAMMAR), ValueWarnings {
+
+  /** A bare address gets the full-width prefix and a warning (see the class comment). */
+  override fun valueWarnings(key: String, value: String): List<ValueWarning> {
+    if (combinator.validate(value) != ParseOutcome.Valid) return emptyList()
+    return listOfNotNull(missingPrefixLengthWarning(key, value))
+  }
 
   companion object {
     val GRAMMAR = SequenceCombinator(

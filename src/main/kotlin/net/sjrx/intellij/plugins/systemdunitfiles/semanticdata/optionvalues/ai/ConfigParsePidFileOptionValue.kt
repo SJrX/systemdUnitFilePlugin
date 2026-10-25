@@ -1,12 +1,17 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarning
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.ValueWarnings
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.legacyVarRunWarning
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.NOT_API_VFS
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.NO_DOT_DOT_COMPONENT
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.BatchUnitCoreGrammar.UNIT_TEXT_CHAR
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.ParseOutcome
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.RegexTerminal
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.validate
 
 /*
  * [Service] PIDFile=
@@ -37,4 +42,11 @@ class ConfigParsePidFileOptionValue : SimpleGrammarOptionValues(
     RegexTerminal("""[\s\S]+""", """$NO_DOT_DOT_COMPONENT$NOT_API_VFS$UNIT_TEXT_CHAR+$"""),
     EOF(),
   )
-)
+), ValueWarnings {
+
+  /** A path below /var/run/ is rewritten to /run/ by patch_var_run() with a notice. */
+  override fun valueWarnings(key: String, value: String): List<ValueWarning> {
+    if (combinator.validate(value) != ParseOutcome.Valid) return emptyList()
+    return listOfNotNull(legacyVarRunWarning(key, value))
+  }
+}
