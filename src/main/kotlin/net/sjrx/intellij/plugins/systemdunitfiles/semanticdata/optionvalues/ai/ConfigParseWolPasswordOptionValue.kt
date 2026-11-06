@@ -3,7 +3,7 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.ai
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.SimpleGrammarOptionValues
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.AlternativeCombinator
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.EOF
-import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.MAC_ADDRESS
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SECUREON_PASSWORD
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SAFE_ABSOLUTE_PATH
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SequenceCombinator
 
@@ -29,7 +29,7 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.gram
 class ConfigParseWolPasswordOptionValue : SimpleGrammarOptionValues(
     "config_parse_wol_password",
     AlternativeCombinator(
-        SequenceCombinator(MAC_ADDRESS, EOF()),
+        SequenceCombinator(SECUREON_PASSWORD, EOF()),
         SequenceCombinator(SAFE_ABSOLUTE_PATH, EOF()),
     )
 )

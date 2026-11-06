@@ -1,7 +1,9 @@
 package net.sjrx.intellij.plugins.systemdunitfiles.settings
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.util.ui.FormBuilder
 import javax.swing.JComponent
@@ -12,6 +14,7 @@ class PodmanQuadletConfigurable(private val project: Project) : Configurable {
   private var enabledCheckbox: JBCheckBox? = null
   private var grammarEngineCheckbox: JBCheckBox? = null
   private var underlineGrammarKeysCheckbox: JBCheckBox? = null
+  private var macFormatCombo: ComboBox<PreferredMacFormat>? = null
 
   override fun getDisplayName(): String = "systemd Unit Files"
 
@@ -27,11 +30,15 @@ class PodmanQuadletConfigurable(private val project: Project) : Configurable {
       "Underline keys backed by the new grammar engine (experimental)",
       experimental.state.underlineGrammarEngineKeys,
     )
+    macFormatCombo = ComboBox(PreferredMacFormat.entries.toTypedArray()).apply {
+      selectedItem = experimental.state.preferredMacFormat
+    }
 
     return FormBuilder.createFormBuilder()
       .addComponent(enabledCheckbox!!)
       .addComponent(grammarEngineCheckbox!!)
       .addComponent(underlineGrammarKeysCheckbox!!)
+      .addLabeledComponent("Preferred MAC address format (grammar engine only):", macFormatCombo!!)
       .addComponentFillVertically(JPanel(), 0)
       .panel
   }
@@ -41,7 +48,8 @@ class PodmanQuadletConfigurable(private val project: Project) : Configurable {
     val experimental = ExperimentalSettings.getInstance(project)
     return enabledCheckbox?.isSelected != settings.state.enabled ||
       grammarEngineCheckbox?.isSelected != experimental.state.useGrammarParseEngine ||
-      underlineGrammarKeysCheckbox?.isSelected != experimental.state.underlineGrammarEngineKeys
+      underlineGrammarKeysCheckbox?.isSelected != experimental.state.underlineGrammarEngineKeys ||
+      selectedMacFormat() != experimental.state.preferredMacFormat
   }
 
   override fun apply() {
@@ -52,9 +60,18 @@ class PodmanQuadletConfigurable(private val project: Project) : Configurable {
     }
     settings.state.enabled = newEnabled
 
-    val experimental = ExperimentalSettings.getInstance(project)
-    experimental.state.useGrammarParseEngine = grammarEngineCheckbox?.isSelected ?: false
-    experimental.state.underlineGrammarEngineKeys = underlineGrammarKeysCheckbox?.isSelected ?: false
+    val experimental = ExperimentalSettings.getInstance(project).state
+    val newGrammarEngine = grammarEngineCheckbox?.isSelected ?: false
+    val newUnderlineKeys = underlineGrammarKeysCheckbox?.isSelected ?: false
+    val newMacFormat = selectedMacFormat()
+    val changed = experimental.useGrammarParseEngine != newGrammarEngine ||
+      experimental.underlineGrammarEngineKeys != newUnderlineKeys ||
+      experimental.preferredMacFormat != newMacFormat
+    experimental.useGrammarParseEngine = newGrammarEngine
+    experimental.underlineGrammarEngineKeys = newUnderlineKeys
+    experimental.preferredMacFormat = newMacFormat
+    // Inspections and annotators read these when they build their visitors, so re-run them on open files.
+    if (changed) DaemonCodeAnalyzer.getInstance(project).restart()
   }
 
   override fun reset() {
@@ -63,5 +80,9 @@ class PodmanQuadletConfigurable(private val project: Project) : Configurable {
     enabledCheckbox?.isSelected = settings.state.enabled
     grammarEngineCheckbox?.isSelected = experimental.state.useGrammarParseEngine
     underlineGrammarKeysCheckbox?.isSelected = experimental.state.underlineGrammarEngineKeys
+    macFormatCombo?.selectedItem = experimental.state.preferredMacFormat
   }
+
+  private fun selectedMacFormat(): PreferredMacFormat =
+    macFormatCombo?.selectedItem as? PreferredMacFormat ?: PreferredMacFormat.COLON_LOWER
 }

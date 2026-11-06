@@ -73,7 +73,7 @@ class ValueWarningInspection : LocalInspectionTool() {
  * UnitFileValueType.getValue(): each value line is trimmed (String.trim(), i.e. chars <= ' '), a trailing continuation
  * backslash becomes a space, and the joined result is trimmed again. Null if the reconstruction does not match [value].
  */
-private fun valueTextOffsets(valueElement: PsiElement, value: String): IntArray? {
+internal fun valueTextOffsets(valueElement: PsiElement, value: String): IntArray? {
   val text = StringBuilder()
   val offsets = mutableListOf<Int>()
   var child = valueElement.firstChild

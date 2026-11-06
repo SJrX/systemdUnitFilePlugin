@@ -204,34 +204,74 @@ private val HW_ADDR_WORD = RegexTerminal("[0-9a-fA-F]{1,4}", "[0-9a-fA-F]{1,4}")
 private fun hwAddrGroups(group: Combinator, sep: Combinator, count: Int): Combinator =
   SequenceCombinator(group, Repeat(SequenceCombinator(sep, group), count - 1, count - 1))
 
-// A 6-byte Ethernet MAC address, i.e. systemd parse_ether_addr (expected_len == ETH_ALEN). Used by
-// SR-IOV=, BridgeFDB=, DHCPServerStaticLease=, MACsec*=, NetDev/Peer= and MACVLAN/MACVTAP source.
-val MAC_ADDRESS = Labeled(Role.LITERAL, AlternativeCombinator(
+// Hardware-address families, by byte length. Each accepts all three separator styles: colon and
+// hyphen with 1-byte fields (N groups), dot with 2-byte fields (N/2 groups). Each family is Labeled
+// exactly once, as a single literal span, so nothing that assembles them below adds another wrapper.
+// Only the 6-byte family carries SemanticTag.MAC_ADDRESS.
+
+// 4 bytes: IPv4 tunnels (IPIP, GRE, SIT). The "hardware address" is the tunnel endpoint's IPv4 address.
+private val IPV4_TUNNEL_HW_ADDR = Labeled(Role.LITERAL, AlternativeCombinator(
+  hwAddrGroups(HW_ADDR_BYTE, COLON, 4),
+  hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 4),
+  hwAddrGroups(HW_ADDR_WORD, DOT, 2),
+))
+
+// 6 bytes, in parse_ether_addr's three spellings. Unlabeled: wrapped below as either a MAC or a password.
+private val SIX_BYTE_HW_ADDR_FORMS = AlternativeCombinator(
   hwAddrGroups(HW_ADDR_BYTE, COLON, 6),
   hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 6),
   hwAddrGroups(HW_ADDR_WORD, DOT, 3),
+)
+
+// 6 bytes: an Ethernet MAC (Wi-Fi, wired NICs, bridges, VLANs, ...).
+private val ETHERNET_HW_ADDR = Labeled(Role.LITERAL, SIX_BYTE_HW_ADDR_FORMS, SemanticTag.MAC_ADDRESS)
+
+// [Link] WakeOnLanPassword=: a 6-byte SecureOn password spelled like a MAC (systemd parses it with
+// parse_ether_addr), but not an address, so it is deliberately NOT tagged SemanticTag.MAC_ADDRESS.
+val SECUREON_PASSWORD = Labeled(Role.LITERAL, SIX_BYTE_HW_ADDR_FORMS)
+
+// 16 bytes: IPv6 tunnels (ip6tnl, ip6gre). The tunnel endpoint's IPv6 address.
+private val IPV6_TUNNEL_HW_ADDR = Labeled(Role.LITERAL, AlternativeCombinator(
+  hwAddrGroups(HW_ADDR_BYTE, COLON, 16),
+  hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 16),
+  hwAddrGroups(HW_ADDR_WORD, DOT, 8),
 ))
 
-// The raw hex forms of a hardware address (colon/hyphen use 1-byte fields → 4/6/16/20 groups; dot uses
-// 2-byte fields → 2/3/8/10 groups). Longest group counts come first so the classic (first-full-match)
-// matcher never stops on a shorter prefix. Wrapped once so the whole address reads as a single literal
-// span rather than per-field.
-private val RAW_HARDWARE_ADDRESS = Labeled(Role.LITERAL, AlternativeCombinator(
-  hwAddrGroups(HW_ADDR_BYTE, COLON, 20), hwAddrGroups(HW_ADDR_BYTE, COLON, 16), hwAddrGroups(HW_ADDR_BYTE, COLON, 6), hwAddrGroups(HW_ADDR_BYTE, COLON, 4),
-  hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 20), hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 16), hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 6), hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 4),
-  hwAddrGroups(HW_ADDR_WORD, DOT, 10), hwAddrGroups(HW_ADDR_WORD, DOT, 8), hwAddrGroups(HW_ADDR_WORD, DOT, 3), hwAddrGroups(HW_ADDR_WORD, DOT, 2),
+// 20 bytes: InfiniBand (4-byte queue-pair number + 16-byte GID).
+private val INFINIBAND_HW_ADDR = Labeled(Role.LITERAL, AlternativeCombinator(
+  hwAddrGroups(HW_ADDR_BYTE, COLON, 20),
+  hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 20),
+  hwAddrGroups(HW_ADDR_WORD, DOT, 10),
 ))
+
+// A 6-byte Ethernet MAC address, i.e. systemd parse_ether_addr (expected_len == ETH_ALEN). Used by
+// SR-IOV=, BridgeFDB=, DHCPServerStaticLease=, MACsec*=, NetDev/Peer= and MACVLAN/MACVTAP source.
+// Already Labeled and tagged SemanticTag.MAC_ADDRESS (above), so MacAddressFormatInspection can find it.
+val MAC_ADDRESS: Combinator = ETHERNET_HW_ADDR
 
 // A hardware address as accepted by parse_hw_addr_full with expected_len == 0 (Match=, Link=,
 // Neighbor.LinkLayerAddress=). Besides 6-byte MACs it accepts 4-, 16- and 20-byte (Infiniband)
-// hardware addresses, and — because the parser first tries in_addr_from_string — plain IPv4 and IPv6
-// address literals. IPV4_ADDR / IPV6_ADDR are already Labeled (IPv6 also carries SemanticTag.IPV6), so
-// they sit alongside the wrapped raw forms rather than inside a second wrapper — a whole-alternation
-// Labeled would emit a redundant second literal region over an IP literal's span.
+// hardware addresses, and (because the parser first tries in_addr_from_string) plain IPv4 and IPv6
+// address literals. Every alternative is already Labeled exactly once (IPv6 carries SemanticTag.IPV6,
+// the 6-byte family SemanticTag.MAC_ADDRESS), so nothing here adds another wrapper.
+//
+// ORDER MATTERS for the classic matcher (SyntacticMatch): it takes the first alternative that matches a
+// *prefix* and never backtracks, so an alternative must not come before one whose values it can be a
+// prefix of. Hence:
+//  - 20- and 16-byte families before IPV6_ADDR: the first 8 colon fields of `01:02:...:10` are a valid
+//    IPv6 address, which would otherwise win and leave the rest unmatched;
+//  - IPV6_ADDR / IPV4_ADDR before the 6- and 4-byte families: `1:2:3:4:5:6:7:8` starts with a valid MAC,
+//    and `192.168.1.1` with a valid 2-word dot address;
+//  - longer families before shorter ones (the 4-byte colon branch would eat the start of a MAC).
+// The new parse() engine tries every alternative, so it doesn't care. MacAddressGrammarTest covers each
+// length in each separator style with the classic engine.
 val HARDWARE_ADDRESS = AlternativeCombinator(
+  INFINIBAND_HW_ADDR,
+  IPV6_TUNNEL_HW_ADDR,
   IPV6_ADDR,
   IPV4_ADDR,
-  RAW_HARDWARE_ADDRESS,
+  ETHERNET_HW_ADDR,
+  IPV4_TUNNEL_HW_ADDR,
 )
 
 
