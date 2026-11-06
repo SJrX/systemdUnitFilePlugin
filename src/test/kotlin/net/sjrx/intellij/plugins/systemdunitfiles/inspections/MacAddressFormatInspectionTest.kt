@@ -135,4 +135,42 @@ class MacAddressFormatInspectionTest : AbstractUnitFileTest() {
     myFixture.launchAction(myFixture.findSingleIntention("Convert MAC address to"))
     myFixture.checkResult("[MACVLAN]\nSourceMACAddress=00:11:22:33:44:55 aa:bb:cc:dd:ee:ff\n")
   }
+
+  // --- Regressions from the PR #576 review.
+
+  @Test
+  fun testFixAllRewritesEveryMacInAList() {
+    // Each fix lengthens the value, so later fixes in the same value must not use stale offsets.
+    configure()
+    setupFileInEditor("f.netdev", "[MACVLAN]\nSourceMACAddress=1-2-3-4-5-${COMPLETION_POSITION}6 A-B-C-D-E-F 00:11:22:33:44:55\n")
+    enableInspection(MacAddressFormatInspection::class.java)
+    myFixture.doHighlighting()
+
+    myFixture.launchAction(myFixture.findSingleIntention("Fix all 'MAC address not in preferred format' problems in file"))
+    myFixture.checkResult("[MACVLAN]\nSourceMACAddress=01:02:03:04:05:06 0a:0b:0c:0d:0e:0f 00:11:22:33:44:55\n")
+  }
+
+  @Test
+  fun testQuickFixOnContinuationLineKeepsLayout() {
+    // valueText joins the lines, so its offsets must be mapped back onto the raw text.
+    configure()
+    setupFileInEditor(
+      "f.netdev",
+      "[MACVLAN]\nSourceMACAddress=00:11:22:33:44:55 \\\n    AA-BB-${COMPLETION_POSITION}CC-DD-EE-FF\n",
+    )
+    enableInspection(MacAddressFormatInspection::class.java)
+    myFixture.doHighlighting()
+
+    myFixture.launchAction(myFixture.findSingleIntention("Convert MAC address to"))
+    myFixture.checkResult("[MACVLAN]\nSourceMACAddress=00:11:22:33:44:55 \\\n    aa:bb:cc:dd:ee:ff\n")
+  }
+
+  @Test
+  fun testWakeOnLanPasswordIsNotTreatedAsAMac() {
+    // A SecureOn password is spelled like a MAC but isn't an address.
+    configure()
+    setupFileInEditor("f.link", "[Link]\nWakeOnLanPassword=00-11-22-33-44-55\n")
+    enableInspection(MacAddressFormatInspection::class.java)
+    assertFalse(hasFormatWarning())
+  }
 }

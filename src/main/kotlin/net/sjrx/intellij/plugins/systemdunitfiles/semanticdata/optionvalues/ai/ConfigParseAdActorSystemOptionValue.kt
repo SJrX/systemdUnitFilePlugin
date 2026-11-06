@@ -12,21 +12,6 @@ import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.Simp
  */
 
 /**
- * The six bytes of a [MAC_ADDRESS] spelling: colon- or hyphen-separated 1-byte fields, or three
- * dot-separated 2-byte fields (`0223.4567.89ab`, where a short field such as `123` is 0x0123).
- */
-private fun macAddressBytes(text: String): IntArray? {
-  val bytes = when {
-    '.' in text -> text.split('.').flatMap { word ->
-      val v = word.toIntOrNull(16) ?: return null
-      listOf(v shr 8, v and 0xFF)
-    }
-    else -> text.split(':', '-').map { it.toIntOrNull(16) ?: return null }
-  }
-  return if (bytes.size == 6) bytes.toIntArray() else null
-}
-
-/**
  * Validator for [Bond] AdActorSystem= (.netdev).
  *
  * C Function: config_parse_ad_actor_system(0). parse_ether_addr() takes a 6-byte MAC in any of the three
