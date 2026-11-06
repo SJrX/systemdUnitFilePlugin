@@ -80,8 +80,8 @@ class MacAddressGrammarTest {
   fun testAddressColorsAsOneLiteralSpan() {
     // Both combinators wrap the raw hex forms in Labeled(Role.LITERAL): the whole address is a single
     // literal span (not coloured per octet / with the separators as operators).
-    assertEquals(listOf(Region(0, 17, Role.LITERAL)), mac.colorize("00:11:22:33:44:55"))
-    assertEquals(listOf(Region(0, 17, Role.LITERAL)), hwAddr.colorize("00-11-22-33-44-55"))
+    assertEquals(listOf(Region(0, 17, Role.LITERAL, SemanticTag.MAC_ADDRESS)), mac.colorize("00:11:22:33:44:55"))
+    assertEquals(listOf(Region(0, 17, Role.LITERAL, SemanticTag.MAC_ADDRESS)), hwAddr.colorize("00-11-22-33-44-55"))
   }
 
   @Test
