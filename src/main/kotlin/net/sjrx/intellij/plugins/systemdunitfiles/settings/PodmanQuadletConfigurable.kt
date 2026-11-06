@@ -60,15 +60,18 @@ class PodmanQuadletConfigurable(private val project: Project) : Configurable {
     }
     settings.state.enabled = newEnabled
 
-    val experimental = ExperimentalSettings.getInstance(project)
-    experimental.state.useGrammarParseEngine = grammarEngineCheckbox?.isSelected ?: false
-    experimental.state.underlineGrammarEngineKeys = underlineGrammarKeysCheckbox?.isSelected ?: false
+    val experimental = ExperimentalSettings.getInstance(project).state
+    val newGrammarEngine = grammarEngineCheckbox?.isSelected ?: false
+    val newUnderlineKeys = underlineGrammarKeysCheckbox?.isSelected ?: false
     val newMacFormat = selectedMacFormat()
-    if (experimental.state.preferredMacFormat != newMacFormat) {
-      experimental.state.preferredMacFormat = newMacFormat
-      // Inspections read the setting when they build their visitor, so re-run them on open files.
-      DaemonCodeAnalyzer.getInstance(project).restart()
-    }
+    val changed = experimental.useGrammarParseEngine != newGrammarEngine ||
+      experimental.underlineGrammarEngineKeys != newUnderlineKeys ||
+      experimental.preferredMacFormat != newMacFormat
+    experimental.useGrammarParseEngine = newGrammarEngine
+    experimental.underlineGrammarEngineKeys = newUnderlineKeys
+    experimental.preferredMacFormat = newMacFormat
+    // Inspections and annotators read these when they build their visitors, so re-run them on open files.
+    if (changed) DaemonCodeAnalyzer.getInstance(project).restart()
   }
 
   override fun reset() {

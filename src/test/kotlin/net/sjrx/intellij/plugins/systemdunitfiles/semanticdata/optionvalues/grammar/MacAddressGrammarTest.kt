@@ -91,4 +91,33 @@ class MacAddressGrammarTest {
     assertEquals(listOf(Region(0, 11, Role.LITERAL, SemanticTag.IPV6)), hwAddr.colorize("2001:db8::1"))
     assertEquals(listOf(Region(0, 11, Role.LITERAL)), hwAddr.colorize("192.168.1.1"))
   }
+
+  @Test
+  fun testClassicEngineAcceptsEveryHardwareAddressLength() {
+    // The classic engine takes the first alternative matching a prefix and never backtracks, so the
+    // hardware-address families must stay ordered longest first. A shorter family placed earlier would
+    // eat the start of a longer address and leave the rest unmatched.
+    fun bytes(n: Int, sep: String) = (1..n).joinToString(sep) { "%02x".format(it) }
+    fun words(n: Int) = (1..n / 2).joinToString(".") { "%04x".format(it) }
+    for (n in listOf(4, 6, 16, 20)) {
+      for (value in listOf(bytes(n, ":"), bytes(n, "-"), words(n))) {
+        assertEquals(value, GrammarEngineVerdict.VALID, GrammarEngineVerdict.classic(hwAddr, value))
+        assertEquals(value, true, hwAddr.accepts(value))
+      }
+    }
+  }
+
+  @Test
+  fun testClassicEngineStillAcceptsIpLiterals() {
+    // IP literals sit between the long and short families; a short family must never eat their prefix.
+    for (value in listOf("1:2:3:4:5:6:7:8", "2001:db8::1", "::1", "192.168.1.1")) {
+      assertEquals(value, GrammarEngineVerdict.VALID, GrammarEngineVerdict.classic(hwAddr, value))
+    }
+  }
+
+  @Test
+  fun testOnlySixByteAddressesAreTaggedAsMacs() {
+    assertEquals(listOf(Region(0, 11, Role.LITERAL)), hwAddr.colorize("01:02:03:04"))
+    assertEquals(listOf(Region(0, 59, Role.LITERAL)), hwAddr.colorize((1..20).joinToString(":") { "%02x".format(it) }))
+  }
 }
