@@ -46,6 +46,12 @@ class ExperimentalSettings : PersistentStateComponent<ExperimentalSettings.State
      * validation path is active, so this can be toggled on its own.
      */
     var underlineGrammarEngineKeys: Boolean = false
+
+    /**
+     * Which spelling MacAddressFormatInspection suggests for 6-byte MAC addresses. Only consulted when
+     * [useGrammarParseEngine] is on; [PreferredMacFormat.LEAVE_ALONE] disables the suggestion.
+     */
+    var preferredMacFormat: PreferredMacFormat = PreferredMacFormat.COLON_LOWER
   }
 
   override fun getState(): State = myState
