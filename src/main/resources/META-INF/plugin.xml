@@ -90,6 +90,10 @@
                      groupPath="Unit files (systemd)" language="Unit File (systemd)"
                      shortName="Ipv6CanonicalForm" displayName="IPv6 address not in canonical form (RFC 5952)"
                      groupName="Style" enabledByDefault="true" level="WEAK WARNING"/>
+    <localInspection implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.inspections.MacAddressFormatInspection"
+                     groupPath="Unit files (systemd)" language="Unit File (systemd)"
+                     shortName="MacAddressFormat" displayName="MAC address not in preferred format"
+                     groupName="Style" enabledByDefault="true" level="WEAK WARNING"/>
     <localInspection implementationClass="net.sjrx.intellij.plugins.systemdunitfiles.inspections.IPAddressAllowOnlyInspection"
                      groupPath="Unit files (systemd)" language="Unit File (systemd)"
                      shortName="IPAddressAllowOnly" displayName="IPAddressAllow without IPAddressDeny"

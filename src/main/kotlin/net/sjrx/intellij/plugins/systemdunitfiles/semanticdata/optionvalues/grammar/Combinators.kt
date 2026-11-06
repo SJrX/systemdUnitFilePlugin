@@ -204,23 +204,58 @@ private val HW_ADDR_WORD = RegexTerminal("[0-9a-fA-F]{1,4}", "[0-9a-fA-F]{1,4}")
 private fun hwAddrGroups(group: Combinator, sep: Combinator, count: Int): Combinator =
   SequenceCombinator(group, Repeat(SequenceCombinator(sep, group), count - 1, count - 1))
 
-// A 6-byte Ethernet MAC address, i.e. systemd parse_ether_addr (expected_len == ETH_ALEN). Used by
-// SR-IOV=, BridgeFDB=, DHCPServerStaticLease=, MACsec*=, NetDev/Peer= and MACVLAN/MACVTAP source.
-val MAC_ADDRESS = Labeled(Role.LITERAL, AlternativeCombinator(
+// Hardware-address families, by byte length. Each accepts all three separator styles: colon and
+// hyphen with 1-byte fields (N groups), dot with 2-byte fields (N/2 groups). Each family is Labeled
+// exactly once, as a single literal span, so nothing that assembles them below adds another wrapper.
+// Only the 6-byte family carries SemanticTag.MAC_ADDRESS.
+
+// 4 bytes: IPv4 tunnels (IPIP, GRE, SIT). The "hardware address" is the tunnel endpoint's IPv4 address.
+private val IPV4_TUNNEL_HW_ADDR = Labeled(Role.LITERAL, AlternativeCombinator(
+  hwAddrGroups(HW_ADDR_BYTE, COLON, 4),
+  hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 4),
+  hwAddrGroups(HW_ADDR_WORD, DOT, 2),
+))
+
+// 6 bytes: an Ethernet MAC (Wi-Fi, wired NICs, bridges, VLANs, ...).
+private val ETHERNET_HW_ADDR = Labeled(Role.LITERAL, AlternativeCombinator(
   hwAddrGroups(HW_ADDR_BYTE, COLON, 6),
   hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 6),
   hwAddrGroups(HW_ADDR_WORD, DOT, 3),
+), tag=SemanticTag.MAC_ADDRESS)
+
+// 16 bytes: IPv6 tunnels (ip6tnl, ip6gre). The tunnel endpoint's IPv6 address.
+private val IPV6_TUNNEL_HW_ADDR = Labeled(Role.LITERAL, AlternativeCombinator(
+  hwAddrGroups(HW_ADDR_BYTE, COLON, 16),
+  hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 16),
+  hwAddrGroups(HW_ADDR_WORD, DOT, 8),
 ))
 
-// The raw hex forms of a hardware address (colon/hyphen use 1-byte fields → 4/6/16/20 groups; dot uses
-// 2-byte fields → 2/3/8/10 groups). Longest group counts come first so the classic (first-full-match)
-// matcher never stops on a shorter prefix. Wrapped once so the whole address reads as a single literal
-// span rather than per-field.
-private val RAW_HARDWARE_ADDRESS = Labeled(Role.LITERAL, AlternativeCombinator(
-  hwAddrGroups(HW_ADDR_BYTE, COLON, 20), hwAddrGroups(HW_ADDR_BYTE, COLON, 16), hwAddrGroups(HW_ADDR_BYTE, COLON, 6), hwAddrGroups(HW_ADDR_BYTE, COLON, 4),
-  hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 20), hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 16), hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 6), hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 4),
-  hwAddrGroups(HW_ADDR_WORD, DOT, 10), hwAddrGroups(HW_ADDR_WORD, DOT, 8), hwAddrGroups(HW_ADDR_WORD, DOT, 3), hwAddrGroups(HW_ADDR_WORD, DOT, 2),
+// 20 bytes: InfiniBand (4-byte queue-pair number + 16-byte GID).
+private val INFINIBAND_HW_ADDR = Labeled(Role.LITERAL, AlternativeCombinator(
+  hwAddrGroups(HW_ADDR_BYTE, COLON, 20),
+  hwAddrGroups(HW_ADDR_BYTE, HYPHEN, 20),
+  hwAddrGroups(HW_ADDR_WORD, DOT, 10),
 ))
+
+// A 6-byte Ethernet MAC address, i.e. systemd parse_ether_addr (expected_len == ETH_ALEN). Used by
+// SR-IOV=, BridgeFDB=, DHCPServerStaticLease=, MACsec*=, NetDev/Peer= and MACVLAN/MACVTAP source.
+// Already Labeled and tagged SemanticTag.MAC_ADDRESS (above), so MacAddressFormatInspection can find it.
+val MAC_ADDRESS: Combinator = ETHERNET_HW_ADDR
+
+// Every raw hex hardware-address length. Not wrapped: each family is already its own literal span, and
+// an outer Labeled would add a second, untagged region over every address.
+//
+// ORDER MATTERS: the classic matcher (SyntacticMatch) takes the first alternative that matches a
+// *prefix* and never backtracks, so longer families must come before shorter ones. Otherwise e.g. the
+// 4-byte colon branch eats the first 4 fields of a MAC and the rest is left over. (The new parse()
+// engine tries every alternative, so it doesn't care.)
+private val RAW_HARDWARE_ADDRESS = AlternativeCombinator(
+  INFINIBAND_HW_ADDR,
+  IPV6_TUNNEL_HW_ADDR,
+  ETHERNET_HW_ADDR,
+  IPV4_TUNNEL_HW_ADDR,
+)
+
 
 // A hardware address as accepted by parse_hw_addr_full with expected_len == 0 (Match=, Link=,
 // Neighbor.LinkLayerAddress=). Besides 6-byte MACs it accepts 4-, 16- and 20-byte (Infiniband)
