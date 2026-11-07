@@ -428,3 +428,16 @@ tasks.register<org.jetbrains.intellij.platform.gradle.tasks.PublishPluginTask>("
   // Set the distribution file in gradle build to the archive file of the buildPlugin task
   archiveFiles.from(project.file("build/distributions/${project.name}-${project.version}.zip"))
 }
+
+// `./gradlew runIde263`: run the plugin, still built against 242, in IntelliJ IDEA 2026.3 — what users on
+// the newest IDE actually get. Changing intellijVersion instead would also compile against 263 (Java 25).
+// 2026.3 is the first unified IntelliJ IDEA (no Community edition), hence IntellijIdea rather than IC.
+// Its platform moved libraries into content modules plugins can't see implicitly (#577).
+intellijPlatformTesting {
+  runIde {
+    register("runIde263") {
+      type = org.jetbrains.intellij.platform.gradle.IntelliJPlatformType.IntellijIdea
+      version = "2026.3"
+    }
+  }
+}
