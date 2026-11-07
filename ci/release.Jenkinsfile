@@ -31,11 +31,12 @@ if ((isReleaseDay && started_by_timer) || publishToStable) {
 
 echo "Release channel $releaseChannel"
 
-def buildPodDefinition(workerPodImage, ciUtilsEnabled, kanikoEnabled) {
-  // Pods that run Gradle (worker-pod) or kaniko are "heavy": they are restricted to the perf=fast nodes, and at most
-  // one of them may be scheduled per node across all builds, so a burst of PR builds queues instead of piling onto
-  // (and thrashing) the nodes.
-  def heavy = workerPodImage != null || kanikoEnabled
+def buildPodDefinition(workerPodImage, workerRunsGradle, ciUtilsEnabled, kanikoEnabled) {
+  // Pods that run Gradle (worker-pod with workerRunsGradle) or kaniko are "heavy": they are restricted to the
+  // perf=fast nodes, and at most one of them may be scheduled per node across all builds, so a burst of PR builds
+  // queues instead of piling onto (and thrashing) the nodes. A worker-pod that only copies files out of its image
+  // (the Assemble Metadata stages) is light, so it doesn't take one of those few slots for a few seconds of cp.
+  def heavy = (workerPodImage != null && workerRunsGradle) || kanikoEnabled
 
   // language=yaml
   yaml = """
@@ -151,11 +152,12 @@ spec:
     # 2.2-3.1Gi RSS with the limit never hit. The request leaves ~1Gi of headroom and is small enough
     # (with jnlp) to fit the 8 GB nodes too; the limit is kept roomy because it also sets the JVMs'
     # default max heap. A runaway build is OOM-killed in its own cgroup, not the node (#559).
+    # A worker that only copies files needs next to nothing.
     resources:
       requests:
-        memory: "4Gi"
+        memory: "${workerRunsGradle ? '4Gi' : '256Mi'}"
       limits:
-        memory: "6Gi"
+        memory: "${workerRunsGradle ? '6Gi' : '1Gi'}"
     volumeMounts:
     - name: github-ssh-host-key
       mountPath:  /github-ssh-host-key   
@@ -218,7 +220,7 @@ pipeline {
               defaultContainer 'ci-utils'
 
               // language=yaml
-              yaml buildPodDefinition(null, true, false)
+              yaml buildPodDefinition(null, false, true, false)
               //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
             }
           }
@@ -270,7 +272,7 @@ pipeline {
                       defaultContainer 'kaniko'
 
                       // language=yaml
-                      yaml buildPodDefinition(null, false, true)
+                      yaml buildPodDefinition(null, false, false, true)
                       //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
                     }
                   }
@@ -299,7 +301,7 @@ pipeline {
                       defaultContainer 'kaniko'
 
                       // language=yaml
-                      yaml buildPodDefinition(null, false, true)
+                      yaml buildPodDefinition(null, false, false, true)
                       //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
                     }
                   }
@@ -328,7 +330,7 @@ pipeline {
                       defaultContainer 'kaniko'
 
                       // language=yaml
-                      yaml buildPodDefinition(null, false, true)
+                      yaml buildPodDefinition(null, false, false, true)
                       //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
                     }
                   }
@@ -356,7 +358,7 @@ pipeline {
               defaultContainer 'worker-pod'
 
               // language=yaml
-              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-ubuntu-image:$ubuntuUnitsHash", false, false)
+              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-ubuntu-image:$ubuntuUnitsHash", false, false, false)
               //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
             }
           }
@@ -376,7 +378,7 @@ pipeline {
               defaultContainer 'worker-pod'
 
               // language=yaml
-              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-systemd-builder-image:$systemdBuilderHash", false,false)
+              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-systemd-builder-image:$systemdBuilderHash", false, false, false)
               //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
             }
           }
@@ -407,7 +409,7 @@ pipeline {
           defaultContainer 'worker-pod'
 
           // language=yaml
-          yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-build-environment:$buildEnvironmentHash", false,false)
+          yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-build-environment:$buildEnvironmentHash", true, false, false)
           //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
         }
       }
@@ -487,7 +489,7 @@ pipeline {
               defaultContainer 'worker-pod'
 
               // language=yaml
-              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-build-environment:$buildEnvironmentHash", false,false)
+              yaml buildPodDefinition("${env.DOCKER_REGISTRY_PREFIX}/systemd-plugin-build-environment:$buildEnvironmentHash", true, false, false)
               //workspaceVolume hostPathWorkspaceVolume('/opt/jenkins/workspace')
             }
           }
