@@ -1,0 +1,14 @@
+<html>
+<body>
+<p>
+  Suggests rewriting an IPv6 address in its canonical form (RFC 5952).
+</p>
+<!-- tooltip end -->
+<p>systemd accepts any valid spelling of an IPv6 address. The canonical form writes the same address in exactly one
+way, so it is easier to compare and search for: hex digits in lower case, no leading zeros in a group, and the longest
+run of two or more zero groups shortened to <code>::</code>. For example, <code>2001:0DB8:0000:0000:0000:0000:0000:0001</code>
+becomes <code>2001:db8::1</code>.</p>
+<p>Addresses with an embedded IPv4 part, such as <code>::ffff:192.0.2.1</code>, are left alone.</p>
+<p>This inspection needs the new grammar engine, which you turn on under <b>Settings | Tools | systemd Unit Files</b>.</p>
+</body>
+</html>
