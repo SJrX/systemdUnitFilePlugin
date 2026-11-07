@@ -17,7 +17,13 @@ def started_by_timer = currentBuild.getBuildCauses()[0]["shortDescription"].matc
 echo "Started by timer: ${started_by_timer}"
 
 
-if (isReleaseDay && started_by_timer) {
+// "Build with Parameters" -> PUBLISH_TO_STABLE ships this build to the stable channel straight away, so an
+// urgent fix doesn't have to wait for Wednesday. Automatic builds (merges, nightly timer) leave it at its
+// default (false). params is empty until the first build after this was added has registered the parameter.
+publishToStable = params.PUBLISH_TO_STABLE == true
+echo "Manual stable publish requested: ${publishToStable}"
+
+if ((isReleaseDay && started_by_timer) || publishToStable) {
   releaseChannel = "default"
 } else {
   releaseChannel = "dev"
@@ -192,6 +198,10 @@ pipeline {
     timestamps()
     quietPeriod(1)
     //skipDefaultCheckout()
+  }
+  parameters {
+    booleanParam(name: 'PUBLISH_TO_STABLE', defaultValue: false,
+                 description: 'Publish this build to the stable Marketplace channel now instead of waiting for the Wednesday nightly. Only has an effect on a release branch (NNN.x).')
   }
   triggers {
     cron(cron_string)
