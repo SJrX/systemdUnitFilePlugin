@@ -3,9 +3,8 @@ package net.sjrx.intellij.plugins.systemdunitfiles.semanticdata
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonFactoryBuilder
 import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.NotNullLazyValue
@@ -221,10 +220,10 @@ class SemanticDataRepository private constructor() {
     }
 
     val mapper = ObjectMapper(factory)
-    mapper.registerModule(KotlinModule.Builder().build())
 
     try {
-      val read: Map<String, Map<String, Map<String, KeywordData>>> = mapper.readValue(sectionToKeywordMapFromDocJsonFile)
+      val read: Map<String, Map<String, Map<String, KeywordData>>> =
+        mapper.readValue(sectionToKeywordMapFromDocJsonFile, object : TypeReference<Map<String, Map<String, Map<String, KeywordData>>>>() {})
 
       // intern strings in maps
       val output: MutableMap<String, MutableMap<String, Map<String, KeywordData>>> = HashMap()

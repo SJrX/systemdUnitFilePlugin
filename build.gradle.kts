@@ -74,6 +74,9 @@ repositories {
 dependencies {
   implementation("commons-io:commons-io:2.22.0")
   implementation("com.google.guava:guava:33.8.0-jre")
+  // Bundled rather than borrowed from the IDE: from 2026.3 the platform's Jackson 2 lives in content
+  // modules plugins can't see without declaring them (#577), and declaring them breaks older IDEs.
+  implementation("com.fasterxml.jackson.core:jackson-databind:2.22.4")
   testImplementation("junit:junit:4.13.2")
   testImplementation("org.opentest4j:opentest4j:1.3.0")
 
