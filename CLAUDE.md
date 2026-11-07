@@ -13,6 +13,7 @@ IntelliJ plugin providing language support for systemd unit files (.service, .mo
 ./gradlew test                 # Run all tests
 ./gradlew test --tests "net.sjrx.intellij.plugins.systemdunitfiles.lexer.UnitFileLexerTest"  # Single test class
 ./gradlew runIde               # Launch dev IDE with plugin loaded
+./gradlew runIde263            # Same, but in IntelliJ IDEA 2026.3 (plugin still built against 242)
 ./gradlew checkstyleMain       # Run checkstyle (excludes generated code)
 ./gradlew generateLexerTask    # Regenerate lexer from .flex grammar
 ./gradlew generateParserTask   # Regenerate parser from .bnf grammar
