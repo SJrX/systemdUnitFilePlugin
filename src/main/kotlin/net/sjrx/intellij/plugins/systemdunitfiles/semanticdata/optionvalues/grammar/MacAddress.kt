@@ -41,6 +41,10 @@ fun macAddressBytes(text: String): IntArray? {
  * The result is compared with the original text, and the inspection fires only when they differ, so
  * an address already in [format] comes back unchanged (same case, same zero padding).
  */
+/** The format [address] is written in exactly, or null if it matches none (e.g. mixed case). */
+fun macFormatOf(address: String): PreferredMacFormat? =
+  PreferredMacFormat.entries.firstOrNull { it != PreferredMacFormat.LEAVE_ALONE && formatMac(address, it) == address }
+
 fun formatMac(address: String, format: PreferredMacFormat): String? {
   if (format == PreferredMacFormat.LEAVE_ALONE) return null
   val bytes = macAddressBytes(address) ?: return null

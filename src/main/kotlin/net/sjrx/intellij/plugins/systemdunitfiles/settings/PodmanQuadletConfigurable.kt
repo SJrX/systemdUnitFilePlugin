@@ -38,7 +38,7 @@ class PodmanQuadletConfigurable(private val project: Project) : Configurable {
       .addComponent(enabledCheckbox!!)
       .addComponent(grammarEngineCheckbox!!)
       .addComponent(underlineGrammarKeysCheckbox!!)
-      .addLabeledComponent("Preferred MAC address format (grammar engine only):", macFormatCombo!!)
+      .addLabeledComponent("Preferred MAC address format:", macFormatCombo!!)
       .addComponentFillVertically(JPanel(), 0)
       .panel
   }

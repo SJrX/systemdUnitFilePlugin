@@ -40,6 +40,9 @@ abstract class TaggedSpanRewriteInspection : LocalInspectionTool() {
 
   protected abstract fun quickFix(original: String, replacement: String): LocalQuickFix
 
+  /** Further fixes offered next to [quickFix] that don't rewrite the span (e.g. changing the preference). */
+  protected open fun extraQuickFixes(original: String): List<LocalQuickFix> = emptyList()
+
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
     val file = holder.file
     if (file !is UnitFile || !file.language.isKindOf(UnitFileLanguage.INSTANCE)) return PsiElementVisitor.EMPTY_VISITOR
@@ -67,7 +70,7 @@ abstract class TaggedSpanRewriteInspection : LocalInspectionTool() {
           if (replacement == text) continue
           val range = TextRange(offsets[region.start], offsets[region.end - 1] + 1)
           if (range.substring(rawText) != text) continue
-          holder.registerProblem(valueElement, message(replacement), ProblemHighlightType.WEAK_WARNING, range, quickFix(text, replacement))
+          holder.registerProblem(valueElement, message(replacement), ProblemHighlightType.WEAK_WARNING, range, quickFix(text, replacement), *extraQuickFixes(text).toTypedArray())
         }
       }
     }

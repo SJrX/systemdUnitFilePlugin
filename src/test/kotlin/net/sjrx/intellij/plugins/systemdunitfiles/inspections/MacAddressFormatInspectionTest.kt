@@ -173,4 +173,32 @@ class MacAddressFormatInspectionTest : AbstractUnitFileTest() {
     enableInspection(MacAddressFormatInspection::class.java)
     assertFalse(hasFormatWarning())
   }
+
+  // --- "Set preferred MAC address format": keep the address, adopt its format as the preference.
+
+  @Test
+  fun testPreferenceFixAdoptsTheWrittenFormatWithoutEditingTheFile() {
+    configure()
+    val text = "[SR-IOV]\nMACAddress=00-1A-${COMPLETION_POSITION}2B-3C-4D-5E\n"
+    setupFileInEditor("f.link", text)
+    enableInspection(MacAddressFormatInspection::class.java)
+    myFixture.doHighlighting()
+
+    myFixture.launchAction(myFixture.findSingleIntention("Set preferred MAC address format to"))
+    assertEquals(PreferredMacFormat.HYPHEN_UPPER, ExperimentalSettings.getInstance(project).state.preferredMacFormat)
+    myFixture.checkResult("[SR-IOV]\nMACAddress=00-1A-2B-3C-4D-5E\n")
+    assertFalse(hasFormatWarning())
+  }
+
+  @Test
+  fun testNoPreferenceFixWhenTheWrittenFormatIsNotOneOfTheChoices() {
+    // Mixed case matches none of the formats on offer, so only the rewrite is offered.
+    configure()
+    setupFileInEditor("f.link", "[SR-IOV]\nMACAddress=00-1a-${COMPLETION_POSITION}2B-3c-4D-5e\n")
+    enableInspection(MacAddressFormatInspection::class.java)
+    myFixture.doHighlighting()
+
+    assertTrue(myFixture.availableIntentions.none { it.text.startsWith("Set preferred MAC address format") })
+    assertNotNull(myFixture.findSingleIntention("Convert MAC address to"))
+  }
 }
