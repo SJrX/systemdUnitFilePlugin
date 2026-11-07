@@ -2,8 +2,10 @@ package net.sjrx.intellij.plugins.systemdunitfiles.inspections
 
 import com.intellij.codeInspection.LocalQuickFix
 import net.sjrx.intellij.plugins.systemdunitfiles.intentions.NormalizeMacFormatQuickFix
+import net.sjrx.intellij.plugins.systemdunitfiles.intentions.SetPreferredMacFormatQuickFix
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.SemanticTag
 import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.formatMac
+import net.sjrx.intellij.plugins.systemdunitfiles.semanticdata.optionvalues.grammar.macFormatOf
 import net.sjrx.intellij.plugins.systemdunitfiles.settings.ExperimentalSettings
 import net.sjrx.intellij.plugins.systemdunitfiles.settings.PreferredMacFormat
 
@@ -24,4 +26,8 @@ class MacAddressFormatInspection : TaggedSpanRewriteInspection() {
   override fun message(replacement: String) = "MAC address is not in preferred format, use: '$replacement'"
 
   override fun quickFix(original: String, replacement: String): LocalQuickFix = NormalizeMacFormatQuickFix(original, replacement)
+
+  // If the address is already written in one of the other formats, offer to make that the preference instead.
+  override fun extraQuickFixes(original: String): List<LocalQuickFix> =
+    listOfNotNull(macFormatOf(original)?.let(::SetPreferredMacFormatQuickFix))
 }

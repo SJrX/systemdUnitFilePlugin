@@ -1,0 +1,15 @@
+<html>
+<body>
+<p>
+  Suggests rewriting a MAC address in the format chosen under <b>Settings | Tools | systemd Unit Files</b>.
+</p>
+<!-- tooltip end -->
+<p>systemd accepts a MAC address written several ways, for example <code>00:1a:2b:3c:4d:5e</code>,
+<code>00-1A-2B-3C-4D-5E</code> and <code>001a.2b3c.4d5e</code>. This inspection flags any MAC address not
+written in the preferred format and offers to convert it. If the address is already written in one of the other
+formats, it also offers to make that format the preferred one.</p>
+<p>Set the preferred format to <i>Leave as written</i> to turn the suggestions off. Other hardware addresses, such as
+Infiniband addresses in <code>[Match]</code> sections, are left alone.</p>
+<p>This inspection needs the new grammar engine, which you turn on under <b>Settings | Tools | systemd Unit Files</b>.</p>
+</body>
+</html>
