@@ -30,7 +30,7 @@ fun getVersionNumber() : String {
 
 plugins {
   id("java")
-  id("org.jetbrains.intellij.platform") version "2.19.0"
+  id("org.jetbrains.intellij.platform") version "2.20.1"
   id("org.jetbrains.grammarkit") version "2023.3.0.4"
   id("checkstyle")
   id("jacoco")
@@ -174,10 +174,10 @@ tasks {
    }
 }
 
-tasks {
-  buildSearchableOptions {
-    enabled = false
-  }
+intellijPlatform {
+  // Disables buildSearchableOptions and prepareJarSearchableOptions together; disabling only the
+  // former leaves the latter failing on its missing input directory (Gradle plugin 2.20+).
+  buildSearchableOptions = false
 }
 
 /*
